@@ -10,8 +10,7 @@
         ShipmentETD (timestamp)
         ShipmentETA (timestamp)
         ShipmentStatus (string)
-        ShipmentFreightMethod (string)
-        ShipmentShipmentType (string)
+        ##### MasterTemplate
         ShipmentCreatorType (string)
         ShipmentCreatorUserKey (string)
         ShipmentCreateTimestamp (timestamp)
@@ -21,18 +20,6 @@
         +ChatRoom
             >ChatRoomKey
                 ChatRoomName (string)
-                ChatRoomProductName (string)
-                ChatRoomFromCompanyName (string)
-                ChatRoomFromCompanyKey (string)
-                ChatRoomToCompanyName (string)
-                ChatRoomToCompanyKey (string)
-                ChatRoomShipmentSourceLocation (string)
-                ChatRoomShipmentDestinationLocation (string)
-                ChatRoomContainerNumber (string)
-                ChatRoomBillOfLandingNumber (string)
-                ChatRoomOriginalDocumentTrackingNumber (string)
-                ChatRoomNote (string)
-                ChatRoomShippingMethod (string)
                 ChatRoomFileLink (Array<object>)
                     [ {FileName : "FileA.jpg" , FileUrl : "'https://firebasestorage.googleapis.com'" , FileCreateTimestamp : "123123124124124" , FilePath : "/Shipment/{ShipmentKey}/ShipmentFile/{FileKey}" }]
                 ChatRoomMember ()
