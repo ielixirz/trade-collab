@@ -1,0 +1,26 @@
++Shipment
+    >ShipmentKey
+        ShipmentReference (array<object>)
+            { "RefOwner" : "Seller" , "RefID" : "Ref1234" , "RefTimestampUpdate" : "1234567673242"  }
+        ShipmentSellerName (string)
+        ShipmentSourceLocation (string)
+        ShipmentBuyerName (string)
+        ShipmentDestinationLocation (string)
+        ShipmentProductName (string)
+        ShipmentETD (timestamp)
+        ShipmentETA (timestamp)
+        ShipmentStatus (string)
+        ShipmentCreatorUserKey (string)
+        ShipmentCreateTimestamp (timestamp)
+        ShipmentLastestUpdateTimestamp (timestamp)
+
++UserInfo
+    >UserKey
+        UserInfoFirstname (string)
+        UserInfoSurname (string)
+        UserInfoEmail (string)
+        UserInfoUsername (string)
+        UserInfoProfileImageLink (string)
+        UserInfoCreateTimestamp (timestamp)
+        UserInfoCompanyName (string)
+        UserInfoCompanyRelate (string)
