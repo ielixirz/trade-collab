@@ -91,17 +91,21 @@
         CompanyWebsiteUrl (string)
         CompanyEmail (string)
         CompanyAboutUs (string)
-        CompanyMember (Array<object>)
-            [{ UserKey : "123" , UserCompanyStanding : "Joined" , CompanyUserRoleKey : "123" } , { UserKey : "123" , UserCompanyStanding : "Pending" , CompanyUserRoleKey : "123"}]
-        +CompanyUserRole
-            >CompanyUserRoleKey
-                CompanyUserRoleName (string)
-                UserRightA (boolean)
-                UserRightB (boolean)
-                .
-                .
-                .
-                UserRightX (boolean)
+        +CompanyMember (Array<object>)
+            >UserKey
+                UserMemberEmail (string)
+                UserMemberPosition (string)
+                UserMemberRole (string) (Binary number)
+                UserMemberCompanyStandingStatus (string)
+                UserMemberJoinedTimestamp (timestamp)
+        +CompanyInvitation
+            >InvitationKey
+                UserInvitationFristname (string)
+                UserInvitationSurname (string)
+                UserInvitationEmail (string)
+                UserInvitationPosition (string)
+                UserInvitationRole (string)
+                UserInvitationStatus (string) ('Reject','Approve','Pending')
         
 
 __________________________________________________________________________________
