@@ -46,6 +46,7 @@
     >UserKey
         UserInfoUsername (string)
         UserInfoEmail (string)
+        UserInfoBio (string)
         UserInfoProfileImageLink (string) *(Note-Ask)
         UserInfoCreateTimestamp (timestamp)
         UserInfoAccountType (string)
@@ -83,7 +84,13 @@
 +Company
     >CompanyKey
         CompanyName (string)
+        CompanyID (string) *(ID is not a key)
         CompanyImageLink (string)
+        CompanyTelNumber (string)
+        CompanyAddress (string)
+        CompanyWebsiteUrl (string)
+        CompanyEmail (string)
+        CompanyAboutUs (string)
         CompanyMember (Array<object>)
             [{ UserKey : "123" , UserCompanyStanding : "Joined" , CompanyUserRoleKey : "123" } , { UserKey : "123" , UserCompanyStanding : "Pending" , CompanyUserRoleKey : "123"}]
         +CompanyUserRole
