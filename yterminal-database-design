@@ -90,6 +90,11 @@
             >CompanyUserRoleKey
                 CompanyUserRoleName (string)
                 UserRightA (boolean)
+                UserRightB (boolean)
+                .
+                .
+                .
+                UserRightX (boolean)
         
 
 __________________________________________________________________________________
