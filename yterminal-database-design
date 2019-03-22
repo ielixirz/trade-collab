@@ -74,7 +74,6 @@
             >ShipmentKey
                 ShipmentReferenceSelect (string) [RefOwner]
                 
-                
 +FieldComponent
     >FieldComponentKey
         FieldComponentIDNumber (string)
@@ -100,13 +99,27 @@
                 UserMemberJoinedTimestamp (timestamp)
         +CompanyInvitation
             >InvitationKey
+                UserInvitationUserKey (string)
+                UserInvitationCompanyKey (string)
                 UserInvitationFristname (string)
                 UserInvitationSurname (string)
                 UserInvitationEmail (string)
                 UserInvitationPosition (string)
                 UserInvitationRole (string)
+                UserInvitationTimestamp (timestamp)
                 UserInvitationStatus (string) ('Reject','Approve','Pending')
-        
+        +CompanyRequest
+            >RequestKey
+                UserRequestUserKey (string)
+                UserRequestCompanyKey (string)
+                UserRequestFristname (string)
+                UserRequestSurname (string)
+                UserRequestEmail (string)
+                UserRequestNote (string)
+                UserRequestTimestamp (timestamp)
+                UserInvitationStatus (string) ('Reject','Approve','Pending')
+
++
 
 __________________________________________________________________________________
 
