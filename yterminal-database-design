@@ -61,6 +61,22 @@
                 ProfileEmail (string)
                 ProfileProfileImageLink (string) *(Note-Ask)
                 ProfileNotificationToken (Array<string>)
+        +UserInvitation (User was recruited)
+            >InvitationKey
+                CompanyInvitationCompanyKey (string)
+                CompanyInvitationName (string)
+                CompanyInvitationEmail (string)
+                CompanyInvitationPosition (string)
+                CompanyInvitationRole (string)
+                CompanyInvitationTimestamp (timestamp)
+                CompanyInvitationStatus (string) ('Reject','Approve','Pending')
+        +UserRequest (User looking for a job)
+            >RequestKey
+                CompanyRequestCompanyKey (string)
+                CompanyRequestCompanyName (string)
+                CompanyRequestNote (string)
+                CompanyRequestTimestamp (timestamp)
+                CompanyRequestStatus (string) ('Reject','Approve','Pending')
 
 +UserPersonalize
     >ProfileKey
@@ -97,7 +113,7 @@
                 UserMemberRole (string) (Binary number)
                 UserMemberCompanyStandingStatus (string)
                 UserMemberJoinedTimestamp (timestamp)
-        +CompanyInvitation
+        +CompanyInvitation (Company pull who one)
             >InvitationKey
                 UserInvitationUserKey (string)
                 UserInvitationCompanyKey (string)
@@ -108,7 +124,7 @@
                 UserInvitationRole (string)
                 UserInvitationTimestamp (timestamp)
                 UserInvitationStatus (string) ('Reject','Approve','Pending')
-        +CompanyRequest
+        +CompanyRequest (Who one want to join)
             >RequestKey
                 UserRequestUserKey (string)
                 UserRequestCompanyKey (string)
