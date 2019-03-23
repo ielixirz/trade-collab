@@ -8,10 +8,12 @@
         ShipmentDestinationLocation (string)
         ShipmentProductName (string)
         ShipmentETD (timestamp)
-        ShipmentETA (timestamp)
+        ShipmentETAPort (timestamp)
+        ShipmentETAWarehouse (timestamp)
         ShipmentStatus (string)
-        ShipmentFieldComponents (Array<object>)
-            [{ FieldComponentKey : "123" , FieldData : "FieldData" }, { FieldComponentKey : "123" , FieldData : "FieldData" }]
+        ShipmentPriceDescription (string)
+        *ShipmentDetails (Array<object>)
+            [{ DetailName: "Product", DetailValue: "Young Coconut" }]
         ShipmentCreatorType (string) *Importer or Exporter
         ShipmentCreatorUserKey (string)
         ShipmentCreateTimestamp (timestamp)
@@ -94,7 +96,8 @@
     >FieldComponentKey
         FieldComponentIDNumber (string)
         FieldComponentName (string)
-        FieldComponentType (string)
+        *FieldComponentType (string) -- importer,exporter,forwarder,trucking
+        *FieldComponentPrivateSupplierChat (boolean)
         
 +Company
     >CompanyKey
