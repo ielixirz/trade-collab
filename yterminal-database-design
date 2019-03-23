@@ -65,6 +65,7 @@
                 ProfileNotificationToken (Array<string>)
         +UserInvitation (User was recruited)
             >InvitationKey
+                CompanyInvitationReference (reference)
                 CompanyInvitationCompanyKey (string)
                 CompanyInvitationName (string)
                 CompanyInvitationEmail (string)
@@ -74,11 +75,12 @@
                 CompanyInvitationStatus (string) ('Reject','Approve','Pending')
         +UserRequest (User looking for a job)
             >RequestKey
+                CompanyRequestReference (reference)
                 CompanyRequestCompanyKey (string)
                 CompanyRequestCompanyName (string)
                 CompanyRequestNote (string)
                 CompanyRequestTimestamp (timestamp)
-                CompanyRequestStatus (string) ('Reject','Approve','Pending')
+                CompanyRequestStatus (string) ('Cancel','Pending')
 
 +UserPersonalize
     >ProfileKey
@@ -118,6 +120,7 @@
                 UserMemberJoinedTimestamp (timestamp)
         +CompanyInvitation (Company pull who one)
             >InvitationKey
+                UserInvitationReference (reference)
                 UserInvitationUserKey (string)
                 UserInvitationCompanyKey (string)
                 UserInvitationFristname (string)
@@ -126,9 +129,11 @@
                 UserInvitationPosition (string)
                 UserInvitationRole (string)
                 UserInvitationTimestamp (timestamp)
-                UserInvitationStatus (string) ('Reject','Approve','Pending')
+                UserInvitationStatus (string) ('Cancel','Pending')
         +CompanyRequest (Who one want to join)
             >RequestKey
+                UserRequestReference (reference)
+                UserRequestKey (reference)
                 UserRequestUserKey (string)
                 UserRequestCompanyKey (string)
                 UserRequestFristname (string)
@@ -137,8 +142,6 @@
                 UserRequestNote (string)
                 UserRequestTimestamp (timestamp)
                 UserInvitationStatus (string) ('Reject','Approve','Pending')
-
-+
 
 __________________________________________________________________________________
 
