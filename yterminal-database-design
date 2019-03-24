@@ -20,6 +20,23 @@
         ShipmentLastestUpdateTimestamp (timestamp)
         ShipmentMember (Array<object>)
             [{ UserKey : "123" , Premission : "ShipmentOwner"  }, { UserKey : "123" , Premission : "ShipmentOwner"  } , { UserKey : "123" , Premission : "See Only"  } ]
+        ShipmentShareList (array<string>)
+            ['Shipper','ShipmentDetail','Consignee']
+        +ShipmentShareData
+                >Shipper
+                    ShipperCompanyName (string)
+                    ShipperPier (string)
+                    ShipperDate (timestamp)
+                >ShipmentDetail
+                    ShipmentDetailProduct (string)
+                    ShipmentDetailContainerNumber (string)
+                    ShipmentDetailBillofLandingNumber (string)
+                    ShipmentDetailOriginalDocumentTrackingNumber (string)
+                    ShipmentDetailNote (string)
+                >Consignee
+                    ConsigneeCompanyName (string)
+                    ConsigneePier (string)
+                    ConsigneeDate (timestamp)
         +ChatRoom
             >ChatRoomKey
                 ChatRoomName (string)
@@ -27,6 +44,13 @@
                     [ {FileName : "FileA.jpg" , FileUrl : "'https://firebasestorage.googleapis.com'" , FileCreateTimestamp : "123123124124124" , FilePath : "/Shipment/{ShipmentKey}/ShipmentFile/{FileKey}" }]
                 ChatRoomMember ()
                 ChatRoomParticipleNotificationToken (Array<string>)
+                ChatRoomPrivateShareDataList (array<string>)
+                    ['Trucking']
+                +ChatRoomPrivateShareData
+                    >Trucking
+                        .
+                        .
+                        .
                 +ChatRoomMessage
                     >ChatRoomMessageKey
                         ChatRoomMessageSender (string)
@@ -142,6 +166,22 @@
                 UserRequestNote (string)
                 UserRequestTimestamp (timestamp)
                 UserInvitationStatus (string) ('Reject','Approve','Pending')
+
++MasterShipmentData *(This collection is static value)
+    >Shipper
+        ShipperCompanyName (string)
+        ShipperPier (string)
+        ShipperDate (timestamp)
+    >ShipmentDetail
+        ShipmentDetailProduct (string)
+        ShipmentDetailContainerNumber (string)
+        ShipmentDetailBillofLandingNumber (string)
+        ShipmentDetailOriginalDocumentTrackingNumber (string)
+        ShipmentDetailNote (string)
+    >Consignee
+        ConsigneeCompanyName (string)
+        ConsigneePier (string)
+        ConsigneeDate (timestamp)
 
 __________________________________________________________________________________
 
