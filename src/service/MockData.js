@@ -56,3 +56,29 @@ const ChatRoomRefPath = (ShipmentKey) => {
 export const CreateChatRoom = (ShipmentKey,Data) => {
     return ChatRoomRefPath(ShipmentKey).add(ChatRoomMockData())
 }
+
+const UserInfoMockData = () => {
+    const Now = new Date()
+    return (
+        {
+            UserInfoUsername : "Holywisdom",
+            UserInfoEmail : "holy-wisdom@hotmail.com" ,
+            UserInfoBio : `I'll be sippin sippin, mixing mixing, smoking smoking
+                            I'll be rollin rollin that's how my life go` ,
+            UserInfoProfileImageLink : "https://firebasestorage.googleapis.com/v0/b/yterminal-b0906.appspot.com/o/%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%AB%E0%B8%99%E0%B9%89%E0%B8%B2%E0%B8%88%E0%B8%AD%202562-01-01%20%E0%B9%80%E0%B8%A7%E0%B8%A5%E0%B8%B2%2023.44.49.png?alt=media&token=6e105bbe-3cac-42dc-a166-590d5f23aff5" ,
+            UserInfoCreateTimestamp : Now , 
+            UserInfoAccountType : "Exporter" ,
+            UserInfoCompanyName : "Holywisdom Co." ,
+            UserInfoCompanyRelate : "Export beef" ,
+            UserInfoNotificationToken : []
+        }
+    )
+} 
+
+const UserInfoRefPath = () => {
+    return FirebaseApp.firestore().collection(`UserInfo`)
+}
+
+export const CreateUserInfo = (Data) => {
+    return UserInfoRefPath().add(UserInfoMockData())
+}

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { CreateShipment, CreateChatRoom } from '../../service/MockData'
+import { CreateShipment, CreateChatRoom, CreateUserInfo } from '../../service/MockData'
 
 const MockData = () => {
     const [count, setCount] = useState(0)
 
     const ShipmentKey = 'HDTPONlnceJeG5yAA1Zy'
     const ChatRoomKey = 'lvCb608c7PusGqptBsq0'
+
+    const UserInfoKey = 'aE5lNgaD1bcf3OHeQR3P'
 
     useEffect(() => {
         // CreateShipment
@@ -14,11 +16,17 @@ const MockData = () => {
         //     console.log(res.id)
         // })
 
-        //CreateChatRoom
+        // CreateChatRoom
 
-        CreateChatRoom(ShipmentKey).then( res => {
-            console.log(res.id)
-        })
+        // CreateChatRoom(ShipmentKey).then( res => {
+        //     console.log(res.id)
+        // })
+
+        // CreateUserInfo
+
+        // CreateUserInfo().then( res => {
+        //     console.log(res.id)
+        // })
 
       }, []);
     
