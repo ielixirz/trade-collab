@@ -4,6 +4,9 @@ import { CreateShipment, CreateChatRoom } from '../../service/MockData'
 const MockData = () => {
     const [count, setCount] = useState(0)
 
+    const ShipmentKey = 'HDTPONlnceJeG5yAA1Zy'
+    const ChatRoomKey = 'lvCb608c7PusGqptBsq0'
+
     useEffect(() => {
         // CreateShipment
 
@@ -13,7 +16,7 @@ const MockData = () => {
 
         //CreateChatRoom
 
-        CreateChatRoom('HDTPONlnceJeG5yAA1Zy').then( res => {
+        CreateChatRoom(ShipmentKey).then( res => {
             console.log(res.id)
         })
 
