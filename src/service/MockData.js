@@ -31,4 +31,28 @@ const ShipmentRefPath = () => {
 
 export const CreateShipment = () => {
     return ShipmentRefPath().add(ShipmentMockData())
-} 
+}
+
+const ChatRoomMockData = () => {
+    return (
+        {
+            ChatRoomName : "Exporter",
+            ChatRoomFileLink :
+                [ {FileName : "FileA.jpg" , FileUrl : "'https://firebasestorage.googleapis.com'" , FileCreateTimestamp : "123123124124124" , FilePath : "/Shipment/{ShipmentKey}/ShipmentFile/{FileKey}" }] ,
+            ChatRoomMember : {},
+            ChatRoomParticipleNotificationToken : [],
+            ChatRoomhareDataList :
+                ['Shipper','ShipmentDetail'],
+            ChatRoomPrivateShareDataList :
+                ['Trucking']
+        }
+    )
+}
+
+const ChatRoomRefPath = (ShipmentKey) => {
+    return FirebaseApp.firestore().collection(`Shipment`).doc(ShipmentKey).collection(`ChatRoom`)
+}
+
+export const CreateChatRoom = (ShipmentKey,Data) => {
+    return ChatRoomRefPath(ShipmentKey).add(ChatRoomMockData())
+}
