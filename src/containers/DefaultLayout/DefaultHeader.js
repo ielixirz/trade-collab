@@ -41,10 +41,10 @@ class DefaultHeader extends Component {
 
         <Nav className="d-md-down-none" navbar>
           <NavItem className="px-3">
-            <Link to="/shipments">Shipments</Link>
+            <Link to="/shipment">Shipments</Link>
           </NavItem>
           <NavItem className="px-3">
-            <NavLink href="/Chat">Chat</NavLink>
+            <Link to="/chat">Chat</Link>
           </NavItem>
         </Nav>
         <Nav className="ml-auto" navbar>

@@ -57,7 +57,6 @@ class DefaultLayout extends Component {
                       />
                     ) : null;
                   })}
-                  <Redirect from="/" to="/Chat" />
                 </Switch>
               </Suspense>
             </Container>
