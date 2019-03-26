@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component ,useContext,useReducer } from 'react';
 import {
-  Badge,
+  Collapse, Button, CardBody, Card,
   Col,
   Nav,
   NavItem,
@@ -9,20 +9,28 @@ import {
   TabContent,
   TabPane
 } from 'reactstrap';
-import classnames from 'classnames';
-
+import shipmentListContext from '../../context/shipmentContext';
+import shipmentReducer from '../../reducers/shipmentReducer';
+import ShipmentList from '../../component/ShipmentList';
+const Shipment = ()=>{
+    const initialState =  useContext(shipmentListContext);
+    const [state,dispatch]  = useReducer(shipmentReducer,initialState);
+    return (<shipmentListContext.Provider value={{state,dispatch}}><ShipmentList /></shipmentListContext.Provider>)
+}
 class Chat extends Component {
   constructor(props) {
     super(props);
 
     this.toggle = this.toggle.bind(this);
     this.state = {
-      activeTab: new Array(4).fill('1')
+      activeTab: new Array(4).fill('1'),
+      collapse: false
     };
+    this.triggerCollapse = this.triggerCollapse.bind(this);
   }
 
   lorem() {
-    return 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit.';
+    return 'Teddy ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit.';
   }
 
   toggle(tabPane, tab) {
@@ -31,6 +39,10 @@ class Chat extends Component {
     this.setState({
       activeTab: newArray
     });
+  }
+
+  triggerCollapse(){
+      this.setState(state=> ({collapse:!state.collapse}))
   }
 
   tabPane() {
@@ -84,6 +96,23 @@ class Chat extends Component {
               {this.tabPane()}
             </TabContent>
           </Col>
+         <Col></Col>
+          <Col>
+          <div>
+        <Button  onClick={this.triggerCollapse} style={{ marginBottom: '1rem',backgroundColor:'transparent' ,borderWidth:0 }}>Shipment Update :{'string'}</Button>
+        <Collapse isOpen={this.state.collapse}>
+          <Card>
+             <CardBody>
+            Anim pariatur cliche reprehenderit,
+             enim eiusmod high life accusamus terry richardson ad squid. Nihil
+             anim keffiyeh helvetica, craft beer labore wes anderson cred
+             nesciunt sapiente ea proident.
+            </CardBody>
+          </Card>
+          <span><Shipment /></span>
+        </Collapse>
+      </div>
+      </Col>
         </Row>
       </div>
     );
