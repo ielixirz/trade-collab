@@ -1,7 +1,7 @@
 +Shipment
     >ShipmentKey
         ShipmentReference (array<object>)
-            { "RefOwner" : "Seller" , "RefID" : "Ref1234" , "RefTimestampUpdate" : "1234567673242"  }
+            [{ "RefOwner" : "Seller" , "RefID" : "Ref1234" , "RefTimestampUpdate" : "1234567673242"  }]
         ShipmentSellerCompanyName (string)
         ShipmentSourceLocation (string)
         ShipmentBuyerCompanyName (string)
@@ -42,7 +42,7 @@
                     [ {FileName : "FileA.jpg" , FileUrl : "'https://firebasestorage.googleapis.com'" , FileCreateTimestamp : "123123124124124" , FilePath : "/Shipment/{ShipmentKey}/ShipmentFile/{FileKey}" }]
                 ChatRoomMember ()
                 ChatRoomParticipleNotificationToken (Array<string>)
-                ChatRoomhareDataList (Array<string>)
+                ChatRoomShareDataList (Array<string>)
                     ['Shipper','ShipmentDetail']
                 ChatRoomPrivateShareDataList (array<string>)
                     ['Trucking']
