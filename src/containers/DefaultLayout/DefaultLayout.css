@@ -3,5 +3,14 @@
 }
 
 .app-body{
-    background: white
+    background: white;
+    padding: 0px !important
+}
+
+.container-fluid{
+    padding: 0px !important
+}
+
+.col{
+    padding: 0px !important
 }
