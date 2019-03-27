@@ -129,3 +129,42 @@ const ProfileRefPath = (UserInfoKey) => {
 export const CreateProfile = (UserInfoKey,Data) => {
     return ProfileRefPath(UserInfoKey).add(ProfileMockData())
 }
+
+const MasterDataMockData = (GroupName) => {
+
+    switch (GroupName) {
+        case 'Shipper' :
+            return ({
+                ShipperCompanyName: "",
+                ShipperPier: "",
+                ShipperDate: new Date()
+            })
+
+        case 'ShipmentDetail' :
+            return ({
+                ShipmentDetailProduct : "",
+                ShipmentDetailContainerNumber : "",
+                ShipmentDetailBillofLandingNumber : "",
+                ShipmentDetailOriginalDocumentTrackingNumber : "",
+                ShipmentDetailNote : ""
+            })
+
+        case 'Consignee' :
+            return ({
+                ConsigneeCompanyName : "",
+                ConsigneePier : "",
+                ConsigneeDate : new Date()
+            })
+
+        default: 
+            return {}
+    }
+}
+
+const MasterDataRefPath = (GroupName) => {
+    return FirebaseApp.firestore().collection(`MasterData`).doc(GroupName)
+}
+
+export const CreateMasterData = (GroupName) => {
+    return MasterDataRefPath(GroupName).set(MasterDataMockData(GroupName))
+}

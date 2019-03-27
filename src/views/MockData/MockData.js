@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { CreateShipment, CreateChatRoom, CreateUserInfo, CreateCompany, CreateProfile } from '../../service/MockData'
+import { CreateShipment, CreateChatRoom, CreateUserInfo, CreateCompany, CreateProfile, CreateMasterData } from '../../service/MockData'
 
 const MockData = () => {
     const [count, setCount] = useState(0)
@@ -43,6 +43,12 @@ const MockData = () => {
         // CreateProfile(UserInfoKey).then(res => {
         //   console.log(res.id)
         // })
+
+        // CreateMasterData
+
+        // CreateMasterData('Shipper')
+        // CreateMasterData('ShipmentDetail')
+        // CreateMasterData('Consignee')
 
       }, []);
     
