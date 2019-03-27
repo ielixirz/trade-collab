@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { CreateShipment, CreateChatRoom, CreateUserInfo, CreateCompany, CreateProfile, CreateMasterData, CreateShipmentShareList,
           CreateShipmentShareData, CreateShipmentFile, CreateChatRoomPrivateShareData, CreateChatRoomMessage,
-          CreateUserInvitation, CreateUserRequest, CreateUserShipment, CreateUserChatRoom } from '../../service/MockData'
+          CreateUserInvitation, CreateUserRequest, CreateUserShipment, CreateUserChatRoom, CreateCompanyMember } from '../../service/MockData'
 
 const MockData = () => {
     const [count, setCount] = useState(0)
@@ -91,6 +91,10 @@ const MockData = () => {
         // CreateUserChatRoom
 
         // CreateUserChatRoom(UserInfoKey,ShipmentKey,ChatRoomKey)
+
+        // CreateCompanyMember
+
+        // CreateCompanyMember(CompanyKey)
 
 
       }, []);

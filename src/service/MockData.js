@@ -337,3 +337,22 @@ export const CreateUserChatRoom = (UserInfoKey,ShipmentKey,ChatRoomKey) => {
     return UserChatRoomRefPath(UserInfoKey).add(UserChatRoomMockData(ShipmentKey,ChatRoomKey))
 }
 
+const CompanyMemberMockData = () => {
+    return ({
+        UserMemberEmail : "holy-wisdom@ghotmail.com",
+        UserMemberPosition : "CEO",
+        UserMemberRoleName : "Admin", 
+        UserMatrixRolePermissionCode : "11111111",
+        UserMemberCompanyStandingStatus : "Joined",
+        UserMemberJoinedTimestamp: new Date()
+    })
+}
+
+const CompanyMemberRefPath = (CompanyKey) => {
+    return FirebaseApp.firestore().collection(`Company`).doc(CompanyKey).collection(`CompanyMember`)
+}
+
+export const CreateCompanyMember = (CompanyKey) => {
+    return CompanyMemberRefPath(CompanyKey).add(CompanyMemberMockData())
+}
+
