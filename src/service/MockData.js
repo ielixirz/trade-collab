@@ -306,3 +306,18 @@ export const CreateUserRequest = (UserInfoKey) => {
     return UserRequestRefPath(UserInfoKey).add(UserRequestMockData())
 }
 
+const UserShipmentMockData = (ShipmentKey) => {
+    return ({
+        UserShipmentReference: FirebaseApp.firestore().collection(`Shipment`).doc(ShipmentKey), 
+        UserShipmentTimestamp: new Date()
+    })
+}
+
+const UserShipmentRefPath = (UserInfoKey) => {
+    return FirebaseApp.firestore().collection(`UserInfo`).doc(UserInfoKey).collection(`UserShipment`)
+}
+
+export const CreateUserShipment = (UserInfoKey,ShipmentKey) => {
+    return UserShipmentRefPath(UserInfoKey).add(UserShipmentMockData(ShipmentKey))
+}
+
