@@ -18,6 +18,7 @@ import {
 import navigation from '../../_nav';
 // routes config
 import routes from '../../routes';
+import './DefaultLayout.css';
 
 const DefaultAside = React.lazy(() => import('./DefaultAside'));
 const DefaultFooter = React.lazy(() => import('./DefaultFooter'));
