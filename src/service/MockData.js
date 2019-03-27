@@ -266,3 +266,24 @@ export const CreateShipmentFile = (ShipmentKey) => {
     return ShipmentFileRefPath(ShipmentKey).add(ShipmentFileMockData())
 }
 
+const UserInvitationMockData = () => {
+    return ({
+        CompanyInvitationReference: FirebaseApp.firestore().collection(`Company`).doc(`CompanyKey`) , 
+        CompanyInvitationCompanyKey: "CompanyKey",
+        CompanyInvitationName: "Apple Co.",
+        CompanyInvitationEmail: "Apple@icloud.com",
+        CompanyInvitationPosition: "CEO",
+        CompanyInvitationRole: "Admin",
+        CompanyInvitationTimestamp: new Date(),
+        CompanyInvitationStatus: 'Pending'
+    })
+}
+
+const UserInvitationRefPath = (UserInfoKey) => {
+    return FirebaseApp.firestore().collection(`UserInfo`).doc(UserInfoKey).collection(`UserInvitation`)
+}
+
+export const CreateUserInvitation = (UserInfoKey) => {
+    return UserInvitationRefPath(UserInfoKey).add(UserInvitationMockData())
+}
+
