@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { CreateShipment, CreateChatRoom, CreateUserInfo, CreateCompany, CreateProfile, CreateMasterData, CreateShipmentShareList,
-  CreateShipmentShareData } from '../../service/MockData'
+          CreateShipmentShareData, CreateShipmentFile } from '../../service/MockData'
 
 const MockData = () => {
     const [count, setCount] = useState(0)
@@ -57,9 +57,16 @@ const MockData = () => {
 
         // CreateShipmentShareData
 
-        CreateShipmentShareData(ShipmentKey,'Shipper')
-        CreateShipmentShareData(ShipmentKey,'ShipmentDetail')
-        CreateShipmentShareData(ShipmentKey,'Consignee')
+        // CreateShipmentShareData(ShipmentKey,'Shipper')
+        // CreateShipmentShareData(ShipmentKey,'ShipmentDetail')
+        // CreateShipmentShareData(ShipmentKey,'Consignee')
+
+        // CreateShipmentFile
+
+        CreateShipmentFile(ShipmentKey).then(res => {
+            console.log(res.id)
+        })
+
 
       }, []);
     

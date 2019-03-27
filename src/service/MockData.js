@@ -218,3 +218,22 @@ const ShipmentShareDataRefPath = (ShipmentKey,GroupName) => {
 export const CreateShipmentShareData = (ShipmentKey,GroupName) => {
     return ShipmentShareDataRefPath(ShipmentKey,GroupName).set(ShipmentShareDataMockData(GroupName),{merge:true})
 }
+
+const ShipmentFileMockData = () => {
+    return ({
+        FileName : "ภาพหน้าจอ 2562-01-14 เวลา 17.35.00.png",
+        FileUrl : "https://firebasestorage.googleapis.com/v0/b/yterminal-b0906.appspot.com/o/Shipment%2FHDTPONlnceJeG5yAA1Zy%2F%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%AB%E0%B8%99%E0%B9%89%E0%B8%B2%E0%B8%88%E0%B8%AD%202562-01-14%20%E0%B9%80%E0%B8%A7%E0%B8%A5%E0%B8%B2%2017.35.00.png?alt=media&token=28d9a23e-174b-41fe-9c1c-bb5ad9d33364",
+        FileCreateTimestamp : new Date(),
+        FileOwnerKey : "aE5lNgaD1bcf3OHeQR3P",
+        FileStorgeReference : "gs://yterminal-b0906.appspot.com/Shipment/HDTPONlnceJeG5yAA1Zy/ภาพหน้าจอ 2562-01-14 เวลา 17.35.00.png",
+    })
+}
+
+const ShipmentFileRefPath = (ShipmentKey) => {
+    return FirebaseApp.firestore().collection(`Shipment`).doc(ShipmentKey).collection(`ShipmentFile`)
+}
+
+export const CreateShipmentFile = (ShipmentKey) => {
+    return ShipmentFileRefPath(ShipmentKey).add(ShipmentFileMockData())
+}
+
