@@ -82,3 +82,29 @@ const UserInfoRefPath = () => {
 export const CreateUserInfo = (Data) => {
     return UserInfoRefPath().add(UserInfoMockData())
 }
+
+const CompanyMockData = () => {
+    return (
+        {
+            CompanyName : "Holywisdom Co." ,
+            CompanyID : "holywisdom-co" ,
+            CompanyImageLink : "" ,
+            CompanyTelNumber : "+66910679631" ,
+            CompanyAddress : "cnx , thailand 50130" ,
+            CompanyWebsiteUrl : "https://www.facebook.com/thanongkiat.tamtai" ,
+            CompanyEmail : "holy-wisdom@hotmail.com" ,
+            CompanyAboutUs : `และจะเก็บเอาไว้ให้เธอแบบนี้
+                                ไม่ว่านานแค่ไหนจะดูอย่างดี
+                                เผื่อว่าตอนเช้าๆเธอจะได้ไม่เหงาเวลาไม่มีใครเป็นเพื่อนเธออย่างฉันอีก บางเวลาที่เธอกังวล
+                                ถึงเขา ไม่ต้องคิดให้วุ่นวายไม่ต้องเหงาในอากาศดีๆ`
+        }
+    )
+}
+
+const CompanyRefPath = () => {
+    return FirebaseApp.firestore().collection(`Company`)
+}
+
+export const CreateCompany = (Data) => {
+    return CompanyRefPath().add(CompanyMockData())
+}
