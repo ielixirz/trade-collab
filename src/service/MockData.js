@@ -180,3 +180,41 @@ const ShipmentShareListRefPath = (ShipmentKey) => {
 export const CreateShipmentShareList = (ShipmentKey) => {
     return ShipmentShareListRefPath(ShipmentKey).set(ShipmentShareListMockData(),{merge:true})
 }
+
+const ShipmentShareDataMockData = (GroupName) => {
+    switch (GroupName) {
+        case 'Shipper' :
+            return ({
+                ShipperCompanyName: "Holywisdom Co.",
+                ShipperPier: "Ping River",
+                ShipperDate: new Date()
+            })
+
+        case 'ShipmentDetail' :
+            return ({
+                ShipmentDetailProduct : "Beef A5 from japan ",
+                ShipmentDetailContainerNumber : "Con001xJp",
+                ShipmentDetailBillofLandingNumber : "B11254820",
+                ShipmentDetailOriginalDocumentTrackingNumber : "TH16394u5jd9",
+                ShipmentDetailNote : ""
+            })
+
+        case 'Consignee' :
+            return ({
+                ConsigneeCompanyName : "CP Co.",
+                ConsigneePier : "Chonburi Pier",
+                ConsigneeDate : new Date()
+            })
+
+        default: 
+            return {}
+    }
+}
+
+const ShipmentShareDataRefPath = (ShipmentKey,GroupName) => {
+    return FirebaseApp.firestore().collection(`Shipment`).doc(ShipmentKey).collection(`ShipmentShareData`).doc(GroupName)
+}
+
+export const CreateShipmentShareData = (ShipmentKey,GroupName) => {
+    return ShipmentShareDataRefPath(ShipmentKey,GroupName).set(ShipmentShareDataMockData(GroupName),{merge:true})
+}
