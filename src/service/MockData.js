@@ -321,3 +321,19 @@ export const CreateUserShipment = (UserInfoKey,ShipmentKey) => {
     return UserShipmentRefPath(UserInfoKey).add(UserShipmentMockData(ShipmentKey))
 }
 
+const UserChatRoomMockData = (ShipmentKey,ChatRoomKey) => {
+    return ({
+        UserChatRoomReference: FirebaseApp.firestore().collection(`Shipment`).doc(ShipmentKey).collection(`ChatRoom`).doc(ChatRoomKey),
+        UserChatRoomTimestamp: new Date(),
+        UserChatRoomLastestTimestamp: new Date()
+    })
+}
+
+const UserChatRoomRefPath = (UserInfoKey) => {
+    return FirebaseApp.firestore().collection(`UserInfo`).doc(UserInfoKey).collection(`UserChatRoom`)
+}
+
+export const CreateUserChatRoom = (UserInfoKey,ShipmentKey,ChatRoomKey) => {
+    return UserChatRoomRefPath(UserInfoKey).add(UserChatRoomMockData(ShipmentKey,ChatRoomKey))
+}
+
