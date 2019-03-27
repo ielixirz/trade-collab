@@ -116,7 +116,7 @@ img{ max-width:100%;}
 .user-name {
  font-weight: bolder;
 }
-.type_msg {border: 1px solid #c4c4c4;position: relative;margin-bottom:10px;padding: 5px }
+.type_msg {border: 1px solid #c4c4c4;position: relative;margin-bottom:10px;padding: 5px; margin-top: 12px; }
 .msg_send_btn {
   background: #05728f none repeat scroll 0 0;
   border: medium none;
@@ -133,6 +133,6 @@ img{ max-width:100%;}
 }
 .messaging { padding: 0 0 50px 0;}
 .msg_history {
-  height: 516px;
+  height: 78vh;
   overflow-y: auto;
 }
