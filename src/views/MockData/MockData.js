@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { CreateShipment, CreateChatRoom, CreateUserInfo, CreateCompany } from '../../service/MockData'
+import { CreateShipment, CreateChatRoom, CreateUserInfo, CreateCompany, CreateProfile } from '../../service/MockData'
 
 const MockData = () => {
     const [count, setCount] = useState(0)
@@ -8,8 +8,10 @@ const MockData = () => {
     const ChatRoomKey = 'lvCb608c7PusGqptBsq0'
 
     const UserInfoKey = 'aE5lNgaD1bcf3OHeQR3P'
+    const ProfileKey = '3Ntt1SClkYCwOZXnLkKl'
 
     const CompanyKey = 'LuX49vebvTP7U3tSAq0d'
+
 
     useEffect(() => {
         // CreateShipment
@@ -34,6 +36,12 @@ const MockData = () => {
 
         // CreateCompany().then( res => {
         //     console.log(res.id)
+        // })
+
+        // CreateProfile
+
+        // CreateProfile(UserInfoKey).then(res => {
+        //   console.log(res.id)
         // })
 
       }, []);
