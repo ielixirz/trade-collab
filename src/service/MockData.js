@@ -168,3 +168,15 @@ const MasterDataRefPath = (GroupName) => {
 export const CreateMasterData = (GroupName) => {
     return MasterDataRefPath(GroupName).set(MasterDataMockData(GroupName))
 }
+
+const ShipmentShareListMockData = () => {
+    return ({ 'ShipmentShareList' : ['Shipper','ShipmentDetail','Consignee']})
+}
+
+const ShipmentShareListRefPath = (ShipmentKey) => {
+    return FirebaseApp.firestore().collection(`Shipment`).doc(ShipmentKey)
+}
+
+export const CreateShipmentShareList = (ShipmentKey) => {
+    return ShipmentShareListRefPath(ShipmentKey).set(ShipmentShareListMockData(),{merge:true})
+}
