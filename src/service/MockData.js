@@ -57,6 +57,18 @@ export const CreateChatRoom = (ShipmentKey,Data) => {
     return ChatRoomRefPath(ShipmentKey).add(ChatRoomMockData())
 }
 
+const ChatRoomPrivateShareDataMockData = () => {
+    return ({})
+}
+
+const ChatRoomPrivateShareDataRefPath = (ShipmentKey,ChatRoomKey,GroupName) => {
+    return FirebaseApp.firestore().collection(`Shipment`).doc(ShipmentKey).collection(`ChatRoom`).doc(ChatRoomKey).collection(`ChatRoomPrivateShareData`).doc(GroupName)
+}
+
+export const CreateChatRoomPrivateShareData = (ShipmentKey,ChatRoomKey,GroupName) => {
+    return ChatRoomPrivateShareDataRefPath(ShipmentKey,ChatRoomKey,GroupName).set(ChatRoomPrivateShareDataMockData(),{merge:true})
+}
+
 const UserInfoMockData = () => {
     const Now = new Date()
     return (
