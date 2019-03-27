@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { CreateShipment, CreateChatRoom, CreateUserInfo, CreateCompany, CreateProfile, CreateMasterData, CreateShipmentShareList,
           CreateShipmentShareData, CreateShipmentFile, CreateChatRoomPrivateShareData, CreateChatRoomMessage,
-          CreateUserInvitation } from '../../service/MockData'
+          CreateUserInvitation, CreateUserRequest } from '../../service/MockData'
 
 const MockData = () => {
     const [count, setCount] = useState(0)
@@ -79,6 +79,10 @@ const MockData = () => {
         // CreateUserInvitation
 
         // CreateUserInvitation(UserInfoKey)
+
+        // CreateUserRequest
+
+        // CreateUserRequest(UserInfoKey)
 
 
       }, []);

@@ -287,3 +287,22 @@ export const CreateUserInvitation = (UserInfoKey) => {
     return UserInvitationRefPath(UserInfoKey).add(UserInvitationMockData())
 }
 
+const UserRequestMockData = () => {
+    return ({
+        CompanyRequestReference: FirebaseApp.firestore().collection(`Company`).doc(`CompanyKey`) ,
+        CompanyRequestCompanyKey: "CompanyKey",
+        CompanyRequestCompanyName: "Apple Co.",
+        CompanyRequestNote: "Plese let me in",
+        CompanyRequestTimestamp: new Date(), 
+        CompanyRequestStatus: 'Pending'
+    })
+}
+
+const UserRequestRefPath = (UserInfoKey) => {
+    return FirebaseApp.firestore().collection(`UserInfo`).doc(UserInfoKey).collection(`UserRequest`)
+}
+
+export const CreateUserRequest = (UserInfoKey) => {
+    return UserRequestRefPath(UserInfoKey).add(UserRequestMockData())
+}
+
