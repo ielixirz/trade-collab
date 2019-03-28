@@ -356,3 +356,26 @@ export const CreateCompanyMember = (CompanyKey) => {
     return CompanyMemberRefPath(CompanyKey).add(CompanyMemberMockData())
 }
 
+const CompanyInvitationMockData = (UserInfoKey) => {
+    return ({
+        UserInvitationReference: FirebaseApp.firestore().collection(`UserInfo`).doc(UserInfoKey),
+        UserInvitationUserKey: UserInfoKey ,
+        UserInvitationCompanyKey : "CompanyKey",
+        UserInvitationFristname : "Thanongkiat",
+        UserInvitationSurname : "Tamtai",
+        UserInvitationEmail : "holy-wisdom@hotmail.com",
+        UserInvitationPosition : "CEO",
+        UserInvitationRole : "Admin",
+        UserInvitationTimestamp: new Date(),
+        UserInvitationStatus: 'Pending'
+    })
+}
+
+const CompanyInvitationRefPath = (CompanyKey) => {
+    return FirebaseApp.firestore().collection(`Company`).doc(CompanyKey).collection(`CompanyInvitation`)
+}
+
+export const CreateCompanyInvitation = (CompanyKey,UserInfoKey) => {
+    return CompanyInvitationRefPath(CompanyKey).add(CompanyInvitationMockData(UserInfoKey))
+}
+
