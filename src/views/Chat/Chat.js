@@ -24,9 +24,11 @@ class Chat extends Component {
     this.toggle = this.toggle.bind(this);
     this.state = {
       activeTab: new Array(4).fill('1'),
-      collapse: false
+      collapse: false,
+      collapseFile:false
     };
     this.triggerCollapse = this.triggerCollapse.bind(this);
+    this.triggerCollapseFile = this.triggerCollapseFile.bind(this);
   }
 
   lorem() {
@@ -44,6 +46,10 @@ class Chat extends Component {
   triggerCollapse(){
       this.setState(state=> ({collapse:!state.collapse}))
   }
+  triggerCollapseFile(){
+    this.setState(state=> ({collapseFile:!state.collapseFile}))
+  }
+
 
   tabPane() {
     return (
@@ -99,17 +105,24 @@ class Chat extends Component {
          <Col></Col>
           <Col>
           <div>
-        <Button  onClick={this.triggerCollapse} style={{ marginBottom: '1rem',backgroundColor:'transparent' ,borderWidth:0 }}>Shipment Update :{'string'}</Button>
+        <Button  onClick={this.triggerCollapseFile} style={{ marginBottom: '1rem',backgroundColor:'transparent' ,borderWidth:0 }}>File</Button>
+        <Collapse isOpen={this.state.collapseFile}>
+          <Card>
+             <CardBody>
+               body
+            </CardBody>
+          </Card>
+        </Collapse>
+        </div>
+        <div>
+        <Button  onClick={this.triggerCollapse} style={{ marginBottom: '1rem',backgroundColor:'transparent' ,borderWidth:0 }}>  <i class="fa fa-flickr"></i><span>Shipment Update</span>
+</Button>
         <Collapse isOpen={this.state.collapse}>
           <Card>
              <CardBody>
-            Anim pariatur cliche reprehenderit,
-             enim eiusmod high life accusamus terry richardson ad squid. Nihil
-             anim keffiyeh helvetica, craft beer labore wes anderson cred
-             nesciunt sapiente ea proident.
+             <Shipment />
             </CardBody>
           </Card>
-          <span><Shipment /></span>
         </Collapse>
       </div>
       </Col>
