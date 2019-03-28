@@ -402,3 +402,18 @@ export const CreateCompanyRequest = (CompanyKey,UserInfoKey) => {
     return CompanyRequestRefPath(CompanyKey).add(CompanyRequestMockData(CompanyKey,UserInfoKey))
 }
 
+
+const CompanyUserMatrixMockdata = () => {
+    return ({
+        CompanyUserMatrixRoleName: "Admin",
+        CompanyUserMatrixRolePermissionCode: "11111111"
+    })
+}
+
+const CompanyUserMatrixRefPath = (CompanyKey) => {
+    return FirebaseApp.firestore().collection(`Company`).doc(CompanyKey).collection(`CompanyUserMatrix`)
+}
+
+export const CreateCompanyUserMatrix = (CompanyKey) => {
+    return CompanyUserMatrixRefPath(CompanyKey).add(CompanyUserMatrixMockdata())
+}
