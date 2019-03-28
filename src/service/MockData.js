@@ -379,3 +379,26 @@ export const CreateCompanyInvitation = (CompanyKey,UserInfoKey) => {
     return CompanyInvitationRefPath(CompanyKey).add(CompanyInvitationMockData(UserInfoKey))
 }
 
+const CompanyRequestMockData = (CompanyKey,UserInfoKey) => {
+    return ({
+        UserRequestReference: FirebaseApp.firestore().collection(`UserInfo`).doc(UserInfoKey),
+        UserRequestKey: "UserRequestKey",
+        UserRequestUserKey : UserInfoKey,
+        UserRequestCompanyKey : CompanyKey,
+        UserRequestFristname : "Thanongkait",
+        UserRequestSurname : "Tamtai",
+        UserRequestEmail : "holy-wisdom@hotmail.com",
+        UserRequestNote : "Plese let me in",
+        UserRequestTimestamp: new Date(),
+        UserInvitationStatus : 'Approve'
+    })
+}
+
+const CompanyRequestRefPath = (CompanyKey) => {
+    return FirebaseApp.firestore().collection(`Company`).doc(CompanyKey).collection(`CompanyRequest`)
+}
+
+export const CreateCompanyRequest = (CompanyKey,UserInfoKey) => {
+    return CompanyRequestRefPath(CompanyKey).add(CompanyRequestMockData(CompanyKey,UserInfoKey))
+}
+
