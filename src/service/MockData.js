@@ -417,3 +417,45 @@ const CompanyUserMatrixRefPath = (CompanyKey) => {
 export const CreateCompanyUserMatrix = (CompanyKey) => {
     return CompanyUserMatrixRefPath(CompanyKey).add(CompanyUserMatrixMockdata())
 }
+
+const UserPersonalizeShipmentOrderingMockData = () => {
+    return ({
+        ChatRoomOrdering: ['Internal','Exporter','Customer','Trucking']
+    })
+}
+
+const UserPersonalizeShipmentOrderingRefPath = (ProfileKey,ShipmentKey) => {
+    return FirebaseApp.firestore().collection(`UserPersonalize`).doc(ProfileKey).collection(`ShipmentOrdering`).doc(ShipmentKey)
+}
+
+export const CreateUserPersonalizeShipmentOrdering = (ProfileKey,ShipmentKey) => {
+    return UserPersonalizeShipmentOrderingRefPath(ProfileKey,ShipmentKey).set(UserPersonalizeShipmentOrderingMockData())
+}
+
+// const UserPersonalizeShipmentPinMockData = () => {
+//     return ({
+        
+//     })
+// }
+
+// const UserPersonalizeShipmentPinRefPath = () => {
+//     return UserPersonalize ShipmentPin
+// }
+
+// export const CreateUserPersonalizeShipmentPin = () => {
+//     return 
+// }
+
+// const UserPersonalizeShipmentReferenceDisplayMockData = () => {
+//     return ({
+        
+//     })
+// }
+
+// const UserPersonalizeShipmentReferenceDisplayRefPath = () => {
+//     return UserPersonalize ShipmentReferenceDisplay
+// }
+
+// export const CreateUserPersonalizeShipmentReferenceDisplay = () => {
+//     return 
+// }
