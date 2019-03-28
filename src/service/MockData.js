@@ -446,16 +446,16 @@ export const CreateUserPersonalizeShipmentPin = (ProfileKey,ShipmentKey) => {
     return UserPersonalizeShipmentPinRefPath(ProfileKey,ShipmentKey).set(UserPersonalizeShipmentPinMockData(ShipmentKey))
 }
 
-// const UserPersonalizeShipmentReferenceDisplayMockData = () => {
-//     return ({
-        
-//     })
-// }
+const UserPersonalizeShipmentReferenceDisplayMockData = () => {
+    return ({
+        ShipmentReferenceSelect: "Seller"
+    })
+}
 
-// const UserPersonalizeShipmentReferenceDisplayRefPath = () => {
-//     return UserPersonalize ShipmentReferenceDisplay
-// }
+const UserPersonalizeShipmentReferenceDisplayRefPath = (ProfileKey,ShipmentKey) => {
+    return FirebaseApp.firestore().collection(`UserPersonalize`).doc(ProfileKey).collection(`ShipmentReferenceDisplay`).doc(ShipmentKey)
+}
 
-// export const CreateUserPersonalizeShipmentReferenceDisplay = () => {
-//     return 
-// }
+export const CreateUserPersonalizeShipmentReferenceDisplay = (ProfileKey,ShipmentKey) => {
+    return UserPersonalizeShipmentReferenceDisplayRefPath(ProfileKey,ShipmentKey).set(UserPersonalizeShipmentReferenceDisplayMockData())
+}
