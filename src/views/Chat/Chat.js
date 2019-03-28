@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component ,useContext,useReducer } from 'react';
 import {
-  Badge,
+  Collapse, Button, CardBody, Card,
   Col,
   Nav,
   NavItem,
@@ -9,9 +9,17 @@ import {
   TabContent,
   TabPane
 } from 'reactstrap';
+import shipmentListContext from '../../context/shipmentContext';
+import shipmentReducer from '../../reducers/shipmentReducer';
+import ShipmentList from '../../component/ShipmentList';
 import Tabs from 'react-draggable-tabs';
 import './Chat.css';
 
+const Shipment = ()=>{
+    const initialState =  useContext(shipmentListContext);
+    const [state,dispatch]  = useReducer(shipmentReducer,initialState);
+    return (<shipmentListContext.Provider value={{state,dispatch}}><ShipmentList /></shipmentListContext.Provider>)
+}
 class Chat extends Component {
   constructor(props) {
     super(props);
@@ -20,6 +28,9 @@ class Chat extends Component {
     this.closedTab = this.closedTab.bind(this);
     this.addTab = this.addTab.bind(this);
     this.state = {
+      activeTab: new Array(4).fill('1'),
+      collapse: false,
+      collapseFile:false,
       tabs: [
         {
           id: 1,
@@ -29,6 +40,8 @@ class Chat extends Component {
         }
       ]
     };
+    this.triggerCollapse = this.triggerCollapse.bind(this);
+    this.triggerCollapseFile = this.triggerCollapseFile.bind(this);
   }
 
   moveTab(dragIndex, hoverIndex) {
@@ -140,7 +153,33 @@ class Chat extends Component {
   }
 
   lorem() {
-    return 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit.';
+    return 'Teddy ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit.';
+  }
+
+  toggle(tabPane, tab) {
+    const newArray = this.state.activeTab.slice();
+    newArray[tabPane] = tab;
+    this.setState({
+      activeTab: newArray
+    });
+  }
+
+  triggerCollapse(){
+      this.setState(state=> ({collapse:!state.collapse}))
+  }
+  triggerCollapseFile(){
+    this.setState(state=> ({collapseFile:!state.collapseFile}))
+  }
+
+
+  tabPane() {
+    return (
+      <>
+        <TabPane tabId="1">{`1. ${this.lorem()}`}</TabPane>
+        <TabPane tabId="2">{`2. ${this.lorem()}`}</TabPane>
+        <TabPane tabId="3">{`3. ${this.lorem()}`}</TabPane>
+      </>
+    );
   }
 
   render() {
@@ -162,6 +201,30 @@ class Chat extends Component {
               {activeTab.length !== 0 ? activeTab[0].display : ''}
             </TabContent>
           </Col>
+         <Col></Col>
+          <Col>
+          <div>
+        <Button  onClick={this.triggerCollapseFile} style={{ marginBottom: '1rem',backgroundColor:'transparent' ,borderWidth:0 }}>File</Button>
+        <Collapse isOpen={this.state.collapseFile}>
+          <Card>
+             <CardBody>
+               body
+            </CardBody>
+          </Card>
+        </Collapse>
+        </div>
+        <div>
+        <Button  onClick={this.triggerCollapse} style={{ marginBottom: '1rem',backgroundColor:'transparent' ,borderWidth:0 }}>  <i class="fa fa-flickr"></i><span>Shipment Update</span>
+</Button>
+        <Collapse isOpen={this.state.collapse}>
+          <Card>
+             <CardBody>
+             <Shipment />
+            </CardBody>
+          </Card>
+        </Collapse>
+      </div>
+      </Col>
         </Row>
       </div>
     );
