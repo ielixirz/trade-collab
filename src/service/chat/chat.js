@@ -1,5 +1,6 @@
 import { FirebaseApp } from '../firebase'
 import { collection } from 'rxfire/firestore';
+import { map } from 'rxjs/operators';
 
 const ChatRoomRefPath = (ShipmentKey,ChatRoomKey) => {
     return FirebaseApp.firestore().collection(`Shipment`).doc(ShipmentKey).collection(`ChatRoom`).doc(ChatRoomKey)
@@ -26,16 +27,10 @@ const ChatRoomMessageRefPathOrderByNewerTimestamp = (ShipmentKey,ChatRoomKey) =>
 
 export const CreateChatMessage = (ShipmentKey,ChatRoomKey,data) => {
     return ChatRoomMessageRefPath(ShipmentKey,ChatRoomKey).add(data)
-            .then(res => {
-                return res.id
-            }).catch(err => {
-                console.log(`error message : ${err}`)
-                return err
-            })
 }
 
 export const GetChatMessage = (ShipmentKey,ChatRoomKey) => {
-    return collection(ChatRoomMessageRefPathOrderByNewerTimestamp(ShipmentKey,ChatRoomKey))
+    return collection(ChatRoomMessageRefPathOrderByNewerTimestamp(ShipmentKey,ChatRoomKey)).pipe(map(docs => docs.map(d => d.data())))
 }
 
 
