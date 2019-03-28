@@ -432,19 +432,19 @@ export const CreateUserPersonalizeShipmentOrdering = (ProfileKey,ShipmentKey) =>
     return UserPersonalizeShipmentOrderingRefPath(ProfileKey,ShipmentKey).set(UserPersonalizeShipmentOrderingMockData())
 }
 
-// const UserPersonalizeShipmentPinMockData = () => {
-//     return ({
-        
-//     })
-// }
+const UserPersonalizeShipmentPinMockData = (ShipmentKey) => {
+    return ({
+        ShipmentPin: [ShipmentKey]
+    })
+}
 
-// const UserPersonalizeShipmentPinRefPath = () => {
-//     return UserPersonalize ShipmentPin
-// }
+const UserPersonalizeShipmentPinRefPath = (ProfileKey,ShipmentKey) => {
+    return FirebaseApp.firestore().collection(`UserPersonalize`).doc(ProfileKey).collection(`ShipmentPin`).doc(ShipmentKey)
+}
 
-// export const CreateUserPersonalizeShipmentPin = () => {
-//     return 
-// }
+export const CreateUserPersonalizeShipmentPin = (ProfileKey,ShipmentKey) => {
+    return UserPersonalizeShipmentPinRefPath(ProfileKey,ShipmentKey).set(UserPersonalizeShipmentPinMockData(ShipmentKey))
+}
 
 // const UserPersonalizeShipmentReferenceDisplayMockData = () => {
 //     return ({

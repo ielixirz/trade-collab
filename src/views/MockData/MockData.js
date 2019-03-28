@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import {  CreateShipment, CreateChatRoom, CreateUserInfo, CreateCompany, CreateProfile, CreateMasterData, CreateShipmentShareList,
           CreateShipmentShareData, CreateShipmentFile, CreateChatRoomPrivateShareData, CreateChatRoomMessage,
           CreateUserInvitation, CreateUserRequest, CreateUserShipment, CreateUserChatRoom, CreateCompanyMember,
-          CreateCompanyInvitation, CreateCompanyRequest, CreateCompanyUserMatrix, CreateUserPersonalizeShipmentOrdering
+          CreateCompanyInvitation, CreateCompanyRequest, CreateCompanyUserMatrix, CreateUserPersonalizeShipmentOrdering, CreateUserPersonalizeShipmentPin
         } from '../../service/MockData'
 
 const MockData = () => {
@@ -113,6 +113,10 @@ const MockData = () => {
         // CreateUserPersonalizeShipmentOrdering
 
         // CreateUserPersonalizeShipmentOrdering(ProfileKey,ShipmentKey)
+
+        // CreateUserPersonalizeShipmentPin
+
+        // CreateUserPersonalizeShipmentPin(ProfileKey,ShipmentKey)
 
 
       }, []);
