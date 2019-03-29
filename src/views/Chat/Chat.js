@@ -57,11 +57,18 @@ class Chat extends Component {
       return (  <div className="incoming_msg">
         <div className="received_msg">
           <div className="received_withd_msg">
+<Row>
+  <Col xs='8'>
+    <p>
+      <p className="user-name">{name}</p>
+      {text}</p>
+  </Col>
+  <Col xs='.col-auto - variable width content'>
+    <span className="time_date"> {status}</span>
+  </Col>
+</Row>
 
-            <p>
-              <p className="user-name">Name</p>
-              {this.lorem()}</p>
-            <span className="time_date"> {status}</span>
+
           </div>
         </div>
       </div>)
@@ -69,8 +76,17 @@ class Chat extends Component {
       return (
         <div className="outgoing_msg">
           <div className="sent_msg">
-            <p>{this.lorem()}</p>
-            <span className="time_date"> {status}</span>
+            <Row>
+              <Col xs='.col-auto - variable width content'>
+                <span className="time_date"> {status}</span>
+              </Col>
+              <Col>
+                <p>
+                  <p className="user-name">{name}</p>
+                  {text}</p>
+              </Col>
+
+            </Row>
           </div>
         </div>
       )
