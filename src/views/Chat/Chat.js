@@ -2,11 +2,10 @@ import React, { Component ,useContext,useReducer } from 'react';
 import {
   Collapse, Button, CardBody, Card,
   Col,
-  Nav,
-  NavItem,
-  NavLink,
+  InputGroup,
+  InputGroupAddon,
   Row,
-  TabContent,
+  TabContent,Input,
   TabPane
 } from 'reactstrap';
 import shipmentListContext from '../../context/shipmentContext';
@@ -52,62 +51,56 @@ class Chat extends Component {
       return { tabs: newTabs };
     });
   }
+  renderMessage(message){
+    const {type='sender',text=this.lorem(),name='Anonymouse',status='11:01 AM | Today'} =message;
+    if(message.type==='sender'){
+      return (  <div className="incoming_msg">
+        <div className="received_msg">
+          <div className="received_withd_msg">
+
+            <p>
+              <p className="user-name">Name</p>
+              {this.lorem()}</p>
+            <span className="time_date"> {status}</span>
+          </div>
+        </div>
+      </div>)
+    }else{
+      return (
+        <div className="outgoing_msg">
+          <div className="sent_msg">
+            <p>{this.lorem()}</p>
+            <span className="time_date"> {status}</span>
+          </div>
+        </div>
+      )
+    }
+  }
   renderChat() {
     return (
       <div className="inbox_msg">
         <div className="mesgs">
           <div className="msg_history">
-            <div className="incoming_msg">
-              <div className="received_msg">
-                <div className="received_withd_msg">
-                  <p className="user-name">Name</p>
-                  <p>{this.lorem()}</p>
-                  <span className="time_date"> 11:01 AM | June 9</span>
-                </div>
-              </div>
-            </div>
-            <div className="outgoing_msg">
-              <div className="sent_msg">
-                <p>{this.lorem()}</p>
-                <span className="time_date"> 11:01 AM | June 9</span>
-              </div>
-            </div>
-            <div className="incoming_msg">
-              <div className="received_msg">
-                <div className="received_withd_msg">
-                  <p className="user-name">Name</p>
-                  <p>{this.lorem()}</p>
-                  <span className="time_date"> 11:01 AM | Yesterday</span>
-                </div>
-              </div>
-            </div>
-            <div className="outgoing_msg">
-              <div className="sent_msg">
-                <p>{this.lorem()}</p>
-                <span className="time_date"> 11:01 AM | Today</span>
-              </div>
-            </div>
-            <div className="incoming_msg">
-              <div className="received_msg">
-                <div className="received_withd_msg">
-                  <p className="user-name">Name</p>
-                  <p>{this.lorem()}</p>
-                  <span className="time_date"> 11:01 AM | Today</span>
-                </div>
-              </div>
-            </div>
+            {this.renderMessage({type:'sender'})}
+            {this.renderMessage({type:'user'})}
+            {this.renderMessage({type:'user'})}
+            {this.renderMessage({type:'user'})}
+            {this.renderMessage({type:'sender'})}
+            {this.renderMessage({type:'sender'})}
+
           </div>
           <div className="type_msg">
-            <div className="input_msg_write">
-              <input
-                type="text"
-                className="write_msg"
-                placeholder="Type a message"
-              />
-              <button className="msg_send_btn" type="button">
-                <i className="fa fa-paper-plane-o" aria-hidden="true" />
-              </button>
-            </div>
+            <InputGroup>
+              <InputGroupAddon addonType="prepend">
+                <Button color="default">  <i className="fa fa-plus fa-lg"></i></Button>
+              </InputGroupAddon>
+              <Input placeholder="and..." />
+              <InputGroupAddon addonType="append">
+                <Button color="default1"> @</Button>
+                <Button color="default1"> <i className="fa fa-smile-o fa-lg"></i></Button>
+                <Button color="default1"> <i className="fa fa-paper-plane-o fa-lg"></i></Button>
+              </InputGroupAddon>
+            </InputGroup>
           </div>
         </div>
       </div>
@@ -185,8 +178,8 @@ class Chat extends Component {
   render() {
     const activeTab = this.state.tabs.filter(tab => tab.active === true);
     return (
-      <div className="animated fadeIn">
-        <Row>
+      <div className="animated fadeIn chatbox">
+        <Row >
           <Col xs='10'>
             <Tabs
               style={{ backgroundColor: 'black' }}
