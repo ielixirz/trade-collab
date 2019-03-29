@@ -97,10 +97,10 @@ img{ max-width:100%;}
 }
 
 .sent_msg p {
-  background: #05728f none repeat scroll 0 0;
+  background: #80D2DE none repeat scroll 0 0;
   border-radius: 3px;
   font-size: 14px;
-  margin: 0; color:#fff;
+  margin: 0; color:black;
   padding: 5px 10px 5px 12px;
   width:100%;
 }
@@ -142,6 +142,7 @@ img{ max-width:100%;}
 .msg_history {
   height: 80vh;
   overflow-y: auto;
+  padding-right: 10px;
 }
 .btn-default{
   color: #000000;
