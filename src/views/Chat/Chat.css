@@ -105,6 +105,9 @@ img{ max-width:100%;}
   float: right;
   width: 46%;
 }
+.main {
+  height:auto
+}
 .input_msg_write input {
   background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
   border: medium none;

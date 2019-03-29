@@ -187,7 +187,7 @@ class Chat extends Component {
     return (
       <div className="animated fadeIn">
         <Row>
-          <Col>
+          <Col xs='10'>
             <Tabs
               style={{ backgroundColor: 'black' }}
               moveTab={this.moveTab}
@@ -201,8 +201,7 @@ class Chat extends Component {
               {activeTab.length !== 0 ? activeTab[0].display : ''}
             </TabContent>
           </Col>
-         <Col></Col>
-          <Col>
+         <Col xs='2'>
           <div>
         <Button  onClick={this.triggerCollapseFile} style={{ marginBottom: '1rem',backgroundColor:'transparent' ,borderWidth:0 }}>File</Button>
         <Collapse isOpen={this.state.collapseFile}>
