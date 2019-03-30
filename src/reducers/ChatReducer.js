@@ -1,15 +1,15 @@
-import {TYPING_TEXT} from "../constants/constants";
+import { TYPING_TEXT } from '../constants/constants';
 
 const INITIAL_STATE = {
-  text:''
+  text: ''
 };
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case TYPING_TEXT:
       return {
         ...state,
-        text:action.text
-      }
+        text: action.text
+      };
     default:
       return state;
   }

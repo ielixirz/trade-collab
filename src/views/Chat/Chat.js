@@ -1,18 +1,24 @@
-import React, { Component ,useContext,useReducer } from 'react';
+import React, { Component, useContext, useReducer } from 'react';
 import {
-  Collapse, Button, CardBody, Card,
+  Collapse,
+  Button,
+  CardBody,
+  Card,
   Col,
   InputGroup,
   InputGroupAddon,
   Row,
-  TabContent,Input,
+  TabContent,
+  Input,
   TabPane
 } from 'reactstrap';
+import { typing } from '../../actions/chatActions';
+import { connect } from 'react-redux';
 
 import Tabs from 'react-draggable-tabs';
 import './Chat.css';
-import  ShipmentSide  from './ShipmentSide';
-import  FileSide from './FileSide';
+import ShipmentSide from './ShipmentSide';
+import FileSide from './FileSide';
 
 class Chat extends Component {
   constructor(props) {
@@ -23,7 +29,7 @@ class Chat extends Component {
     this.addTab = this.addTab.bind(this);
     this.state = {
       activeTab: new Array(4).fill('1'),
-      text:'',
+      text: '',
       tabs: [
         {
           id: 1,
@@ -33,7 +39,6 @@ class Chat extends Component {
         }
       ]
     };
-
   }
 
   moveTab(dragIndex, hoverIndex) {
@@ -44,28 +49,34 @@ class Chat extends Component {
       return { tabs: newTabs };
     });
   }
-  renderMessage(message){
-    const {type='sender',text=this.lorem(),name='Anonymous',status='11:01 AM | Today'} =message;
-    if(type==='sender'){
-      return (  <div className="incoming_msg">
-        <div className="received_msg">
-          <div className="received_withd_msg">
-<Row>
-  <Col xs='8'>
-    <p>
-      <span className="user-name">{name}</span> <br/>
-      {text}</p>
-  </Col>
-  <Col xs={3}>
-    <span className="time_date"> {status}</span>
-  </Col>
-</Row>
-
-
+  renderMessage(message) {
+    const {
+      type = 'sender',
+      text = this.lorem(),
+      name = 'Anonymous',
+      status = '11:01 AM | Today'
+    } = message;
+    if (type === 'sender') {
+      return (
+        <div className="incoming_msg">
+          <div className="received_msg">
+            <div className="received_withd_msg">
+              <Row>
+                <Col xs="8">
+                  <p>
+                    <span className="user-name">{name}</span> <br />
+                    {text}
+                  </p>
+                </Col>
+                <Col xs={3}>
+                  <span className="time_date"> {status}</span>
+                </Col>
+              </Row>
+            </div>
           </div>
         </div>
-      </div>)
-    }else{
+      );
+    } else {
       return (
         <div className="outgoing_msg">
           <div className="sent_msg">
@@ -75,14 +86,14 @@ class Chat extends Component {
               </Col>
               <Col>
                 <p>
-                  <span className="user-name">{name}</span> <br/>
-                  {text}</p>
+                  <span className="user-name">{name}</span> <br />
+                  {text}
+                </p>
               </Col>
-
             </Row>
           </div>
         </div>
-      )
+      );
     }
   }
   renderChat() {
@@ -90,24 +101,36 @@ class Chat extends Component {
       <div className="inbox_msg">
         <div className="mesgs">
           <div className="msg_history">
-            {this.renderMessage({type:'sender'})}
-            {this.renderMessage({type:'user'})}
-            {this.renderMessage({type:'user'})}
-            {this.renderMessage({type:'user'})}
-            {this.renderMessage({type:'sender'})}
-            {this.renderMessage({type:'sender'})}
-
+            {this.renderMessage({ type: 'sender' })}
+            {this.renderMessage({ type: 'user' })}
+            {this.renderMessage({ type: 'user' })}
+            {this.renderMessage({ type: 'user' })}
+            {this.renderMessage({ type: 'sender' })}
+            {this.renderMessage({ type: 'sender' })}
           </div>
           <div className="type_msg">
             <InputGroup>
               <InputGroupAddon addonType="prepend">
-                <Button color="default">  <i className="fa fa-plus fa-lg"></i></Button>
+                <Button color="default">
+                  {' '}
+                  <i className="fa fa-plus fa-lg" />
+                </Button>
               </InputGroupAddon>
-              <Input placeholder="and..." />
+              <Input
+                placeholder="and..."
+                value={this.props.text}
+                onChange={this.props.typing}
+              />
               <InputGroupAddon addonType="append">
                 <Button color="default1"> @</Button>
-                <Button color="default1"> <i className="fa fa-smile-o fa-lg"></i></Button>
-                <Button color="default1"> <i className="fa fa-paper-plane-o fa-lg"></i></Button>
+                <Button color="default1">
+                  {' '}
+                  <i className="fa fa-smile-o fa-lg" />
+                </Button>
+                <Button color="default1">
+                  {' '}
+                  <i className="fa fa-paper-plane-o fa-lg" />
+                </Button>
               </InputGroupAddon>
             </InputGroup>
           </div>
@@ -181,7 +204,7 @@ class Chat extends Component {
     return (
       <div className="animated fadeIn chatbox">
         <Row>
-          <Col xs='9'>
+          <Col xs="9">
             <Tabs
               style={{ backgroundColor: 'black' }}
               moveTab={this.moveTab}
@@ -195,14 +218,23 @@ class Chat extends Component {
               {activeTab.length !== 0 ? activeTab[0].display : ''}
             </TabContent>
           </Col>
-         <Col xs='3' style={{backgroundColor:'#F7F7F7'}}>
-         <FileSide />
-       <ShipmentSide />
-      </Col>
+          <Col xs="3" style={{ backgroundColor: '#F7F7F7' }}>
+            <FileSide />
+            <ShipmentSide />
+          </Col>
         </Row>
       </div>
     );
   }
 }
+const mapStateToProps = state => {
+  const { ChatReducer } = state;
+  return {
+    ChatReducer
+  };
+};
 
-export default Chat;
+export default connect(
+  mapStateToProps,
+  { typing }
+)(Chat);
