@@ -7,9 +7,9 @@ const shipmentListContext = React.createContext({
     shipper: 'Fresh Product',
     consignee: 'Exotime',
     product: 'coconut',
-    container: '001',
-    bill: '002',
-    track: '003',
+    container: 'cxru09329',
+    bill: 'slkm23824890',
+    track: 'DHL:8925486',
     note: 'IP-MAN THE GRAND MASTER'
   }]
 })

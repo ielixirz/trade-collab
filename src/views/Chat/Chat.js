@@ -1,4 +1,4 @@
-import React, { Component ,useContext,useReducer } from 'react';
+import React, { Component } from 'react';
 import {
   Collapse, Button, CardBody, Card,
   Col,
@@ -9,17 +9,12 @@ import {
   TabContent,
   TabPane
 } from 'reactstrap';
-import shipmentListContext from '../../context/shipmentContext';
-import shipmentReducer from '../../reducers/shipmentReducer';
-import ShipmentList from '../../component/ShipmentList';
+
 import Tabs from 'react-draggable-tabs';
 import './Chat.css';
+import  ShipmentSide  from './ShipmentSide';
+import  FileSide from './FileSide';
 
-const Shipment = ()=>{
-    const initialState =  useContext(shipmentListContext);
-    const [state,dispatch]  = useReducer(shipmentReducer,initialState);
-    return (<shipmentListContext.Provider value={{state,dispatch}}><ShipmentList /></shipmentListContext.Provider>)
-}
 class Chat extends Component {
   constructor(props) {
     super(props);
@@ -29,8 +24,6 @@ class Chat extends Component {
     this.addTab = this.addTab.bind(this);
     this.state = {
       activeTab: new Array(4).fill('1'),
-      collapse: false,
-      collapseFile:false,
       tabs: [
         {
           id: 1,
@@ -40,8 +33,7 @@ class Chat extends Component {
         }
       ]
     };
-    this.triggerCollapse = this.triggerCollapse.bind(this);
-    this.triggerCollapseFile = this.triggerCollapseFile.bind(this);
+
   }
 
   moveTab(dragIndex, hoverIndex) {
@@ -164,14 +156,6 @@ class Chat extends Component {
     });
   }
 
-  triggerCollapse(){
-      this.setState(state=> ({collapse:!state.collapse}))
-  }
-  triggerCollapseFile(){
-    this.setState(state=> ({collapseFile:!state.collapseFile}))
-  }
-
-
   tabPane() {
     return (
       <>
@@ -187,7 +171,7 @@ class Chat extends Component {
     return (
       <div className="animated fadeIn">
         <Row>
-          <Col xs='10'>
+          <Col xs='9'>
             <Tabs
               style={{ backgroundColor: 'black' }}
               moveTab={this.moveTab}
@@ -201,28 +185,9 @@ class Chat extends Component {
               {activeTab.length !== 0 ? activeTab[0].display : ''}
             </TabContent>
           </Col>
-         <Col xs='2'>
-          <div>
-        <Button  onClick={this.triggerCollapseFile} style={{ marginBottom: '1rem',backgroundColor:'transparent' ,borderWidth:0 }}>File</Button>
-        <Collapse isOpen={this.state.collapseFile}>
-          <Card>
-             <CardBody>
-               body
-            </CardBody>
-          </Card>
-        </Collapse>
-        </div>
-        <div>
-        <Button  onClick={this.triggerCollapse} style={{ marginBottom: '1rem',backgroundColor:'transparent' ,borderWidth:0 }}>  <i class="fa fa-flickr"></i><span>Shipment Update</span>
-</Button>
-        <Collapse isOpen={this.state.collapse}>
-          <Card>
-             <CardBody>
-             <Shipment />
-            </CardBody>
-          </Card>
-        </Collapse>
-      </div>
+         <Col xs='3' style={{backgroundColor:'#F7F7F7'}}>
+         <FileSide />
+       <ShipmentSide />
       </Col>
         </Row>
       </div>
