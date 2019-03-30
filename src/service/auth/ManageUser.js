@@ -19,9 +19,7 @@ VerificationEmail().subscribe({
 
 export const VerificationEmail = () => {
 
-    const User = user(FirebaseApp.auth())
-
-    return User.pipe(
+    return user(FirebaseApp.auth()).pipe(
         map(AuthStage => {
             if(!AuthStage.emailVerified) {
                 return from(AuthStage.sendEmailVerification())
