@@ -8,17 +8,12 @@ import {
   TabContent,Input,
   TabPane
 } from 'reactstrap';
-import shipmentListContext from '../../context/shipmentContext';
-import shipmentReducer from '../../reducers/shipmentReducer';
-import ShipmentList from '../../component/ShipmentList';
+
 import Tabs from 'react-draggable-tabs';
 import './Chat.css';
+import  ShipmentSide  from './ShipmentSide';
+import  FileSide from './FileSide';
 
-const Shipment = ()=>{
-    const initialState =  useContext(shipmentListContext);
-    const [state,dispatch]  = useReducer(shipmentReducer,initialState);
-    return (<shipmentListContext.Provider value={{state,dispatch}}><ShipmentList /></shipmentListContext.Provider>)
-}
 class Chat extends Component {
   constructor(props) {
     super(props);
@@ -28,8 +23,7 @@ class Chat extends Component {
     this.addTab = this.addTab.bind(this);
     this.state = {
       activeTab: new Array(4).fill('1'),
-      collapse: false,
-      collapseFile:false,
+      text:'',
       tabs: [
         {
           id: 1,
@@ -39,8 +33,7 @@ class Chat extends Component {
         }
       ]
     };
-    this.triggerCollapse = this.triggerCollapse.bind(this);
-    this.triggerCollapseFile = this.triggerCollapseFile.bind(this);
+
   }
 
   moveTab(dragIndex, hoverIndex) {
@@ -52,18 +45,18 @@ class Chat extends Component {
     });
   }
   renderMessage(message){
-    const {type='sender',text=this.lorem(),name='Anonymouse',status='11:01 AM | Today'} =message;
-    if(message.type==='sender'){
+    const {type='sender',text=this.lorem(),name='Anonymous',status='11:01 AM | Today'} =message;
+    if(type==='sender'){
       return (  <div className="incoming_msg">
         <div className="received_msg">
           <div className="received_withd_msg">
 <Row>
   <Col xs='8'>
     <p>
-      <p className="user-name">{name}</p>
+      <span className="user-name">{name}</span> <br/>
       {text}</p>
   </Col>
-  <Col xs='.col-auto - variable width content'>
+  <Col xs={3}>
     <span className="time_date"> {status}</span>
   </Col>
 </Row>
@@ -77,12 +70,12 @@ class Chat extends Component {
         <div className="outgoing_msg">
           <div className="sent_msg">
             <Row>
-              <Col xs='.col-auto - variable width content'>
+              <Col xs={3}>
                 <span className="time_date"> {status}</span>
               </Col>
               <Col>
                 <p>
-                  <p className="user-name">{name}</p>
+                  <span className="user-name">{name}</span> <br/>
                   {text}</p>
               </Col>
 
@@ -173,14 +166,6 @@ class Chat extends Component {
     });
   }
 
-  triggerCollapse(){
-      this.setState(state=> ({collapse:!state.collapse}))
-  }
-  triggerCollapseFile(){
-    this.setState(state=> ({collapseFile:!state.collapseFile}))
-  }
-
-
   tabPane() {
     return (
       <>
@@ -195,8 +180,8 @@ class Chat extends Component {
     const activeTab = this.state.tabs.filter(tab => tab.active === true);
     return (
       <div className="animated fadeIn chatbox">
-        <Row >
-          <Col xs='10'>
+        <Row>
+          <Col xs='9'>
             <Tabs
               style={{ backgroundColor: 'black' }}
               moveTab={this.moveTab}
@@ -210,28 +195,9 @@ class Chat extends Component {
               {activeTab.length !== 0 ? activeTab[0].display : ''}
             </TabContent>
           </Col>
-         <Col xs='2'>
-          <div>
-        <Button  onClick={this.triggerCollapseFile} style={{ marginBottom: '1rem',backgroundColor:'transparent' ,borderWidth:0 }}>File</Button>
-        <Collapse isOpen={this.state.collapseFile}>
-          <Card>
-             <CardBody>
-               body
-            </CardBody>
-          </Card>
-        </Collapse>
-        </div>
-        <div>
-        <Button  onClick={this.triggerCollapse} style={{ marginBottom: '1rem',backgroundColor:'transparent' ,borderWidth:0 }}>  <i class="fa fa-flickr"></i><span>Shipment Update</span>
-</Button>
-        <Collapse isOpen={this.state.collapse}>
-          <Card>
-             <CardBody>
-             <Shipment />
-            </CardBody>
-          </Card>
-        </Collapse>
-      </div>
+         <Col xs='3' style={{backgroundColor:'#F7F7F7'}}>
+         <FileSide />
+       <ShipmentSide />
       </Col>
         </Row>
       </div>
