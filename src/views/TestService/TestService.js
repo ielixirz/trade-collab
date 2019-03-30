@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { GetChatMessage, CreateChatMessage } from '../../service/Chat/Chat'
 import { LoginWithEmail } from '../../service/Auth/Login'
+import { VerificationEmail } from '../../service/Auth/ManageUser'
 
 
 const TestService = () => {
@@ -39,6 +40,12 @@ const TestService = () => {
 
       // LoginWithEmail('holy-wisdom@hotmail.com','123456').subscribe({
       //   next:(res) => {(console.log(res))},
+      //   error:(err) => {(console.log(err))},
+      //   complete:() => {}
+      // })
+
+      // VerificationEmail().subscribe({
+      //   next:() => {(console.log('Email sended'))},
       //   error:(err) => {(console.log(err))},
       //   complete:() => {}
       // })
