@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { GetChatMessage, CreateChatMessage } from '../../service/chat/chat'
+import { LoginWithEmail } from '../../service/auth/login'
 
 
 const TestService = () => {
@@ -30,6 +31,17 @@ const TestService = () => {
       // })
       // GetChatMessage(ShipmentKey,ChatRoomKey).subscribe(console.log)
 
+      // LoginWithEmail('holy-wisdom@hotmail.com','123456').then(res =>{
+      //   console.log(res)}).catch(err => {
+      //       console.log(`error message : ${err}`)
+      //       return err
+      // })
+
+      // LoginWithEmail('holy-wisdom@hotmail.com','123456').subscribe({
+      //   next:(res) => {(console.log(res))},
+      //   error:(err) => {(console.log(err))},
+      //   complete:() => {}
+      // })
 
       }, []);
     
