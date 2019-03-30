@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { GetChatMessage, CreateChatMessage } from '../../service/Chat/Chat'
 import { LoginWithEmail } from '../../service/Auth/Login'
-import { VerificationEmail } from '../../service/Auth/ManageUser'
+import { VerificationEmail, AuthStage } from '../../service/Auth/ManageUser'
 
 
 const TestService = () => {
@@ -48,6 +48,9 @@ const TestService = () => {
       //   next:() => {(console.log('Email sended'))},
       //   error:(err) => {(console.log(err))},
       //   complete:() => {}
+      // })
+
+      // AuthStage().subscribe(res => {
       // })
 
       }, []);
