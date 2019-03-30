@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { GetChatMessage, CreateChatMessage } from '../../service/chat/chat'
-import { LoginWithEmail } from '../../service/auth/login'
+import { GetChatMessage, CreateChatMessage } from '../../service/Chat/Chat'
+import { LoginWithEmail } from '../../service/Auth/Login'
 
 
 const TestService = () => {
