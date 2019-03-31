@@ -17,9 +17,14 @@ import {
   Row
 } from 'reactstrap';
 import './login.css';
+import { connect } from 'react-redux';
+import { typinglogin, login } from '../../../actions/loginActions';
 
 class Login extends Component {
   render() {
+    console.log('props is', this.props);
+    const { email, password } = this.props.loginForm;
+
     return (
       <div className="app flex-row align-items-center">
         <Container>
@@ -37,7 +42,13 @@ class Login extends Component {
                         <Col xs="12">
                           <FormGroup>
                             <Label htmlFor="email">Email</Label>
-                            <Input type="email" id="email" required />
+                            <Input
+                              type="email"
+                              id="email"
+                              value={email}
+                              onChange={this.props.typinglogin}
+                              required
+                            />
                           </FormGroup>
                         </Col>
                       </Row>
@@ -45,7 +56,13 @@ class Login extends Component {
                         <Col xs="12">
                           <FormGroup>
                             <Label htmlFor="password">Password </Label>
-                            <Input type="password" id="password" required />
+                            <Input
+                              type="password"
+                              value={password}
+                              id="password"
+                              onChange={this.props.typinglogin}
+                              required
+                            />
                             <div className="text-center text-md-right">
                               <a href="/forgetpassword">Forget Password</a>
                             </div>
@@ -53,7 +70,13 @@ class Login extends Component {
                         </Col>
                       </Row>
                       <Row className="justify-content-center full-height align-items-center ">
-                        <Button color="primary" className="px-4">
+                        <Button
+                          color="primary"
+                          onClick={() => {
+                            this.props.login(this.props.loginForm);
+                          }}
+                          className="px-4"
+                        >
                           Login
                         </Button>
                       </Row>
@@ -69,4 +92,14 @@ class Login extends Component {
   }
 }
 
-export default Login;
+const mapStateToProps = state => {
+  const { authReducer } = state;
+  return {
+    ...authReducer
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  { typinglogin, login }
+)(Login);

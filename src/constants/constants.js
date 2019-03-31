@@ -1,1 +1,3 @@
-export const TYPING_TEXT='TYPING_TEXT';
+export const TYPING_TEXT = 'TYPING_TEXT';
+export const FILL_CREDENCIAL = 'FILL_CREDENCIAL';
+export const SAVE_CREDENCIAL = 'SAVE_CREDENCIAL';

@@ -11,8 +11,8 @@ const TestService = React.lazy(() => import('./views/TestService/TestService'));
 const routes = [
   { path: '/chat', name: 'chat', component: Chat },
   { path: '/shipment', name: 'shipment', component: Shipment },
-  { path: '/mockdata', name: 'mockdata', component: MockData},
-  { path: '/testservice', name: 'testservice', component: TestService},
+  { path: '/mockdata', name: 'mockdata', component: MockData },
+  { path: '/testservice', name: 'testservice', component: TestService }
 ];
 
 export default routes;

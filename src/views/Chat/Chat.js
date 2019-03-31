@@ -12,6 +12,7 @@ import {
   Input,
   TabPane
 } from 'reactstrap';
+
 import { typing } from '../../actions/chatActions';
 import { connect } from 'react-redux';
 
