@@ -99,43 +99,51 @@ class Chat extends Component {
   }
   renderChat() {
     return (
-      <div className="inbox_msg">
-        <div className="mesgs">
-          <div className="msg_history">
-            {this.renderMessage({ type: 'sender' })}
-            {this.renderMessage({ type: 'user' })}
-            {this.renderMessage({ type: 'user' })}
-            {this.renderMessage({ type: 'user' })}
-            {this.renderMessage({ type: 'sender' })}
-            {this.renderMessage({ type: 'sender' })}
-          </div>
-          <div className="type_msg">
-            <InputGroup>
-              <InputGroupAddon addonType="prepend">
-                <Button color="default">
-                  {' '}
-                  <i className="fa fa-plus fa-lg" />
-                </Button>
-              </InputGroupAddon>
-              <Input
-                placeholder="and..."
-                value={this.props.text}
-                onChange={this.props.typing}
-              />
-              <InputGroupAddon addonType="append">
-                <Button color="default1"> @</Button>
-                <Button color="default1">
-                  {' '}
-                  <i className="fa fa-smile-o fa-lg" />
-                </Button>
-                <Button color="default1">
-                  {' '}
-                  <i className="fa fa-paper-plane-o fa-lg" />
-                </Button>
-              </InputGroupAddon>
-            </InputGroup>
-          </div>
-        </div>
+      <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
+        <Row>
+          <Col xs="8" style={{ backgroundColor: 'white' }}>
+            <div className="mesgs">
+              <div className="msg_history">
+                {this.renderMessage({ type: 'sender' })}
+                {this.renderMessage({ type: 'user' })}
+                {this.renderMessage({ type: 'user' })}
+                {this.renderMessage({ type: 'user' })}
+                {this.renderMessage({ type: 'sender' })}
+                {this.renderMessage({ type: 'sender' })}
+              </div>
+              <div className="type_msg">
+                <InputGroup>
+                  <InputGroupAddon addonType="prepend">
+                    <Button color="default">
+                      {' '}
+                      <i className="fa fa-plus fa-lg" />
+                    </Button>
+                  </InputGroupAddon>
+                  <Input
+                    placeholder="and..."
+                    value={this.props.text}
+                    onChange={this.props.typing}
+                  />
+                  <InputGroupAddon addonType="append">
+                    <Button color="default1"> @</Button>
+                    <Button color="default1">
+                      {' '}
+                      <i className="fa fa-smile-o fa-lg" />
+                    </Button>
+                    <Button color="default1">
+                      {' '}
+                      <i className="fa fa-paper-plane-o fa-lg" />
+                    </Button>
+                  </InputGroupAddon>
+                </InputGroup>
+              </div>
+            </div>
+          </Col>
+          <Col xs="4" style={{ paddingLeft: '0.3rem' }}>
+            <FileSide />
+            <ShipmentSide />
+          </Col>
+        </Row>
       </div>
     );
   }
@@ -204,26 +212,18 @@ class Chat extends Component {
     const activeTab = this.state.tabs.filter(tab => tab.active === true);
     return (
       <div className="animated fadeIn chatbox">
-        <Row>
-          <Col xs="8" style={{ backgroundColor: 'rgb(247, 247, 247)', paddingRight: '3px' }}>
-            <Tabs
-              style={{ backgroundColor: 'black' }}
-              moveTab={this.moveTab}
-              selectTab={this.selectTab}
-              closeTab={this.closedTab}
-              tabs={this.state.tabs}
-            >
-              <button onClick={this.addTab}>+</button>
-            </Tabs>
-            <TabContent>
-              {activeTab.length !== 0 ? activeTab[0].display : ''}
-            </TabContent>
-          </Col>
-          <Col xs="4" style={{ backgroundColor: '#F7F7F7', paddingLeft: '0' }}>
-            <FileSide />
-            <ShipmentSide />
-          </Col>
-        </Row>
+        <Tabs
+          style={{ backgroundColor: 'black' }}
+          moveTab={this.moveTab}
+          selectTab={this.selectTab}
+          closeTab={this.closedTab}
+          tabs={this.state.tabs}
+        >
+          <button onClick={this.addTab}>+</button>
+        </Tabs>
+        <TabContent>
+          {activeTab.length !== 0 ? activeTab[0].display : ''}
+        </TabContent>
       </div>
     );
   }
