@@ -1,7 +1,14 @@
 import { TYPING_TEXT } from '../constants/constants';
 
 const INITIAL_STATE = {
-  text: ''
+  text: '',
+  chatroom: [
+    {
+      roomId: 'room1',
+      roomName: 'Exporter',
+      chatMsg: []
+    }
+  ]
 };
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {

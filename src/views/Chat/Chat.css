@@ -159,3 +159,22 @@ img{ max-width:100%;}
   width: 50px;
 
 }
+.react-tabs-container{
+  background-color: #ffffff;
+
+}
+.react-tabs-tab{
+  background-color: #e4e7ea;
+  color: #000000;
+  border-radius: 5%;
+  border-top: 1px solid #707070;
+  border-right: 1px solid #707070;
+
+
+
+
+}
+.react-tabs-tab-close {
+display: none;
+
+}
