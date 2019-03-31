@@ -21,7 +21,8 @@ import {
   typing,
   fetchChatMessage,
   sendMessage,
-  moveTab
+  moveTab,
+  selectTab
 } from '../../actions/chatActions';
 import { connect } from 'react-redux';
 
@@ -35,8 +36,7 @@ class Chat extends Component {
     super(props);
 
     this.moveTab = this.props.moveTab.bind(this);
-    this.selectTab = this.selectTab.bind(this);
-    this.closedTab = this.closedTab.bind(this);
+    this.selectTab = this.props.selectTab.bind(this);
     this.addTab = this.addTab.bind(this);
     this.state = {
       activeTab: new Array(4).fill('1'),
@@ -93,10 +93,8 @@ class Chat extends Component {
     }
   }
   renderChat(ChatRoomKey = '', ShipmentKey = '') {
-    this.props.fetchChatMessage(ChatRoomKey, ShipmentKey);
-
     let chat = _.get(this.props, `ChatReducer.chatrooms.${ChatRoomKey}`, {});
-    console.log(this.props);
+
     const text = this.props.ChatReducer.text;
     return (
       <div
@@ -197,16 +195,6 @@ class Chat extends Component {
     );
   }
 
-  selectTab(selectedIndex, selectedID) {
-    this.setState((state, props) => {
-      const newTabs = state.tabs.map(tab => ({
-        ...tab,
-        active: tab.id === selectedID
-      }));
-      return { tabs: newTabs };
-    });
-  }
-
   closedTab(removedIndex, removedID) {
     this.setState((state, props) => {
       let newTabs = [...state.tabs];
@@ -258,7 +246,25 @@ class Chat extends Component {
   }
   componentDidUpdate() {}
 
-  componentDidMount() {}
+  componentDidMount() {
+    let chats = this.props.ChatReducer.chatrooms;
+    let tabs = [];
+    _.forEach(chats, (item, index) => {
+      tabs.push({
+        id: tabs.length + 1,
+        content: item.roomName,
+        active: item.active,
+        ChatRoomKey: item.ChatRoomKey,
+        ShipmentKey: item.ShipmentKey
+      });
+    });
+    console.log(chats);
+    const activeTab = tabs.filter(tab => tab.active === true);
+    this.props.fetchChatMessage(
+      activeTab[0].ChatRoomKey,
+      activeTab[0].ShipmentKey
+    );
+  }
 
   render() {
     let chats = this.props.ChatReducer.chatrooms;
@@ -267,25 +273,30 @@ class Chat extends Component {
       tabs.push({
         id: tabs.length + 1,
         content: item.roomName,
-        active: tabs.length === 0,
-        display: this.renderChat(item.ChatRoomKey, item.ShipmentKey)
+        active: item.active,
+        ChatRoomKey: item.ChatRoomKey,
+        ShipmentKey: item.ShipmentKey
       });
     });
-
+    console.log(chats);
     const activeTab = tabs.filter(tab => tab.active === true);
     return (
       <div className="animated fadeIn chatbox">
         <Tabs
           style={{ backgroundColor: 'black' }}
           moveTab={this.props.moveTab}
-          selectTab={this.selectTab}
-          closeTab={this.closedTab}
+          selectTab={this.props.selectTab}
           tabs={tabs}
         >
           <button onClick={this.addTab}>+</button>
         </Tabs>
         <TabContent>
-          {activeTab.length !== 0 ? activeTab[0].display : ''}
+          {activeTab.length !== 0
+            ? this.renderChat(
+                activeTab[0].ChatRoomKey,
+                activeTab[0].ShipmentKey
+              )
+            : ''}
         </TabContent>
       </div>
     );
@@ -301,5 +312,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { typing, fetchChatMessage, sendMessage, moveTab }
+  { typing, fetchChatMessage, sendMessage, moveTab, selectTab }
 )(Chat);

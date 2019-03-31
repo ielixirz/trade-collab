@@ -9,7 +9,8 @@ const INITIAL_STATE = {
       ChatRoomKey: ChatRoomKey,
       ShipmentKey: ShipmentKey,
       roomName: 'Exporter',
-      chatMsg: []
+      chatMsg: [],
+      active: true
     }
   }
 };
