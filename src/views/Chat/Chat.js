@@ -12,6 +12,7 @@ import {
   Input,
   TabPane
 } from 'reactstrap';
+import { GetChatMessage } from '../../service/chat/chat';
 
 import { typing, fetchChatMessage } from '../../actions/chatActions';
 import { connect } from 'react-redux';
@@ -24,6 +25,7 @@ import FileSide from './FileSide';
 class Chat extends Component {
   constructor(props) {
     super(props);
+    console.log(this.props);
     this.moveTab = this.moveTab.bind(this);
     this.selectTab = this.selectTab.bind(this);
     this.closedTab = this.closedTab.bind(this);

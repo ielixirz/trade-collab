@@ -1,10 +1,13 @@
 import { TYPING_TEXT } from '../constants/constants';
+const ShipmentKey = 'HDTPONlnceJeG5yAA1Zy';
+const ChatRoomKey = 'lvCb608c7PusGqptBsq0';
 
 const INITIAL_STATE = {
   text: '',
-  chatroom: [
+  chatrooms: [
     {
-      roomId: 'room1',
+      ChatRoomKey: ChatRoomKey,
+      ShipmentKey: ShipmentKey,
       roomName: 'Exporter',
       chatMsg: []
     }
