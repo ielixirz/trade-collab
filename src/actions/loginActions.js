@@ -19,6 +19,8 @@ export const login = data => dispatch => {
         type: SAVE_CREDENCIAL,
         payload: res.user
       });
+
+      window.location.replace('/');
     },
     error: err => {
       console.log(err);
