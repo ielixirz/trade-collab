@@ -15,7 +15,7 @@ import {
   ButtonGroup
 } from 'reactstrap';
 
-import { typing } from '../../actions/chatActions';
+import { typing, fetchChatMessage } from '../../actions/chatActions';
 import { connect } from 'react-redux';
 
 import Tabs from 'react-draggable-tabs';
@@ -248,5 +248,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { typing }
+  { typing, fetchChatMessage }
 )(Chat);
