@@ -31,7 +31,7 @@ class ShipmentSide extends Component{
   render(){
     return(
         <div>
-        <Card  onClick={this.triggerCollapse} style={styles.button}>
+        <Card  onClick={this.triggerCollapse} style={styles.card}>
         <CardBody>
         <Row>
           <Col xs="10" className="text-left">
@@ -72,6 +72,11 @@ const styles = {
    },
    status:{
     color: '#58CADB'  
+   },
+   card:{
+    marginBottom: '0.2rem',
+    marginTop: '0.2rem',
+    marginRight: '0.2rem'
    }
 }
 

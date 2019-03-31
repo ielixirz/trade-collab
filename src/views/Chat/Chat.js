@@ -205,7 +205,7 @@ class Chat extends Component {
     return (
       <div className="animated fadeIn chatbox">
         <Row>
-          <Col xs="9">
+          <Col xs="8" style={{ backgroundColor: 'rgb(247, 247, 247)', paddingRight: '3px' }}>
             <Tabs
               style={{ backgroundColor: 'black' }}
               moveTab={this.moveTab}
@@ -219,7 +219,7 @@ class Chat extends Component {
               {activeTab.length !== 0 ? activeTab[0].display : ''}
             </TabContent>
           </Col>
-          <Col xs="3" style={{ backgroundColor: '#F7F7F7' }}>
+          <Col xs="4" style={{ backgroundColor: '#F7F7F7', paddingLeft: '0' }}>
             <FileSide />
             <ShipmentSide />
           </Col>
