@@ -75,7 +75,6 @@ const styles = {
    },
    card:{
     marginBottom: '0.2rem',
-    marginTop: '0.2rem',
     marginRight: '0.2rem'
    }
 }
