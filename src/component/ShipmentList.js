@@ -10,35 +10,35 @@ export default function ShipmentList(){
         <ListGroup flush key={s.id}>
         <ListGroupItem  disabled tag="a">  
         <Row>
-          <Col xs="12"><small>Shipper</small><br/>{s.shipper}</Col>
+          <Col xs="12"><small>Shipper</small><br/><b>{s.shipper}</b></Col>
         </Row>
-        <Row><Col xs="12"><small>consignee</small><br/>{s.consignee}</Col></Row>
+        <Row><Col xs="12"><small>consignee</small><br/><b>{s.consignee}</b></Col></Row>
         </ListGroupItem>
         <ListGroupItem  disabled tag="a"><Row>
-          <Col xs="6">Product</Col>
+          <Col xs="6"><b>Product</b></Col>
           <Col xs="6" className="text-right">{s.product}</Col>
         </Row></ListGroupItem>
         <ListGroupItem  disabled tag="a">
         <Row>
-          <Col xs="6">Container No.</Col>
+          <Col xs="6"><b>Container No.</b></Col>
           <Col xs="6" className="text-right">{s.container}</Col>
         </Row>
         </ListGroupItem>
         <ListGroupItem  disabled tag="a">
         <Row>
-          <Col xs="6">Bill of Landing No.</Col>
+          <Col xs="6"><b>Bill of Landing No.</b></Col>
           <Col xs="6" className="text-right">{s.bill}</Col>
         </Row>
         </ListGroupItem>
         <ListGroupItem  disabled tag="a">
         <Row>
-          <Col xs="6">Original Docs.Tracking No.</Col>
+          <Col xs="6"><b>Original Docs.Tracking No.</b></Col>
           <Col xs="6" className="text-right">{s.track}</Col>
         </Row>
         </ListGroupItem>
         <ListGroupItem  disabled tag="a">
         <Row>
-          <Col xs="2">Note</Col>
+          <Col xs="2"><b>Note</b></Col>
           <Col xs="8">{s.note}</Col>
         </Row>
         </ListGroupItem>
