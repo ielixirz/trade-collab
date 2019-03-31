@@ -260,10 +260,9 @@ class Chat extends Component {
     });
     console.log(chats);
     const activeTab = tabs.filter(tab => tab.active === true);
-    this.props.fetchChatMessage(
-      activeTab[0].ChatRoomKey,
-      activeTab[0].ShipmentKey
-    );
+    _.forEach(tabs, tab => {
+      this.props.fetchChatMessage(tab.ChatRoomKey, tab.ShipmentKey);
+    });
   }
 
   render() {
