@@ -14,9 +14,15 @@ import {
   Breadcrumb,
   ButtonGroup
 } from 'reactstrap';
+import _ from 'lodash';
 import { GetChatMessage } from '../../service/chat/chat';
 
-import { typing, fetchChatMessage } from '../../actions/chatActions';
+import {
+  typing,
+  fetchChatMessage,
+  sendMessage,
+  moveTab
+} from '../../actions/chatActions';
 import { connect } from 'react-redux';
 
 import Tabs from 'react-draggable-tabs';
@@ -27,33 +33,18 @@ import FileSide from './FileSide';
 class Chat extends Component {
   constructor(props) {
     super(props);
-    console.log(this.props);
-    this.moveTab = this.moveTab.bind(this);
+
+    this.moveTab = this.props.moveTab.bind(this);
     this.selectTab = this.selectTab.bind(this);
     this.closedTab = this.closedTab.bind(this);
     this.addTab = this.addTab.bind(this);
     this.state = {
       activeTab: new Array(4).fill('1'),
       text: '',
-      tabs: [
-        {
-          id: 1,
-          content: 'Exporter',
-          active: true,
-          display: this.renderChat()
-        }
-      ]
+      tabs: []
     };
   }
 
-  moveTab(dragIndex, hoverIndex) {
-    this.setState((state, props) => {
-      let newTabs = [...state.tabs];
-      newTabs.splice(hoverIndex, 0, newTabs.splice(dragIndex, 1)[0]);
-
-      return { tabs: newTabs };
-    });
-  }
   renderMessage(message) {
     const {
       type = 'sender',
@@ -101,12 +92,30 @@ class Chat extends Component {
       );
     }
   }
-  renderChat() {
+  renderChat(ChatRoomKey = '', ShipmentKey = '') {
+    this.props.fetchChatMessage(ChatRoomKey, ShipmentKey);
+
+    let chat = _.get(this.props, `ChatReducer.chatrooms.${ChatRoomKey}`, {});
+    console.log(this.props);
+    const text = this.props.ChatReducer.text;
     return (
-      <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
-        <Row style={{ backgroundColor: 'white', borderBottom: '1px solid #707070' }}>
+      <div
+        className="inbox_msg"
+        style={{ backgroundColor: 'rgb(247, 247, 247)' }}
+      >
+        <Row
+          style={{
+            backgroundColor: 'white',
+            borderBottom: '1px solid #707070'
+          }}
+        >
           <Breadcrumb className="chat-toolbar">
-            <Button style={{ marginLeft: '2rem', marginRight: '1rem' }} color="success">Invite</Button>
+            <Button
+              style={{ marginLeft: '2rem', marginRight: '1rem' }}
+              color="success"
+            >
+              Invite
+            </Button>
             <Button className="btn-chat-label">|</Button>
             <Button className="btn-chat-label">Member: 14</Button>
             <Button className="btn-chat-label">|</Button>
@@ -117,12 +126,27 @@ class Chat extends Component {
           <Col xs="8" style={{ backgroundColor: 'white', marginTop: '0.5rem' }}>
             <div className="mesgs">
               <div className="msg_history">
-                {this.renderMessage({ type: 'sender' })}
-                {this.renderMessage({ type: 'user' })}
-                {this.renderMessage({ type: 'user' })}
-                {this.renderMessage({ type: 'user' })}
-                {this.renderMessage({ type: 'sender' })}
-                {this.renderMessage({ type: 'sender' })}
+                {chat.chatMsg.map((msg, i) => {
+                  console.log(msg);
+                  var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
+                  let type = 'sender';
+
+                  if (
+                    _.get(this.props, 'user.uid', '0') ===
+                    msg.ChatRoomMessageSender
+                  ) {
+                    console.log('user is', _.get(this.props, 'user.uid', '0'));
+                    type = 'reciever';
+                  }
+                  let message = {
+                    type: type,
+                    text: msg.ChatRoomMessageContext,
+                    name: msg.ChatRoomMessageSender,
+                    status: t.toLocaleString()
+                  };
+                  console.log(message);
+                  return this.renderMessage(message);
+                })}
               </div>
               <div className="type_msg">
                 <InputGroup>
@@ -134,7 +158,7 @@ class Chat extends Component {
                   </InputGroupAddon>
                   <Input
                     placeholder="and..."
-                    value={this.props.text}
+                    value={text}
                     onChange={this.props.typing}
                   />
                   <InputGroupAddon addonType="append">
@@ -143,7 +167,19 @@ class Chat extends Component {
                       {' '}
                       <i className="fa fa-smile-o fa-lg" />
                     </Button>
-                    <Button color="default1">
+                    <Button
+                      color="default1"
+                      onClick={() => {
+                        console.log(
+                          'Sending Message',
+                          ChatRoomKey,
+                          ShipmentKey,
+                          text
+                        );
+                        console.log(text);
+                        this.props.sendMessage(ChatRoomKey, ShipmentKey, text);
+                      }}
+                    >
                       {' '}
                       <i className="fa fa-paper-plane-o fa-lg" />
                     </Button>
@@ -220,17 +256,31 @@ class Chat extends Component {
       </>
     );
   }
+  componentDidUpdate() {}
+
+  componentDidMount() {}
 
   render() {
-    const activeTab = this.state.tabs.filter(tab => tab.active === true);
+    let chats = this.props.ChatReducer.chatrooms;
+    let tabs = [];
+    _.forEach(chats, (item, index) => {
+      tabs.push({
+        id: tabs.length + 1,
+        content: item.roomName,
+        active: tabs.length === 0,
+        display: this.renderChat(item.ChatRoomKey, item.ShipmentKey)
+      });
+    });
+
+    const activeTab = tabs.filter(tab => tab.active === true);
     return (
       <div className="animated fadeIn chatbox">
         <Tabs
           style={{ backgroundColor: 'black' }}
-          moveTab={this.moveTab}
+          moveTab={this.props.moveTab}
           selectTab={this.selectTab}
           closeTab={this.closedTab}
-          tabs={this.state.tabs}
+          tabs={tabs}
         >
           <button onClick={this.addTab}>+</button>
         </Tabs>
@@ -242,13 +292,14 @@ class Chat extends Component {
   }
 }
 const mapStateToProps = state => {
-  const { ChatReducer } = state;
+  const { ChatReducer, authReducer } = state;
   return {
-    ChatReducer
+    ChatReducer,
+    user: authReducer.user
   };
 };
 
 export default connect(
   mapStateToProps,
-  { typing, fetchChatMessage }
+  { typing, fetchChatMessage, sendMessage, moveTab }
 )(Chat);
