@@ -13,7 +13,7 @@ import {
   TabPane
 } from 'reactstrap';
 
-import { typing } from '../../actions/chatActions';
+import { typing, fetchChatMessage } from '../../actions/chatActions';
 import { connect } from 'react-redux';
 
 import Tabs from 'react-draggable-tabs';
@@ -99,7 +99,10 @@ class Chat extends Component {
   }
   renderChat() {
     return (
-      <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
+      <div
+        className="inbox_msg"
+        style={{ backgroundColor: 'rgb(247, 247, 247)' }}
+      >
         <Row>
           <Col xs="8" style={{ backgroundColor: 'white' }}>
             <div className="mesgs">
@@ -237,5 +240,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { typing }
+  { typing, fetchChatMessage }
 )(Chat);
