@@ -10,7 +10,9 @@ import {
   Row,
   TabContent,
   Input,
-  TabPane
+  TabPane,
+  Breadcrumb,
+  ButtonGroup
 } from 'reactstrap';
 
 import { typing } from '../../actions/chatActions';
@@ -100,8 +102,17 @@ class Chat extends Component {
   renderChat() {
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
+        <Row style={{ backgroundColor: 'white', borderBottom: '1px solid #707070' }}>
+          <Breadcrumb className="chat-toolbar">
+            <Button style={{ marginLeft: '2rem', marginRight: '1rem' }} color="success">Invite</Button>
+            <Button className="btn-chat-label">|</Button>
+            <Button className="btn-chat-label">Member: 14</Button>
+            <Button className="btn-chat-label">|</Button>
+            <Button className="btn-chat-label">Ref#123</Button>
+          </Breadcrumb>
+        </Row>
         <Row>
-          <Col xs="8" style={{ backgroundColor: 'white' }}>
+          <Col xs="8" style={{ backgroundColor: 'white', marginTop: '0.5rem' }}>
             <div className="mesgs">
               <div className="msg_history">
                 {this.renderMessage({ type: 'sender' })}
@@ -139,7 +150,7 @@ class Chat extends Component {
               </div>
             </div>
           </Col>
-          <Col xs="4" style={{ paddingLeft: '0.3rem' }}>
+          <Col xs="4" style={{ paddingLeft: '0.3rem', marginTop: '0.6rem' }}>
             <FileSide />
             <ShipmentSide />
           </Col>
