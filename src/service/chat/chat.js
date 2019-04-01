@@ -80,3 +80,11 @@ export const CreateChatRoom = (ShipmentKey, Data) => {
 export const EditChatRoom = (ShipmentKey, ChatRoomKey, Data) => {
   return ChatRoomRefPath(ShipmentKey, ChatRoomKey).update(Data);
 };
+
+/* Example Data AddChatRoomFileLink
+  [ {FileName : "FileA.jpg" , FileUrl : "'https://firebasestorage.googleapis.com'" , FileCreateTimestamp : "123123124124124" , FilePath : "/Shipment/{ShipmentKey}/ShipmentFile/{FileKey}" }]
+*/
+
+export const EditChatRoomFileLink = (ShipmentKey, ChatRoomKey, Data) => {
+  return ChatRoomRefPath(ShipmentKey, ChatRoomKey).set({ChatRoomFileLink:Data},{merge:true});
+};
