@@ -19,6 +19,7 @@ import {
 } from '@coreui/react';
 import logo from '../../assets/img/brand/logo.svg';
 import sygnet from '../../assets/img/brand/sygnet.svg';
+import { connect } from 'react-redux';
 
 const propTypes = {
   children: PropTypes.node
@@ -56,16 +57,7 @@ class DefaultHeader extends Component {
               </Badge>
             </NavLink>
           </NavItem>
-          <NavItem className="d-md-down-none">
-            <NavLink href="#">
-              <i className="icon-list" />
-            </NavLink>
-          </NavItem>
-          <NavItem className="d-md-down-none">
-            <NavLink href="#">
-              <i className="icon-location-pin" />
-            </NavLink>
-          </NavItem>
+
           <AppHeaderDropdown direction="down">
             <DropdownToggle nav>
               <img
@@ -73,6 +65,7 @@ class DefaultHeader extends Component {
                 className="img-avatar"
                 alt="admin@bootstrapmaster.com"
               />
+              <span>{this.props.user.email}</span>
             </DropdownToggle>
             <DropdownMenu right style={{ right: 'auto' }}>
               <DropdownItem header tag="div" className="text-center">
@@ -130,5 +123,14 @@ class DefaultHeader extends Component {
 
 DefaultHeader.propTypes = propTypes;
 DefaultHeader.defaultProps = defaultProps;
+const mapStateToProps = state => {
+  const { authReducer } = state;
+  return {
+    user: authReducer.user
+  };
+};
 
-export default DefaultHeader;
+export default connect(
+  mapStateToProps,
+  null
+)(DefaultHeader);
