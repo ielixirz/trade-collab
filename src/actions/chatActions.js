@@ -112,7 +112,7 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (
   console.log(user);
   if (_.get(user, 'uid', false)) {
     let msg = {
-      ChatRoomMessageSender: _.get(user, 'uid', 0),
+      ChatRoomMessageSender: _.get(user, 'email', 0),
       ChatRoomMessageContext: text,
       ChatRoomMessageType: 'Text',
       ChatRoomMessageTimestamp: new Date()
