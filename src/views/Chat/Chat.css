@@ -123,7 +123,7 @@ img{ max-width:100%;}
 .user-name {
  font-weight: bolder;
 }
-.type_msg {position: relative;margin-bottom:10px;padding: 5px; margin-top: 12px;height: 10vh }
+.type_msg {position: relative;margin-bottom:10px; height: 10vh }
 .msg_send_btn {
   background: #05728f none repeat scroll 0 0;
   border: medium none;
