@@ -61,3 +61,7 @@ export const UpdateEmail = (Email,Password,NewEmail) => {
         tap(UserInfo => from(UserInfo.updateEmail(NewEmail)))
     )
 }
+
+export const ForgetPassword = (NewEmail) => {
+    return from(FirebaseApp.auth().sendPasswordResetEmail(NewEmail))
+}
