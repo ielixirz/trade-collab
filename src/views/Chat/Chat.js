@@ -116,9 +116,9 @@ class Chat extends Component {
               Invite
             </Button>
             <Button className="btn-chat-label">|</Button>
-            <Button className="btn-chat-label">Member: 14</Button>
+            <Button className="btn-chat-label">Member 14</Button>
             <Button className="btn-chat-label">|</Button>
-            <Button className="btn-chat-label">Ref#123</Button>
+            <Button className="btn-chat-label">Ref#1234</Button>
           </Breadcrumb>
         </Row>
         <Row>
