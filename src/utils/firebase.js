@@ -1,7 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-import { collectionData } from 'rxfire/firestore';
-import { tap } from 'rxjs/operators';
+
 let config = {
   apiKey: 'AIzaSyAU9GiZ6sPSkcodEuMCK-1cwRj8sSbGM68',
   authDomain: 'yterminal-b0906.firebaseapp.com',
@@ -11,4 +10,4 @@ let config = {
   messagingSenderId: '745735371809'
 };
 
-export const app = firebase.initializeApp(config);
+export const firebaseApp = firebase.initializeApp(config);
