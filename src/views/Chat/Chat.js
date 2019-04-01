@@ -109,14 +109,16 @@ class Chat extends Component {
           }}
         >
           <Breadcrumb className="chat-toolbar">
-            <Button
-              style={{ marginLeft: '2rem', marginRight: '1rem' }}
-              color="success"
+            <Button className="invite-btn"
+              style={{ marginLeft: '2rem', marginRight: '1rem', color: 'white', backgroundColor: '#16A085' }}
             >
+              <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
               Invite
             </Button>
             <Button className="btn-chat-label">|</Button>
-            <Button className="btn-chat-label">Member 14</Button>
+            <Button className="btn-chat-label">
+            <i style={{ marginRight: '0.5rem' }} className="fa  fa-users fa-lg" />
+            14</Button>
             <Button className="btn-chat-label">|</Button>
             <Button className="btn-chat-label">Ref#1234</Button>
           </Breadcrumb>
@@ -301,9 +303,9 @@ class Chat extends Component {
         <TabContent>
           {activeTab.length !== 0
             ? this.renderChat(
-                activeTab[0].ChatRoomKey,
-                activeTab[0].ShipmentKey
-              )
+              activeTab[0].ChatRoomKey,
+              activeTab[0].ShipmentKey
+            )
             : ''}
         </TabContent>
       </div>
