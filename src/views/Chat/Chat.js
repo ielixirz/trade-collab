@@ -174,7 +174,7 @@ class Chat extends Component {
                     </Button>
                   </InputGroupAddon>
                   <Input
-                    placeholder="and..."
+                    placeholder="type...."
                     value={text}
                     onChange={this.props.typing}
                     onKeyPress={event => {
