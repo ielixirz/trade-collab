@@ -1,5 +1,6 @@
 import { FirebaseApp } from '../firebase';
 import { collection } from 'rxfire/firestore';
+import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 const ShipmentRefPath = ShipmentKey => {
@@ -48,7 +49,7 @@ const ChatRoomMessageRefPathOrderByNewerTimestamp = (
 */
 
 export const CreateChatMessage = (ShipmentKey, ChatRoomKey, Data) => {
-  return ChatRoomMessageRefPath(ShipmentKey, ChatRoomKey).add(Data);
+  return from(ChatRoomMessageRefPath(ShipmentKey, ChatRoomKey).add(Data));
 };
 
 export const GetChatMessage = (ShipmentKey, ChatRoomKey) => {
@@ -74,11 +75,11 @@ export const GetChatMessage = (ShipmentKey, ChatRoomKey) => {
 */
 
 export const CreateChatRoom = (ShipmentKey, Data) => {
-  return ShipmentRefPath(ShipmentKey).add(Data);
+  return from(ShipmentRefPath(ShipmentKey).add(Data));
 };
 
 export const EditChatRoom = (ShipmentKey, ChatRoomKey, Data) => {
-  return ChatRoomRefPath(ShipmentKey, ChatRoomKey).update(Data);
+  return from(ChatRoomRefPath(ShipmentKey, ChatRoomKey).update(Data));
 };
 
 /* Example Data AddChatRoomFileLink
@@ -86,5 +87,5 @@ export const EditChatRoom = (ShipmentKey, ChatRoomKey, Data) => {
 */
 
 export const EditChatRoomFileLink = (ShipmentKey, ChatRoomKey, Data) => {
-  return ChatRoomRefPath(ShipmentKey, ChatRoomKey).set({ChatRoomFileLink:Data},{merge:true});
+  return from(ChatRoomRefPath(ShipmentKey, ChatRoomKey).set({ChatRoomFileLink:Data},{merge:true}));
 };

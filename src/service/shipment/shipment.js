@@ -20,9 +20,9 @@ const ShipmentFileRefPath = (ShipmentKey) => {
 */
 
 export const CreateShipmentFile = (ShipmentKey, Data) => {
-    return ShipmentFileRefPath(ShipmentKey).add(Data);
+    return from(ShipmentFileRefPath(ShipmentKey).add(Data));
 };
 
 export const DeleteShipmetFile = (ShipmentKey,ShipmentFileKey) => {
-    return ShipmentFileRefPath(ShipmentKey).doc(ShipmentFileKey).delete();
+    return from(ShipmentFileRefPath(ShipmentKey).doc(ShipmentFileKey).delete());
 };
