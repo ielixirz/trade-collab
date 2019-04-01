@@ -64,7 +64,7 @@ class Chat extends Component {
                     {text}
                   </p>
                 </Col>
-                <Col xs={3}>
+                <Col xs={4}>
                   <span className="time_date"> {status}</span>
                 </Col>
               </Row>
@@ -77,7 +77,7 @@ class Chat extends Component {
         <div className="outgoing_msg">
           <div className="sent_msg">
             <Row>
-              <Col xs={3}>
+              <Col xs={4}>
                 <span className="time_date"> {status}</span>
               </Col>
               <Col>
