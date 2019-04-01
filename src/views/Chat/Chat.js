@@ -123,7 +123,7 @@ class Chat extends Component {
         <Row>
           <Col xs="8" style={{ backgroundColor: 'white', marginTop: '0.5rem' }}>
             <div className="mesgs">
-              <div className="msg_history">
+              <div className="msg_history" ref={(el) => { this.msgChatRef = el; }}>
                 {chat.chatMsg.map((msg, i) => {
                   console.log(msg);
                   var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
@@ -195,6 +195,10 @@ class Chat extends Component {
     );
   }
 
+  scrollChatToBottom() {
+    this.msgChatRef.scrollTop = this.msgChatRef.scrollHeight;
+  }
+
   closedTab(removedIndex, removedID) {
     this.setState((state, props) => {
       let newTabs = [...state.tabs];
@@ -244,7 +248,9 @@ class Chat extends Component {
       </>
     );
   }
-  componentDidUpdate() {}
+  componentDidUpdate() {
+    this.scrollChatToBottom();
+  }
 
   componentDidMount() {
     let chats = this.props.ChatReducer.chatrooms;
