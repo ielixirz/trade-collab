@@ -87,5 +87,10 @@ export const EditChatRoom = (ShipmentKey, ChatRoomKey, Data) => {
 */
 
 export const EditChatRoomFileLink = (ShipmentKey, ChatRoomKey, Data) => {
-  return from(ChatRoomRefPath(ShipmentKey, ChatRoomKey).set({ChatRoomFileLink:Data},{merge:true}));
+  return from(
+    ChatRoomRefPath(ShipmentKey, ChatRoomKey).set(
+      { ChatRoomFileLink: Data },
+      { merge: true }
+    )
+  );
 };

@@ -92,6 +92,7 @@ class Chat extends Component {
       );
     }
   }
+
   renderChat(ChatRoomKey = '', ShipmentKey = '') {
     let chat = _.get(this.props, `ChatReducer.chatrooms.${ChatRoomKey}`, {});
 
@@ -123,7 +124,12 @@ class Chat extends Component {
         <Row>
           <Col xs="8" style={{ backgroundColor: 'white', marginTop: '0.5rem' }}>
             <div className="mesgs">
-              <div className="msg_history" ref={(el) => { this.msgChatRef = el; }}>
+              <div
+                className="msg_history"
+                ref={el => {
+                  this.msgChatRef = el;
+                }}
+              >
                 {chat.chatMsg.map((msg, i) => {
                   console.log(msg);
                   var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
@@ -158,6 +164,12 @@ class Chat extends Component {
                     placeholder="and..."
                     value={text}
                     onChange={this.props.typing}
+                    onKeyPress={event => {
+                      if (event.key === 'Enter') {
+                        console.log('Enter press', event);
+                        this.props.sendMessage(ChatRoomKey, ShipmentKey, text);
+                      }
+                    }}
                   />
                   <InputGroupAddon addonType="append">
                     <Button color="default1"> @</Button>
@@ -168,13 +180,6 @@ class Chat extends Component {
                     <Button
                       color="default1"
                       onClick={() => {
-                        console.log(
-                          'Sending Message',
-                          ChatRoomKey,
-                          ShipmentKey,
-                          text
-                        );
-                        console.log(text);
                         this.props.sendMessage(ChatRoomKey, ShipmentKey, text);
                       }}
                     >
