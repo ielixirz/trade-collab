@@ -131,7 +131,6 @@ class Chat extends Component {
                 }}
               >
                 {chat.chatMsg.map((msg, i) => {
-                  console.log(msg);
                   var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = 'sender';
 
@@ -139,7 +138,6 @@ class Chat extends Component {
                     _.get(this.props, 'user.uid', '0') ===
                     msg.ChatRoomMessageSender
                   ) {
-                    console.log('user is', _.get(this.props, 'user.uid', '0'));
                     type = 'reciever';
                   }
                   let message = {
@@ -148,7 +146,7 @@ class Chat extends Component {
                     name: msg.ChatRoomMessageSender,
                     status: t.toLocaleString()
                   };
-                  console.log(message);
+
                   return this.renderMessage(message);
                 })}
               </div>
