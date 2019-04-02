@@ -226,6 +226,7 @@ class Chat extends Component {
   }
 
   onDragOver = event => {
+    event.stopPropagation();
     event.preventDefault();
   };
 
