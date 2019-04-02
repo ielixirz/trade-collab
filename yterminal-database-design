@@ -1,0 +1,225 @@
++Shipment
+    >ShipmentKey
+        ShipmentReference (array<object>)
+            [{ "RefOwner" : "Seller" , "RefID" : "Ref1234" , "RefTimestampUpdate" : "1234567673242"  }]
+        ShipmentSellerCompanyName (string)
+        ShipmentSourceLocation (string)
+        ShipmentBuyerCompanyName (string)
+        ShipmentDestinationLocation (string)
+        ShipmentProductName (string)
+        ShipmentETD (timestamp)
+        ShipmentETAPort (timestamp)
+        ShipmentETAWarehouse (timestamp)
+        ShipmentStatus (string)
+        ShipmentPriceDescription (string)
+        ShipmentCreatorType (string) *Importer or Exporter
+        ShipmentCreatorUserKey (string)
+        ShipmentCreateTimestamp (timestamp)
+        ShipmentLastestUpdateTimestamp (timestamp)
+        ShipmentMember (Array<object>)
+            [{ UserKey : "123" , Premission : "ShipmentOwner"  }, { UserKey : "123" , Premission : "ShipmentOwner"  } , { UserKey : "123" , Premission : "See Only"  } ]
+        ShipmentShareList (array<string>)
+            ['Shipper','ShipmentDetail','Consignee']
+        +ShipmentShareData
+                >Shipper
+                    ShipperCompanyName (string)
+                    ShipperPier (string)
+                    ShipperDate (timestamp)
+                >ShipmentDetail
+                    ShipmentDetailProduct (string)
+                    ShipmentDetailContainerNumber (string)
+                    ShipmentDetailBillofLandingNumber (string)
+                    ShipmentDetailOriginalDocumentTrackingNumber (string)
+                    ShipmentDetailNote (string)
+                >Consignee
+                    ConsigneeCompanyName (string)
+                    ConsigneePier (string)
+                    ConsigneeDate (timestamp)
+        +ChatRoom
+            >ChatRoomKey
+                ChatRoomName (string)
+                ChatRoomFileLink (Array<object>)
+                    [ {FileName : "FileA.jpg" , FileUrl : "'https://firebasestorage.googleapis.com'" , FileCreateTimestamp : "123123124124124" , FilePath : "/Shipment/{ShipmentKey}/ShipmentFile/{FileKey}" }]
+                ChatRoomMember ()
+                ChatRoomParticipleNotificationToken (Array<string>)
+                ChatRoomShareDataList (Array<string>)
+                    ['Shipper','ShipmentDetail']
+                ChatRoomPrivateShareDataList (array<string>)
+                    ['Trucking']
+                +ChatRoomPrivateShareData
+                    >Trucking
+                        .
+                        .
+                        .
+                +ChatRoomMessage
+                    >ChatRoomMessageKey
+                        ChatRoomMessageSender (string)
+                        ChatRoomMessageContext (string)
+                        ChatRoomMessageFileUrl (string) *Optional
+                        ChatRoomMessageType (string) ['Text','Emoji','Image']
+                        ChatRoomMessageTimestamp (timestamp)
+
+        +ShipmentFile
+            >FileKey
+                FileName (string)
+                FileUrl (string)
+                FileCreateTimestamp (timestamp)
+                FileOwnerKey (string)
+                FileStorgeReference (reference)
+
++UserInfo
+    >UserKey
+        UserInfoUsername (string)
+        UserInfoEmail (string)
+        UserInfoBio (string)
+        UserInfoProfileImageLink (string) *(Note-Ask)
+        UserInfoCreateTimestamp (timestamp)
+        UserInfoAccountType (string)
+        UserInfoCompanyName (string)
+        UserInfoCompanyRelate (string)
+        UserInfoNotificationToken (Array<string>)
+        +Profile
+            >ProfileKey
+                ProfileFirstname (string)
+                ProfileSurname (string)
+                ProfileName (string) *(Note-Ask)
+                ProfileEmail (string)
+                ProfileProfileImageLink (string) *(Note-Ask)
+                ProfileNotificationToken (Array<string>)
+        +UserInvitation (User was recruited)
+            >InvitationKey
+                CompanyInvitationReference (reference)
+                CompanyInvitationCompanyKey (string)
+                CompanyInvitationName (string)
+                CompanyInvitationEmail (string)
+                CompanyInvitationPosition (string)
+                CompanyInvitationRole (string)
+                CompanyInvitationTimestamp (timestamp)
+                CompanyInvitationStatus (string) ('Reject','Approve','Pending')
+        +UserRequest (User looking for a job)
+            >RequestKey
+                CompanyRequestReference (reference)
+                CompanyRequestCompanyKey (string)
+                CompanyRequestCompanyName (string)
+                CompanyRequestNote (string)
+                CompanyRequestTimestamp (timestamp)
+                CompanyRequestStatus (string) ('Cancel','Pending')
+        +UserShipment
+            >UserShipmentKey
+                UserShipmentReference (reference)
+                UserShipmentTimestamp (timestamp)
+        +UserChatRoom
+            >UserChatRoomKey
+                UserChatRoomReference (reference)
+                UserChatRoomTimestamp (timestamp)
+                UserChatRoomLastestTimestamp (timestamp)
+
++UserPersonalize
+    >ProfileKey
+        +ShipmentOrdering
+            >ShipmentKey
+                ChatRoomOrdering (Array<string (ChatRoomKey)>)
+        +ShipmentPin
+            >ShipmentKey
+                ShipmentPin (Array<string (ShipmentKey)>)
+        +ShipmentReferenceDisplay
+            >ShipmentKey
+                ShipmentReferenceSelect (string) [RefOwner]
+                        
++Company
+    >CompanyKey
+        CompanyName (string)
+        CompanyID (string) *(ID is not a key)
+        CompanyImageLink (string)
+        CompanyTelNumber (string)
+        CompanyAddress (string)
+        CompanyWebsiteUrl (string)
+        CompanyEmail (string)
+        CompanyAboutUs (string)
+        +CompanyMember (Array<object>)
+            >UserKey
+                UserMemberEmail (string)
+                UserMemberPosition (string)
+                UserMemberRoleName (string) 
+                UserMatrixRolePermissionCode (string) (Binary number)
+                UserMemberCompanyStandingStatus (string)
+                UserMemberJoinedTimestamp (timestamp)
+        +CompanyInvitation (Company pull who one)
+            >InvitationKey
+                UserInvitationReference (reference)
+                UserInvitationUserKey (string)
+                UserInvitationCompanyKey (string)
+                UserInvitationFristname (string)
+                UserInvitationSurname (string)
+                UserInvitationEmail (string)
+                UserInvitationPosition (string)
+                UserInvitationRole (string)
+                UserInvitationTimestamp (timestamp)
+                UserInvitationStatus (string) ('Cancel','Pending')
+        +CompanyRequest (Who one want to join)
+            >RequestKey
+                UserRequestReference (reference)
+                UserRequestKey (reference)
+                UserRequestUserKey (string)
+                UserRequestCompanyKey (string)
+                UserRequestFristname (string)
+                UserRequestSurname (string)
+                UserRequestEmail (string)
+                UserRequestNote (string)
+                UserRequestTimestamp (timestamp)
+                UserInvitationStatus (string) ('Reject','Approve','Pending')
+        +CompanyUserMatrix
+            >CompanyUserMatrixKey
+                CompanyUserMatrixRoleName (string)
+                CompanyUserMatrixRolePermissionCode (string)
+
++MasterShipmentData *(This collection is static value)
+    >Shipper
+        ShipperCompanyName (string)
+        ShipperPier (string)
+        ShipperDate (timestamp)
+    >ShipmentDetail
+        ShipmentDetailProduct (string)
+        ShipmentDetailContainerNumber (string)
+        ShipmentDetailBillofLandingNumber (string)
+        ShipmentDetailOriginalDocumentTrackingNumber (string)
+        ShipmentDetailNote (string)
+    >Consignee
+        ConsigneeCompanyName (string)
+        ConsigneePier (string)
+        ConsigneeDate (timestamp)
+
+__________________________________________________________________________________
+
+User 
+    A
+        A1 
+        A2
+        A3
+    B
+        B1
+        B2
+
+Ogan
+    A
+        A1 : Owner
+        A2 : Editor
+        A3 : Editor
+        A4 : Observe
+        A5 : Creator
+    B
+        B1 : Owner
+        B2 : Editor
+        B3 : Observe
+
+
+Shipment1
+
+    Owner   Member
+    A       A , B
+
+    Editable 
+
+
+Note - One Chatroom can have many Organ ?
+     - Organ C can invate ? 
