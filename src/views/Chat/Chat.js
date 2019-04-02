@@ -148,7 +148,6 @@ class Chat extends Component {
                 }}
                 onDragOver={this.onDragOver}
                 onDrop={(event) => this.onFileDrop(event, ShipmentKey)}>
-                >
                 {chat.chatMsg.map((msg, i) => {
                   var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = 'sender';
