@@ -1,5 +1,7 @@
 import { FirebaseApp } from '../firebase'
 import { fromTask, put, percentage, getDownloadURL, getMetadata } from 'rxfire/storage';
+import { from } from 'rxjs';
+import { map } from 'rxjs/operators';
 import * as firebase from 'firebase';
 import 'firebase/storage';
 
@@ -7,8 +9,8 @@ const storage = FirebaseApp.storage();
 
 export const PutFile = (StorageRefPath, File) => {
     const RefPath = storage.ref(StorageRefPath)
-    
-    return put(RefPath,File)
+
+    return put(RefPath, File)
 }
 
 export const GetTaskProgress = (ObserablePut) => {
@@ -50,7 +52,7 @@ export const GetMetaDataFromStorageRefPath = (StorageRefPath) => {
 export const GetMetaDataFromURL = (Url) => {
 
     const StorageRefPath = storage.refFromURL(Url)
-    
+
     return GetMetaDataFromStorageRefPath(StorageRefPath)
 }
 

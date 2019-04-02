@@ -16,6 +16,7 @@ import {
 } from 'reactstrap';
 import _ from 'lodash';
 import { GetChatMessage } from '../../service/chat/chat';
+import { PutFile } from '../../service/storage/managestorage';
 
 import {
   typing,
@@ -38,6 +39,7 @@ class Chat extends Component {
     this.moveTab = this.props.moveTab.bind(this);
     this.selectTab = this.props.selectTab.bind(this);
     this.addTab = this.addTab.bind(this);
+    this.putFile = PutFile.bind(this);
     this.state = {
       activeTab: new Array(4).fill('1'),
       text: '',
@@ -144,7 +146,9 @@ class Chat extends Component {
                 ref={el => {
                   this.msgChatRef = el;
                 }}
-              >
+                onDragOver={this.onDragOver}
+                onDrop={(event) => this.onFileDrop(event, ShipmentKey)}>
+                >
                 {chat.chatMsg.map((msg, i) => {
                   var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = 'sender';
@@ -212,6 +216,22 @@ class Chat extends Component {
       </div>
     );
   }
+
+  onFileDrop(event, ShipmentKey) {
+    event.preventDefault();
+    console.log(event);
+    let file = event.dataTransfer.items[0].getAsFile();
+    event.target.value = null;
+    this.putFile(`/Shipment/${ShipmentKey}/${file.name}`, file);
+  }
+
+  onDragOver = event => {
+    event.preventDefault();
+  };
+
+  onDragEnter = event => {
+    event.preventDefault();
+  };
 
   scrollChatToBottom() {
     this.msgChatRef.scrollTop = this.msgChatRef.scrollHeight;
@@ -316,9 +336,9 @@ class Chat extends Component {
         <TabContent>
           {activeTab.length !== 0
             ? this.renderChat(
-                activeTab[0].ChatRoomKey,
-                activeTab[0].ShipmentKey
-              )
+              activeTab[0].ChatRoomKey,
+              activeTab[0].ShipmentKey
+            )
             : ''}
         </TabContent>
       </div>
