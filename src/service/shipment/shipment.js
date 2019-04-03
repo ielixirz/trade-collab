@@ -1,5 +1,6 @@
 import { FirebaseApp } from '../firebase';
 import { collection } from 'rxfire/firestore';
+import { from } from 'rxjs'
 import { map } from 'rxjs/operators';
 
 const ShipmentRefPath = () => {
@@ -33,12 +34,16 @@ const ShipmentFileRefPath = (ShipmentKey) => {
   }
 */
 
-export const CreateShipment = (Data) => {
-  return ShipmentRefPath().add(Data)
-}
+export const CreateShipment = (Data) => (from(ShipmentRefPath().add(Data)))
 
-export const EditShipment = (ShipmentKey,Data) => {
-  return ShipmentRefPath().doc(ShipmentKey).set(Data,{merge:true})
+export const EditShipment = (ShipmentKey,Data) => (from(ShipmentRefPath().doc(ShipmentKey).set(Data,{merge:true})))
+
+
+export const GetShipmentList = (QueryStatus) => {
+
+  const DefaultQuery = collection(ShipmentRefPath().orderBy('ShipmentCreateTimestamp','asc'))
+  
+  return QueryStatus ? DefaultQuery.where('ShipmentStatus','==',QueryStatus) : DefaultQuery
 }
 
 /* Example data CreateShipmentFile
