@@ -37,6 +37,10 @@ export const CreateShipment = (Data) => {
   return ShipmentRefPath().add(Data)
 }
 
+export const EditShipment = (ShipmentKey,Data) => {
+  return ShipmentRefPath().doc(ShipmentKey).set(Data,{merge:true})
+}
+
 /* Example data CreateShipmentFile
   {
     FileName (string)
