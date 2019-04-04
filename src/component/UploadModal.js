@@ -4,7 +4,7 @@ import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { PutFile } from '../../service/storage/managestorage';
 
 export default UploadModal = forwardRef((props, ref) => {
-    const [modal, setModal] = useState(isOpen)
+    const [modal, setModal] = useState(false)
     const [fileName, setFileName] = useState("-")
     const [file, setFile] = useState(null)
 
