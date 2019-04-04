@@ -12,7 +12,8 @@ import {
   Input,
   TabPane,
   Breadcrumb,
-  ButtonGroup
+  ButtonGroup,
+  Modal, ModalBody, ModalFooter, ModalHeader
 } from 'reactstrap';
 import _ from 'lodash';
 import { GetChatMessage } from '../../service/chat/chat';
@@ -43,7 +44,8 @@ class Chat extends Component {
     this.state = {
       activeTab: new Array(4).fill('1'),
       text: '',
-      tabs: []
+      tabs: [],
+      onDropChatStyle: false
     };
   }
 
@@ -140,13 +142,14 @@ class Chat extends Component {
         </Row>
         <Row>
           <Col xs="8" style={{ backgroundColor: 'white', marginTop: '0.5rem' }}>
-            <div className="mesgs">
+            <div className="mesgs" style={this.state.onDropChatStyle === false ? {} : { opacity: '0.5' }}>
               <div
                 className="msg_history"
                 ref={el => {
                   this.msgChatRef = el;
                 }}
                 onDragOver={this.onDragOver}
+                onDragLeave={this.onDragLeave}
                 onDrop={(event) => this.onFileDrop(event, ShipmentKey)}>
                 {chat.chatMsg.map((msg, i) => {
                   var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
@@ -218,16 +221,29 @@ class Chat extends Component {
 
   onFileDrop(event, ShipmentKey) {
     event.preventDefault();
-    console.log(event);
     let file = event.dataTransfer.items[0].getAsFile();
     event.target.value = null;
-    this.putFile(`/Shipment/${ShipmentKey}/${file.name}`, file);
+    // this.putFile(`/Shipment/${ShipmentKey}/${file.name}`, file);
+    this.setState({
+      onDropChatStyle: false
+    })
   }
 
   onDragOver = event => {
     event.stopPropagation();
     event.preventDefault();
+    this.setState({
+      onDropChatStyle: true
+    })
   };
+
+  onDragLeave = event => {
+    event.stopPropagation();
+    event.preventDefault();
+    this.setState({
+      onDropChatStyle: false
+    })
+  }
 
   onDragEnter = event => {
     event.preventDefault();
