@@ -1,20 +1,34 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, forwardRef, useRef, useImperativeHandle } from 'react'
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 
-export default UploadModal = ({ file }) => {
-    const [modal, setModal] = useState(false)
+import { PutFile } from '../../service/storage/managestorage';
+
+export default UploadModal = forwardRef(({ file, isOpen }, ref) => {
+    const [modal, setModal] = useState(isOpen)
+    const [fileName, setFileName] = useState("-")
+    const [file, setFile] = useState(null)
 
     const toggle = () => {
         setModal(!modal)
     };
 
-    useEffect(() => {
-        console.log(file)
-    });
+    const upload = () => {
+        PutFile(`/Shipment/${ShipmentKey}/${file.name}`, file);
+    }
+
+    useImperativeHandle(ref, () => ({
+
+        triggerUploading(file) {
+            setFileName(file.name)
+            setFile(file)
+            toggle();
+        }
+
+    }));
 
     return (
         <Modal isOpen={modal} toggle={toggle} className="upload-modal">
-            <ModalHeader toggle={toggle}>Uploading: {file.name}</ModalHeader>
+            <ModalHeader toggle={toggle}>Uploading: {fileName}</ModalHeader>
             <ModalBody>
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
                 et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
@@ -28,4 +42,4 @@ export default UploadModal = ({ file }) => {
             </ModalFooter>
         </Modal>
     );
-}
+});
