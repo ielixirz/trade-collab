@@ -1,45 +1,79 @@
-import React, { useState, useEffect, forwardRef, useRef, useImperativeHandle } from 'react'
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import React, { useState, forwardRef, useRef, useImperativeHandle } from 'react'
+import { Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import { connect } from 'react-redux';
 
-import { PutFile } from '../../service/storage/managestorage';
 
-export default UploadModal = forwardRef((props, ref) => {
+import { PutFile } from '../service/storage/managestorage';
+
+const UploadModal = forwardRef((props, ref) => {
     const [modal, setModal] = useState(false)
     const [fileName, setFileName] = useState("-")
     const [file, setFile] = useState(null)
+    const [shipmentKey, setShipmentKey] = useState(null)
+    const [chatRoomKey, setChatRoomKey] = useState(null)
+    const [message, setMessage] = useState("")
+
+    const messageRef = useRef();
 
     const toggle = () => {
         setModal(!modal)
     };
 
     const upload = () => {
-        PutFile(`/Shipment/${ShipmentKey}/${file.name}`, file);
+        if (file !== null) {
+            PutFile(`/Shipment/${shipmentKey}/${fileName}`, file);
+        }
+        toggle();
+        props.sendMessage(chatRoomKey, shipmentKey, `${message} [ ${fileName} ]`);
     }
 
     useImperativeHandle(ref, () => ({
 
-        triggerUploading(file) {
-            setFileName(file.name)
-            setFile(file)
+        triggerUploading(file, shipmentKey, chatRoomKey) {
+            console.log(file)
+            if (file !== undefined) {
+                setFileName(file.name)
+                setFile(file)
+            }
+            setChatRoomKey(chatRoomKey)
+            setShipmentKey(shipmentKey)
             toggle();
         }
 
     }));
 
+    const handleMessageChange = (event) => {
+        setMessage(event.target.value)
+    }
+
     return (
         <Modal isOpen={modal} toggle={toggle} className="upload-modal">
-            <ModalHeader toggle={toggle}>Uploading: {fileName}</ModalHeader>
+            <ModalHeader toggle={toggle}><b>Upload a file</b></ModalHeader>
             <ModalBody>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
-                et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                culpa qui officia deserunt mollit anim id est laborum.
-                  </ModalBody>
+                <Input
+                    type="textarea"
+                    name="textarea-input"
+                    id="textarea-input"
+                    rows="9"
+                    placeholder="Add a message about the file"
+                    ref={messageRef}
+                    value={message}
+                    onChange={handleMessageChange}
+                />
+                <Label htmlFor="filename" style={{ marginTop: '0.5rem' }}><b>File name</b></Label>
+                <Input
+                    type="text"
+                    id="filename"
+                    placeholder=""
+                    disabled
+                    value={fileName}
+                />
+            </ModalBody>
             <ModalFooter>
-                <Button color="primary" onClick={toggle}>Upload</Button>{' '}
-                <Button color="secondary" onClick={toggle}>Cancel</Button>
+                <Button color="primary" onClick={upload}>Upload</Button>{' '}
             </ModalFooter>
         </Modal>
     );
 });
+
+export default UploadModal

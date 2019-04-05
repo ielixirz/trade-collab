@@ -32,6 +32,7 @@ import Tabs from 'react-draggable-tabs';
 import './Chat.css';
 import ShipmentSide from './ShipmentSide';
 import FileSide from './FileSide';
+import UploadModal from '../../component/UploadModal'
 
 class Chat extends Component {
   constructor(props) {
@@ -47,6 +48,9 @@ class Chat extends Component {
       tabs: [],
       onDropChatStyle: false
     };
+
+    this.uploadModalRef = React.createRef();
+    this.fileInput = React.createRef();
   }
 
   renderMessage(message) {
@@ -150,7 +154,7 @@ class Chat extends Component {
                 }}
                 onDragOver={this.onDragOver}
                 onDragLeave={this.onDragLeave}
-                onDrop={(event) => this.onFileDrop(event, ShipmentKey)}>
+                onDrop={(event) => this.onFileDrop(event, ShipmentKey, ChatRoomKey)}>
                 {chat.chatMsg.map((msg, i) => {
                   var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = 'sender';
@@ -172,12 +176,15 @@ class Chat extends Component {
                 })}
               </div>
               <div className="type_msg">
+                <UploadModal sendMessage={this.props.sendMessage} ref={this.uploadModalRef}></UploadModal>
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">
-                    <Button color="default">
+                    <Button color="default" onClick={() => this.browseFile(ShipmentKey)}>
                       {' '}
                       <i className="fa fa-plus fa-lg" />
                     </Button>
+                    <input type="file" id="file" ref={this.fileInput} style={{ display: "none" }}
+                      onChange={(event) => this.uploadModalRef.current.triggerUploading(event.target.files[0], ShipmentKey, ChatRoomKey)} />
                   </InputGroupAddon>
                   <Input
                     placeholder="type...."
@@ -219,11 +226,16 @@ class Chat extends Component {
     );
   }
 
-  onFileDrop(event, ShipmentKey) {
+  browseFile() {
+    this.fileInput.current.value = null;
+    this.fileInput.current.click();
+  }
+
+  onFileDrop(event, ShipmentKey, ChatRoomKey) {
     event.preventDefault();
     let file = event.dataTransfer.items[0].getAsFile();
     event.target.value = null;
-    // this.putFile(`/Shipment/${ShipmentKey}/${file.name}`, file);
+    this.uploadModalRef.current.triggerUploading(file, ShipmentKey, ChatRoomKey)
     this.setState({
       onDropChatStyle: false
     })
@@ -238,7 +250,6 @@ class Chat extends Component {
   };
 
   onDragLeave = event => {
-    event.stopPropagation();
     event.preventDefault();
     this.setState({
       onDropChatStyle: false
