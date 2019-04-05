@@ -12,7 +12,8 @@ import {
   Input,
   TabPane,
   Breadcrumb,
-  ButtonGroup
+  ButtonGroup,
+  Modal, ModalBody, ModalFooter, ModalHeader
 } from 'reactstrap';
 import _ from 'lodash';
 import { GetChatMessage } from '../../service/chat/chat';
@@ -31,6 +32,7 @@ import Tabs from 'react-draggable-tabs';
 import './Chat.css';
 import ShipmentSide from './ShipmentSide';
 import FileSide from './FileSide';
+import UploadModal from '../../component/UploadModal'
 
 class Chat extends Component {
   constructor(props) {
@@ -43,8 +45,12 @@ class Chat extends Component {
     this.state = {
       activeTab: new Array(4).fill('1'),
       text: '',
-      tabs: []
+      tabs: [],
+      onDropChatStyle: false
     };
+
+    this.uploadModalRef = React.createRef();
+    this.fileInput = React.createRef();
   }
 
   renderMessage(message) {
@@ -140,14 +146,15 @@ class Chat extends Component {
         </Row>
         <Row>
           <Col xs="8" style={{ backgroundColor: 'white', marginTop: '0.5rem' }}>
-            <div className="mesgs">
+            <div className="mesgs" style={this.state.onDropChatStyle === false ? {} : { opacity: '0.5' }}>
               <div
                 className="msg_history"
                 ref={el => {
                   this.msgChatRef = el;
                 }}
                 onDragOver={this.onDragOver}
-                onDrop={(event) => this.onFileDrop(event, ShipmentKey)}>
+                onDragLeave={this.onDragLeave}
+                onDrop={(event) => this.onFileDrop(event, ShipmentKey, ChatRoomKey)}>
                 {chat.chatMsg.map((msg, i) => {
                   var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = 'sender';
@@ -169,12 +176,15 @@ class Chat extends Component {
                 })}
               </div>
               <div className="type_msg">
+                <UploadModal sendMessage={this.props.sendMessage} ref={this.uploadModalRef}></UploadModal>
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">
-                    <Button color="default">
+                    <Button color="default" onClick={() => this.browseFile(ShipmentKey)}>
                       {' '}
                       <i className="fa fa-plus fa-lg" />
                     </Button>
+                    <input type="file" id="file" ref={this.fileInput} style={{ display: "none" }}
+                      onChange={(event) => this.uploadModalRef.current.triggerUploading(event.target.files[0], ShipmentKey, ChatRoomKey)} />
                   </InputGroupAddon>
                   <Input
                     placeholder="type...."
@@ -216,18 +226,35 @@ class Chat extends Component {
     );
   }
 
-  onFileDrop(event, ShipmentKey) {
+  browseFile() {
+    this.fileInput.current.value = null;
+    this.fileInput.current.click();
+  }
+
+  onFileDrop(event, ShipmentKey, ChatRoomKey) {
     event.preventDefault();
-    console.log(event);
     let file = event.dataTransfer.items[0].getAsFile();
     event.target.value = null;
-    this.putFile(`/Shipment/${ShipmentKey}/${file.name}`, file);
+    this.uploadModalRef.current.triggerUploading(file, ShipmentKey, ChatRoomKey)
+    this.setState({
+      onDropChatStyle: false
+    })
   }
 
   onDragOver = event => {
     event.stopPropagation();
     event.preventDefault();
+    this.setState({
+      onDropChatStyle: true
+    })
   };
+
+  onDragLeave = event => {
+    event.preventDefault();
+    this.setState({
+      onDropChatStyle: false
+    })
+  }
 
   onDragEnter = event => {
     event.preventDefault();
