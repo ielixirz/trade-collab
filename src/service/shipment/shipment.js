@@ -67,3 +67,5 @@ export const CreateShipmentFile = (ShipmentKey, Data) => {
 export const DeleteShipmetFile = (ShipmentKey,ShipmentFileKey) => {
     return from(ShipmentFileRefPath(ShipmentKey).doc(ShipmentFileKey).delete());
 };
+
+export const GetShipmentFileList = (ShipmentKey) => ( collection(ShipmentFileRefPath(ShipmentKey).orderBy('FileCreateTimestamp','asc')) )
