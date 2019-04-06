@@ -1,6 +1,11 @@
 import { FirebaseApp } from '../firebase';
-import { collection } from 'rxfire/firestore';
+import { collection, doc } from 'rxfire/firestore';
+import { from } from 'rxjs'
 import { map } from 'rxjs/operators';
+
+const ShipmentRefPath = () => {
+  return FirebaseApp.firestore().collection(`Shipment`)
+}
 
 const ShipmentFileRefPath = (ShipmentKey) => {
     return FirebaseApp.firestore()
@@ -8,6 +13,42 @@ const ShipmentFileRefPath = (ShipmentKey) => {
       .doc(ShipmentKey)
       .collection(`ShipmentFile`);
   };
+
+/* ex. CreateShipment
+  {
+        ShipmentReference (array<object>)
+          [{ "RefOwner" : "Seller" , "RefID" : "Ref1234" , "RefTimestampUpdate" : "1234567673242"  }]
+        ShipmentSellerCompanyName (string)
+        ShipmentSourceLocation (string)
+        ShipmentBuyerCompanyName (string)
+        ShipmentDestinationLocation (string)
+        ShipmentProductName (string)
+        ShipmentETD (timestamp)
+        ShipmentETAPort (timestamp)
+        ShipmentETAWarehouse (timestamp)
+        ShipmentStatus (string)
+        ShipmentPriceDescription (string)
+        ShipmentCreatorType (string) *Importer or Exporter
+        ShipmentCreatorUserKey (string)
+        ShipmentCreateTimestamp (timestamp)
+  }
+*/
+
+export const CreateShipment = (Data) => (from(ShipmentRefPath().add(Data)))
+
+export const EditShipment = (ShipmentKey,Data) => (from(ShipmentRefPath().doc(ShipmentKey).set(Data,{merge:true})))
+
+export const GetShipmentList = (QueryStatus,QueryFieldName,QueryFieldDirection = 'asc') => {
+
+  const DefaultQuery = ShipmentRefPath().orderBy('ShipmentCreateTimestamp','asc')
+
+  if (QueryStatus && QueryFieldName) return collection(DefaultQuery.orderBy(QueryFieldName,QueryFieldDirection).where('ShipmentStatus','==',QueryStatus))
+  else if (QueryStatus) return collection(DefaultQuery.where('ShipmentStatus','==',QueryStatus))
+  else if (QueryFieldName) return collection(DefaultQuery.orderBy(QueryFieldName,QueryFieldDirection))
+  else return DefaultQuery
+}
+
+export const GetShipmentDetail = (ShipmentKey) => (doc(ShipmentRefPath().doc(ShipmentKey)))
 
 /* Example data CreateShipmentFile
   {
@@ -26,3 +67,5 @@ export const CreateShipmentFile = (ShipmentKey, Data) => {
 export const DeleteShipmetFile = (ShipmentKey,ShipmentFileKey) => {
     return from(ShipmentFileRefPath(ShipmentKey).doc(ShipmentFileKey).delete());
 };
+
+export const GetShipmentFileList = (ShipmentKey) => ( collection(ShipmentFileRefPath(ShipmentKey).orderBy('FileCreateTimestamp','asc')) )
