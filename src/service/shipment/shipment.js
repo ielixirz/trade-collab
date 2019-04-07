@@ -1,7 +1,6 @@
 import { FirebaseApp } from '../firebase';
 import { collection, doc } from 'rxfire/firestore';
 import { from } from 'rxjs'
-import { map } from 'rxjs/operators';
 
 const ShipmentRefPath = () => {
   return FirebaseApp.firestore().collection(`Shipment`)
@@ -68,4 +67,4 @@ export const DeleteShipmetFile = (ShipmentKey,ShipmentFileKey) => {
     return from(ShipmentFileRefPath(ShipmentKey).doc(ShipmentFileKey).delete());
 };
 
-export const GetShipmentFileList = (ShipmentKey) => ( collection(ShipmentFileRefPath(ShipmentKey).orderBy('FileCreateTimestamp','asc')).pipe(map(docs => docs.map(d => d.data()))) )
+export const GetShipmentFileList = (ShipmentKey) => ( collection(ShipmentFileRefPath(ShipmentKey).orderBy('FileCreateTimestamp','desc')))
