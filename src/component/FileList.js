@@ -34,6 +34,7 @@ export default function FileList({ shipmentKey }) {
   }, shipmentKey);
 
   const props = useMappedState(mapState);
+
   useEffect(() => {
     const ShipmentKey = shipmentKey;
     fetchFiles(ShipmentKey);
@@ -42,10 +43,10 @@ export default function FileList({ shipmentKey }) {
   const { collection = [] } = props;
   return (
     <div>
-      {collection.map(s => {
+      {collection.map((s, index) => {
         console.log(s);
         return (
-          <ListGroup flush key={s.FileOwnerKey}>
+          <ListGroup flush key={index}>
             <ListGroupItem disabled tag="a">
               <Row>
                 <Col xs="1">
