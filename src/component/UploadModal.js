@@ -22,17 +22,25 @@ const UploadModal = forwardRef((props, ref) => {
         if (file !== null) {
             let storageRefPath = `/Shipment/${shipmentKey}/${fileName}`;
             PutFile(storageRefPath, file);
-            GetMetaDataFromStorageRefPath(storageRefPath).then((metaData) => {
-                CreateShipmentFile(shipmentKey,
-                    {
-                        FileName: metaData.name,
-                        FileUrl: metaData.fullPath,
-                        FileCreateTimestamp: metaData.timeCreated,
-                        FileOwnerKey: "mockKey",
-                        FileStorgeReference: metaData.fullPath
-                    }
-                )
-            })
+            GetMetaDataFromStorageRefPath(storageRefPath)
+                .subscribe({
+                    next: metaData => {
+                        CreateShipmentFile(shipmentKey,
+                            {
+                                FileName: metaData.name,
+                                FileUrl: metaData.fullPath,
+                                FileCreateTimestamp: metaData.timeCreated,
+                                FileOwnerKey: "mockKey",
+                                FileStorgeReference: metaData.fullPath
+                            }
+                        )
+                    },
+                    error: err => {
+                        console.log(err);
+                        alert(err.message);
+                    },
+                    complete: () => { 'TO DO LOG' }
+                });;
         }
         toggle();
         props.sendMessage(chatRoomKey, shipmentKey, `${message} [ ${fileName} ]`);
