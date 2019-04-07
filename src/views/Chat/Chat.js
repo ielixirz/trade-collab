@@ -218,7 +218,7 @@ class Chat extends Component {
             </div>
           </Col>
           <Col xs="4" style={{ paddingLeft: '0.3rem', marginTop: '0.6rem' }}>
-            <FileSide />
+            <FileSide shipmentKey={ShipmentKey}/>
             <ShipmentSide />
           </Col>
         </Row>

@@ -1,21 +1,40 @@
-import React,{useContext}  from 'react';
-import FileListContext from '../context/FileContext';
-import { ListGroup, ListGroupItem,Row,Col } from 'reactstrap';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { ListGroup, ListGroupItem, Row, Col } from 'reactstrap';
+import {
+  fetchFiles,
+} from '../actions/fileActions';
 
-export default function FileList(){
- const { state } =  useContext(FileListContext);
- return (
-     <div>   
-     {state.FileList.map(s => (
-        <ListGroup flush key={s.id}>
-        <ListGroupItem  disabled tag="a"><Row>
-          <Col xs="1"><i className="fa fa-file-picture-o"></i></Col>
-          <Col xs="11" className="text-left">{s.name}</Col>
-        </Row></ListGroupItem>
-        </ListGroup>
-     ))}    
-     </div>
-    
- )
+class FileList extends Component {
+  componentDidMount() {
+    const ShipmentKey = this.props.shipmentKey;
+    this.props.fetchFiles(ShipmentKey);
+  }
+
+  render() {
+    const { collection = [] } = this.props;
+    return (
+      <div>
+        {collection.map(s => {
+          console.log(s)
+          return (
+            <ListGroup flush key={s.FileOwnerKey}>
+              <ListGroupItem disabled tag="a"><Row>
+                <Col xs="1"><i className="fa fa-file-picture-o"></i></Col>
+                <Col xs="11" className="text-left">{s.FileName}</Col>
+              </Row></ListGroupItem>
+            </ListGroup>
+          )
+        })}
+      </div>)
+  }
 }
 
+const mapStateToProps = state => {
+  return { collection: state.FileReducer }
+}
+
+export default connect(
+  mapStateToProps,
+  { fetchFiles }
+)(FileList);
