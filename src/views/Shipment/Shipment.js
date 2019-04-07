@@ -1,5 +1,15 @@
 import React, { Component } from 'react';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Container, Button, Row, Col } from 'reactstrap';
+import {
+  TabContent,
+  TabPane,
+  Nav,
+  NavItem,
+  NavLink,
+  Container,
+  Button,
+  Row,
+  Col
+} from 'reactstrap';
 import classnames from 'classnames';
 import TableShipment from './TableShipment';
 class Shipment extends Component {
@@ -22,62 +32,70 @@ class Shipment extends Component {
   render() {
     return (
       <Container>
-      <div>
-        <Nav>
-          <NavItem>
-            <NavLink
-              className={classnames({ active: this.state.activeTab === '1' })}
-              onClick={() => { this.toggle('1'); }}
-            >
-              Alert |
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink
-              className={classnames({ active: this.state.activeTab === '2' })}
-              onClick={() => { this.toggle('2'); }}
-            >
-              Plan  |
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink
-              className={classnames({ active: this.state.activeTab === '3' })}
-              onClick={() => { this.toggle('3'); }}
-            >
-              Active
-            </NavLink>
-          </NavItem>
-          <Nav className="ml-auto" navbar>
-          <NavItem>
-          <Button color="success" right>Create New Shipment</Button>
-          </NavItem>
+        <div>
+          <Nav>
+            <NavItem>
+              <NavLink
+                className={classnames({ active: this.state.activeTab === '1' })}
+                onClick={() => {
+                  this.toggle('1');
+                }}
+              >
+                Alert |
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                className={classnames({ active: this.state.activeTab === '2' })}
+                onClick={() => {
+                  this.toggle('2');
+                }}
+              >
+                Plan |
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                className={classnames({ active: this.state.activeTab === '3' })}
+                onClick={() => {
+                  this.toggle('3');
+                }}
+              >
+                Active
+              </NavLink>
+            </NavItem>
+            <Nav className="ml-auto" navbar>
+              <NavItem>
+                <Button color="success" right>
+                  Create New Shipment
+                </Button>
+              </NavItem>
+            </Nav>
           </Nav>
-        </Nav>
-        <TabContent activeTab={this.state.activeTab}>
-          <TabPane tabId="1">
-            <Row>
-              <Col sm="12">
-                <TableShipment/>
-              </Col>
-            </Row>
-          </TabPane>
-          <TabPane tabId="2">
-            <Row>
-              <Col sm="6">
-              <h4>Tab 2 Contents</h4>
-              </Col>
-            </Row>
-          </TabPane>
-          <TabPane tabId="3">
-            <Row>
-              <Col sm="6">
-              <h4>Tab 3Contents</h4>
-              </Col>
-            </Row>
-          </TabPane>
-        </TabContent>
-      </div>
+          <TabContent activeTab={this.state.activeTab}>
+            <TabPane tabId="1">
+              <Row>
+                <Col sm="12">
+                  <TableShipment />
+                </Col>
+              </Row>
+            </TabPane>
+            <TabPane tabId="2">
+              <Row>
+                <Col sm="6">
+                  <h4>Tab 2 Contents</h4>
+                </Col>
+              </Row>
+            </TabPane>
+            <TabPane tabId="3">
+              <Row>
+                <Col sm="6">
+                  <h4>Tab 3Contents</h4>
+                </Col>
+              </Row>
+            </TabPane>
+          </TabContent>
+        </div>
       </Container>
     );
   }

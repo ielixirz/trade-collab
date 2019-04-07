@@ -147,7 +147,8 @@ class Chat extends Component {
                   this.msgChatRef = el;
                 }}
                 onDragOver={this.onDragOver}
-                onDrop={(event) => this.onFileDrop(event, ShipmentKey)}>
+                onDrop={event => this.onFileDrop(event, ShipmentKey)}
+              >
                 {chat.chatMsg.map((msg, i) => {
                   var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = 'sender';
@@ -336,9 +337,9 @@ class Chat extends Component {
         <TabContent>
           {activeTab.length !== 0
             ? this.renderChat(
-              activeTab[0].ChatRoomKey,
-              activeTab[0].ShipmentKey
-            )
+                activeTab[0].ChatRoomKey,
+                activeTab[0].ShipmentKey
+              )
             : ''}
         </TabContent>
       </div>
