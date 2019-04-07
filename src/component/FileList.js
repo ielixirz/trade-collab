@@ -1,37 +1,15 @@
 import React, { useEffect, useCallback } from 'react';
 import { ListGroup, ListGroupItem, Row, Col } from 'reactstrap';
-import { useDispatch, useMappedState } from 'redux-react-hook';
-import { GetShipmentFileList } from '../service/shipment/shipment';
-import { map } from 'rxjs/operators';
-import { FETCH_FILES } from '../constants/constants';
+import { useMappedState } from 'redux-react-hook';
+import { fetchFiles } from '../actions/fileActions';
 
-export default function FileList({ shipmentKey }) {
+const FileList = ({ shipmentKey }) => {
   const mapState = useCallback(
     state => ({
       collection: state.FileReducer
     }),
     []
   );
-  console.log(shipmentKey);
-  const dispatch = useDispatch();
-  const fetchFiles = useCallback(shipmentKey => {
-    GetShipmentFileList(shipmentKey)
-      .pipe(map(docs => docs.map(d => d.data())))
-      .subscribe({
-        next: res => {
-          dispatch({
-            type: FETCH_FILES,
-            id: shipmentKey,
-            payload: res
-          });
-        },
-        error: err => {
-          console.log(err);
-          alert(err.message);
-        },
-        complete: () => {}
-      });
-  }, shipmentKey);
 
   const props = useMappedState(mapState);
 
@@ -63,3 +41,5 @@ export default function FileList({ shipmentKey }) {
     </div>
   );
 }
+
+export default FileList
