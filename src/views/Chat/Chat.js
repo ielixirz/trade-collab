@@ -13,7 +13,10 @@ import {
   TabPane,
   Breadcrumb,
   ButtonGroup,
-  Modal, ModalBody, ModalFooter, ModalHeader
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader
 } from 'reactstrap';
 import _ from 'lodash';
 import { GetChatMessage } from '../../service/chat/chat';
@@ -27,9 +30,7 @@ import {
   selectTab
 } from '../../actions/chatActions';
 
-import {
-  fetchFiles,
-} from '../../actions/fileActions';
+import { fetchFiles } from '../../actions/fileActions';
 
 import { connect } from 'react-redux';
 
@@ -37,7 +38,7 @@ import Tabs from 'react-draggable-tabs';
 import './Chat.css';
 import ShipmentSide from './ShipmentSide';
 import FileSide from './FileSide';
-import UploadModal from '../../component/UploadModal'
+import UploadModal from '../../component/UploadModal';
 
 class Chat extends Component {
   constructor(props) {
@@ -151,7 +152,12 @@ class Chat extends Component {
         </Row>
         <Row>
           <Col xs="8" style={{ backgroundColor: 'white', marginTop: '0.5rem' }}>
-            <div className="mesgs" style={this.state.onDropChatStyle === false ? {} : { opacity: '0.5' }}>
+            <div
+              className="mesgs"
+              style={
+                this.state.onDropChatStyle === false ? {} : { opacity: '0.5' }
+              }
+            >
               <div
                 className="msg_history"
                 ref={el => {
@@ -159,7 +165,10 @@ class Chat extends Component {
                 }}
                 onDragOver={this.onDragOver}
                 onDragLeave={this.onDragLeave}
-                onDrop={(event) => this.onFileDrop(event, ShipmentKey, ChatRoomKey)}>
+                onDrop={event =>
+                  this.onFileDrop(event, ShipmentKey, ChatRoomKey)
+                }
+              >
                 {chat.chatMsg.map((msg, i) => {
                   var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = 'sender';
@@ -181,15 +190,33 @@ class Chat extends Component {
                 })}
               </div>
               <div className="type_msg">
-                <UploadModal sendMessage={this.props.sendMessage} fetchFiles={this.props.fetchFiles} ref={this.uploadModalRef}></UploadModal>
+                <UploadModal
+                  sendMessage={this.props.sendMessage}
+                  fetchFiles={this.props.fetchFiles}
+                  ref={this.uploadModalRef}
+                />
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">
-                    <Button color="default" onClick={() => this.browseFile(ShipmentKey)}>
+                    <Button
+                      color="default"
+                      onClick={() => this.browseFile(ShipmentKey)}
+                    >
                       {' '}
                       <i className="fa fa-plus fa-lg" />
                     </Button>
-                    <input type="file" id="file" ref={this.fileInput} style={{ display: "none" }}
-                      onChange={(event) => this.uploadModalRef.current.triggerUploading(event.target.files[0], ShipmentKey, ChatRoomKey)} />
+                    <input
+                      type="file"
+                      id="file"
+                      ref={this.fileInput}
+                      style={{ display: 'none' }}
+                      onChange={event =>
+                        this.uploadModalRef.current.triggerUploading(
+                          event.target.files[0],
+                          ShipmentKey,
+                          ChatRoomKey
+                        )
+                      }
+                    />
                   </InputGroupAddon>
                   <Input
                     placeholder="type...."
@@ -240,10 +267,14 @@ class Chat extends Component {
     event.preventDefault();
     let file = event.dataTransfer.items[0].getAsFile();
     event.target.value = null;
-    this.uploadModalRef.current.triggerUploading(file, ShipmentKey, ChatRoomKey)
+    this.uploadModalRef.current.triggerUploading(
+      file,
+      ShipmentKey,
+      ChatRoomKey
+    );
     this.setState({
       onDropChatStyle: false
-    })
+    });
   }
 
   onDragOver = event => {
@@ -251,15 +282,15 @@ class Chat extends Component {
     event.preventDefault();
     this.setState({
       onDropChatStyle: true
-    })
+    });
   };
 
   onDragLeave = event => {
     event.preventDefault();
     this.setState({
       onDropChatStyle: false
-    })
-  }
+    });
+  };
 
   onDragEnter = event => {
     event.preventDefault();
@@ -368,9 +399,9 @@ class Chat extends Component {
         <TabContent>
           {activeTab.length !== 0
             ? this.renderChat(
-              activeTab[0].ChatRoomKey,
-              activeTab[0].ShipmentKey
-            )
+                activeTab[0].ChatRoomKey,
+                activeTab[0].ShipmentKey
+              )
             : ''}
         </TabContent>
       </div>

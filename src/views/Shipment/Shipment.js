@@ -30,10 +30,7 @@ class Shipment extends Component {
   }
 
   render() {
-    return (
-      <div className="animated fadeIn">
-      </div>
-    );
+    return <div className="animated fadeIn" />;
   }
 }
 
