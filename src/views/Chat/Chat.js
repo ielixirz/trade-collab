@@ -30,8 +30,6 @@ import {
   selectTab
 } from '../../actions/chatActions';
 
-import { fetchFiles } from '../../actions/fileActions';
-
 import { connect } from 'react-redux';
 
 import Tabs from 'react-draggable-tabs';
@@ -192,7 +190,6 @@ class Chat extends Component {
               <div className="type_msg">
                 <UploadModal
                   sendMessage={this.props.sendMessage}
-                  fetchFiles={this.props.fetchFiles}
                   ref={this.uploadModalRef}
                 />
                 <InputGroup>
@@ -399,9 +396,9 @@ class Chat extends Component {
         <TabContent>
           {activeTab.length !== 0
             ? this.renderChat(
-                activeTab[0].ChatRoomKey,
-                activeTab[0].ShipmentKey
-              )
+              activeTab[0].ChatRoomKey,
+              activeTab[0].ShipmentKey
+            )
             : ''}
         </TabContent>
       </div>
@@ -418,5 +415,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { typing, fetchChatMessage, sendMessage, moveTab, selectTab, fetchFiles }
+  { typing, fetchChatMessage, sendMessage, moveTab, selectTab }
 )(Chat);

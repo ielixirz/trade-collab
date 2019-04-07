@@ -1,4 +1,4 @@
-import React, { Component, useContext, useReducer } from 'react';
+import React, { Component } from 'react';
 
 import {
   Collapse, CardBody, Card, Row, Col

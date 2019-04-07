@@ -3,6 +3,11 @@ import { Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader } from
 
 import { PutFile, GetMetaDataFromStorageRefPath } from '../service/storage/managestorage';
 import { CreateShipmentFile } from '../service/shipment/shipment';
+import { fetchFiles } from '../actions/fileActions';
+
+import { useDispatch } from 'redux-react-hook';
+
+
 
 const UploadModal = forwardRef((props, ref) => {
     const [modal, setModal] = useState(false)
@@ -11,6 +16,8 @@ const UploadModal = forwardRef((props, ref) => {
     const [shipmentKey, setShipmentKey] = useState(null)
     const [chatRoomKey, setChatRoomKey] = useState(null)
     const [message, setMessage] = useState("")
+
+    const dispatch = useDispatch();
 
     const messageRef = useRef();
 
@@ -44,7 +51,7 @@ const UploadModal = forwardRef((props, ref) => {
         }
         toggle();
         props.sendMessage(chatRoomKey, shipmentKey, `${message} [ ${fileName} ]`);
-        props.fetchFiles(shipmentKey);
+        fetchFiles(shipmentKey, dispatch);
     }
 
     useImperativeHandle(ref, () => ({

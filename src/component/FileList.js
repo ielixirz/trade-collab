@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { ListGroup, ListGroupItem, Row, Col } from 'reactstrap';
-import { useMappedState } from 'redux-react-hook';
+import { useMappedState, useDispatch } from 'redux-react-hook';
 import { fetchFiles } from '../actions/fileActions';
 
 const FileList = ({ shipmentKey }) => {
@@ -10,12 +10,12 @@ const FileList = ({ shipmentKey }) => {
     }),
     []
   );
-
+  const dispatch = useDispatch();
   const props = useMappedState(mapState);
 
   useEffect(() => {
     const ShipmentKey = shipmentKey;
-    fetchFiles(ShipmentKey);
+    fetchFiles(ShipmentKey, dispatch);
   }, []);
 
   const { collection = [] } = props;
