@@ -28,26 +28,35 @@ const UploadModal = forwardRef((props, ref) => {
     const upload = () => {
         if (file !== null) {
             let storageRefPath = `/Shipment/${shipmentKey}/${fileName}`;
-            PutFile(storageRefPath, file);
-            GetMetaDataFromStorageRefPath(storageRefPath)
-                .subscribe({
-                    next: metaData => {
-                        CreateShipmentFile(shipmentKey,
-                            {
-                                FileName: metaData.name,
-                                FileUrl: metaData.fullPath,
-                                FileCreateTimestamp: metaData.timeCreated,
-                                FileOwnerKey: "mockKey",
-                                FileStorgeReference: metaData.fullPath
-                            }
-                        )
-                    },
-                    error: err => {
-                        console.log(err);
-                        alert(err.message);
-                    },
-                    complete: () => { 'TO DO LOG' }
-                });;
+            PutFile(storageRefPath, file).subscribe({
+                next: () => { console.log('TODO: UPLOAD PROGRESS') },
+                error: err => {
+                    console.log(err);
+                    alert(err.message);
+                },
+                complete: snapshot => {
+                    console.log(snapshot)
+                    GetMetaDataFromStorageRefPath(storageRefPath)
+                        .subscribe({
+                            next: metaData => {
+                                CreateShipmentFile(shipmentKey,
+                                    {
+                                        FileName: metaData.name,
+                                        FileUrl: metaData.fullPath,
+                                        FileCreateTimestamp: metaData.timeCreated,
+                                        FileOwnerKey: "mockKey",
+                                        FileStorgeReference: metaData.fullPath
+                                    }
+                                )
+                            },
+                            error: err => {
+                                console.log(err);
+                                alert(err.message);
+                            },
+                            complete: () => { 'TO DO LOG' }
+                        });
+                }
+            });
         }
         toggle();
         props.sendMessage(chatRoomKey, shipmentKey, `${message} [ ${fileName} ]`);

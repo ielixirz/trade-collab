@@ -155,17 +155,17 @@ class Chat extends Component {
               style={
                 this.state.onDropChatStyle === false ? {} : { opacity: '0.5' }
               }
+              onDragOver={this.onDragOver}
+              onDragLeave={this.onDragLeave}
+              onDrop={event =>
+                this.onFileDrop(event, ShipmentKey, ChatRoomKey)
+              }
             >
               <div
                 className="msg_history"
                 ref={el => {
                   this.msgChatRef = el;
                 }}
-                onDragOver={this.onDragOver}
-                onDragLeave={this.onDragLeave}
-                onDrop={event =>
-                  this.onFileDrop(event, ShipmentKey, ChatRoomKey)
-                }
               >
                 {chat.chatMsg.map((msg, i) => {
                   var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
@@ -283,6 +283,7 @@ class Chat extends Component {
   };
 
   onDragLeave = event => {
+    event.stopPropagation();
     event.preventDefault();
     this.setState({
       onDropChatStyle: false
