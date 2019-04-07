@@ -1,9 +1,8 @@
 import React, { useState, forwardRef, useRef, useImperativeHandle } from 'react'
 import { Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import { connect } from 'react-redux';
 
-
-import { PutFile } from '../service/storage/managestorage';
+import { PutFile, GetMetaDataFromStorageRefPath } from '../service/storage/managestorage';
+import { CreateShipmentFile } from '../service/shipment/shipment';
 
 const UploadModal = forwardRef((props, ref) => {
     const [modal, setModal] = useState(false)
@@ -21,10 +20,31 @@ const UploadModal = forwardRef((props, ref) => {
 
     const upload = () => {
         if (file !== null) {
-            PutFile(`/Shipment/${shipmentKey}/${fileName}`, file);
+            let storageRefPath = `/Shipment/${shipmentKey}/${fileName}`;
+            PutFile(storageRefPath, file);
+            GetMetaDataFromStorageRefPath(storageRefPath)
+                .subscribe({
+                    next: metaData => {
+                        CreateShipmentFile(shipmentKey,
+                            {
+                                FileName: metaData.name,
+                                FileUrl: metaData.fullPath,
+                                FileCreateTimestamp: metaData.timeCreated,
+                                FileOwnerKey: "mockKey",
+                                FileStorgeReference: metaData.fullPath
+                            }
+                        )
+                    },
+                    error: err => {
+                        console.log(err);
+                        alert(err.message);
+                    },
+                    complete: () => { 'TO DO LOG' }
+                });;
         }
         toggle();
         props.sendMessage(chatRoomKey, shipmentKey, `${message} [ ${fileName} ]`);
+        props.fetchFiles(shipmentKey);
     }
 
     useImperativeHandle(ref, () => ({

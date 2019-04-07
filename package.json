@@ -44,6 +44,7 @@
     "reactstrap": "^7.1.0",
     "redux": "^4.0.1",
     "redux-persist": "^5.10.0",
+    "redux-react-hook": "^3.3.0",
     "redux-thunk": "^2.3.0",
     "rxfire": "^3.3.7",
     "rxjs": "^6.4.0",
