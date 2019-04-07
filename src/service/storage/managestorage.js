@@ -46,7 +46,8 @@ export const GetURLFromStorageRefPath = (StorageRefPath) => {
 }
 
 export const GetMetaDataFromStorageRefPath = (StorageRefPath) => {
-    return getMetadata(StorageRefPath)
+    const RefPath = storage.ref(StorageRefPath)
+    return RefPath.getMetadata();
 }
 
 export const GetMetaDataFromURL = (Url) => {

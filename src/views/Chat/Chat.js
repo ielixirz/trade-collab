@@ -26,6 +26,11 @@ import {
   moveTab,
   selectTab
 } from '../../actions/chatActions';
+
+import {
+  fetchFiles,
+} from '../../actions/fileActions';
+
 import { connect } from 'react-redux';
 
 import Tabs from 'react-draggable-tabs';
@@ -176,7 +181,7 @@ class Chat extends Component {
                 })}
               </div>
               <div className="type_msg">
-                <UploadModal sendMessage={this.props.sendMessage} ref={this.uploadModalRef}></UploadModal>
+                <UploadModal sendMessage={this.props.sendMessage} fetchFiles={this.props.fetchFiles} ref={this.uploadModalRef}></UploadModal>
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">
                     <Button color="default" onClick={() => this.browseFile(ShipmentKey)}>
@@ -218,7 +223,7 @@ class Chat extends Component {
             </div>
           </Col>
           <Col xs="4" style={{ paddingLeft: '0.3rem', marginTop: '0.6rem' }}>
-            <FileSide shipmentKey={ShipmentKey}/>
+            <FileSide shipmentKey={ShipmentKey} />
             <ShipmentSide />
           </Col>
         </Row>
@@ -382,5 +387,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { typing, fetchChatMessage, sendMessage, moveTab, selectTab }
+  { typing, fetchChatMessage, sendMessage, moveTab, selectTab, fetchFiles }
 )(Chat);
