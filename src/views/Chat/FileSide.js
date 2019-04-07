@@ -3,18 +3,7 @@ import React, { Component, useContext, useReducer } from 'react';
 import {
   Collapse, CardBody, Card, Row, Col
 } from 'reactstrap';
-import FileListContext from '../../context/FileContext';
-import FileReducer from '../../reducers/FileReducer';
 import FileList from '../../component/FileList';
-
-const FileData = (props) => {
-  const initialState = useContext(FileListContext);
-  const [state, dispatch] = useReducer(FileReducer, initialState);
-  return (
-    <FileListContext.Provider value={{ state, dispatch }}>
-      <FileList shipmentKey={props.shipmentKey} />
-    </FileListContext.Provider>)
-}
 
 class FileSide extends Component {
   constructor(props) {
@@ -46,7 +35,7 @@ class FileSide extends Component {
               </Col>
             </Row>
             <Collapse isOpen={this.state.collapse}>
-              <FileData shipmentKey={this.props.shipmentKey} />
+              <FileList shipmentKey={this.props.shipmentKey} />
             </Collapse>
           </CardBody>
 
