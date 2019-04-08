@@ -27,7 +27,8 @@ import {
   fetchChatMessage,
   sendMessage,
   moveTab,
-  selectTab
+  selectTab,
+  getChatRoomList
 } from '../../actions/chatActions';
 
 import { connect } from 'react-redux';
@@ -352,6 +353,7 @@ class Chat extends Component {
   }
 
   componentDidMount() {
+    this.props.getChatRoomList(`HDTPONlnceJeG5yAA1Zy`); //MOCK SHIPMENT KEY
     let chats = this.props.ChatReducer.chatrooms;
     let tabs = [];
     _.forEach(chats, (item, index) => {
@@ -363,7 +365,6 @@ class Chat extends Component {
         ShipmentKey: item.ShipmentKey
       });
     });
-    console.log(chats);
     const activeTab = tabs.filter(tab => tab.active === true);
     _.forEach(tabs, tab => {
       this.props.fetchChatMessage(tab.ChatRoomKey, tab.ShipmentKey);
@@ -382,7 +383,6 @@ class Chat extends Component {
         ShipmentKey: item.ShipmentKey
       });
     });
-    console.log(chats);
     const activeTab = tabs.filter(tab => tab.active === true);
     return (
       <div className="animated fadeIn chatbox">
@@ -416,5 +416,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { typing, fetchChatMessage, sendMessage, moveTab, selectTab }
+  { typing, fetchChatMessage, sendMessage, moveTab, selectTab, getChatRoomList }
 )(Chat);
