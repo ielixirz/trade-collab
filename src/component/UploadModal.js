@@ -27,7 +27,7 @@ const UploadModal = forwardRef((props, ref) => {
 
     const upload = () => {
         if (file !== null) {
-            let storageRefPath = `/Shipment/${shipmentKey}/${fileName}`;
+            let storageRefPath = `/Shipment/${shipmentKey}/${fileName}` + new Date().valueOf();
             PutFile(storageRefPath, file).subscribe({
                 next: () => { console.log('TODO: UPLOAD PROGRESS') },
                 error: err => {
