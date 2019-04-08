@@ -3,20 +3,14 @@ import { ListGroup, ListGroupItem, Row, Col } from 'reactstrap';
 import { useMappedState, useDispatch } from 'redux-react-hook';
 import { fetchFiles } from '../actions/fileActions';
 
-const FileList = ({ shipmentKey }) => {
+const FileList = ({ chatroomKey }) => {
   const mapState = useCallback(
     state => ({
-      collection: state.FileReducer
+      collection: state.ChatReducer.chatrooms[chatroomKey].ChatRoomData.ChatRoomFileLink
     }),
     []
   );
-  const dispatch = useDispatch();
   const props = useMappedState(mapState);
-
-  useEffect(() => {
-    const ShipmentKey = shipmentKey;
-    fetchFiles(ShipmentKey, dispatch);
-  }, []);
 
   const { collection = [] } = props;
   return (
