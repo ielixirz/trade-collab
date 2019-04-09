@@ -1,5 +1,4 @@
 import { FETCH_CHAT, TYPING_TEXT, moveTab } from '../constants/constants';
-
 const ShipmentKey = 'HDTPONlnceJeG5yAA1Zy';
 const ChatRoomKey = 'lvCb608c7PusGqptBsq0';
 
@@ -7,13 +6,13 @@ const INITIAL_STATE = {
   text: '',
   chatrooms: {
     [ChatRoomKey]: {
-      ChatRoomKey,
-      ShipmentKey,
+      ChatRoomKey: ChatRoomKey,
+      ShipmentKey: ShipmentKey,
       roomName: 'Exporter',
       chatMsg: [],
-      active: true,
-    },
-  },
+      active: true
+    }
+  }
 };
 export default (state = INITIAL_STATE, action) => {
   console.log(action);
@@ -21,7 +20,7 @@ export default (state = INITIAL_STATE, action) => {
     case TYPING_TEXT:
       return {
         ...state,
-        text: action.text,
+        text: action.text
       };
     case FETCH_CHAT:
       return {
@@ -30,16 +29,16 @@ export default (state = INITIAL_STATE, action) => {
           ...state.chatrooms,
           [action.id]: {
             ...state.chatrooms[action.id],
-            chatMsg: action.payload,
-          },
-        },
+            chatMsg: action.payload
+          }
+        }
       };
     case moveTab:
       return {
         ...state,
         chatrooms: {
-          ...action.payload,
-        },
+          ...action.payload
+        }
       };
     default:
       return state;

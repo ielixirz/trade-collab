@@ -1,27 +1,30 @@
-/* eslint-disable max-len */
+import { FirebaseApp } from '../firebase';
 import { collection, doc } from 'rxfire/firestore';
 import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { FirebaseApp } from '../firebase';
 
-const ShipmentRefPath = ShipmentKey => FirebaseApp.firestore()
-  .collection('Shipment')
-  .doc(ShipmentKey)
-  .collection('ChatRoom');
+const ShipmentRefPath = ShipmentKey => {
+  return FirebaseApp.firestore()
+    .collection(`Shipment`)
+    .doc(ShipmentKey)
+    .collection(`ChatRoom`);
+};
 
-const ChatRoomRefPath = (ShipmentKey, ChatRoomKey) => FirebaseApp.firestore()
-  .collection('Shipment')
-  .doc(ShipmentKey)
-  .collection('ChatRoom')
-  .doc(ChatRoomKey);
+const ChatRoomRefPath = (ShipmentKey, ChatRoomKey) => {
+  return FirebaseApp.firestore()
+    .collection(`Shipment`)
+    .doc(ShipmentKey)
+    .collection(`ChatRoom`)
+    .doc(ChatRoomKey);
+};
 
 const ChatRoomMessageRefPath = (ShipmentKey, ChatRoomKey) => {
   return FirebaseApp.firestore()
-    .collection('Shipment')
+    .collection(`Shipment`)
     .doc(ShipmentKey)
-    .collection('ChatRoom')
+    .collection(`ChatRoom`)
     .doc(ChatRoomKey)
-    .collection('ChatRoomMessage');
+    .collection(`ChatRoomMessage`);
 };
 
 const ChatRoomMessageRefPathOrderByNewerTimestamp = (
@@ -92,6 +95,6 @@ export const EditChatRoomFileLink = (ShipmentKey, ChatRoomKey, Data) => {
   );
 };
 
-export const GetChatRoomList = ShipmentKey => (collection(ShipmentRefPath(ShipmentKey)));
+export const GetChatRoomList = (ShipmentKey) => (collection(ShipmentRefPath(ShipmentKey)))
 
-export const GetChatRoomDetail = (ShipmentKey, ChatRoomKey) => (doc(ChatRoomRefPath(ShipmentKey, ChatRoomKey)));
+export const GetChatRoomDetail = (ShipmentKey,ChatRoomKey) => (doc(ChatRoomRefPath(ShipmentKey,ChatRoomKey)))

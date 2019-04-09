@@ -12,14 +12,14 @@ import reducers from '../reducers';
 
 const persistConfig = {
   key: 'root',
-  storage,
+  storage
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
 
 export const configureStore = () => {
   const store = createStore(persistedReducer, applyMiddleware(thunk));
-  const persistor = persistStore(store);
+  let persistor = persistStore(store);
 
   return { store, persistor };
 };
