@@ -5,10 +5,14 @@ import {
   TYPING_TEXT,
   FETCH_CHAT_ROOMS
 } from '../constants/constants';
-import { GetChatMessage, CreateChatMessage, GetChatRoomList, GetChatRoomDetail } from '../service/chat/chat';
+import {
+  GetChatMessage,
+  CreateChatMessage,
+  GetChatRoomList,
+  GetChatRoomDetail
+} from '../service/chat/chat';
 import _ from 'lodash';
 import { map } from 'rxjs/operators';
-
 
 export const typing = data => dispatch => {
   let text = data.target.value;
@@ -33,7 +37,7 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => dispatch => {
       console.log(err);
       alert(err.message);
     },
-    complete: () => { }
+    complete: () => {}
   });
 };
 
@@ -67,10 +71,7 @@ export const moveTab = (dragIndex, hoverIndex) => (getState, dispatch) => {
   dispatch({ type: MOVE_TAB, payload: originalReducer });
 };
 
-export const selectTab = (selectedIndex, selectedID) => (
-  dispatch,
-  getState
-) => {
+export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => {
   let chats = getState().ChatReducer.chatrooms;
   let tabs = [];
   _.forEach(chats, (item, index) => {
@@ -100,10 +101,7 @@ export const selectTab = (selectedIndex, selectedID) => (
   dispatch({ type: MOVE_TAB, payload: originalReducer });
 };
 
-export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (
-  dispatch,
-  getState
-) => {
+export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getState) => {
   // ShipmentKey,ChatRoomKey,Data
   // {
   //   ChatRoomMessageSender : ProfileKey,
@@ -111,9 +109,9 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (
   //   ChatRoomMessageType : "Text",
   //   ChatRoomMessageTimestamp : new Date()
   // }
-  console.log(getState().authReducer);
+
   const user = getState().authReducer.user;
-  console.log(user);
+
   if (_.get(user, 'uid', false)) {
     let msg = {
       ChatRoomMessageSender: _.get(user, 'email', 0),
@@ -122,6 +120,34 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (
       ChatRoomMessageTimestamp: new Date()
     };
     CreateChatMessage(ShipmentKey, ChatRoomKey, msg);
+    let chats = getState().ChatReducer.chatrooms;
+    let tabs = [];
+    tabs = _.map(chats, (item, index) => {
+      if (item.ChatRoomKey === ChatRoomKey && item.ShipmentKey === ShipmentKey) {
+        return {
+          ...item,
+          active: true
+        };
+      } else {
+        return {
+          ...item,
+          active: false
+        };
+      }
+    });
+    console.log('tabs', tabs);
+    let originalReducer = [];
+    _.forEach(tabs, (item, index) => {
+      originalReducer[item.ChatRoomKey] = {
+        ChatRoomKey: item.ChatRoomKey,
+        ShipmentKey: item.ShipmentKey,
+        roomName: item.roomName,
+        active: item.active,
+        ChatRoomData: item.ChatRoomData
+      };
+    });
+    dispatch({ type: MOVE_TAB, payload: originalReducer });
+
     dispatch({
       type: TYPING_TEXT,
       text: ''
@@ -131,7 +157,7 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (
   }
 };
 
-export const getChatRoomList = (shipmentKey) => (dispatch, getState) => {
+export const getChatRoomList = shipmentKey => (dispatch, getState) => {
   //TODO: get chatroom filter by user?
   const user = getState().authReducer.user;
 
@@ -141,7 +167,7 @@ export const getChatRoomList = (shipmentKey) => (dispatch, getState) => {
       let chatrooms = [];
       snapshot.map((d, index) => {
         let chatRoomKey = d.id;
-        let data = d.data()
+        let data = d.data();
 
         chatrooms.push({
           id: index + 1,
@@ -150,9 +176,9 @@ export const getChatRoomList = (shipmentKey) => (dispatch, getState) => {
           ShipmentKey: shipmentKey,
           ChatRoomData: data
         });
-      })
+      });
 
-      _.forEach(chatrooms, (c) => {
+      _.forEach(chatrooms, c => {
         originalReducer[c.ChatRoomKey] = {
           ChatRoomKey: c.ChatRoomKey,
           ShipmentKey: c.ShipmentKey,
@@ -171,6 +197,6 @@ export const getChatRoomList = (shipmentKey) => (dispatch, getState) => {
       console.log(err);
       alert(err.message);
     },
-    complete: () => { }
+    complete: () => {}
   });
-}
+};

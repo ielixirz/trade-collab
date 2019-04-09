@@ -108,13 +108,10 @@ class Chat extends Component {
 
   renderChat(ChatRoomKey = '', ShipmentKey = '') {
     let chat = _.get(this.props, `ChatReducer.chatroomsMsg.${ChatRoomKey}`, []);
-    let chatMsg = chat.length === 0 ? [] : chat.chatMsg
+    let chatMsg = chat.length === 0 ? [] : chat.chatMsg;
     const text = this.props.ChatReducer.text;
     return (
-      <div
-        className="inbox_msg"
-        style={{ backgroundColor: 'rgb(247, 247, 247)' }}
-      >
+      <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
         <Row
           style={{
             backgroundColor: 'white',
@@ -131,18 +128,12 @@ class Chat extends Component {
                 backgroundColor: '#16A085'
               }}
             >
-              <i
-                style={{ marginRight: '0.5rem' }}
-                className="fa  fa-user-plus fa-lg"
-              />
+              <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
               Invite
             </Button>
             <Button className="btn-chat-label">|</Button>
             <Button className="btn-chat-label">
-              <i
-                style={{ marginRight: '0.5rem' }}
-                className="fa  fa-users fa-lg"
-              />
+              <i style={{ marginRight: '0.5rem' }} className="fa  fa-users fa-lg" />
               14
             </Button>
             <Button className="btn-chat-label">|</Button>
@@ -153,14 +144,10 @@ class Chat extends Component {
           <Col xs="8" style={{ backgroundColor: 'white', marginTop: '0.5rem' }}>
             <div
               className="mesgs"
-              style={
-                this.state.onDropChatStyle === false ? {} : { opacity: '0.5' }
-              }
+              style={this.state.onDropChatStyle === false ? {} : { opacity: '0.5' }}
               onDragOver={this.onDragOver}
               onDragLeave={this.onDragLeave}
-              onDrop={event =>
-                this.onFileDrop(event, ShipmentKey, ChatRoomKey)
-              }
+              onDrop={event => this.onFileDrop(event, ShipmentKey, ChatRoomKey)}
             >
               <div
                 className="msg_history"
@@ -172,10 +159,7 @@ class Chat extends Component {
                   var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = 'sender';
 
-                  if (
-                    _.get(this.props, 'user.email', '0') ===
-                    msg.ChatRoomMessageSender
-                  ) {
+                  if (_.get(this.props, 'user.email', '0') === msg.ChatRoomMessageSender) {
                     type = 'reciever';
                   }
                   let message = {
@@ -190,16 +174,15 @@ class Chat extends Component {
               </div>
               <div className="type_msg">
                 <UploadModal
-                  chatFile={this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink}
+                  chatFile={
+                    this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink
+                  }
                   sendMessage={this.props.sendMessage}
                   ref={this.uploadModalRef}
                 />
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">
-                    <Button
-                      color="default"
-                      onClick={() => this.browseFile(ShipmentKey)}
-                    >
+                    <Button color="default" onClick={() => this.browseFile(ShipmentKey)}>
                       {' '}
                       <i className="fa fa-plus fa-lg" />
                     </Button>
@@ -249,7 +232,8 @@ class Chat extends Component {
             </div>
           </Col>
           <Col xs="4" style={{ paddingLeft: '0.3rem', marginTop: '0.6rem' }}>
-            <FileSide chatFile={this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink}
+            <FileSide
+              chatFile={this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink}
             />
             <ShipmentSide />
           </Col>
@@ -267,11 +251,7 @@ class Chat extends Component {
     event.preventDefault();
     let file = event.dataTransfer.items[0].getAsFile();
     event.target.value = null;
-    this.uploadModalRef.current.triggerUploading(
-      file,
-      ShipmentKey,
-      ChatRoomKey
-    );
+    this.uploadModalRef.current.triggerUploading(file, ShipmentKey, ChatRoomKey);
     this.setState({
       onDropChatStyle: false
     });
@@ -357,7 +337,7 @@ class Chat extends Component {
   componentDidMount() {
     this.props.getChatRoomList(`HDTPONlnceJeG5yAA1Zy`); //MOCK SHIPMENT KEY
     let chats = this.props.ChatReducer.chatrooms;
-    console.log(chats)
+    console.log(chats);
     let tabs = [];
     _.forEach(chats, (item, index) => {
       tabs.push({
@@ -399,10 +379,7 @@ class Chat extends Component {
         </Tabs>
         <TabContent>
           {activeTab.length !== 0
-            ? this.renderChat(
-              activeTab[0].ChatRoomKey,
-              activeTab[0].ShipmentKey
-            )
+            ? this.renderChat(activeTab[0].ChatRoomKey, activeTab[0].ShipmentKey)
             : ''}
         </TabContent>
       </div>
@@ -411,6 +388,8 @@ class Chat extends Component {
 }
 const mapStateToProps = state => {
   const { ChatReducer, authReducer } = state;
+  console.log('ChatReducer', ChatReducer);
+
   return {
     ChatReducer,
     user: authReducer.user
