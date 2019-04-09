@@ -4,6 +4,20 @@ import { from } from 'rxjs'
 
 const UserInfoRefPath = () => FirebaseApp.firestore().collection(`UserInfo`)
 
+/*
+    {
+        UserInfoUsername (string)
+        UserInfoEmail (string)
+        UserInfoBio (string)
+        UserInfoProfileImageLink (string) *(Note-Ask)
+        UserInfoCreateTimestamp (timestamp)
+        UserInfoAccountType (string)
+        UserInfoCompanyName (string)
+        UserInfoCompanyRelate (string)
+        UserInfoNotificationToken (Array<string>)
+    }
+*/
+
 export const UpdateUserInfo = (UserInfoKey,Data) => from(UserInfoRefPath().doc(UserInfoKey).set(Data,{merge:true}))
 
 export const GetUserInfoDetail = UserInfoKey => doc(UserInfoRefPath().doc(UserInfoKey))
