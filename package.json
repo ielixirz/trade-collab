@@ -69,7 +69,8 @@
     "test:cov": "react-scripts test --coverage",
     "test:debug": "react-scripts --inspect-brk test --runInBand",
     "eject": "react-scripts eject",
-    "eslint": "eslint src/**/*.js"
+    "eslint": "eslint src/**/*.js",
+    "eslint-fix": "eslint src/**/*.js --fix"
   },
   "bugs": {
     "url": "https://github.com/coreui/coreui-free-react-admin-template/issues"

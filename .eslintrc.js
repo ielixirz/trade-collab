@@ -1,8 +1,8 @@
 module.exports = {
   env: {
     browser: true,
-    es6: true,
   },
+  parser: 'babel-eslint',
   extends: 'airbnb',
   globals: {
     Atomics: 'readonly',
@@ -28,6 +28,6 @@ module.exports = {
     ],
     "filenames/match-regex": 2,
     "filenames/match-exported": 2,
-    "filenames/no-index": 2
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
   },
 };
