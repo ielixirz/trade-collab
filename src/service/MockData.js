@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { FirebaseApp } from './firebase';
 
 const ShipmentMockData = () => {
@@ -33,15 +34,15 @@ const ChatRoomMockData = () => (
   {
     ChatRoomName: 'Exporter',
     ChatRoomFileLink:
-                [{
-                  FileName: 'FileA.jpg', FileUrl: "'https://firebasestorage.googleapis.com'", FileCreateTimestamp: '123123124124124', FilePath: '/Shipment/{ShipmentKey}/ShipmentFile/{FileKey}',
-                }],
+      [{
+        FileName: 'FileA.jpg', FileUrl: "'https://firebasestorage.googleapis.com'", FileCreateTimestamp: '123123124124124', FilePath: '/Shipment/{ShipmentKey}/ShipmentFile/{FileKey}',
+      }],
     ChatRoomMember: {},
     ChatRoomParticipleNotificationToken: [],
     ChatRoomhareDataList:
-                ['Shipper', 'ShipmentDetail'],
+      ['Shipper', 'ShipmentDetail'],
     ChatRoomPrivateShareDataList:
-                ['Trucking'],
+      ['Trucking'],
   }
 );
 
