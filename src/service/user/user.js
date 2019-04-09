@@ -14,5 +14,6 @@ export const GetUserInfoFromUsername = Username => collection(UserInfoRefPath().
 
 export const GetUserInfoUsername = UserInfoKey => doc(UserInfoRefPath().doc(UserInfoKey)).pipe(map(User => User.UserInfoUsername))
 
+export const GetUserInfoUserInfoNotificationToken = UserInfoKey => doc(UserInfoRefPath().doc(UserInfoKey)).pipe(map(User => User.UserInfoNotificationToken))
 
   
