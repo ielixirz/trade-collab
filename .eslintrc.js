@@ -17,7 +17,17 @@ module.exports = {
   },
   plugins: [
     'react',
+    'filenames'
   ],
   rules: {
+    "camelcase": [
+      2,
+      {
+        "properties": "always",
+      }
+    ],
+    "filenames/match-regex": 2,
+    "filenames/match-exported": 2,
+    "filenames/no-index": 2
   },
 };
