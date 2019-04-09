@@ -1,22 +1,20 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { ListGroup, ListGroupItem, Row, Col } from 'reactstrap';
 import { useMappedState, useDispatch } from 'redux-react-hook';
 import { fetchFiles } from '../actions/fileActions';
+import _ from 'lodash';
 
-const FileList = ({ chatroomKey }) => {
-  const mapState = useCallback(
-    state => ({
-      collection: state.ChatReducer.chatrooms[chatroomKey].ChatRoomData.ChatRoomFileLink
-    }),
-    []
-  );
-  const props = useMappedState(mapState);
 
-  const { collection = [] } = props;
+const FileList = (props) => {
+  const [chatFile, setChatFile] = useState(false)
+
+  useEffect(() => {
+    setChatFile(props.chatFile)
+  })
+
   return (
     <div>
-      {collection.map((s, index) => {
-        console.log(s);
+      {_.map(chatFile, (s, index) => {
         return (
           <ListGroup flush key={index}>
             <ListGroupItem disabled tag="a">

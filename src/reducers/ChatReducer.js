@@ -4,8 +4,8 @@ const ChatRoomKey = 'lvCb608c7PusGqptBsq0';
 
 const INITIAL_STATE = {
   text: '',
-  chatrooms: {
-  }
+  chatrooms: {},
+  chatroomsMsg: {}
 };
 export default (state = INITIAL_STATE, action) => {
   console.log(action);
@@ -18,10 +18,9 @@ export default (state = INITIAL_STATE, action) => {
     case FETCH_CHAT:
       return {
         ...state,
-        chatrooms: {
-          ...state.chatrooms,
+        chatroomsMsg: {
+          ...state.chatroomsMsg,
           [action.id]: {
-            ...state.chatrooms[action.id],
             chatMsg: action.payload
           }
         }

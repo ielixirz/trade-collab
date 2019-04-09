@@ -43,11 +43,11 @@ export const moveTab = (dragIndex, hoverIndex) => (getState, dispatch) => {
   _.forEach(chats, (item, index) => {
     tabs.push({
       id: tabs.length + 1,
-      content: item.roomName,
+      roomName: item.roomName,
       active: item.active,
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
-      chatMsg: item.chatMsg
+      ChatRoomData: item.ChatRoomData
     });
   });
   let newTabs = tabs;
@@ -57,9 +57,10 @@ export const moveTab = (dragIndex, hoverIndex) => (getState, dispatch) => {
     originalReducer[item.ChatRoomKey] = {
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
-      roomName: 'Exporter',
+      roomName: item.roomName,
       chatMsg: item.chatMsg,
-      active: item.active
+      active: item.active,
+      ChatRoomData: item.ChatRoomData
     };
   });
 
@@ -75,11 +76,11 @@ export const selectTab = (selectedIndex, selectedID) => (
   _.forEach(chats, (item, index) => {
     tabs.push({
       id: tabs.length + 1,
-      content: item.roomName,
+      roomName: item.roomName,
       active: item.active,
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
-      chatMsg: item.chatMsg
+      ChatRoomData: item.ChatRoomData
     });
   });
   const newTabs = tabs.map(tab => ({
@@ -91,9 +92,9 @@ export const selectTab = (selectedIndex, selectedID) => (
     originalReducer[item.ChatRoomKey] = {
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
-      roomName: 'Exporter',
-      chatMsg: item.chatMsg,
-      active: item.active
+      roomName: item.roomName,
+      active: item.active,
+      ChatRoomData: item.ChatRoomData
     };
   });
   dispatch({ type: MOVE_TAB, payload: originalReducer });
@@ -156,7 +157,6 @@ export const getChatRoomList = (shipmentKey) => (dispatch, getState) => {
           ChatRoomKey: c.ChatRoomKey,
           ShipmentKey: c.ShipmentKey,
           roomName: c.ChatRoomData.ChatRoomName,
-          chatMsg: [],
           active: c.active,
           ChatRoomData: c.ChatRoomData
         };
