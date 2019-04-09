@@ -2,12 +2,11 @@ import React, { useState, forwardRef, useRef, useImperativeHandle } from 'react'
 import { Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 
 import { PutFile, GetMetaDataFromStorageRefPath } from '../service/storage/managestorage';
+import { EditChatRoomFileLink } from '../service/chat/chat';
+
 import { CreateShipmentFile } from '../service/shipment/shipment';
-import { fetchFiles } from '../actions/fileActions';
 
 import { useDispatch } from 'redux-react-hook';
-
-
 
 const UploadModal = forwardRef((props, ref) => {
     const [modal, setModal] = useState(false)
@@ -27,7 +26,7 @@ const UploadModal = forwardRef((props, ref) => {
 
     const upload = () => {
         if (file !== null) {
-            let storageRefPath = `/Shipment/${shipmentKey}/${fileName}`;
+            let storageRefPath = `/Shipment/${shipmentKey}/${fileName}` + new Date().valueOf();
             PutFile(storageRefPath, file).subscribe({
                 next: () => { console.log('TODO: UPLOAD PROGRESS') },
                 error: err => {
@@ -35,7 +34,6 @@ const UploadModal = forwardRef((props, ref) => {
                     alert(err.message);
                 },
                 complete: snapshot => {
-                    console.log(snapshot)
                     GetMetaDataFromStorageRefPath(storageRefPath)
                         .subscribe({
                             next: metaData => {
@@ -48,6 +46,18 @@ const UploadModal = forwardRef((props, ref) => {
                                         FileStorgeReference: metaData.fullPath
                                     }
                                 )
+
+                                let editedChatFile = props.chatFile;
+                                editedChatFile.push(
+                                    {
+                                        FileName: metaData.name,
+                                        FileUrl: metaData.fullPath,
+                                        FileCreateTimestamp: metaData.timeCreated,
+                                        FilePath: metaData.fullPath
+                                    }
+                                )
+
+                                EditChatRoomFileLink(shipmentKey, chatRoomKey, editedChatFile)
                             },
                             error: err => {
                                 console.log(err);
@@ -60,7 +70,6 @@ const UploadModal = forwardRef((props, ref) => {
         }
         toggle();
         props.sendMessage(chatRoomKey, shipmentKey, `${message} [ ${fileName} ]`);
-        fetchFiles(shipmentKey, dispatch);
     }
 
     useImperativeHandle(ref, () => ({
