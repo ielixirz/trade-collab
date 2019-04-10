@@ -1,8 +1,8 @@
-import { FirebaseApp } from '../firebase';
 import { collection, doc } from 'rxfire/firestore';
-import { from } from 'rxjs'
+import { from } from 'rxjs';
+import { FirebaseApp } from '../firebase';
 
-const ProfileRefPath = UserInfoKey => FirebaseApp.firestore().collection(`UserInfo`).doc(UserInfoKey).collection(`Profile`)
+const ProfileRefPath = UserInfoKey => FirebaseApp.firestore().collection('UserInfo').doc(UserInfoKey).collection('Profile');
 
 /*
  {
@@ -15,8 +15,10 @@ const ProfileRefPath = UserInfoKey => FirebaseApp.firestore().collection(`UserIn
  }
 */
 
-export const CreateProfile = (UserInfoKey,Data) => from(ProfileRefPath(UserInfoKey).add(Data))
+export const CreateProfile = (UserInfoKey, Data) => from(ProfileRefPath(UserInfoKey).add(Data));
 
-export const GetProlfileList = UserInfoKey => collection(ProfileRefPath(UserInfoKey))
+export const GetProlfileList = UserInfoKey => collection(ProfileRefPath(UserInfoKey));
 
-export const GetProfileDetail = (UserInfoKey,ProfileKey) => doc(ProfileRefPath(UserInfoKey).doc(ProfileKey))
+export const GetProfileDetail = (UserInfoKey, ProfileKey) => doc(
+  ProfileRefPath(UserInfoKey).doc(ProfileKey),
+);
