@@ -12,7 +12,11 @@ import {
   Input,
   TabPane,
   Breadcrumb,
-  ButtonGroup
+  ButtonGroup,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader
 } from 'reactstrap';
 import _ from 'lodash';
 import { GetChatMessage } from '../../service/chat/chat';
@@ -23,14 +27,17 @@ import {
   fetchChatMessage,
   sendMessage,
   moveTab,
-  selectTab
+  selectTab,
+  getChatRoomList
 } from '../../actions/chatActions';
+
 import { connect } from 'react-redux';
 
 import Tabs from 'react-draggable-tabs';
 import './Chat.css';
 import ShipmentSide from './ShipmentSide';
 import FileSide from './FileSide';
+import UploadModal from '../../component/UploadModal';
 
 class Chat extends Component {
   constructor(props) {
@@ -43,8 +50,12 @@ class Chat extends Component {
     this.state = {
       activeTab: new Array(4).fill('1'),
       text: '',
-      tabs: []
+      tabs: [],
+      onDropChatStyle: false
     };
+
+    this.uploadModalRef = React.createRef();
+    this.fileInput = React.createRef();
   }
 
   renderMessage(message) {
@@ -96,8 +107,8 @@ class Chat extends Component {
   }
 
   renderChat(ChatRoomKey = '', ShipmentKey = '') {
-    let chat = _.get(this.props, `ChatReducer.chatrooms.${ChatRoomKey}`, {});
-
+    let chat = _.get(this.props, `ChatReducer.chatroomsMsg.${ChatRoomKey}`, []);
+    let chatMsg = chat.length === 0 ? [] : chat.chatMsg
     const text = this.props.ChatReducer.text;
     return (
       <div
@@ -140,15 +151,24 @@ class Chat extends Component {
         </Row>
         <Row>
           <Col xs="8" style={{ backgroundColor: 'white', marginTop: '0.5rem' }}>
-            <div className="mesgs">
+            <div
+              className="mesgs"
+              style={
+                this.state.onDropChatStyle === false ? {} : { opacity: '0.5' }
+              }
+              onDragOver={this.onDragOver}
+              onDragLeave={this.onDragLeave}
+              onDrop={event =>
+                this.onFileDrop(event, ShipmentKey, ChatRoomKey)
+              }
+            >
               <div
                 className="msg_history"
                 ref={el => {
                   this.msgChatRef = el;
                 }}
-                onDragOver={this.onDragOver}
-                onDrop={(event) => this.onFileDrop(event, ShipmentKey)}>
-                {chat.chatMsg.map((msg, i) => {
+              >
+                {chatMsg.map((msg, i) => {
                   var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = 'sender';
 
@@ -169,12 +189,33 @@ class Chat extends Component {
                 })}
               </div>
               <div className="type_msg">
+                <UploadModal
+                  chatFile={this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink}
+                  sendMessage={this.props.sendMessage}
+                  ref={this.uploadModalRef}
+                />
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">
-                    <Button color="default">
+                    <Button
+                      color="default"
+                      onClick={() => this.browseFile(ShipmentKey)}
+                    >
                       {' '}
                       <i className="fa fa-plus fa-lg" />
                     </Button>
+                    <input
+                      type="file"
+                      id="file"
+                      ref={this.fileInput}
+                      style={{ display: 'none' }}
+                      onChange={event =>
+                        this.uploadModalRef.current.triggerUploading(
+                          event.target.files[0],
+                          ShipmentKey,
+                          ChatRoomKey
+                        )
+                      }
+                    />
                   </InputGroupAddon>
                   <Input
                     placeholder="type...."
@@ -208,7 +249,8 @@ class Chat extends Component {
             </div>
           </Col>
           <Col xs="4" style={{ paddingLeft: '0.3rem', marginTop: '0.6rem' }}>
-            <FileSide />
+            <FileSide chatFile={this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink}
+            />
             <ShipmentSide />
           </Col>
         </Row>
@@ -216,17 +258,39 @@ class Chat extends Component {
     );
   }
 
-  onFileDrop(event, ShipmentKey) {
+  browseFile() {
+    this.fileInput.current.value = null;
+    this.fileInput.current.click();
+  }
+
+  onFileDrop(event, ShipmentKey, ChatRoomKey) {
     event.preventDefault();
-    console.log(event);
     let file = event.dataTransfer.items[0].getAsFile();
     event.target.value = null;
-    this.putFile(`/Shipment/${ShipmentKey}/${file.name}`, file);
+    this.uploadModalRef.current.triggerUploading(
+      file,
+      ShipmentKey,
+      ChatRoomKey
+    );
+    this.setState({
+      onDropChatStyle: false
+    });
   }
 
   onDragOver = event => {
     event.stopPropagation();
     event.preventDefault();
+    this.setState({
+      onDropChatStyle: true
+    });
+  };
+
+  onDragLeave = event => {
+    event.stopPropagation();
+    event.preventDefault();
+    this.setState({
+      onDropChatStyle: false
+    });
   };
 
   onDragEnter = event => {
@@ -291,7 +355,9 @@ class Chat extends Component {
   }
 
   componentDidMount() {
+    this.props.getChatRoomList(`HDTPONlnceJeG5yAA1Zy`); //MOCK SHIPMENT KEY
     let chats = this.props.ChatReducer.chatrooms;
+    console.log(chats)
     let tabs = [];
     _.forEach(chats, (item, index) => {
       tabs.push({
@@ -302,7 +368,6 @@ class Chat extends Component {
         ShipmentKey: item.ShipmentKey
       });
     });
-    console.log(chats);
     const activeTab = tabs.filter(tab => tab.active === true);
     _.forEach(tabs, tab => {
       this.props.fetchChatMessage(tab.ChatRoomKey, tab.ShipmentKey);
@@ -321,7 +386,6 @@ class Chat extends Component {
         ShipmentKey: item.ShipmentKey
       });
     });
-    console.log(chats);
     const activeTab = tabs.filter(tab => tab.active === true);
     return (
       <div className="animated fadeIn chatbox">
@@ -355,5 +419,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { typing, fetchChatMessage, sendMessage, moveTab, selectTab }
+  { typing, fetchChatMessage, sendMessage, moveTab, selectTab, getChatRoomList }
 )(Chat);

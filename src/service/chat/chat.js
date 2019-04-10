@@ -1,5 +1,5 @@
 import { FirebaseApp } from '../firebase';
-import { collection } from 'rxfire/firestore';
+import { collection, doc } from 'rxfire/firestore';
 import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -94,3 +94,7 @@ export const EditChatRoomFileLink = (ShipmentKey, ChatRoomKey, Data) => {
     )
   );
 };
+
+export const GetChatRoomList = (ShipmentKey) => (collection(ShipmentRefPath(ShipmentKey)))
+
+export const GetChatRoomDetail = (ShipmentKey,ChatRoomKey) => (doc(ChatRoomRefPath(ShipmentKey,ChatRoomKey)))

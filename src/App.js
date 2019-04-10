@@ -6,6 +6,8 @@ import { Provider } from 'react-redux';
 
 import { PersistGate } from 'redux-persist/integration/react';
 import Loadable from 'react-loadable';
+import { StoreContext } from 'redux-react-hook';
+
 import './App.scss';
 const loading = () => (
   <div className="animated fadeIn pt-3 text-center">Loading...</div>
@@ -42,22 +44,29 @@ class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <HashRouter>
-            <Switch>
-              <Route exact path="/login" name="Login Page" component={Login} />
-              <Route
-                exact
-                path="/register"
-                name="Register Page"
-                component={Register}
-              />
-              <Route exact path="/404" name="Page 404" component={Page404} />
-              <Route exact path="/500" name="Page 500" component={Page500} />
-              <Route path="/" name="Home" component={DefaultLayout} />
-            </Switch>
-          </HashRouter>
-        </PersistGate>
+        <StoreContext.Provider value={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <HashRouter>
+              <Switch>
+                <Route
+                  exact
+                  path="/login"
+                  name="Login Page"
+                  component={Login}
+                />
+                <Route
+                  exact
+                  path="/register"
+                  name="Register Page"
+                  component={Register}
+                />
+                <Route exact path="/404" name="Page 404" component={Page404} />
+                <Route exact path="/500" name="Page 500" component={Page500} />
+                <Route path="/" name="Home" component={DefaultLayout} />
+              </Switch>
+            </HashRouter>
+          </PersistGate>
+        </StoreContext.Provider>
       </Provider>
     );
   }

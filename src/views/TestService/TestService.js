@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GetChatMessage, CreateChatMessage } from '../../service/chat/chat';
+import { GetChatMessage, CreateChatMessage, GetChatRoomList } from '../../service/chat/chat';
 import { LoginWithEmail } from '../../service/auth/login';
 import { VerificationEmail, AuthStage } from '../../service/auth/ManageUser';
 
@@ -46,6 +46,8 @@ const TestService = () => {
     // })
     // AuthStage().subscribe(res => {
     // })
+
+    // GetChatRoomList(ShipmentKey).subscribe(console.log)
   }, []);
 
   return (
