@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {
   FETCH_CHAT,
   moveTab as MOVE_TAB,

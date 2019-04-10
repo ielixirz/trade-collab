@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { GetChatMessage, CreateChatMessage, GetChatRoomList } from '../../service/chat/chat';
 import { LoginWithEmail } from '../../service/auth/login';
 import { VerificationEmail, AuthStage } from '../../service/auth/ManageUser';
+import { Register, RegisterWithEmail } from '../../service/auth/Register'
+import { UpdateUserInfo } from '../../service/user/user'
 
 const TestService = () => {
   const [count, setCount] = useState(0);
@@ -48,6 +50,15 @@ const TestService = () => {
     // })
 
     // GetChatRoomList(ShipmentKey).subscribe(console.log)
+
+  //   const UserInfoData = {
+  //     UserInfoEmail: "Email@email.com",
+  //     UserInfoAccountType: "AccountType"
+  // }
+
+    // UpdateUserInfo("wozF6KKfDhfHBHU8vuSAxpQbEqP2",UserInfoData)
+
+    // Register({Email:"test1@gmail.com",Password:"123456789",Firstname:"Top", Surname:"Top", AccountType:"Exporter"}).subscribe(console.log)
   }, []);
 
   return (

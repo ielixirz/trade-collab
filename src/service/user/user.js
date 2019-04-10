@@ -1,6 +1,7 @@
 import { FirebaseApp } from '../firebase';
 import { collection, doc } from 'rxfire/firestore';
 import { from } from 'rxjs'
+import { map } from 'rxjs/operators';
 
 const UserInfoRefPath = () => FirebaseApp.firestore().collection(`UserInfo`)
 
@@ -18,7 +19,9 @@ const UserInfoRefPath = () => FirebaseApp.firestore().collection(`UserInfo`)
     }
 */
 
-export const UpdateUserInfo = (UserInfoKey,Data) => from(UserInfoRefPath().doc(UserInfoKey).set(Data,{merge:true}))
+export const CreateUserInfo = (UserInfoKey, Data) => from(UserInfoRefPath().doc(UserInfoKey).set(Data))
+
+export const UpdateUserInfo = (UserInfoKey, Data) => from(UserInfoRefPath().doc(UserInfoKey).set(Data,{merge:true}))
 
 export const GetUserInfoDetail = UserInfoKey => doc(UserInfoRefPath().doc(UserInfoKey))
 
