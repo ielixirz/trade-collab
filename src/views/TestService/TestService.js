@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { GetChatMessage, CreateChatMessage, GetChatRoomList } from '../../service/chat/chat';
 import { LoginWithEmail } from '../../service/auth/login';
-import { VerificationEmail, AuthStage } from '../../service/auth/ManageUser';
+import { VerificationEmail, AuthStage } from '../../service/auth/manageuser';
 import { Register, RegisterWithEmail } from '../../service/auth/register';
 import { UpdateUserInfo } from '../../service/user/user';
 
