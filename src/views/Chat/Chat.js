@@ -27,7 +27,8 @@ import {
   fetchChatMessage,
   sendMessage,
   moveTab,
-  selectTab
+  selectTab,
+  getChatRoomList
 } from '../../actions/chatActions';
 
 import { connect } from 'react-redux';
@@ -106,8 +107,8 @@ class Chat extends Component {
   }
 
   renderChat(ChatRoomKey = '', ShipmentKey = '') {
-    let chat = _.get(this.props, `ChatReducer.chatrooms.${ChatRoomKey}`, {});
-
+    let chat = _.get(this.props, `ChatReducer.chatroomsMsg.${ChatRoomKey}`, []);
+    let chatMsg = chat.length === 0 ? [] : chat.chatMsg
     const text = this.props.ChatReducer.text;
     return (
       <div
@@ -167,7 +168,7 @@ class Chat extends Component {
                   this.msgChatRef = el;
                 }}
               >
-                {chat.chatMsg.map((msg, i) => {
+                {chatMsg.map((msg, i) => {
                   var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = 'sender';
 
@@ -189,6 +190,7 @@ class Chat extends Component {
               </div>
               <div className="type_msg">
                 <UploadModal
+                  chatFile={this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink}
                   sendMessage={this.props.sendMessage}
                   ref={this.uploadModalRef}
                 />
@@ -247,7 +249,8 @@ class Chat extends Component {
             </div>
           </Col>
           <Col xs="4" style={{ paddingLeft: '0.3rem', marginTop: '0.6rem' }}>
-            <FileSide shipmentKey={ShipmentKey} />
+            <FileSide chatFile={this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink}
+            />
             <ShipmentSide />
           </Col>
         </Row>
@@ -352,7 +355,9 @@ class Chat extends Component {
   }
 
   componentDidMount() {
+    this.props.getChatRoomList(`HDTPONlnceJeG5yAA1Zy`); //MOCK SHIPMENT KEY
     let chats = this.props.ChatReducer.chatrooms;
+    console.log(chats)
     let tabs = [];
     _.forEach(chats, (item, index) => {
       tabs.push({
@@ -363,7 +368,6 @@ class Chat extends Component {
         ShipmentKey: item.ShipmentKey
       });
     });
-    console.log(chats);
     const activeTab = tabs.filter(tab => tab.active === true);
     _.forEach(tabs, tab => {
       this.props.fetchChatMessage(tab.ChatRoomKey, tab.ShipmentKey);
@@ -382,7 +386,6 @@ class Chat extends Component {
         ShipmentKey: item.ShipmentKey
       });
     });
-    console.log(chats);
     const activeTab = tabs.filter(tab => tab.active === true);
     return (
       <div className="animated fadeIn chatbox">
@@ -416,5 +419,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { typing, fetchChatMessage, sendMessage, moveTab, selectTab }
+  { typing, fetchChatMessage, sendMessage, moveTab, selectTab, getChatRoomList }
 )(Chat);

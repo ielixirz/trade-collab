@@ -1,43 +1,43 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { ListGroup, ListGroupItem, Row, Col } from 'reactstrap';
 import { useMappedState, useDispatch } from 'redux-react-hook';
 import { fetchFiles } from '../actions/fileActions';
+import _ from 'lodash';
 
-const FileList = ({ shipmentKey }) => {
-  const mapState = useCallback(
-    state => ({
-      collection: state.FileReducer
-    }),
-    []
-  );
-  const dispatch = useDispatch();
-  const props = useMappedState(mapState);
+
+const FileList = (props) => {
+  const [chatFile, setChatFile] = useState(false)
 
   useEffect(() => {
-    const ShipmentKey = shipmentKey;
-    fetchFiles(ShipmentKey, dispatch);
-  }, []);
+    setChatFile(props.chatFile)
+  })
 
-  const { collection = [] } = props;
+  const preventParentCollapse = (e) => {
+    e.stopPropagation();
+  }
+
+  const openFile = (url) => {
+    window.open(url, '_blank');
+  }
+
   return (
     <div>
-      {collection.map((s, index) => {
-        console.log(s);
-        return (
-          <ListGroup flush key={index}>
-            <ListGroupItem disabled tag="a">
+      <ListGroup onClick={preventParentCollapse} flush>
+        {_.map(chatFile, (s) => {
+          return (
+            <ListGroupItem tag="a">
               <Row>
                 <Col xs="1">
                   <i className="fa fa-file-picture-o" />
                 </Col>
-                <Col xs="11" className="text-left">
+                <Col onClick={() => openFile(s.FileUrl)} xs="11" className="text-left">
                   {s.FileName}
                 </Col>
               </Row>
             </ListGroupItem>
-          </ListGroup>
-        );
-      })}
+          );
+        })}
+      </ListGroup>
     </div>
   );
 }

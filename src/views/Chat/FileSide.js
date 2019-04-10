@@ -35,7 +35,7 @@ class FileSide extends Component {
               </Col>
             </Row>
             <Collapse isOpen={this.state.collapse}>
-              <FileList shipmentKey={this.props.shipmentKey} />
+              <FileList chatFile={this.props.chatFile} />
             </Collapse>
           </CardBody>
 
