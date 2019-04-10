@@ -1,13 +1,13 @@
-import { map, switchMap,tap } from 'rxjs/operators';
-import { from } from 'rxjs'
-
-import { FirebaseApp } from '../firebase'
+import { map, tap } from 'rxjs/operators';
+import { from } from 'rxjs';
 import { auth } from 'firebase';
 import 'firebase/auth';
 
-import { CreateUserInfo, UpdateUserInfo } from '../user/user'
-import { CreateProfile } from '../user/profile'
+import { FirebaseApp } from '../firebase';
 
+
+import { UpdateUserInfo } from '../user/user';
+import { CreateProfile } from '../user/profile';
 
 // เวลา Invoke ใช้ท่านี้นะ
 
@@ -21,30 +21,31 @@ RegisterWithEmail('holy-wisdom@hotmail.com','123456').subscribe({
 
 */
 
-export const RegisterWithEmail = (Email,Password) => {
-    return from(FirebaseApp.auth().createUserWithEmailAndPassword(Email, Password))
-}
+export const RegisterWithEmail = (Email, Password) => {
+  return from(FirebaseApp.auth().createUserWithEmailAndPassword(Email, Password));
+};
 
-export const Register = Data => {
-    
-    const { Email, Password, Firstname, Surname, AccountType } = Data
+export const Register = (Data) => {
+  const {
+    Email, Password, Firstname, Surname, AccountType,
+  } = Data;
 
-    const UserInfoData = {
-        UserInfoEmail: Email,
-        UserInfoAccountType: AccountType
-    }
+  const UserInfoData = {
+    UserInfoEmail: Email,
+    UserInfoAccountType: AccountType,
+  };
 
-    const ProfileData = {
-        ProfileFirstname: Firstname,
-        ProfileSurname: Surname,
-        ProfileEmail: Email
-    }
+  const ProfileData = {
+    ProfileFirstname: Firstname,
+    ProfileSurname: Surname,
+    ProfileEmail: Email,
+  };
 
-    return RegisterWithEmail(Email,Password).pipe(
-        map(RegisterSnapshot => RegisterSnapshot.user.uid),
-        tap(uid => {
-            UpdateUserInfo(uid,UserInfoData)
-            CreateProfile(uid,ProfileData)
-        })
-    )
-}
+  return RegisterWithEmail(Email, Password).pipe(
+    map(RegisterSnapshot => RegisterSnapshot.user.uid),
+    tap((uid) => {
+      UpdateUserInfo(uid, UserInfoData);
+      CreateProfile(uid, ProfileData);
+    }),
+  );
+};
