@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { TabContent, TabPane, Nav, NavItem, NavLink, Container, Button, Row, Col } from 'reactstrap';
 import classnames from 'classnames';
 import TableShipment from './TableShipment';
+
+
 class Shipment extends Component {
   constructor(props) {
     super(props);
@@ -19,6 +21,7 @@ class Shipment extends Component {
       });
     }
   }
+  
   render() {
     return (
       <Container>
@@ -45,7 +48,23 @@ class Shipment extends Component {
               className={classnames({ active: this.state.activeTab === '3' })}
               onClick={() => { this.toggle('3'); }}
             >
-              Active
+              Active |
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: this.state.activeTab === '4' })}
+              onClick={() => { this.toggle('4'); }}
+            >
+              Complete |
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: this.state.activeTab === '5' })}
+              onClick={() => { this.toggle('5'); }}
+            >
+              Cancel |
             </NavLink>
           </NavItem>
           <Nav className="ml-auto" navbar>
@@ -65,14 +84,28 @@ class Shipment extends Component {
           <TabPane tabId="2">
             <Row>
               <Col sm="6">
-              <h4>Tab 2 Contents</h4>
+                toolkit
               </Col>
             </Row>
           </TabPane>
           <TabPane tabId="3">
             <Row>
               <Col sm="6">
-              <h4>Tab 3Contents</h4>
+              <h4>Tab 3Contentss</h4>
+              </Col>
+            </Row>
+          </TabPane>
+          <TabPane tabId="4">
+            <Row>
+              <Col sm="6">
+              <h4>Complete</h4>
+              </Col>
+            </Row>
+          </TabPane>
+          <TabPane tabId="5">
+            <Row>
+              <Col sm="6">
+              <h4>Cancel</h4>
               </Col>
             </Row>
           </TabPane>
