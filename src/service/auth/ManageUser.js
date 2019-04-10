@@ -1,12 +1,12 @@
-import { FirebaseApp } from '../firebase'
-import { authState, user } from 'rxfire/auth'
+import { authState, user } from 'rxfire/auth';
 import { auth } from 'firebase';
 import 'firebase/auth';
+import { from, Observable, throwError } from 'rxjs';
+import { tap, map, filter } from 'rxjs/operators';
+import { FirebaseApp } from '../firebase';
 
-import { LoginWithEmail } from './login' 
+import { LoginWithEmail } from './login';
 
-import { from, Observable, throwError } from 'rxjs'
-import { tap, map, filter } from 'rxjs/operators'
 
 // Example invoke
 
@@ -20,17 +20,14 @@ VerificationEmail().subscribe({
 
 */
 
-export const VerificationEmail = () => {
-
-    return user(FirebaseApp.auth()).pipe(
-        map(AuthStage => {
-            if(!AuthStage.emailVerified) {
-                return from(AuthStage.sendEmailVerification())
-            }
-            else { return throwError("Email Verified") }
-        })
-    )
-}
+export const VerificationEmail = () => user(FirebaseApp.auth()).pipe(
+  map((AuthStage) => {
+    if (!AuthStage.emailVerified) {
+      return from(AuthStage.sendEmailVerification());
+    }
+    return throwError('Email Verified');
+  }),
+);
 
 /*
 
@@ -44,24 +41,17 @@ AuthStage().subscribe(user => {
 
 */
 
-export const AuthStage = () => {
-    return user(FirebaseApp.auth())
-}
+export const AuthStage = () => user(FirebaseApp.auth());
 
-export const UpdatePassword = (Email,Password,NewPassword) => {
-    return LoginWithEmail(Email,Password).pipe(
-        map( User => User.user),
-        tap(UserInfo => from(UserInfo.updatePassword(NewPassword)))
-    )
-}
+export const UpdatePassword = (Email, Password, NewPassword) => LoginWithEmail(Email, Password)
+  .pipe(
+    map(User => User.user),
+    tap(UserInfo => from(UserInfo.updatePassword(NewPassword))),
+  );
 
-export const UpdateEmail = (Email,Password,NewEmail) => {
-    return LoginWithEmail(Email,Password).pipe(
-        map( User => User.user),
-        tap(UserInfo => from(UserInfo.updateEmail(NewEmail)))
-    )
-}
+export const UpdateEmail = (Email, Password, NewEmail) => LoginWithEmail(Email, Password).pipe(
+  map(User => User.user),
+  tap(UserInfo => from(UserInfo.updateEmail(NewEmail))),
+);
 
-export const ForgetPassword = (NewEmail) => {
-    return from(FirebaseApp.auth().sendPasswordResetEmail(NewEmail))
-}
+export const ForgetPassword = NewEmail => from(FirebaseApp.auth().sendPasswordResetEmail(NewEmail));
