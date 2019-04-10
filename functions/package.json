@@ -10,8 +10,11 @@
     "logs": "firebase functions:log"
   },
   "dependencies": {
+    "firebase": "^5.9.3",
     "firebase-admin": "~7.0.0",
-    "firebase-functions": "^2.2.0"
+    "firebase-functions": "^2.2.0",
+    "rxfire": "^3.3.10",
+    "rxjs": "^6.4.0"
   },
   "devDependencies": {
     "eslint": "^5.12.0",

@@ -1,8 +1,8 @@
 module.exports = {
   env: {
     browser: true,
-    es6: true,
   },
+  parser: 'babel-eslint',
   extends: 'airbnb',
   globals: {
     Atomics: 'readonly',
@@ -12,12 +12,22 @@ module.exports = {
     ecmaFeatures: {
       jsx: true,
     },
-    ecmaVersion: 2018,
+    ecmaVersion: 8,
     sourceType: 'module',
   },
   plugins: [
     'react',
+    'filenames'
   ],
   rules: {
+    "camelcase": [
+      2,
+      {
+        "properties": "always",
+      }
+    ],
+    "filenames/match-regex": 2,
+    "filenames/match-exported": 2,
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
   },
 };

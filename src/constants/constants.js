@@ -7,7 +7,7 @@ export const closedTab = 'closedTab';
 export const addTab = 'addTab';
 
 // Shipment
-export const FETCH_SHIPMENT = "FETCH_SHIPMENT";
+export const FETCH_SHIPMENT = 'FETCH_SHIPMENT';
 
 // File
 export const FETCH_FILES = "FETCH_FILES";
