@@ -12,24 +12,32 @@ const FileList = (props) => {
     setChatFile(props.chatFile)
   })
 
+  const preventParentCollapse = (e) => {
+    e.stopPropagation();
+  }
+
+  const openFile = (url) => {
+    window.open(url, '_blank');
+  }
+
   return (
     <div>
-      {_.map(chatFile, (s, index) => {
-        return (
-          <ListGroup flush key={index}>
-            <ListGroupItem disabled tag="a">
+      <ListGroup onClick={preventParentCollapse} flush>
+        {_.map(chatFile, (s) => {
+          return (
+            <ListGroupItem tag="a">
               <Row>
                 <Col xs="1">
                   <i className="fa fa-file-picture-o" />
                 </Col>
-                <Col xs="11" className="text-left">
+                <Col onClick={() => openFile(s.FileUrl)} xs="11" className="text-left">
                   {s.FileName}
                 </Col>
               </Row>
             </ListGroupItem>
-          </ListGroup>
-        );
-      })}
+          );
+        })}
+      </ListGroup>
     </div>
   );
 }
