@@ -10,26 +10,26 @@ import _ from 'lodash';
 import { map } from 'rxjs/operators';
 
 
-export const typing = data => dispatch => {
-  let text = data.target.value;
+export const typing = data => (dispatch) => {
+  const text = data.target.value;
   console.log(text);
   dispatch({
     type: TYPING_TEXT,
-    text: text
+    text,
   });
 };
 
-export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => dispatch => {
+export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch) => {
   console.log('trigger Fetch');
   GetChatMessage(ShipmentKey, ChatRoomKey).subscribe({
-    next: res => {
+    next: (res) => {
       dispatch({
         type: FETCH_CHAT,
         id: ChatRoomKey,
-        payload: res
+        payload: res,
       });
     },
-    error: err => {
+    error: (err) => {
       console.log(err);
       alert(err.message);
     },
@@ -38,8 +38,8 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => dispatch => {
 };
 
 export const moveTab = (dragIndex, hoverIndex) => (getState, dispatch) => {
-  let chats = getState().ChatReducer.chatrooms;
-  let tabs = [];
+  const chats = getState().ChatReducer.chatrooms;
+  const tabs = [];
   _.forEach(chats, (item, index) => {
     tabs.push({
       id: tabs.length + 1,
@@ -50,9 +50,9 @@ export const moveTab = (dragIndex, hoverIndex) => (getState, dispatch) => {
       ChatRoomData: item.ChatRoomData
     });
   });
-  let newTabs = tabs;
+  const newTabs = tabs;
   newTabs.splice(hoverIndex, 0, newTabs.splice(dragIndex, 1)[0]);
-  let originalReducer = [];
+  const originalReducer = [];
   _.forEach(newTabs, (item, index) => {
     originalReducer[item.ChatRoomKey] = {
       ChatRoomKey: item.ChatRoomKey,
@@ -69,10 +69,10 @@ export const moveTab = (dragIndex, hoverIndex) => (getState, dispatch) => {
 
 export const selectTab = (selectedIndex, selectedID) => (
   dispatch,
-  getState
+  getState,
 ) => {
-  let chats = getState().ChatReducer.chatrooms;
-  let tabs = [];
+  const chats = getState().ChatReducer.chatrooms;
+  const tabs = [];
   _.forEach(chats, (item, index) => {
     tabs.push({
       id: tabs.length + 1,
@@ -85,9 +85,9 @@ export const selectTab = (selectedIndex, selectedID) => (
   });
   const newTabs = tabs.map(tab => ({
     ...tab,
-    active: tab.id === selectedID
+    active: tab.id === selectedID,
   }));
-  let originalReducer = [];
+  const originalReducer = [];
   _.forEach(newTabs, (item, index) => {
     originalReducer[item.ChatRoomKey] = {
       ChatRoomKey: item.ChatRoomKey,
@@ -102,7 +102,7 @@ export const selectTab = (selectedIndex, selectedID) => (
 
 export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (
   dispatch,
-  getState
+  getState,
 ) => {
   // ShipmentKey,ChatRoomKey,Data
   // {
@@ -115,16 +115,16 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (
   const user = getState().authReducer.user;
   console.log(user);
   if (_.get(user, 'uid', false)) {
-    let msg = {
+    const msg = {
       ChatRoomMessageSender: _.get(user, 'email', 0),
       ChatRoomMessageContext: text,
       ChatRoomMessageType: 'Text',
-      ChatRoomMessageTimestamp: new Date()
+      ChatRoomMessageTimestamp: new Date(),
     };
     CreateChatMessage(ShipmentKey, ChatRoomKey, msg);
     dispatch({
       type: TYPING_TEXT,
-      text: ''
+      text: '',
     });
   } else {
     alert('please Sign in');

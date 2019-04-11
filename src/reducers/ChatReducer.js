@@ -13,7 +13,7 @@ export default (state = INITIAL_STATE, action) => {
     case TYPING_TEXT:
       return {
         ...state,
-        text: action.text
+        text: action.text,
       };
     case FETCH_CHAT:
       return {
@@ -29,8 +29,8 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         chatrooms: {
-          ...action.payload
-        }
+          ...action.payload,
+        },
       };
     case FETCH_CHAT_ROOMS:
       return {
