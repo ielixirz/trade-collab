@@ -24,10 +24,10 @@ const FileList = (props) => {
 
   return (
     <div>
-      <CopyModal
-        ref={copyModalRef}
-      />
       <ListGroup onClick={preventParentCollapse} flush>
+        <CopyModal
+          ref={copyModalRef}
+        />
         {_.map(chatFile, (s) => {
           return (
             <ListGroupItem tag="a">
