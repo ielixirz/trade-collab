@@ -36,7 +36,7 @@ export const EditShipment = (ShipmentKey, Data) => from(
 );
 
 export const GetShipmentList = (QueryStatus, QueryFieldName, QueryFieldDirection = 'asc') => {
-  const DefaultQuery = ShipmentRefPath().orderBy('ShipmentCreateTimestamp', 'asc');
+  const DefaultQuery = ShipmentRefPath().orderBy('ShipmentCreateTimestamp', 'desc');
 
   if (QueryStatus && QueryFieldName) return collection(DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection).where('ShipmentStatus', '==', QueryStatus));
   if (QueryStatus) return collection(DefaultQuery.where('ShipmentStatus', '==', QueryStatus));
