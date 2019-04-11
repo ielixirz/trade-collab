@@ -1,13 +1,15 @@
+import { FETCH_SHIPMENT } from '../constants/constants';
+
 const INITIAL_STATE = {
-  Shipments: [],
+  Shipments: []
 };
 
 export default function reducer(state = INITIAL_STATE, action) {
   switch (action.type) {
-    case 'FETCH_SHIPMENTS':
+    case FETCH_SHIPMENT:
       return {
         ...state,
-        Shipments: action.payload,
+        Shipments: action.payload
       };
     default:
       return state;

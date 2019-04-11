@@ -7,11 +7,11 @@ export const closedTab = 'closedTab';
 export const addTab = 'addTab';
 
 // Shipment
-export const FETCH_SHIPMENT = "FETCH_SHIPMENT";
+export const FETCH_SHIPMENT = 'FETCH_SHIPMENT';
 
 // File
-export const FETCH_FILES = "FETCH_FILES";
+export const FETCH_FILES = 'FETCH_FILES';
 
 // Chat
 export const FETCH_CHAT = 'FETCH_CHAT';
-export const FETCH_CHAT_ROOMS = "FETCH_CHAT_ROOMS";
+export const FETCH_CHAT_ROOMS = 'FETCH_CHAT_ROOMS';
