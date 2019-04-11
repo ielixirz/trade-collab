@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { TabContent, TabPane, Nav, NavItem, NavLink, Container, Button, Row, Col } from 'reactstrap';
 import classnames from 'classnames';
 import TableShipment from './TableShipment';
+import {GetShipmentList} from "../../service/shipment/shipment";
 
 
 class Shipment extends Component {
@@ -21,7 +22,7 @@ class Shipment extends Component {
       });
     }
   }
-  
+
   render() {
     return (
       <Container>
