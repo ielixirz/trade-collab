@@ -94,7 +94,7 @@ const TestService = () => {
     //   console.log(res.map( d => d.data()))
     // })
     
-    GetShipmentList(null,null,'').subscribe(console.log)
+    // GetShipmentList(null,null,'').subscribe(console.log)
 
     
 
