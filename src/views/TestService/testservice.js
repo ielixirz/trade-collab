@@ -90,9 +90,13 @@ const TestService = () => {
 
     // QueryStatus Case
 
-    // GetShipmentList('Planning','','').subscribe(console.log)
+    // GetShipmentList('Planning','','').subscribe(res => {
+    //   console.log(res.map( d => d.data()))
+    // })
     
-    // GetShipmentList('Delayed','','').subscribe(console.log)
+    GetShipmentList(null,null,'').subscribe(console.log)
+
+    
 
     
   }, []);

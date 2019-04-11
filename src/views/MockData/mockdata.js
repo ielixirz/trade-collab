@@ -21,9 +21,9 @@ const mockdata = () => {
   useEffect(() => {
     // CreateShipment
 
-    // CreateShipment().then( res => {
-    //     console.log(res.id)
-    // })
+    CreateShipment().then((res) => {
+      console.log(res.id);
+    });
 
     // CreateChatRoom
 

@@ -41,7 +41,7 @@ export const GetShipmentList = (QueryStatus, QueryFieldName, QueryFieldDirection
   if (QueryStatus && QueryFieldName) return collection(DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection).where('ShipmentStatus', '==', QueryStatus));
   if (QueryStatus) return collection(DefaultQuery.where('ShipmentStatus', '==', QueryStatus));
   if (QueryFieldName) return collection(DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection));
-  return DefaultQuery;
+  return collection(DefaultQuery);
 };
 
 export const GetShipmentDetail = ShipmentKey => doc(ShipmentRefPath().doc(ShipmentKey));
