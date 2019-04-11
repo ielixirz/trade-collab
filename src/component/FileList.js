@@ -1,12 +1,14 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { ListGroup, ListGroupItem, Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import ThreeDotDropdown from './ThreeDotDropdown';
+import CopyModal from './CopyModal';
 import { useMappedState, useDispatch } from 'redux-react-hook';
 import { fetchFiles } from '../actions/fileActions';
 import _ from 'lodash';
 
 const FileList = (props) => {
   const [chatFile, setChatFile] = useState(false)
+  const copyModalRef = useRef(null);
 
   useEffect(() => {
     setChatFile(props.chatFile)
@@ -22,6 +24,9 @@ const FileList = (props) => {
 
   return (
     <div>
+      <CopyModal
+        ref={copyModalRef}
+      />
       <ListGroup onClick={preventParentCollapse} flush>
         {_.map(chatFile, (s) => {
           return (
@@ -42,7 +47,7 @@ const FileList = (props) => {
                       },
                       {
                         text: 'Copy',
-                        function: undefined
+                        function: () => copyModalRef.current.triggerCopying(s)
                       }]
                     }
                   />
