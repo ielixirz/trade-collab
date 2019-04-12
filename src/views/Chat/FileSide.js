@@ -26,7 +26,7 @@ class FileSide extends Component {
               <Col xs="10" className="text-left">
                 <span style={styles.boxColor}>
                   <i className="fa fa-file"></i></span>
-                <span style={styles.title}>File</span></Col>
+                <span style={styles.title}>Shared Files</span></Col>
               <Col xs="2" className="text-right">
                 {this.state.collapse ?
                   <span style={styles.arrow}><i className="fa fa-angle-down"></i></span> :
