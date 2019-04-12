@@ -5,6 +5,7 @@ import { LoginWithEmail } from '../../service/auth/login';
 import { VerificationEmail, AuthStage } from '../../service/auth/manageuser';
 import { Register, RegisterWithEmail } from '../../service/auth/register';
 import { UpdateUserInfo } from '../../service/user/user';
+import { GetShipmentList } from '../../service/shipment/shipment'
 
 const TestService = () => {
   const [count, setCount] = useState(0);
@@ -60,6 +61,44 @@ const TestService = () => {
     // UpdateUserInfo("wozF6KKfDhfHBHU8vuSAxpQbEqP2",UserInfoData)
 
     // Register({Email:"test1@gmail.com",Password:"123456789",Firstname:"Top", Surname:"Top", AccountType:"Exporter"}).subscribe(console.log)
+
+    // Only QueryFieldName Case
+
+    // GetShipmentList('','ShipmentSellerCompanyName','asc').subscribe(console.log)
+    // GetShipmentList('','ShipmentSellerCompanyName','desc').subscribe(console.log)
+    // GetShipmentList('','ShipmentBuyerCompanyName','asc').subscribe(console.log)
+    // GetShipmentList('','ShipmentBuyerCompanyName','desc').subscribe(console.log)
+    // GetShipmentList('','ShipmentETD','asc').subscribe(console.log)
+    // GetShipmentList('','ShipmentETD','desc').subscribe(console.log)
+    // GetShipmentList('','ShipmentETAPort','asc').subscribe(console.log)
+    // GetShipmentList('','ShipmentETAPort','desc').subscribe(console.log)
+    // GetShipmentList('','ShipmentETAWarehouse','asc').subscribe(console.log)
+    // GetShipmentList('','ShipmentETAWarehouse','desc').subscribe(console.log)
+
+    // QueryStatus and QueryFieldName Case
+
+    // GetShipmentList('Planning','ShipmentSellerCompanyName','asc').subscribe(console.log)
+    // GetShipmentList('Planning','ShipmentSellerCompanyName','desc').subscribe(console.log)
+    // GetShipmentList('Planning','ShipmentBuyerCompanyName','asc').subscribe(console.log)
+    // GetShipmentList('Planning','ShipmentBuyerCompanyName','desc').subscribe(console.log)
+    // GetShipmentList('Planning','ShipmentETD','asc').subscribe(console.log)
+    // GetShipmentList('Planning','ShipmentETD','desc').subscribe(console.log)
+    // GetShipmentList('Planning','ShipmentETAPort','asc').subscribe(console.log)
+    // GetShipmentList('Planning','ShipmentETAPort','desc').subscribe(console.log)
+    // GetShipmentList('Planning','ShipmentETAWarehouse','asc').subscribe(console.log)
+    // GetShipmentList('Planning','ShipmentETAWarehouse','desc').subscribe(console.log)
+
+    // QueryStatus Case
+
+    // GetShipmentList('Planning','','').subscribe(res => {
+    //   console.log(res.map( d => d.data()))
+    // })
+    
+    GetShipmentList(null,null,'').subscribe(console.log)
+
+    
+
+    
   }, []);
 
   return (

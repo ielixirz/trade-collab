@@ -40,7 +40,7 @@ export const EditShipment = (ShipmentKey, Data) =>
   );
 
 export const GetShipmentList = (QueryStatus, QueryFieldName, QueryFieldDirection = 'asc') => {
-  const DefaultQuery = ShipmentRefPath().orderBy('ShipmentCreateTimestamp', 'asc');
+  const DefaultQuery = ShipmentRefPath().orderBy('ShipmentCreateTimestamp', 'desc');
 
   if (QueryStatus && QueryFieldName)
     return collection(
@@ -52,7 +52,7 @@ export const GetShipmentList = (QueryStatus, QueryFieldName, QueryFieldDirection
     );
   if (QueryStatus) return collection(DefaultQuery.where('ShipmentStatus', '==', QueryStatus));
   if (QueryFieldName) return collection(DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection));
-  return DefaultQuery;
+  return collection(DefaultQuery);
 };
 
 export const GetShipmentDetail = ShipmentKey => doc(ShipmentRefPath().doc(ShipmentKey));
