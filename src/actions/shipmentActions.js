@@ -7,6 +7,7 @@ export const fetchShipments = () => dispatch => {
     next: res => {
       shipments = _.map(res, item => {
         return {
+          uid: item.id,
           ...item.data()
         };
       });

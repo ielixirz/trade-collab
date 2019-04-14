@@ -57,7 +57,9 @@ img{ max-width:100%;}
   padding: 18px 16px 10px;
 }
 .inbox_chat { height: 550px; overflow-y: scroll;}
-
+input {
+  font-family:Arial, FontAwesome;
+}
 .active_chat{ background:#ebebeb;}
 
 .incoming_msg_img {

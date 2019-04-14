@@ -95,7 +95,7 @@ class Shipment extends Component {
             </NavItem>
             <Nav className="ml-auto" navbar>
               <NavItem>
-                <Button color="success" right>
+                <Button color="success" right={true}>
                   Create New Shipment
                 </Button>
               </NavItem>
