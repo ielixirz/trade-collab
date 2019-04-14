@@ -38,6 +38,7 @@ class Shipment extends Component {
   }
 
   render() {
+    console.log('this state is', this.props);
     return (
       <Container>
         <div>
@@ -104,7 +105,7 @@ class Shipment extends Component {
             <TabPane tabId="1">
               <Row>
                 <Col sm="12">
-                  <TableShipment />
+                  <TableShipment input={this.props.shipments} />
                 </Col>
               </Row>
             </TabPane>
@@ -141,7 +142,13 @@ class Shipment extends Component {
   }
 }
 
+const mapStateToProps = state => {
+  return {
+    shipments: state.shipmentReducer.Shipments
+  };
+};
+
 export default connect(
-  null,
+  mapStateToProps,
   { fetchShipments }
 )(Shipment);

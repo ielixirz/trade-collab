@@ -8,6 +8,7 @@ export const addTab = 'addTab';
 
 // Shipment
 export const FETCH_SHIPMENT = 'FETCH_SHIPMENT';
+export const FETCH_SHIPMENT_LIST = 'FETCH_SHIPMENT_LIST';
 
 // File
 export const FETCH_FILES = 'FETCH_FILES';
