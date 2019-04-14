@@ -93,13 +93,6 @@ class Shipment extends Component {
                 Cancel |
               </NavLink>
             </NavItem>
-            <Nav className="ml-auto" navbar>
-              <NavItem>
-                <Button color="success" right={true}>
-                  Create New Shipment
-                </Button>
-              </NavItem>
-            </Nav>
           </Nav>
           <TabContent activeTab={this.state.activeTab}>
             <TabPane tabId="1">

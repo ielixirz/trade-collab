@@ -60,6 +60,11 @@ img{ max-width:100%;}
 input {
   font-family:Arial, FontAwesome;
 }
+.popover{
+  max-width:1000px;
+  width: 300px;
+
+}
 .active_chat{ background:#ebebeb;}
 
 .incoming_msg_img {

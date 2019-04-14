@@ -27,7 +27,8 @@ export const createDataTable = input => {
         sort: true,
         headerStyle: () => {
           return { width: '80px', textAlign: 'center' };
-        }
+        },
+        hidden: true
       };
     }
     return {

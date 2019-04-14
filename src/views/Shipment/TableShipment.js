@@ -5,11 +5,22 @@ import _ from 'lodash';
 import { createDataTable } from '../../utils/tool';
 import BootstrapTable from 'react-bootstrap-table-next';
 
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
-import { Row, Col } from 'reactstrap';
+
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+
+import {
+  Row,
+  Col,
+  Button,
+  UncontrolledPopover,
+  FormGroup,
+  Label,
+  Input,
+  PopoverBody
+} from 'reactstrap';
 const { SearchBar } = Search;
 
 export default class TableShipment extends React.Component {
@@ -106,6 +117,45 @@ export default class TableShipment extends React.Component {
     ]
   };
 
+  renderRefComponent(index, ref) {
+    console.log(ref);
+    return (
+      <div>
+        <Button id={'popover' + index} type="button">
+          {ref.RefID}
+        </Button>
+        <UncontrolledPopover trigger="legacy" placement="bottom" target={'popover' + index}>
+          <PopoverBody>
+            <Row>
+              <Col xs={1} />
+              <Col xs={5}>
+                <Label check>
+                  <Input type="radio" name={'shipmentRef' + index} value={ref.RefID} />
+                  Ref #1 : ({ref.RefOwner})
+                </Label>
+              </Col>
+              <Col xs={5}>
+                <Input
+                  type="text"
+                  name={'shipmentRefID' + index}
+                  id={'shipmentRefID' + index}
+                  value={ref.RefID}
+                  maxlength={50}
+                  disabled
+                />
+              </Col>
+            </Row>
+          </PopoverBody>
+        </UncontrolledPopover>
+      </div>
+    );
+  }
+
+  renderStatusComponent(index, ref) {
+    console.log(ref);
+    return <div />;
+  }
+
   render() {
     let input = _.map(this.props.input, (item, index) => {
       // ShipmentBuyerCompanyName: "JP Fish Co."
@@ -128,7 +178,7 @@ export default class TableShipment extends React.Component {
       let eta = _.get(item, 'ShipmentETAPort', 0);
 
       return {
-        Ref: _.get(item, 'ShipmentReference.RefID', 'input your Ref'),
+        Ref: this.renderRefComponent(index, _.get(item, 'ShipmentReference', 'input your Ref')),
         Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
         Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
         Product: _.get(item, 'ShipmentProductName', ''),
@@ -145,12 +195,17 @@ export default class TableShipment extends React.Component {
         <ToolkitProvider keyField="id" data={data} columns={columns} search>
           {props => (
             <div>
-              <Row className="justify-content-center">
+              <Row>
                 <Col xs={6}>
                   <SearchBar {...props.searchProps} placeholder="&#xF002; Search" id="search" />
                 </Col>
-                <Col xs={6} />
+                <Col sm={{ size: '5', offset: 1 }}>
+                  <Button color="success" className="float-right">
+                    Create New Shipment
+                  </Button>
+                </Col>
               </Row>
+
               <hr />
               <BootstrapTable
                 rowStyle={{ textAlign: 'center' }}
