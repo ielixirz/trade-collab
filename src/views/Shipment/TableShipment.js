@@ -21,6 +21,7 @@ import {
   Input,
   PopoverBody
 } from 'reactstrap';
+import { EditShipment } from '../../service/shipment/shipment';
 const { SearchBar } = Search;
 
 export default class TableShipment extends React.Component {
@@ -151,9 +152,42 @@ export default class TableShipment extends React.Component {
     );
   }
 
-  renderStatusComponent(index, ref) {
-    console.log(ref);
-    return <div />;
+  renderStatusComponent(item) {
+    return (
+      <div>
+        <Input
+          type="select"
+          onChange={e => {
+            const value = e.target.value;
+            EditShipment(item.uid, {
+              ShipmentStatus: value
+            });
+          }}
+        >
+          <option value="Planing" selected={item.ShipmentStatus === 'Planing' ? true : ''}>
+            Planing
+          </option>
+          <option
+            value="Order Confirmed"
+            selected={item.ShipmentStatus === 'Order Confirmed' ? true : ''}
+          >
+            Order Confirmed
+          </option>
+          <option value="In-Transit" selected={item.ShipmentStatus === 'In-Transit' ? true : ''}>
+            In-Transit
+          </option>
+          <option value="Delayed" selected={item.ShipmentStatus === 'Delayed' ? true : ''}>
+            Delayed
+          </option>
+          <option value="Delivered" selected={item.ShipmentStatus === 'Delivered' ? true : ''}>
+            Delivered
+          </option>
+          <option value="Cancelled" selected={item.ShipmentStatus === 'Cancelled' ? true : ''}>
+            Cancelled
+          </option>
+        </Input>
+      </div>
+    );
   }
 
   render() {
@@ -184,11 +218,10 @@ export default class TableShipment extends React.Component {
         Product: _.get(item, 'ShipmentProductName', ''),
         ETD: new Date(etd.seconds * 1000).toLocaleString(),
         ETA: new Date(eta.seconds * 1000).toLocaleString(),
-        Status: _.get(item, 'ShipmentStatus', '')
+        Status: this.renderStatusComponent(item)
       };
     });
     input = createDataTable(input);
-    console.log('data is ', input);
     const { data, columns } = input;
     return (
       <div>
