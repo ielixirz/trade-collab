@@ -165,10 +165,15 @@ img{ max-width:100%;}
   margin-top: 0.5rem !important;
   border: 0px !important;
 }
+
+.react-tabs-tab.react-tabs-active{
+  background-color: #ffffff !important;
+  font-weight: bold !important;
+}
+
 .react-tabs-tab{
-  background-color: white !important;
+  background-color: #f0f3f5b5 !important;
   color: #000000 !important;
-  font-weight: 3000 !important;
   border-top: 1px solid #c8ced3 !important;
   border-right: 1px solid #c8ced3 !important;
   border-left: 1px solid #c8ced3 !important;
@@ -181,7 +186,6 @@ img{ max-width:100%;}
 .react-tabs-tab-content{
   font-size: medium !important;
   width: 100% !important;
-  font-weight: bold !important;
 }
 
 .react-tabs-tab-close {
