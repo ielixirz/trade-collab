@@ -226,7 +226,7 @@ export default class TableShipment extends React.Component {
             <div>
               <Row>
                 <Col xs={6}>
-                  <SearchBar {...props.searchProps} placeholder="&#xF002; Search" id="search" />
+                  <SearchBar {...props.searchProps} placeholder="&#xF002; Typing" id="search" />
                 </Col>
                 <Col sm={{ size: '5', offset: 1 }}>
                   <Button color="success" className="float-right">
@@ -240,6 +240,8 @@ export default class TableShipment extends React.Component {
                 rowStyle={{ textAlign: 'center' }}
                 {...props.baseProps}
                 pagination={paginationFactory()}
+				bordered={ false }
+
               />
             </div>
           )}
