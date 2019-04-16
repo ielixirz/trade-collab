@@ -52,6 +52,7 @@ const CopyModal = forwardRef((props, ref) => {
     const mapChatroom = (chatrooms) => {
         let chatroomOption = []
         Object.keys(chatrooms).forEach(key => {
+            if(key !== "custom"){
             let room = chatrooms[key];
             chatroomOption.push({
                 value: {
@@ -62,6 +63,7 @@ const CopyModal = forwardRef((props, ref) => {
                 },
                 label: room.roomName
             });
+            }
         });
         setChatroomOption(chatroomOption);
     }
