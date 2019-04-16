@@ -5,40 +5,43 @@ import {
   TYPING_TEXT,
   FETCH_CHAT_ROOMS
 } from '../constants/constants';
-import { GetChatMessage, CreateChatMessage, GetChatRoomList, GetChatRoomDetail } from '../service/chat/chat';
+import {
+  GetChatMessage,
+  CreateChatMessage,
+  GetChatRoomList,
+  GetChatRoomDetail
+} from '../service/chat/chat';
 import _ from 'lodash';
 import { map } from 'rxjs/operators';
 
-
-export const typing = data => (dispatch) => {
+export const typing = data => dispatch => {
   const text = data.target.value;
   console.log(text);
   dispatch({
     type: TYPING_TEXT,
-    text,
+    text
   });
 };
 
-export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch) => {
+export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => dispatch => {
   console.log('trigger Fetch');
   GetChatMessage(ShipmentKey, ChatRoomKey).subscribe({
-    next: (res) => {
+    next: res => {
       dispatch({
         type: FETCH_CHAT,
         id: ChatRoomKey,
-        payload: res,
+        payload: res
       });
     },
-    error: (err) => {
+    error: err => {
       console.log(err);
       alert(err.message);
     },
-    complete: () => { }
+    complete: () => {}
   });
 };
 
-export const moveTab = (dragIndex, hoverIndex) => (getState, dispatch) => {
-  const chats = getState().ChatReducer.chatrooms;
+export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
   const tabs = [];
   _.forEach(chats, (item, index) => {
     tabs.push({
@@ -47,30 +50,31 @@ export const moveTab = (dragIndex, hoverIndex) => (getState, dispatch) => {
       active: item.active,
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
-      ChatRoomData: item.ChatRoomData
+      ChatRoomData: item.ChatRoomData,
+      position: item.position
     });
   });
-  const newTabs = tabs;
-  newTabs.splice(hoverIndex, 0, newTabs.splice(dragIndex, 1)[0]);
+
+  const movingItem = tabs[dragIndex];
+  tabs.splice(dragIndex, 1);
+  tabs.splice(hoverIndex, 0, movingItem);
+
   const originalReducer = [];
-  _.forEach(newTabs, (item, index) => {
+  _.forEach(tabs, (item, index) => {
     originalReducer[item.ChatRoomKey] = {
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
       roomName: item.roomName,
       chatMsg: item.chatMsg,
       active: item.active,
-      ChatRoomData: item.ChatRoomData
+      ChatRoomData: item.ChatRoomData,
+      position: index
     };
   });
-
   dispatch({ type: MOVE_TAB, payload: originalReducer });
 };
 
-export const selectTab = (selectedIndex, selectedID) => (
-  dispatch,
-  getState,
-) => {
+export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => {
   const chats = getState().ChatReducer.chatrooms;
   const tabs = [];
   _.forEach(chats, (item, index) => {
@@ -80,12 +84,13 @@ export const selectTab = (selectedIndex, selectedID) => (
       active: item.active,
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
-      ChatRoomData: item.ChatRoomData
+      ChatRoomData: item.ChatRoomData,
+      position: item.index
     });
   });
   const newTabs = tabs.map(tab => ({
     ...tab,
-    active: tab.id === selectedID,
+    active: tab.id === selectedID
   }));
   const originalReducer = [];
   _.forEach(newTabs, (item, index) => {
@@ -94,16 +99,14 @@ export const selectTab = (selectedIndex, selectedID) => (
       ShipmentKey: item.ShipmentKey,
       roomName: item.roomName,
       active: item.active,
-      ChatRoomData: item.ChatRoomData
+      ChatRoomData: item.ChatRoomData,
+      position: index
     };
   });
   dispatch({ type: MOVE_TAB, payload: originalReducer });
 };
 
-export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (
-  dispatch,
-  getState,
-) => {
+export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getState) => {
   // ShipmentKey,ChatRoomKey,Data
   // {
   //   ChatRoomMessageSender : ProfileKey,
@@ -119,19 +122,19 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (
       ChatRoomMessageSender: _.get(user, 'email', 0),
       ChatRoomMessageContext: text,
       ChatRoomMessageType: 'Text',
-      ChatRoomMessageTimestamp: new Date(),
+      ChatRoomMessageTimestamp: new Date()
     };
     CreateChatMessage(ShipmentKey, ChatRoomKey, msg);
     dispatch({
       type: TYPING_TEXT,
-      text: '',
+      text: ''
     });
   } else {
     alert('please Sign in');
   }
 };
 
-export const getChatRoomList = (shipmentKey) => (dispatch, getState) => {
+export const getChatRoomList = shipmentKey => (dispatch, getState) => {
   //TODO: get chatroom filter by user?
   const user = getState().authReducer.user;
 
@@ -141,26 +144,37 @@ export const getChatRoomList = (shipmentKey) => (dispatch, getState) => {
       let chatrooms = [];
       snapshot.map((d, index) => {
         let chatRoomKey = d.id;
-        let data = d.data()
+        let data = d.data();
 
         chatrooms.push({
           id: index + 1,
           active: index === 0 ? true : false,
           ChatRoomKey: chatRoomKey,
           ShipmentKey: shipmentKey,
-          ChatRoomData: data
+          ChatRoomData: data,
+          position: index
         });
-      })
+      });
 
-      _.forEach(chatrooms, (c) => {
+      _.forEach(chatrooms, (c, index) => {
         originalReducer[c.ChatRoomKey] = {
           ChatRoomKey: c.ChatRoomKey,
           ShipmentKey: c.ShipmentKey,
           roomName: c.ChatRoomData.ChatRoomName,
           active: c.active,
-          ChatRoomData: c.ChatRoomData
+          ChatRoomData: c.ChatRoomData,
+          position: index
         };
       });
+
+      originalReducer['custom'] = {
+        ChatRoomKey: 'custom',
+        ShipmentKey: 'custom',
+        roomName: '+',
+        active: false,
+        ChatRoomData: [],
+        position: chatrooms.length
+      };
 
       dispatch({
         type: FETCH_CHAT_ROOMS,
@@ -171,6 +185,6 @@ export const getChatRoomList = (shipmentKey) => (dispatch, getState) => {
       console.log(err);
       alert(err.message);
     },
-    complete: () => { }
+    complete: () => {}
   });
-}
+};

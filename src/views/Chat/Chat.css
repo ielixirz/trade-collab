@@ -211,3 +211,28 @@ ol.breadcrumb{
   padding-bottom: 0.5rem;
   padding-top: 0.5rem;
 }
+
+.time-seperation{
+  font-size: large;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  background: #fff; 
+  padding: 0 15px; 
+}
+
+h2.time-background {
+  text-align: center;
+
+  position: relative;
+  z-index: 1;
+}
+
+h2.time-background:before {
+  border-top: 1px solid #dfdfdf;
+  content:"";
+  margin: 0 auto; /* this centers the line to the full width specified */
+  position: absolute; /* positioning must be absolute here, and relative positioning must be applied to the parent */
+  top: 19px; left: 0; right: 0; bottom: 0;
+  width: 95%;
+  z-index: -1;
+}
