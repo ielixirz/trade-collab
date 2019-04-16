@@ -8,5 +8,5 @@ export default combineReducers({
   dataReducer,
   ChatReducer,
   authReducer,
-  FileReducer,
+  FileReducer
 });
