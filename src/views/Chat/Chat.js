@@ -120,11 +120,13 @@ class Chat extends Component {
       return (
         <div key={i}>
           {isFirstMessageOfTheDay ? (
-            <div align="center">
+            <h2 class="time-background">
+            <span className="time-seperation" align="center">
               {status.toDateString() === new Date().toDateString()
                 ? 'Today'
                 : status.toDateString()}
-            </div>
+            </span>
+          </h2>
           ) : (
             ''
           )}
