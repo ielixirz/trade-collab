@@ -10,6 +10,7 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import Select from 'react-select'
 
 import {
   Row,
@@ -234,14 +235,11 @@ export default class TableShipment extends React.Component {
                   </Button>
                 </Col>
               </Row>
-
-              <hr />
               <BootstrapTable
-                rowStyle={{ textAlign: 'center' }}
+                rowStyle={{ textAlign: 'left' }}
                 {...props.baseProps}
                 pagination={paginationFactory()}
 				bordered={ false }
-
               />
             </div>
           )}
