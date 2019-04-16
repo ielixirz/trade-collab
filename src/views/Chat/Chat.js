@@ -58,48 +58,89 @@ class Chat extends Component {
     this.fileInput = React.createRef();
   }
 
-  renderMessage(message) {
+  renderMessage(message, i) {
+    console.log('renderMessage', message);
+
     const {
       type = 'sender',
       text = this.lorem(),
       name = 'Anonymous',
-      status = '11:01 AM | Today'
+      status = new Date()
     } = message;
+    let prev = _.get(message, 'prev', false);
+    let isFirstMessageOfTheDay = false;
+    if (prev) {
+      let t = new Date(prev.ChatRoomMessageTimestamp.seconds * 1000);
+      console.log(t.toDateString());
+      console.log(status.toDateString());
+
+      if (t.toDateString() === status.toDateString()) {
+        console.log('*** Same day ***');
+      } else {
+        isFirstMessageOfTheDay = true;
+      }
+    } else {
+      console.log('first message');
+      isFirstMessageOfTheDay = true;
+    }
+    console.log('isFirstMessageOfTheDay');
     if (type === 'sender') {
       return (
-        <div className="incoming_msg">
-          <div className="received_msg">
-            <div className="received_withd_msg">
-              <Row>
-                <Col xs="8">
-                  <p>
-                    <span className="user-name">{name}</span> <br />
-                    {text}
-                  </p>
-                </Col>
-                <Col xs={4}>
-                  <span className="time_date"> {status}</span>
-                </Col>
-              </Row>
+        <div key={i}>
+          {isFirstMessageOfTheDay ? (
+            <div align="center">
+              {status.toDateString() === new Date().toDateString()
+                ? 'Today'
+                : status.toDateString()}
+            </div>
+          ) : (
+            ''
+          )}
+          <div className="incoming_msg">
+            <div className="received_msg">
+              <div className="received_withd_msg">
+                <Row>
+                  <Col xs="8">
+                    <p>
+                      <span className="user-name">{name}</span> <br />
+                      {text}
+                    </p>
+                  </Col>
+                  <Col xs={4}>
+                    <span className="time_date"> {status.toLocaleString()}</span>
+                  </Col>
+                </Row>
+              </div>
             </div>
           </div>
         </div>
       );
     } else {
       return (
-        <div className="outgoing_msg">
-          <div className="sent_msg">
-            <Row>
-              <Col xs={4}>
-                <span className="time_date"> {status}</span>
-              </Col>
-              <Col>
-                <p>
-                  <span className="user-name">{name}</span> <br />
-                  {text}
-                </p>
-              </Col>
-            </Row>
+        <div key={i}>
+          {isFirstMessageOfTheDay ? (
+            <div align="center">
+              {status.toDateString() === new Date().toDateString()
+                ? 'Today'
+                : status.toDateString()}
+            </div>
+          ) : (
+            ''
+          )}
+          <div className="outgoing_msg">
+            <div className="sent_msg">
+              <Row>
+                <Col xs={4}>
+                  <span className="time_date"> {status.toLocaleString()}</span>
+                </Col>
+                <Col>
+                  <p>
+                    <span className="user-name">{name}</span> <br />
+                    {text}
+                  </p>
+                </Col>
+              </Row>
+            </div>
           </div>
         </div>
       );
@@ -166,10 +207,11 @@ class Chat extends Component {
                     type: type,
                     text: msg.ChatRoomMessageContext,
                     name: msg.ChatRoomMessageSender,
-                    status: t.toLocaleString()
+                    status: t,
+                    prev: chatMsg[i - 1]
                   };
 
-                  return this.renderMessage(message);
+                  return this.renderMessage(message, i);
                 })}
               </div>
               <div className="type_msg">
