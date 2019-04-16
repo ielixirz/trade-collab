@@ -220,6 +220,12 @@ export default class TableShipment extends React.Component {
       data = input.data;
       columns = input.columns;
     }
+	const selectRow = {
+		  mode: 'checkbox',
+		  clickToSelect: true,
+		  hideSelectColumn: true,
+		  bgColor: '#F5FBFA'
+		};
 
     return (
       <div>
@@ -230,17 +236,13 @@ export default class TableShipment extends React.Component {
                 <Col xs={6}>
                   <SearchBar {...props.searchProps} placeholder="&#xF002; Typing" id="search" />
                 </Col>
-                <Col sm={{ size: '5', offset: 1 }}> 
-                  <Button style={{backgroundColor:'#16A085'}}color="success" className="float-right">
-                      <i className="fa fa-plus-circle"></i> Create New Shipment
-                  </Button>
-                </Col>
               </Row>
               <BootstrapTable
                 rowStyle={{ textAlign: 'left' }}
                 {...props.baseProps}
                 pagination={paginationFactory()}
 				bordered={ false }
+				selectRow={ selectRow }
               />
             </div>
           )}

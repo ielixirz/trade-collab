@@ -93,6 +93,11 @@ class Shipment extends Component {
               <i className="icon-close"></i>   <span style={styles.title}>Cancel</span>
               </NavLink>
             </NavItem>
+			  <Col>
+                <Button style={{backgroundColor:'#16A085',marginTop:2,marginRight:10}}  className="float-right">
+                    <i className="fa fa-plus-circle" style={{color:'white'}}></i> <span style={{fontWeight:'bold',color:'white'}}>Create New Shipment</span>
+                </Button>
+		      </Col>
           </Nav>
           <TabContent activeTab={this.state.activeTab}>
             <TabPane tabId="1">
