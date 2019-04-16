@@ -50,7 +50,7 @@ class Shipment extends Component {
                   this.toggle('1');
                 }}
               >
-                Alert |
+                <span style={styles.title}>Alert</span> <span style={styles.lineTab}>|</span>
               </NavLink>
             </NavItem>
             <NavItem>
@@ -60,7 +60,7 @@ class Shipment extends Component {
                   this.toggle('2');
                 }}
               >
-                Plan |
+                 <span style={styles.title}>Plan</span> <span style={styles.lineTab}>|</span>
               </NavLink>
             </NavItem>
             <NavItem>
@@ -70,7 +70,7 @@ class Shipment extends Component {
                   this.toggle('3');
                 }}
               >
-                Active |
+                 <span style={styles.title}>Active</span> <span style={styles.lineTab}>|</span>
               </NavLink>
             </NavItem>
             <NavItem>
@@ -80,7 +80,7 @@ class Shipment extends Component {
                   this.toggle('4');
                 }}
               >
-                Complete |
+                 <span style={styles.title}>Complete</span> <span style={styles.lineTab}>|</span>
               </NavLink>
             </NavItem>
             <NavItem>
@@ -90,7 +90,7 @@ class Shipment extends Component {
                   this.toggle('5');
                 }}
               >
-                Cancel |
+              <i className="icon-close"></i>   <span style={styles.title}>Cancel</span>
               </NavLink>
             </NavItem>
           </Nav>
@@ -133,6 +133,17 @@ class Shipment extends Component {
     );
   }
 }
+const styles = { 
+   title:{
+       fontSize: 16,
+       fontWeight: 'bold',
+       color: '#707070'
+   },
+   lineTab:{
+	  color:'#EAEAEA',
+	  opacity: 0.8
+   }
+   }
 
 const mapStateToProps = state => {
   return {
