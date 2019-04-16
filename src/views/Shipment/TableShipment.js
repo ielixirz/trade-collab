@@ -191,38 +191,34 @@ export default class TableShipment extends React.Component {
   }
 
   render() {
-    let input = _.map(this.props.input, (item, index) => {
-      // ShipmentBuyerCompanyName: "JP Fish Co."
-      // ShipmentCreateTimestamp: {seconds: 1555010340, nanoseconds: 186000000}
-      // ShipmentCreatorType: "Importer"
-      // ShipmentCreatorUserKey: "User1"
-      // ShipmentDestinationLocation: "Bangkok , Thailand"
-      // ShipmentETAPort: {seconds: 1555010340, nanoseconds: 186000000}
-      // ShipmentETAWarehouse: {seconds: 1555010340, nanoseconds: 186000000}
-      // ShipmentETD: {seconds: 1555010340, nanoseconds: 186000000}
-      // ShipmentLastestUpdateTimestamp: {seconds: 1555010340, nanoseconds: 186000000}
-      // ShipmentMember: (3) [{…}, {…}, {…}]
-      // ShipmentPriceDescription: " N/A"
-      // ShipmentProductName: "Fish Salmon"
-      // ShipmentReference: {RefID: "Ref1234", RefOwner: "Seller", RefTimestampUpdate: "1234567673242"}
-      // ShipmentSellerCompanyName: "BBQ Plaza Co."
-      // ShipmentSourceLocation: "Chiangmai , Thailand"
-      // ShipmentStatus: "Delayed"
-      let etd = _.get(item, 'ShipmentETD', 0);
-      let eta = _.get(item, 'ShipmentETAPort', 0);
+    let data = [];
+    let columns = [];
 
-      return {
-        Ref: this.renderRefComponent(index, _.get(item, 'ShipmentReference', 'input your Ref')),
-        Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
-        Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
-        Product: _.get(item, 'ShipmentProductName', ''),
-        ETD: new Date(etd.seconds * 1000).toLocaleString(),
-        ETA: new Date(eta.seconds * 1000).toLocaleString(),
-        Status: this.renderStatusComponent(item)
-      };
-    });
-    input = createDataTable(input);
-    const { data, columns } = input;
+    let input = [];
+    if (this.props.input.length === 0) {
+      input = this.data;
+      data = input.products;
+      columns = input.columns;
+    } else {
+      input = _.map(this.props.input, (item, index) => {
+        let etd = _.get(item, 'ShipmentETD', 0);
+        let eta = _.get(item, 'ShipmentETAPort', 0);
+
+        return {
+          Ref: this.renderRefComponent(index, _.get(item, 'ShipmentReference', 'input your Ref')),
+          Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
+          Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
+          Product: _.get(item, 'ShipmentProductName', ''),
+          ETD: new Date(etd.seconds * 1000).toLocaleString(),
+          ETA: new Date(eta.seconds * 1000).toLocaleString(),
+          Status: this.renderStatusComponent(item)
+        };
+      });
+      input = createDataTable(input);
+      data = input.data;
+      columns = input.columns;
+    }
+
     return (
       <div>
         <ToolkitProvider keyField="id" data={data} columns={columns} search>

@@ -26,6 +26,7 @@ class Shipment extends Component {
   }
 
   componentDidMount() {
+    console.log('fetch');
     this.props.fetchShipments();
   }
 
