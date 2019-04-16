@@ -11,7 +11,7 @@ import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.m
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import Select from 'react-select'
-
+import './Chat.css';
 import {
   Row,
   Col,
@@ -247,7 +247,6 @@ export default class TableShipment extends React.Component {
 		  pageListRenderer
 		};
     return (
-      <div>
         <ToolkitProvider keyField="id" data={data} columns={columns} search>
           {props => (
             <div>
@@ -256,17 +255,20 @@ export default class TableShipment extends React.Component {
                   <SearchBar {...props.searchProps} placeholder="&#xF002; Typing" id="search" />
                 </Col>
               </Row>
+			  <div className='table'>
               <BootstrapTable
                 rowStyle={{ textAlign: 'left' }}
                 {...props.baseProps}
                 pagination={paginationFactory(options)}
 				bordered={ false }
 				selectRow={ selectRow }
+				wrapperClasses="boo"
               />
+			  </div>
             </div>
           )}
         </ToolkitProvider>
-      </div>
+ 
     );
   }
 }

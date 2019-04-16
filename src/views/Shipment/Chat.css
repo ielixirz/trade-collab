@@ -143,3 +143,11 @@ input {
   height: 516px;
   overflow-y: auto;
 }
+
+div.boo {
+  border: 0px solid white;
+  
+}
+div.table {
+	height:1000px
+}
