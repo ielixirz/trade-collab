@@ -1,14 +1,5 @@
 import React, { Component } from 'react';
-import {
-  Badge,
-  Col,
-  Nav,
-  NavItem,
-  NavLink,
-  Row,
-  TabContent,
-  TabPane
-} from 'reactstrap';
+import { Badge, Col, Nav, NavItem, NavLink, Row, TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
 
 class Shipment extends Component {

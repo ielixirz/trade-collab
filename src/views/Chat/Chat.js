@@ -83,17 +83,16 @@ class Chat extends Component {
       console.log('first message');
       isFirstMessageOfTheDay = true;
     }
-    console.log('isFirstMessageOfTheDay');
     if (type === 'sender') {
       return (
         <div key={i}>
           {isFirstMessageOfTheDay ? (
             <h2 class="time-background">
-            <span className="time-seperation" align="center">
-              {status.toDateString() === new Date().toDateString()
-                ? 'Today'
-                : status.toDateString()}
-            </span>
+              <span className="time-seperation" align="center">
+                {status.toDateString() === new Date().toDateString()
+                  ? 'Today'
+                  : status.toDateString()}
+              </span>
             </h2>
           ) : (
             ''
@@ -109,7 +108,7 @@ class Chat extends Component {
                     </p>
                   </Col>
                   <Col xs={4}>
-                    <span className="time_date"> {status.toLocaleString()}</span>
+                    <span className="time_date"> {status.toLocaleTimeString()}</span>
                   </Col>
                 </Row>
               </div>
@@ -133,7 +132,7 @@ class Chat extends Component {
             <div className="sent_msg">
               <Row>
                 <Col xs={4}>
-                  <span className="time_date"> {status.toLocaleString()}</span>
+                  <span className="time_date"> {status.toLocaleTimeString()}</span>
                 </Col>
                 <Col>
                   <p>
