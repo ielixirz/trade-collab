@@ -20,7 +20,7 @@ import {
   FormGroup,
   Label,
   Input,
-  PopoverBody
+  PopoverBody,
 } from 'reactstrap';
 import { EditShipment } from '../../service/shipment/shipment';
 const { SearchBar } = Search;
@@ -126,13 +126,13 @@ export default class TableShipment extends React.Component {
         <p id={'popover' + index} >
           {ref.RefID}
         </p>
-        <UncontrolledPopover trigger="legacy" placement="bottom" target={'popover' + index}>
+        <UncontrolledPopover  trigger="legacy" placement="bottom" target={'popover' + index}>
           <PopoverBody>
             <Row>
               <Col xs={1} />
-              <Col xs={5}>
+              <Col xs={5} style={{ paddingTop:5}} >
                 <Label check>
-                  <Input type="radio" name={'shipmentRef' + index} value={ref.RefID} />
+                  <Input style={{paddingTop:5}}  type="radio" name={'shipmentRef' + index} value={ref.RefID} />
                   Ref #1 : ({ref.RefOwner})
                 </Label>
               </Col>
@@ -144,6 +144,7 @@ export default class TableShipment extends React.Component {
                   value={ref.RefID}
                   maxlength={50}
                   disabled
+				  bsSize="sm"
                 />
               </Col>
             </Row>
