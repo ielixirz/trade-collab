@@ -149,140 +149,196 @@ class Chat extends Component {
   }
 
   renderChat(ChatRoomKey = '', ShipmentKey = '') {
-    let chat = _.get(this.props, `ChatReducer.chatroomsMsg.${ChatRoomKey}`, []);
-    let chatMsg = chat.length === 0 ? [] : chat.chatMsg;
-    const text = this.props.ChatReducer.text;
-    return (
-      <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
-        <Row
-          style={{
-            backgroundColor: 'white',
-            borderBottom: '1px solid #707070'
-          }}
-        >
-          <Breadcrumb className="chat-toolbar">
-            <Button
-              className="invite-btn"
+    if (ShipmentKey === 'custom') {
+      return (
+        <Card>
+          <CardBody>
+            <Row>
+              <Col xs={4} />
+              <Col xs={4} className="text-lg-center">
+                Inform Other Party about this shipments
+              </Col>
+              <Col xs={4} />
+            </Row>
+            <Row
               style={{
-                marginLeft: '2rem',
-                marginRight: '1rem',
-                color: 'white',
-                backgroundColor: '#16A085'
+                marginTop: '100px',
+                marginBottom: '100px'
               }}
             >
-              <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
-              Invite
-            </Button>
-            <Button className="btn-chat-label">|</Button>
-            <Button className="btn-chat-label">
-              <i style={{ marginRight: '0.5rem' }} className="fa  fa-users fa-lg" />
-              14
-            </Button>
-            <Button className="btn-chat-label">|</Button>
-            <Button className="btn-chat-label">Ref#1234</Button>
-          </Breadcrumb>
-        </Row>
-        <Row>
-          <Col xs="8" style={{ backgroundColor: 'white', marginTop: '0.5rem' }}>
-            <div
-              className="mesgs"
-              style={this.state.onDropChatStyle === false ? {} : { opacity: '0.5' }}
-              onDragOver={this.onDragOver}
-              onDragLeave={this.onDragLeave}
-              onDrop={event => this.onFileDrop(event, ShipmentKey, ChatRoomKey)}
+              <Col />
+              <Col className="text-lg-center">
+                <Button color="primary" size="lg" active>
+                  Inbound Custom Broker
+                </Button>
+              </Col>
+              <Col className="text-lg-center">
+                <Button color="primary" size="lg" active>
+                  Inbound Forwarder
+                </Button>
+              </Col>
+              <Col />
+            </Row>
+            <Row
+              style={{
+                marginTop: '100px',
+                marginBottom: '100px'
+              }}
             >
-              <div
-                className="msg_history"
-                ref={el => {
-                  this.msgChatRef = el;
+              <Col />
+              <Col className="text-lg-center">
+                <Button color="primary" size="lg" active>
+                  Importer
+                </Button>
+              </Col>
+              <Col className="text-lg-center">
+                <Button color="primary" size="lg" active>
+                  Outbound Forwarder
+                </Button>
+              </Col>
+              <Col />
+            </Row>
+          </CardBody>
+        </Card>
+      );
+    } else {
+      let chat = _.get(this.props, `ChatReducer.chatroomsMsg.${ChatRoomKey}`, []);
+      let chatMsg = chat.length === 0 ? [] : chat.chatMsg;
+      const text = this.props.ChatReducer.text;
+      return (
+        <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
+          <Row
+            style={{
+              backgroundColor: 'white',
+              borderBottom: '1px solid #707070'
+            }}
+          >
+            <Breadcrumb className="chat-toolbar">
+              <Button
+                className="invite-btn"
+                style={{
+                  marginLeft: '2rem',
+                  marginRight: '1rem',
+                  color: 'white',
+                  backgroundColor: '#16A085'
                 }}
               >
-                {chatMsg.map((msg, i) => {
-                  var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
-                  let type = 'sender';
+                <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
+                Invite
+              </Button>
+              <Button className="btn-chat-label">|</Button>
+              <Button className="btn-chat-label">
+                <i style={{ marginRight: '0.5rem' }} className="fa  fa-users fa-lg" />
+                14
+              </Button>
+              <Button className="btn-chat-label">|</Button>
+              <Button className="btn-chat-label">Ref#1234</Button>
+            </Breadcrumb>
+          </Row>
+          <Row>
+            <Col xs="8" style={{ backgroundColor: 'white', marginTop: '0.5rem' }}>
+              <div
+                className="mesgs"
+                style={this.state.onDropChatStyle === false ? {} : { opacity: '0.5' }}
+                onDragOver={this.onDragOver}
+                onDragLeave={this.onDragLeave}
+                onDrop={event => this.onFileDrop(event, ShipmentKey, ChatRoomKey)}
+              >
+                <div
+                  className="msg_history"
+                  ref={el => {
+                    this.msgChatRef = el;
+                  }}
+                >
+                  {chatMsg.map((msg, i) => {
+                    var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
+                    let type = 'sender';
 
-                  if (_.get(this.props, 'user.email', '0') === msg.ChatRoomMessageSender) {
-                    type = 'reciever';
-                  }
-                  let message = {
-                    type: type,
-                    text: msg.ChatRoomMessageContext,
-                    name: msg.ChatRoomMessageSender,
-                    status: t,
-                    prev: chatMsg[i - 1]
-                  };
+                    if (_.get(this.props, 'user.email', '0') === msg.ChatRoomMessageSender) {
+                      type = 'reciever';
+                    }
+                    let message = {
+                      type: type,
+                      text: msg.ChatRoomMessageContext,
+                      name: msg.ChatRoomMessageSender,
+                      status: t,
+                      prev: chatMsg[i - 1]
+                    };
 
-                  return this.renderMessage(message, i);
-                })}
-              </div>
-              <div className="type_msg">
-                <UploadModal
-                  chatFile={
-                    this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink
-                  }
-                  sendMessage={this.props.sendMessage}
-                  ref={this.uploadModalRef}
-                />
-                <InputGroup>
-                  <InputGroupAddon addonType="prepend">
-                    <Button color="default" onClick={() => this.browseFile(ShipmentKey)}>
-                      {' '}
-                      <i className="fa fa-plus fa-lg" />
-                    </Button>
-                    <input
-                      type="file"
-                      id="file"
-                      ref={this.fileInput}
-                      style={{ display: 'none' }}
-                      onChange={event =>
-                        this.uploadModalRef.current.triggerUploading(
-                          event.target.files[0],
-                          ShipmentKey,
-                          ChatRoomKey
-                        )
-                      }
-                    />
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="type...."
-                    value={text}
-                    onChange={this.props.typing}
-                    onKeyPress={event => {
-                      if (event.key === 'Enter') {
-                        console.log('Enter press', event);
-                        this.props.sendMessage(ChatRoomKey, ShipmentKey, text);
-                      }
-                    }}
+                    return this.renderMessage(message, i);
+                  })}
+                </div>
+                <div className="type_msg">
+                  <UploadModal
+                    chatFile={
+                      this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink
+                    }
+                    sendMessage={this.props.sendMessage}
+                    ref={this.uploadModalRef}
                   />
-                  <InputGroupAddon addonType="append">
-                    <Button color="default1"> @</Button>
-                    <Button color="default1">
-                      {' '}
-                      <i className="fa fa-smile-o fa-lg" />
-                    </Button>
-                    <Button
-                      color="default1"
-                      onClick={() => {
-                        this.props.sendMessage(ChatRoomKey, ShipmentKey, text);
+                  <InputGroup>
+                    <InputGroupAddon addonType="prepend">
+                      <Button color="default" onClick={() => this.browseFile(ShipmentKey)}>
+                        {' '}
+                        <i className="fa fa-plus fa-lg" />
+                      </Button>
+                      <input
+                        type="file"
+                        id="file"
+                        ref={this.fileInput}
+                        style={{ display: 'none' }}
+                        onChange={event =>
+                          this.uploadModalRef.current.triggerUploading(
+                            event.target.files[0],
+                            ShipmentKey,
+                            ChatRoomKey
+                          )
+                        }
+                      />
+                    </InputGroupAddon>
+                    <Input
+                      placeholder="type...."
+                      value={text}
+                      onChange={this.props.typing}
+                      onKeyPress={event => {
+                        if (event.key === 'Enter') {
+                          console.log('Enter press', event);
+                          this.props.sendMessage(ChatRoomKey, ShipmentKey, text);
+                        }
                       }}
-                    >
-                      {' '}
-                      <i className="fa fa-paper-plane-o fa-lg" />
-                    </Button>
-                  </InputGroupAddon>
-                </InputGroup>
+                    />
+                    <InputGroupAddon addonType="append">
+                      <Button color="default1"> @</Button>
+                      <Button color="default1">
+                        {' '}
+                        <i className="fa fa-smile-o fa-lg" />
+                      </Button>
+                      <Button
+                        color="default1"
+                        onClick={() => {
+                          this.props.sendMessage(ChatRoomKey, ShipmentKey, text);
+                        }}
+                      >
+                        {' '}
+                        <i className="fa fa-paper-plane-o fa-lg" />
+                      </Button>
+                    </InputGroupAddon>
+                  </InputGroup>
+                </div>
               </div>
-            </div>
-          </Col>
-          <Col xs="4" style={{ paddingLeft: '0.3rem', marginTop: '0.6rem' }}>
-            <FileSide
-              chatFile={this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink}
-            />
-            <ShipmentSide />
-          </Col>
-        </Row>
-      </div>
-    );
+            </Col>
+            <Col xs="4" style={{ paddingLeft: '0.3rem', marginTop: '0.6rem' }}>
+              <FileSide
+                chatFile={
+                  this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink
+                }
+              />
+              <ShipmentSide />
+            </Col>
+          </Row>
+        </div>
+      );
+    }
   }
 
   browseFile() {
@@ -321,7 +377,11 @@ class Chat extends Component {
   };
 
   scrollChatToBottom() {
-    this.msgChatRef.scrollTop = this.msgChatRef.scrollHeight;
+    try {
+      this.msgChatRef.scrollTop = this.msgChatRef.scrollHeight;
+    } catch (e) {
+      console.log('is custom tab or something went wrong', e.message);
+    }
   }
 
   closedTab(removedIndex, removedID) {

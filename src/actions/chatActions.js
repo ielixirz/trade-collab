@@ -167,6 +167,15 @@ export const getChatRoomList = shipmentKey => (dispatch, getState) => {
         };
       });
 
+      originalReducer['custom'] = {
+        ChatRoomKey: 'custom',
+        ShipmentKey: 'custom',
+        roomName: '+',
+        active: false,
+        ChatRoomData: [],
+        position: chatrooms.length
+      };
+
       dispatch({
         type: FETCH_CHAT_ROOMS,
         payload: originalReducer
