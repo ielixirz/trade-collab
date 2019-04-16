@@ -123,9 +123,9 @@ export default class TableShipment extends React.Component {
     console.log(ref);
     return (
       <div>
-        <Button id={'popover' + index} type="button">
+        <p id={'popover' + index} >
           {ref.RefID}
-        </Button>
+        </p>
         <UncontrolledPopover trigger="legacy" placement="bottom" target={'popover' + index}>
           <PopoverBody>
             <Row>

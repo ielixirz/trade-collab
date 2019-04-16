@@ -41,7 +41,6 @@ class Shipment extends Component {
   render() {
     console.log('this state is', this.props);
     return (
-      <Container>
         <div>
           <Nav>
             <NavItem>
@@ -131,7 +130,6 @@ class Shipment extends Component {
             </TabPane>
           </TabContent>
         </div>
-      </Container>
     );
   }
 }
