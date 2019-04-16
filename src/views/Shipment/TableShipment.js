@@ -226,7 +226,26 @@ export default class TableShipment extends React.Component {
 		  hideSelectColumn: true,
 		  bgColor: '#F5FBFA'
 		};
+		const pageListRenderer = ({
+		  pages,
+		  onPageChange
+		}) => {
+		  const pageWithoutIndication = pages.filter(p => typeof p.page !== 'string');
+		  return (
+			<div>
+			  <span>Page </span>
+			  {
+				pageWithoutIndication.map(p => (
+				 <Button outline color="secondary" onClick={ () => onPageChange(p.page) }>{ p.page }</Button>
+				))
+			  }
+			</div>
+		  );
+		};
 
+		const options = {
+		  pageListRenderer
+		};
     return (
       <div>
         <ToolkitProvider keyField="id" data={data} columns={columns} search>
@@ -240,7 +259,7 @@ export default class TableShipment extends React.Component {
               <BootstrapTable
                 rowStyle={{ textAlign: 'left' }}
                 {...props.baseProps}
-                pagination={paginationFactory()}
+                pagination={paginationFactory(options)}
 				bordered={ false }
 				selectRow={ selectRow }
               />
