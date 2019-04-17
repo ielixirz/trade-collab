@@ -16,7 +16,7 @@ import {
   Modal,
   ModalBody,
   ModalFooter,
-  ModalHeader
+  ModalHeader,
 } from 'reactstrap';
 import _ from 'lodash';
 import { GetChatMessage } from '../../service/chat/chat';
@@ -28,7 +28,7 @@ import {
   sendMessage,
   moveTab,
   selectTab,
-  getChatRoomList
+  getChatRoomList,
 } from '../../actions/chatActions';
 
 import { connect } from 'react-redux';
@@ -37,6 +37,7 @@ import Tabs from 'react-draggable-tabs';
 import './Chat.css';
 import ShipmentSide from './ShipmentSide';
 import FileSide from './FileSide';
+
 import UploadModal from '../../component/UploadModal';
 
 class Chat extends Component {
@@ -51,7 +52,7 @@ class Chat extends Component {
       activeTab: new Array(4).fill('1'),
       text: '',
       tabs: [],
-      onDropChatStyle: false
+      onDropChatStyle: false,
     };
 
     this.uploadModalRef = React.createRef();
@@ -354,7 +355,7 @@ class Chat extends Component {
     event.target.value = null;
     this.uploadModalRef.current.triggerUploading(file, ShipmentKey, ChatRoomKey);
     this.setState({
-      onDropChatStyle: false
+      onDropChatStyle: false,
     });
   }
 
@@ -362,7 +363,7 @@ class Chat extends Component {
     event.stopPropagation();
     event.preventDefault();
     this.setState({
-      onDropChatStyle: true
+      onDropChatStyle: true,
     });
   };
 
@@ -370,7 +371,7 @@ class Chat extends Component {
     event.stopPropagation();
     event.preventDefault();
     this.setState({
-      onDropChatStyle: false
+      onDropChatStyle: false,
     });
   };
 
@@ -407,7 +408,7 @@ class Chat extends Component {
       newTabs.push({
         id: newTabs.length + 1,
         content: 'Cute *',
-        display: <div key={newTabs.length + 1}>Cute *</div>
+        display: <div key={newTabs.length + 1}>Cute *</div>,
       });
 
       return { tabs: newTabs };
@@ -422,7 +423,7 @@ class Chat extends Component {
     const newArray = this.state.activeTab.slice();
     newArray[tabPane] = tab;
     this.setState({
-      activeTab: newArray
+      activeTab: newArray,
     });
   }
 
@@ -450,7 +451,7 @@ class Chat extends Component {
         content: item.roomName,
         active: item.active,
         ChatRoomKey: item.ChatRoomKey,
-        ShipmentKey: item.ShipmentKey
+        ShipmentKey: item.ShipmentKey,
       });
     });
     const activeTab = tabs.filter(tab => tab.active === true);
@@ -507,11 +508,11 @@ const mapStateToProps = state => {
   const { ChatReducer, authReducer } = state;
   return {
     ChatReducer,
-    user: authReducer.user
+    user: authReducer.user,
   };
 };
 
 export default connect(
   mapStateToProps,
-  { typing, fetchChatMessage, sendMessage, moveTab, selectTab, getChatRoomList }
+  { typing, fetchChatMessage, sendMessage, moveTab, selectTab, getChatRoomList },
 )(Chat);
