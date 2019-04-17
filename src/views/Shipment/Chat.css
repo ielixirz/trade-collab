@@ -146,8 +146,6 @@ input {
 
 div.boo {
   border: 0px solid white;
-  
+  height: 550px;
 }
-div.table {
-	height:1000px
-}
+

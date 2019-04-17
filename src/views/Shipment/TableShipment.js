@@ -21,6 +21,8 @@ import {
   Label,
   Input,
   PopoverBody,
+  InputGroup, InputGroupAddon,
+  InputGroupText
 } from 'reactstrap';
 import { EditShipment } from '../../service/shipment/shipment';
 const { SearchBar } = Search;
@@ -246,14 +248,46 @@ export default class TableShipment extends React.Component {
 		const options = {
 		  pageListRenderer
 		};
+		const MySearch = (props) => {
+			  let input;
+			  const handleClick = () => {
+				props.onSearch(input.value);
+			  };
+			  return (
+				<div>
+				 <InputGroup>
+				 <InputGroupAddon addonType="prepend"><InputGroupText style={{backgroundColor:'white'}}><i className="fa fa-filter"/></InputGroupText></InputGroupAddon>
+		         <Input
+					className="form-control"
+					id="statusSelect"
+					ref={ n => input = n }
+					name="select"
+					type="select"
+					style={{width:170}}
+					onChange={handleClick}
+				  >
+				   <option>Intransit</option>
+					<option>Order</option>
+					<option>Delayed</option>
+					<option>Cancelled</option>
+					<option>Delivered</option>
+				  </Input>
+				 </InputGroup>
+				</div>
+			  );
+			};
     return (
         <ToolkitProvider keyField="id" data={data} columns={columns} search>
           {props => (
             <div>
               <Row>
-                <Col xs={6}>
-                  <SearchBar {...props.searchProps} placeholder="&#xF002; Typing" id="search" />
+                <Col xs="2">
+                  <SearchBar {...props.searchProps} placeholder="&#xF002; Typing" id="search" style={{width:250,height:38}} />
                 </Col>
+				<Col xs="2">
+					<MySearch { ...props.searchProps } />
+				</Col>
+				<Col xs="3"/>
               </Row>
 			  <div className='table'>
               <BootstrapTable
