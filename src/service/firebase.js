@@ -10,4 +10,5 @@ const config = {
   messagingSenderId: '745735371809',
 };
 
+// eslint-disable-next-line import/prefer-default-export
 export const FirebaseApp = firebase.initializeApp(config);
