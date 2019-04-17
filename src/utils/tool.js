@@ -1,23 +1,21 @@
 import _ from 'lodash';
 
 const LABEL = {
-  id: 'id'
+  id: 'id',
 };
 
-export const createDataTable = input => {
-  const data = _.map(input, (item, index) => {
-    return {
-      id: _.get(item, 'id', index) + 1,
-      ...item
-    };
-  });
-  const columns = _.map(_.keys(data[0]), item => {
+export const createDataTable = (input) => {
+  const data = _.map(input, (item, index) => ({
+    id: _.get(item, 'id', index) + 1,
+    ...item,
+  }));
+  const columns = _.map(_.keys(data[0]), (item) => {
     if (item === 'uid') {
       return {
         text: _.get(LABEL, item, item),
         dataField: item,
         sort: true,
-        hidden: true
+        hidden: true,
       };
     }
     if (item === 'id') {
@@ -25,21 +23,19 @@ export const createDataTable = input => {
         text: _.get(LABEL, item, item),
         dataField: item,
         sort: true,
-        headerStyle: () => {
-          return { width: '80px', textAlign: 'center' };
-        },
-        hidden: true
+        headerStyle: () => ({ width: '80px', textAlign: 'center' }),
+        hidden: true,
       };
     }
     return {
       text: _.get(LABEL, item, item),
       dataField: item,
-      sort: true
+      sort: true,
     };
   });
 
   return {
-    columns: columns,
-    data: data
+    columns,
+    data,
   };
 };

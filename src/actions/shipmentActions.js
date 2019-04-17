@@ -1,26 +1,25 @@
+import _ from 'lodash';
 import { FETCH_SHIPMENT, FETCH_SHIPMENT_LIST } from '../constants/constants';
 import { GetShipmentList } from '../service/shipment/shipment';
-import _ from 'lodash';
-export const fetchShipments = (typeStatus:any) => dispatch => {
+
+export const fetchShipments = (typeStatus:any) => (dispatch) => {
   let shipments = [];
   GetShipmentList(typeStatus, '', 'asc').subscribe({
-    next: res => {
-      shipments = _.map(res, item => {
-        return {
-          uid: item.id,
-          ...item.data()
-        };
-      });
+    next: (res) => {
+      shipments = _.map(res, item => ({
+        uid: item.id,
+        ...item.data(),
+      }));
       dispatch({
         type: FETCH_SHIPMENT_LIST,
-        payload: shipments
+        payload: shipments,
       });
       console.log(shipments);
     },
-    error: err => {
+    error: (err) => {
       console.log(err);
     },
-    complete: () => {}
+    complete: () => {},
   });
 };
 export const test = () => null;

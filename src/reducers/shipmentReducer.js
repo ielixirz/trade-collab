@@ -1,7 +1,7 @@
 import { FETCH_SHIPMENT_LIST } from '../constants/constants';
 
 const INITIAL_STATE = {
-  Shipments: []
+  Shipments: [],
 };
 
 export default function reducer(state = INITIAL_STATE, action) {
@@ -9,7 +9,7 @@ export default function reducer(state = INITIAL_STATE, action) {
     case FETCH_SHIPMENT_LIST:
       return {
         ...state,
-        Shipments: action.payload
+        Shipments: action.payload,
       };
     default:
       return state;
