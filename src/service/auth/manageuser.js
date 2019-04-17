@@ -1,12 +1,12 @@
+/* eslint-disable no-alert, no-console */
 import { authState, user } from 'rxfire/auth';
 import { auth } from 'firebase';
+/* eslint-enable no-alert, no-console */
 import 'firebase/auth';
-import { from, Observable, throwError } from 'rxjs';
-import { tap, map, filter } from 'rxjs/operators';
+import { from, throwError } from 'rxjs';
+import { tap, map } from 'rxjs/operators';
 import { FirebaseApp } from '../firebase';
-
 import { LoginWithEmail } from './login';
-
 
 // Example invoke
 
@@ -43,11 +43,10 @@ AuthStage().subscribe(user => {
 
 export const AuthStage = () => user(FirebaseApp.auth());
 
-export const UpdatePassword = (Email, Password, NewPassword) => LoginWithEmail(Email, Password)
-  .pipe(
-    map(User => User.user),
-    tap(UserInfo => from(UserInfo.updatePassword(NewPassword))),
-  );
+export const UpdatePassword = (Email, Password, NewPassword) => LoginWithEmail(Email, Password).pipe(
+  map(User => User.user),
+  tap(UserInfo => from(UserInfo.updatePassword(NewPassword))),
+);
 
 export const UpdateEmail = (Email, Password, NewEmail) => LoginWithEmail(Email, Password).pipe(
   map(User => User.user),
