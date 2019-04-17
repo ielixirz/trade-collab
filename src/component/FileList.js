@@ -40,7 +40,7 @@ const FileList = (props) => {
         {_.map(chatFile, (s) => {
           return (
             <ListGroupItem tag="a">
-                          <span style={fileListDateStyle}>{s.FileCreateTimestamp}</span>
+                          <span style={fileListDateStyle}>{ new Date(s.FileCreateTimestamp).toDateString()}</span>
               <Row>
                 <Col xs="1">
                   <i className="fa fa-file-picture-o" />
