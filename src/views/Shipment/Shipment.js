@@ -66,7 +66,7 @@ class Shipment extends Component {
               className={classnames({ active: this.state.activeTab === '2' })}
               onClick={() => {
                 this.toggle('2');
-                this.setState({ typeShipment: 'plan' });
+                this.setState({ typeShipment: 'Planning' });
               }}
             >
               <span style={styles.title}>Plan</span> <span style={styles.lineTab}>|</span>
@@ -88,7 +88,7 @@ class Shipment extends Component {
               className={classnames({ active: this.state.activeTab === '4' })}
               onClick={() => {
                 this.toggle('4');
-                this.setState({ typeShipment: 'complete' });
+                this.setState({ typeShipment: 'Delivered' });
               }}
             >
               <span style={styles.title}>Complete</span> <span style={styles.lineTab}>|</span>
@@ -99,7 +99,7 @@ class Shipment extends Component {
               className={classnames({ active: this.state.activeTab === '5' })}
               onClick={() => {
                 this.toggle('5');
-                this.setState({ typeShipment: 'cancel' });
+                this.setState({ typeShipment: 'Cancelled' });
               }}
             >
               <i className="icon-close" /> <span style={styles.title}>Cancel</span>
