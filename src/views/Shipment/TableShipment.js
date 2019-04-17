@@ -194,6 +194,9 @@ export default class TableShipment extends React.Component {
           <option value="Cancelled" selected={item.ShipmentStatus === 'Cancelled' ? true : ''}>
             Cancelled
           </option>
+          <option value="Completed" selected={item.ShipmentStatus === 'Completed' ? true : ''}>
+            Completed
+          </option>
         </Input>
       </div>
     );
