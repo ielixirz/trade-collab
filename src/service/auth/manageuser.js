@@ -1,5 +1,6 @@
-/* eslint-disable no-alert, no-console */
+// eslint-disable-next-line no-unused-vars
 import { authState, user } from 'rxfire/auth';
+// eslint-disable-next-line no-unused-vars
 import { auth } from 'firebase';
 /* eslint-enable no-alert, no-console */
 import 'firebase/auth';

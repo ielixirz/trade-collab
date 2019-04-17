@@ -1,7 +1,8 @@
 import { map, tap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import 'firebase/auth';
-
+// eslint-disable-next-line no-unused-vars
+import { auth } from 'firebase';
 import { FirebaseApp } from '../firebase';
 
 import { UpdateUserInfo } from '../user/user';
