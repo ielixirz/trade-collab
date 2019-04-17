@@ -10,7 +10,7 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-import Select from 'react-select'
+import Select from 'react-select';
 import './Chat.css';
 import {
   Row,
@@ -21,7 +21,8 @@ import {
   Label,
   Input,
   PopoverBody,
-  InputGroup, InputGroupAddon,
+  InputGroup,
+  InputGroupAddon,
   InputGroupText
 } from 'reactstrap';
 import { EditShipment } from '../../service/shipment/shipment';
@@ -125,16 +126,19 @@ export default class TableShipment extends React.Component {
     console.log(ref);
     return (
       <div>
-        <p id={'popover' + index} >
-          {ref.RefID}
-        </p>
-        <UncontrolledPopover  trigger="legacy" placement="bottom" target={'popover' + index}>
+        <p id={'popover' + index}>{ref.RefID}</p>
+        <UncontrolledPopover trigger="legacy" placement="bottom" target={'popover' + index}>
           <PopoverBody>
             <Row>
               <Col xs={1} />
-              <Col xs={5} style={{ paddingTop:5}} >
+              <Col xs={5} style={{ paddingTop: 5 }}>
                 <Label check>
-                  <Input style={{paddingTop:5}}  type="radio" name={'shipmentRef' + index} value={ref.RefID} />
+                  <Input
+                    style={{ paddingTop: 5 }}
+                    type="radio"
+                    name={'shipmentRef' + index}
+                    value={ref.RefID}
+                  />
                   Ref #1 : ({ref.RefOwner})
                 </Label>
               </Col>
@@ -146,7 +150,7 @@ export default class TableShipment extends React.Component {
                   value={ref.RefID}
                   maxlength={50}
                   disabled
-				  bsSize="sm"
+                  bsSize="sm"
                 />
               </Col>
             </Row>
@@ -222,118 +226,118 @@ export default class TableShipment extends React.Component {
       data = input.data;
       columns = input.columns;
     }
-	const selectRow = {
-		  mode: 'checkbox',
-		  clickToSelect: true,
-		  hideSelectColumn: true,
-		  bgColor: '#F5FBFA'
-		};
-		const pageListRenderer = ({
-		  pages,
-		  onPageChange
-		}) => {
-		  const pageWithoutIndication = pages.filter(p => typeof p.page !== 'string');
-		  return (
-			<div>
-			  <span>Page </span>
-			  {
-				pageWithoutIndication.map(p => (
-				 <Button outline color="secondary" onClick={ () => onPageChange(p.page) }>{ p.page }</Button>
-				))
-			  }
-			</div>
-		  );
-		};
-        const sizePerPageRenderer = ({
-			  options,
-			  currSizePerPage,
-			  onSizePerPageChange
-			}) => (
-			  <div className="btn-group" role="group">
-				{
-				  options.map((option) => {
-					const isSelect = currSizePerPage === `${option.page}`;
-					return (
-					  <button
-						key={ option.text }
-						type="button"
-						onClick={ () => onSizePerPageChange(option.page) }
-						className={ `btn ${isSelect ? 'btn btn-light' : 'btn btn-dark'}` }
-					  >
-						{ option.text }
-					  </button>
-					);
-				  })
-				}
-			  </div>
-		);
-		const options = {
-		  pageListRenderer,
-		  sizePerPageRenderer
-		};
-		const MySearch = (props) => {
-			  let input;
-			  const handleClick = () => {
-				props.onSearch(input.value);
-			  };
-			  return (
-				<div>
-				 <InputGroup>
-				 <InputGroupAddon addonType="prepend"><InputGroupText style={{backgroundColor:'white'}}><i className="fa fa-filter"/></InputGroupText></InputGroupAddon>
-		         <Input
-					className="form-control"
-					id="statusSelect"
-					ref={ n => input = n }
-					name="select"
-					type="select"
-					style={{width:170}}
-					onChange={handleClick}
-				  >
-				   <option>Intransit</option>
-					<option>Order</option>
-					<option>Delayed</option>
-					<option>Cancelled</option>
-					<option>Delivered</option>
-				  </Input>
-				 </InputGroup>
-				</div>
-			  );
-			};
+    const selectRow = {
+      mode: 'checkbox',
+      clickToSelect: true,
+      hideSelectColumn: true,
+      bgColor: '#F5FBFA'
+    };
+    const pageListRenderer = ({ pages, onPageChange }) => {
+      const pageWithoutIndication = pages.filter(p => typeof p.page !== 'string');
+      return (
+        <div>
+          <span>Page </span>
+          {pageWithoutIndication.map(p => (
+            <Button outline color="secondary" onClick={() => onPageChange(p.page)}>
+              {p.page}
+            </Button>
+          ))}
+        </div>
+      );
+    };
+    const sizePerPageRenderer = ({ options, currSizePerPage, onSizePerPageChange }) => (
+      <div className="btn-group" role="group">
+        {options.map(option => {
+          const isSelect = currSizePerPage === `${option.page}`;
+          return (
+            <button
+              key={option.text}
+              type="button"
+              onClick={() => onSizePerPageChange(option.page)}
+              className={`btn ${isSelect ? 'btn btn-light' : 'btn btn-dark'}`}
+            >
+              {option.text}
+            </button>
+          );
+        })}
+      </div>
+    );
+    const options = {
+      pageListRenderer,
+      sizePerPageRenderer
+    };
+    const MySearch = props => {
+      const handleClick = event => {
+        let query = event.target.value;
+        props.onSearch(query);
+      };
+      return (
+        <div>
+          <InputGroup>
+            <InputGroupAddon addonType="prepend">
+              <InputGroupText style={{ backgroundColor: 'white' }}>
+                <i className="fa fa-filter" />
+              </InputGroupText>
+            </InputGroupAddon>
+            <Input
+              className="form-control"
+              id="statusSelect"
+              ref={n => (input = n)}
+              name="select"
+              type="select"
+              style={{ width: 170 }}
+              onChange={handleClick}
+            >
+              <option>Intransit</option>
+              <option>Order</option>
+              <option>Delayed</option>
+              <option>Cancelled</option>
+              <option>Delivered</option>
+            </Input>
+          </InputGroup>
+        </div>
+      );
+    };
     return (
-        <ToolkitProvider keyField="id" data={data} columns={columns} search>
-          {props => (
-            <div>
-              <Row>
-                <Col xs="2">
-                  <SearchBar {...props.searchProps} placeholder="&#xF002; Typing" id="search" style={{width:250,height:38}} />
-                </Col>
-				<Col xs="2">
-				  <MySearch { ...props.searchProps } />
-				</Col>
-				<Col xs="6"/>
-				<Col xs="2" style={{ display: 'flex',justifyContent: 'flex-end',marginBottom:10}}>
-				  <Button style={{backgroundColor:'#16A085',marginTop:2,marginRight:10}}>
-                   <span style={{fontWeight:'bold',color:'white'}}>Save</span>
+      <ToolkitProvider keyField="id" data={data} columns={columns} search>
+        {props => (
+          <div>
+            <Row>
+              <Col xs="2">
+                <SearchBar
+                  {...props.searchProps}
+                  placeholder="&#xF002; Typing"
+                  id="search"
+                  style={{ width: 250, height: 38 }}
+                />
+              </Col>
+              <Col xs="2">
+                <MySearch {...props.searchProps} />
+              </Col>
+              <Col xs="6" />
+              <Col xs="2" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
+                <Button style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 10 }}>
+                  <span style={{ fontWeight: 'bold', color: 'white' }}>Save</span>
                 </Button>
-				  <Button style={{backgroundColor:'white',marginTop:2,marginRight:10}} >
-                    <i className="icons cui-pencil" style={{color:'black'}}></i> <span style={{fontWeight:'bold',color:'#707070'}}>Edit</span>
+                <Button style={{ backgroundColor: 'white', marginTop: 2, marginRight: 10 }}>
+                  <i className="icons cui-pencil" style={{ color: 'black' }} />{' '}
+                  <span style={{ fontWeight: 'bold', color: '#707070' }}>Edit</span>
                 </Button>
-				</Col>
-              </Row>
-			  <div className='table'>
+              </Col>
+            </Row>
+            <div className="table">
               <BootstrapTable
                 rowStyle={{ textAlign: 'left' }}
                 {...props.baseProps}
                 pagination={paginationFactory(options)}
-				bordered={ false }
-				selectRow={ selectRow }
-				wrapperClasses="boo"
+                bordered={false}
+                selectRow={selectRow}
+                wrapperClasses="boo"
               />
-			  </div>
             </div>
-          )}
-        </ToolkitProvider>
- 
+          </div>
+        )}
+      </ToolkitProvider>
     );
   }
 }
