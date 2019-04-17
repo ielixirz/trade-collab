@@ -8,7 +8,7 @@ import {
   Container,
   Button,
   Row,
-  Col,
+  Col
 } from 'reactstrap';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -22,8 +22,12 @@ class Shipment extends Component {
     this.toggle = this.toggle.bind(this);
     this.state = {
       activeTab: '1',
-      typeShipment: '',
+      typeShipment: ''
     };
+  }
+
+  componentDidMount() {
+    this.props.fetchShipments(this.state.typeShipment);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -36,7 +40,7 @@ class Shipment extends Component {
   toggle(tab) {
     if (this.state.activeTab !== tab) {
       this.setState({
-        activeTab: tab,
+        activeTab: tab
       });
     }
   }
@@ -54,9 +58,7 @@ class Shipment extends Component {
                 this.setState({ typeShipment: '' });
               }}
             >
-              <span style={styles.title}>Alert</span>
-              {' '}
-              <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Alert</span> <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -67,9 +69,7 @@ class Shipment extends Component {
                 this.setState({ typeShipment: 'plan' });
               }}
             >
-              <span style={styles.title}>Plan</span>
-              {' '}
-              <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Plan</span> <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -80,9 +80,7 @@ class Shipment extends Component {
                 this.setState({ typeShipment: 'active' });
               }}
             >
-              <span style={styles.title}>Active</span>
-              {' '}
-              <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Active</span> <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -93,9 +91,7 @@ class Shipment extends Component {
                 this.setState({ typeShipment: 'complete' });
               }}
             >
-              <span style={styles.title}>Complete</span>
-              {' '}
-              <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Complete</span> <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -106,9 +102,7 @@ class Shipment extends Component {
                 this.setState({ typeShipment: 'cancel' });
               }}
             >
-              <i className="icon-close" />
-              {' '}
-              <span style={styles.title}>Cancel</span>
+              <i className="icon-close" /> <span style={styles.title}>Cancel</span>
             </NavLink>
           </NavItem>
           <Col>
@@ -116,8 +110,7 @@ class Shipment extends Component {
               style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 10 }}
               className="float-right"
             >
-              <i className="fa fa-plus-circle" style={{ color: 'white' }} />
-              {' '}
+              <i className="fa fa-plus-circle" style={{ color: 'white' }} />{' '}
               <span style={{ fontWeight: 'bold', color: 'white' }}>Create New Shipment</span>
             </Button>
           </Col>
@@ -168,20 +161,20 @@ const styles = {
   title: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#707070',
+    color: '#707070'
   },
   lineTab: {
     color: '#EAEAEA',
     opacity: 0.8,
-    marginLeft: 20,
-  },
+    marginLeft: 20
+  }
 };
 
 const mapStateToProps = state => ({
-  shipments: state.shipmentReducer.Shipments,
+  shipments: state.shipmentReducer.Shipments
 });
 
 export default connect(
   mapStateToProps,
-  { fetchShipments },
+  { fetchShipments }
 )(Shipment);
