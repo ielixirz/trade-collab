@@ -285,9 +285,17 @@ export default class TableShipment extends React.Component {
                   <SearchBar {...props.searchProps} placeholder="&#xF002; Typing" id="search" style={{width:250,height:38}} />
                 </Col>
 				<Col xs="2">
-					<MySearch { ...props.searchProps } />
+				  <MySearch { ...props.searchProps } />
 				</Col>
-				<Col xs="3"/>
+				<Col xs="6"/>
+				<Col xs="2" style={{ display: 'flex',justifyContent: 'flex-end',marginBottom:10}}>
+				  <Button style={{backgroundColor:'#16A085',marginTop:2,marginRight:10}}>
+                   <span style={{fontWeight:'bold',color:'white'}}>Save</span>
+                </Button>
+				  <Button style={{backgroundColor:'white',marginTop:2,marginRight:10}} >
+                    <i className="icons cui-pencil" style={{color:'black'}}></i> <span style={{fontWeight:'bold',color:'#707070'}}>Edit</span>
+                </Button>
+				</Col>
               </Row>
 			  <div className='table'>
               <BootstrapTable
