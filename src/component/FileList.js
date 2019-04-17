@@ -20,12 +20,22 @@ const FileList = (props) => {
     window.open(url, '_blank');
   }
 
+  const fileListDateStyle = {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        bottom: 0,
+        fontSize: 'xx-small',
+        color: 'grey',
+  }
+
   return (
     <div>
       <ListGroup onClick={preventParentCollapse} flush>
         {_.map(chatFile, (s) => {
           return (
             <ListGroupItem tag="a">
+                          <span style={fileListDateStyle}>{s.FileCreateTimestamp}</span>
               <Row>
                 <Col xs="1">
                   <i className="fa fa-file-picture-o" />
