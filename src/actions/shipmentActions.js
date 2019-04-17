@@ -1,9 +1,9 @@
 import { FETCH_SHIPMENT, FETCH_SHIPMENT_LIST } from '../constants/constants';
 import { GetShipmentList } from '../service/shipment/shipment';
 import _ from 'lodash';
-export const fetchShipments = () => dispatch => {
+export const fetchShipments = (typeStatus:any) => dispatch => {
   let shipments = [];
-  GetShipmentList('', '', 'asc').subscribe({
+  GetShipmentList(typeStatus, '', 'asc').subscribe({
     next: res => {
       shipments = _.map(res, item => {
         return {

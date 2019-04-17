@@ -21,13 +21,14 @@ class Shipment extends Component {
 
     this.toggle = this.toggle.bind(this);
     this.state = {
-      activeTab: '1'
+      activeTab: '1',
+	  typeShipment: ''
     };
   }
 
-  componentDidMount() {
-    console.log('fetch');
-    this.props.fetchShipments();
+  componentDidUpdate() {
+    console.log('fetch shipment');
+    this.props.fetchShipments(this.state.typeShipment);
   }
 
   toggle(tab) {
@@ -45,9 +46,10 @@ class Shipment extends Component {
           <Nav>
             <NavItem>
               <NavLink
-                className={classnames({ active: this.state.activeTab === '1' })}
+                className={classnames({ active: this.state.activeTab === '1'})}
                 onClick={() => {
                   this.toggle('1');
+				  this.setState({typeShipment:''})
                 }}
               >
                 <span style={styles.title}>Alert</span> <span style={styles.lineTab}>|</span>
@@ -58,6 +60,7 @@ class Shipment extends Component {
                 className={classnames({ active: this.state.activeTab === '2' })}
                 onClick={() => {
                   this.toggle('2');
+				   this.setState({typeShipment:'plan'})
                 }}
               >
                  <span style={styles.title}>Plan</span> <span style={styles.lineTab}>|</span>
@@ -68,6 +71,7 @@ class Shipment extends Component {
                 className={classnames({ active: this.state.activeTab === '3' })}
                 onClick={() => {
                   this.toggle('3');
+				   this.setState({typeShipment:'active'})
                 }}
               >
                  <span style={styles.title}>Active</span> <span style={styles.lineTab}>|</span>
@@ -78,6 +82,7 @@ class Shipment extends Component {
                 className={classnames({ active: this.state.activeTab === '4' })}
                 onClick={() => {
                   this.toggle('4');
+				   this.setState({typeShipment:'complete'})
                 }}
               >
                  <span style={styles.title}>Complete</span> <span style={styles.lineTab}>|</span>
@@ -88,6 +93,7 @@ class Shipment extends Component {
                 className={classnames({ active: this.state.activeTab === '5' })}
                 onClick={() => {
                   this.toggle('5');
+				   this.setState({typeShipment:'cancel'})
                 }}
               >
               <i className="icon-close"></i>   <span style={styles.title}>Cancel</span>
@@ -109,27 +115,27 @@ class Shipment extends Component {
             </TabPane>
             <TabPane tabId="2">
               <Row>
-                <Col sm="6">toolkit</Col>
+                <Col sm="12"> <TableShipment input={this.props.shipments} /></Col>
               </Row>
             </TabPane>
             <TabPane tabId="3">
               <Row>
-                <Col sm="6">
-                  <h4>Tab 3Contentss</h4>
+                <Col sm="12">
+                   <TableShipment input={this.props.shipments} />
                 </Col>
               </Row>
             </TabPane>
             <TabPane tabId="4">
               <Row>
-                <Col sm="6">
-                  <h4>Complete</h4>
+                <Col sm="12">
+                    <TableShipment input={this.props.shipments} />
                 </Col>
               </Row>
             </TabPane>
             <TabPane tabId="5">
               <Row>
-                <Col sm="6">
-                  <h4>Cancel</h4>
+                <Col sm="12">
+                    <TableShipment input={this.props.shipments} />
                 </Col>
               </Row>
             </TabPane>
