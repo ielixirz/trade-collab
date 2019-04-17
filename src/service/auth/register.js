@@ -5,7 +5,6 @@ import 'firebase/auth';
 
 import { FirebaseApp } from '../firebase';
 
-
 import { UpdateUserInfo } from '../user/user';
 import { CreateProfile } from '../user/profile';
 
@@ -25,27 +24,25 @@ export const RegisterWithEmail = (Email, Password) => {
   return from(FirebaseApp.auth().createUserWithEmailAndPassword(Email, Password));
 };
 
-export const Register = (Data) => {
-  const {
-    Email, Password, Firstname, Surname, AccountType,
-  } = Data;
+export const Register = Data => {
+  const { Email, Password, Firstname, Surname, AccountType } = Data;
 
   const UserInfoData = {
     UserInfoEmail: Email,
-    UserInfoAccountType: AccountType,
+    UserInfoAccountType: AccountType
   };
 
   const ProfileData = {
     ProfileFirstname: Firstname,
     ProfileSurname: Surname,
-    ProfileEmail: Email,
+    ProfileEmail: Email
   };
 
   return RegisterWithEmail(Email, Password).pipe(
     map(RegisterSnapshot => RegisterSnapshot.user.uid),
-    tap((uid) => {
+    tap(uid => {
       UpdateUserInfo(uid, UserInfoData);
       CreateProfile(uid, ProfileData);
-    }),
+    })
   );
 };

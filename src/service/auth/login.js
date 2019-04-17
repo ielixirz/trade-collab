@@ -15,4 +15,5 @@ LoginWithEmail('holy-wisdom@hotmail.com','123456').subscribe({
 
 */
 
-export const LoginWithEmail = (Email, Password) => from(FirebaseApp.auth().signInWithEmailAndPassword(Email, Password));
+export const LoginWithEmail = (Email, Password) =>
+  from(FirebaseApp.auth().signInWithEmailAndPassword(Email, Password));
