@@ -258,7 +258,7 @@ export default class TableShipment extends React.Component {
 						key={ option.text }
 						type="button"
 						onClick={ () => onSizePerPageChange(option.page) }
-						className={ `btn ${isSelect ? 'btn-secondary' : 'btn-success'}` }
+						className={ `btn ${isSelect ? 'btn btn-light' : 'btn btn-dark'}` }
 					  >
 						{ option.text }
 					  </button>
