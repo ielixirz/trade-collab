@@ -244,9 +244,32 @@ export default class TableShipment extends React.Component {
 			</div>
 		  );
 		};
-
+        const sizePerPageRenderer = ({
+			  options,
+			  currSizePerPage,
+			  onSizePerPageChange
+			}) => (
+			  <div className="btn-group" role="group">
+				{
+				  options.map((option) => {
+					const isSelect = currSizePerPage === `${option.page}`;
+					return (
+					  <button
+						key={ option.text }
+						type="button"
+						onClick={ () => onSizePerPageChange(option.page) }
+						className={ `btn ${isSelect ? 'btn-secondary' : 'btn-success'}` }
+					  >
+						{ option.text }
+					  </button>
+					);
+				  })
+				}
+			  </div>
+		);
 		const options = {
-		  pageListRenderer
+		  pageListRenderer,
+		  sizePerPageRenderer
 		};
 		const MySearch = (props) => {
 			  let input;
