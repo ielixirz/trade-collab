@@ -173,8 +173,8 @@ export default class TableShipment extends React.Component {
             });
           }}
         >
-          <option value="Planing" selected={item.ShipmentStatus === 'Planing' ? true : ''}>
-            Planing
+          <option value="Planning" selected={item.ShipmentStatus === 'Planning' ? true : ''}>
+            Planning
           </option>
           <option
             value="Order Confirmed"
