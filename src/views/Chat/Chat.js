@@ -335,6 +335,8 @@ class Chat extends Component {
                 chatFile={
                   this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink
                 }
+                shipmentKey={ShipmentKey}
+                chatroomKey={ChatRoomKey}
               />
               <ShipmentSide />
             </Col>

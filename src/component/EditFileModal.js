@@ -1,23 +1,19 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
 /* as it is component */
-import React, {
-  useState, forwardRef, useImperativeHandle, useCallback,
-} from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import {
   Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader,
 } from 'reactstrap';
-import Select from 'react-select';
-import { useMappedState } from 'redux-react-hook';
 import _ from 'lodash';
 import { EditChatRoomFileLink } from '../service/chat/chat';
 
 const EditFileModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
   const [fileName, setFileName] = useState('-');
-  const [file, setFile] = useState(null);
+  const [chatFile, setChatFile] = useState(null);
   const [editedFileName, setEditedFileName] = useState('');
-  const [shipmentKey, setShipmentKey] = useState(null);
-  const [chatRoomKey, setChatRoomKey] = useState(null);
+  const [editIndex, setEditIndex] = useState(null);
 
   const toggle = () => {
     setModal(!modal);
@@ -28,21 +24,20 @@ const EditFileModal = forwardRef((props, ref) => {
   };
 
   const edit = () => {
-    // const editedChatRoomFileLink = _.find(file, (f) => {
-    //   f.FileName === fileName;
-    // });
-    // EditChatRoomFileLink(shipmentKey, chatRoomKey, copiedChatRoomFileLink);
+    const editedChatRoomFileLink = chatFile;
+    console.log(editedChatRoomFileLink);
+    editedChatRoomFileLink[editIndex].FileName = editedFileName;
+    EditChatRoomFileLink(props.shipmentKey, props.chatroomKey, editedChatRoomFileLink);
+    toggle();
   };
 
   useImperativeHandle(ref, () => ({
     // eslint-disable-next-line no-shadow
-    triggerEditing(chatFile, shipmentKey, chatRoomKey) {
-      if (chatFile !== undefined) {
-        setFileName(chatFile.FileName);
-        setFile(chatFile);
-      }
-      setChatRoomKey(chatRoomKey);
-      setShipmentKey(shipmentKey);
+    triggerEditing(editIndex, chatFile) {
+      console.log(editIndex);
+      setFileName(chatFile[editIndex].FileName);
+      setEditIndex(editIndex);
+      setChatFile(chatFile);
       toggle();
     },
   }));
