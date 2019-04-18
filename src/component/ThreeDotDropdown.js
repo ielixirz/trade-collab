@@ -1,12 +1,12 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
-/* as it is component */
 import React, { useState } from 'react';
 import {
   Dropdown, DropdownItem, DropdownMenu, DropdownToggle,
 } from 'reactstrap';
 import _ from 'lodash';
 
-const ThreeDotDropdown = (options) => {
+const ThreeDotDropdown = ({ options }) => {
   const [open, setOpen] = useState(false);
 
   const toggle = () => {
@@ -19,13 +19,11 @@ const ThreeDotDropdown = (options) => {
         <i className="fa fa-ellipsis-v" />
       </DropdownToggle>
       <DropdownMenu>
-        {
-                    _.map(options, option => (
-                      option.function === undefined
-                        ? <DropdownItem>{option.text}</DropdownItem>
-                        : <DropdownItem onClick={option.function}>{option.text}</DropdownItem>
-                    ))
-                }
+        {_.map(options, option => (option.function === undefined ? (
+          <DropdownItem>{option.text}</DropdownItem>
+        ) : (
+          <DropdownItem onClick={option.function}>{option.text}</DropdownItem>
+        )))}
       </DropdownMenu>
     </Dropdown>
   );

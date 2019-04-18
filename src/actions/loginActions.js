@@ -2,7 +2,8 @@ import { FILL_CREDENCIAL, SAVE_CREDENCIAL } from '../constants/constants';
 import { LoginWithEmail } from '../service/auth/login';
 
 export const typinglogin = data => (dispatch) => {
-  const [value] = data.target.value;
+  // eslint-disable-next-line prefer-destructuring
+  const value = data.target.value;
   const payload = data.target.id;
   dispatch({
     type: FILL_CREDENCIAL,
