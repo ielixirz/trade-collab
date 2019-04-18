@@ -5,7 +5,6 @@ import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import {
   Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader,
 } from 'reactstrap';
-import _ from 'lodash';
 import { EditChatRoomFileLink } from '../service/chat/chat';
 
 const EditFileModal = forwardRef((props, ref) => {
