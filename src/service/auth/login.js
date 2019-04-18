@@ -1,9 +1,8 @@
-import { FirebaseApp } from '../firebase';
-import { authState } from 'rxfire/auth';
+// eslint-disable-next-line no-unused-vars
 import { auth } from 'firebase';
 import 'firebase/auth';
-
 import { from } from 'rxjs';
+import { FirebaseApp } from '../firebase';
 
 // เวลา Invoke ใช้ท่านี้นะ
 
@@ -17,6 +16,5 @@ LoginWithEmail('holy-wisdom@hotmail.com','123456').subscribe({
 
 */
 
-export const LoginWithEmail = (Email, Password) => {
-  return from(FirebaseApp.auth().signInWithEmailAndPassword(Email, Password));
-};
+// eslint-disable-next-line import/prefer-default-export
+export const LoginWithEmail = (Email, Password) => from(FirebaseApp.auth().signInWithEmailAndPassword(Email, Password));

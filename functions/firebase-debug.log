@@ -1,0 +1,28 @@
+[debug] [2019-04-10T16:17:50.293Z] ----------------------------------------------------------------------
+[debug] [2019-04-10T16:17:50.295Z] Command:       /opt/local/bin/node /opt/local/bin/firebase functions:shell
+[debug] [2019-04-10T16:17:50.295Z] CLI Version:   6.5.0
+[debug] [2019-04-10T16:17:50.295Z] Platform:      darwin
+[debug] [2019-04-10T16:17:50.295Z] Node Version:  v10.15.3
+[debug] [2019-04-10T16:17:50.298Z] Time:          Wed Apr 10 2019 23:17:50 GMT+0700 (GMT+07:00)
+[debug] [2019-04-10T16:17:50.298Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-04-10T16:17:50.313Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-04-10T16:17:50.313Z] > authorizing via signed-in user
+[debug] [2019-04-10T16:17:50.313Z] [iam] checking project yterminal-b0906 for permissions ["firebase.projects.get"]
+[debug] [2019-04-10T16:17:50.315Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2019-04-10T16:17:50.316Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2019-04-10T16:17:50.689Z] <<< HTTP RESPONSE 200
+[debug] [2019-04-10T16:17:50.699Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/yterminal-b0906:testIamPermissions  
+
+[debug] [2019-04-10T16:17:52.312Z] <<< HTTP RESPONSE 200
+[debug] [2019-04-10T16:17:53.214Z] Error: EACCES: permission denied, mkdir '/opt/local/lib/node_modules/firebase-tools/node_modules/@google-cloud/functions-emulator/logs'
+    at Object.mkdirSync (fs.js:752:3)
+    at Object.assertLogsPath (/opt/local/lib/node_modules/firebase-tools/node_modules/@google-cloud/functions-emulator/src/emulator/logs.js:65:10)
+    at new Controller (/opt/local/lib/node_modules/firebase-tools/node_modules/@google-cloud/functions-emulator/src/cli/controller.js:77:32)
+    at FunctionsEmulator.start (/opt/local/lib/node_modules/firebase-tools/lib/functionsEmulator.js:102:23)
+    at Command.module.exports [as _action] (/opt/local/lib/node_modules/firebase-tools/lib/functionsShellCommandAction.js:13:10)
+    at /opt/local/lib/node_modules/firebase-tools/lib/command.js:167:37
+    at process._tickCallback (internal/process/next_tick.js:68:7)
+[error] 
+[error] Error: An unexpected error has occurred.

@@ -4,8 +4,8 @@ const Dashboard = React.lazy(() => import('./views/Dashboard'));
 
 const Chat = React.lazy(() => import('./views/Chat/Chat'));
 const Shipment = React.lazy(() => import('./views/Shipment/Shipment'));
-const MockData = React.lazy(() => import('./views/MockData/MockData'));
-const TestService = React.lazy(() => import('./views/TestService/TestService'));
+const MockData = React.lazy(() => import('./views/MockData/mockdata'));
+const TestService = React.lazy(() => import('./views/TestService/testservice'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [

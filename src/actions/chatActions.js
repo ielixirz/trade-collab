@@ -1,105 +1,112 @@
+import _ from 'lodash';
+import { map } from 'rxjs/operators';
 import {
   FETCH_CHAT,
   moveTab as MOVE_TAB,
   SAVE_CREDENCIAL,
-  TYPING_TEXT
+  TYPING_TEXT,
+  FETCH_CHAT_ROOMS,
 } from '../constants/constants';
-import { GetChatMessage, CreateChatMessage } from '../service/chat/chat';
-import _ from 'lodash';
+import {
+  GetChatMessage,
+  CreateChatMessage,
+  GetChatRoomList,
+  GetChatRoomDetail,
+} from '../service/chat/chat';
 
-export const typing = data => dispatch => {
-  let text = data.target.value;
+export const typing = data => (dispatch) => {
+  const text = data.target.value;
   console.log(text);
   dispatch({
     type: TYPING_TEXT,
-    text: text
+    text,
   });
 };
 
-export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => dispatch => {
+export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch) => {
   console.log('trigger Fetch');
   GetChatMessage(ShipmentKey, ChatRoomKey).subscribe({
-    next: res => {
+    next: (res) => {
       dispatch({
         type: FETCH_CHAT,
         id: ChatRoomKey,
-        payload: res
+        payload: res,
       });
     },
-    error: err => {
+    error: (err) => {
       console.log(err);
       alert(err.message);
     },
-    complete: () => {}
+    complete: () => {},
   });
 };
 
-export const moveTab = (dragIndex, hoverIndex) => (getState, dispatch) => {
-  let chats = getState().ChatReducer.chatrooms;
-  let tabs = [];
+export const moveTab = (dragIndex, hoverIndex, chats) => (dispatch) => {
+  const tabs = [];
   _.forEach(chats, (item, index) => {
     tabs.push({
       id: tabs.length + 1,
-      content: item.roomName,
+      roomName: item.roomName,
       active: item.active,
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
-      chatMsg: item.chatMsg
+      ChatRoomData: item.ChatRoomData,
+      position: item.position,
     });
   });
-  let newTabs = tabs;
-  newTabs.splice(hoverIndex, 0, newTabs.splice(dragIndex, 1)[0]);
-  let originalReducer = [];
-  _.forEach(newTabs, (item, index) => {
+
+  const movingItem = tabs[dragIndex];
+  tabs.splice(dragIndex, 1);
+  tabs.splice(hoverIndex, 0, movingItem);
+
+  const originalReducer = [];
+  _.forEach(tabs, (item, index) => {
     originalReducer[item.ChatRoomKey] = {
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
-      roomName: 'Exporter',
+      roomName: item.roomName,
       chatMsg: item.chatMsg,
-      active: item.active
+      active: item.active,
+      ChatRoomData: item.ChatRoomData,
+      position: index,
     };
   });
-
   dispatch({ type: MOVE_TAB, payload: originalReducer });
 };
 
-export const selectTab = (selectedIndex, selectedID) => (
-  dispatch,
-  getState
-) => {
-  let chats = getState().ChatReducer.chatrooms;
-  let tabs = [];
+export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => {
+  const chats = getState().ChatReducer.chatrooms;
+  const tabs = [];
   _.forEach(chats, (item, index) => {
     tabs.push({
       id: tabs.length + 1,
-      content: item.roomName,
+      roomName: item.roomName,
       active: item.active,
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
-      chatMsg: item.chatMsg
+      ChatRoomData: item.ChatRoomData,
+      position: item.index,
     });
   });
   const newTabs = tabs.map(tab => ({
     ...tab,
-    active: tab.id === selectedID
+    active: tab.id === selectedID,
   }));
-  let originalReducer = [];
+  const originalReducer = [];
   _.forEach(newTabs, (item, index) => {
     originalReducer[item.ChatRoomKey] = {
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
-      roomName: 'Exporter',
-      chatMsg: item.chatMsg,
-      active: item.active
+      roomName: item.roomName,
+      active: item.active,
+      ChatRoomData: item.ChatRoomData,
+      position: index,
     };
   });
   dispatch({ type: MOVE_TAB, payload: originalReducer });
 };
 
-export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (
-  dispatch,
-  getState
-) => {
+export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getState) => {
   // ShipmentKey,ChatRoomKey,Data
   // {
   //   ChatRoomMessageSender : ProfileKey,
@@ -111,18 +118,73 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (
   const user = getState().authReducer.user;
   console.log(user);
   if (_.get(user, 'uid', false)) {
-    let msg = {
+    const msg = {
       ChatRoomMessageSender: _.get(user, 'email', 0),
       ChatRoomMessageContext: text,
       ChatRoomMessageType: 'Text',
-      ChatRoomMessageTimestamp: new Date()
+      ChatRoomMessageTimestamp: new Date(),
     };
     CreateChatMessage(ShipmentKey, ChatRoomKey, msg);
     dispatch({
       type: TYPING_TEXT,
-      text: ''
+      text: '',
     });
   } else {
     alert('please Sign in');
   }
+};
+
+export const getChatRoomList = shipmentKey => (dispatch, getState) => {
+  // TODO: get chatroom filter by user?
+  const user = getState().authReducer.user;
+
+  GetChatRoomList(shipmentKey).subscribe({
+    next: (snapshot) => {
+      const originalReducer = [];
+      const chatrooms = [];
+      snapshot.map((d, index) => {
+        const chatRoomKey = d.id;
+        const data = d.data();
+
+        chatrooms.push({
+          id: index + 1,
+          active: index === 0,
+          ChatRoomKey: chatRoomKey,
+          ShipmentKey: shipmentKey,
+          ChatRoomData: data,
+          position: index,
+        });
+      });
+
+      _.forEach(chatrooms, (c, index) => {
+        originalReducer[c.ChatRoomKey] = {
+          ChatRoomKey: c.ChatRoomKey,
+          ShipmentKey: c.ShipmentKey,
+          roomName: c.ChatRoomData.ChatRoomName,
+          active: c.active,
+          ChatRoomData: c.ChatRoomData,
+          position: index,
+        };
+      });
+
+      originalReducer.custom = {
+        ChatRoomKey: 'custom',
+        ShipmentKey: 'custom',
+        roomName: '+',
+        active: false,
+        ChatRoomData: [],
+        position: chatrooms.length,
+      };
+
+      dispatch({
+        type: FETCH_CHAT_ROOMS,
+        payload: originalReducer,
+      });
+    },
+    error: (err) => {
+      console.log(err);
+      alert(err.message);
+    },
+    complete: () => {},
+  });
 };
