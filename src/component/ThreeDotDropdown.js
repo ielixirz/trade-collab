@@ -1,10 +1,12 @@
-import React, { useEffect, useState, useCallback } from 'react';
+/* eslint-disable filenames/match-regex */
+/* as it is component */
+import React, { useState } from 'react';
 import {
   Dropdown, DropdownItem, DropdownMenu, DropdownToggle,
 } from 'reactstrap';
 import _ from 'lodash';
 
-const ThreeDotDropdown = (props) => {
+const ThreeDotDropdown = (options) => {
   const [open, setOpen] = useState(false);
 
   const toggle = () => {
@@ -18,7 +20,7 @@ const ThreeDotDropdown = (props) => {
       </DropdownToggle>
       <DropdownMenu>
         {
-                    _.map(props.options, option => (
+                    _.map(options, option => (
                       option.function === undefined
                         ? <DropdownItem>{option.text}</DropdownItem>
                         : <DropdownItem onClick={option.function}>{option.text}</DropdownItem>

@@ -1,3 +1,5 @@
+/* eslint-disable filenames/match-regex */
+/* as it is component */
 import React, { useContext } from 'react';
 import {
   ListGroup, ListGroupItem, Row, Col,

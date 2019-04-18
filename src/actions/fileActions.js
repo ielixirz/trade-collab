@@ -2,6 +2,7 @@ import { map } from 'rxjs/operators';
 import { FETCH_FILES } from '../constants/constants';
 import { GetShipmentFileList } from '../service/shipment/shipment';
 
+// eslint-disable-next-line import/prefer-default-export
 export const fetchFiles = (ShipmentKey, dispatch) => {
   if (dispatch !== undefined) {
     console.log('trigger Fetch');

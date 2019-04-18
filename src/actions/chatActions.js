@@ -1,9 +1,7 @@
 import _ from 'lodash';
-import { map } from 'rxjs/operators';
 import {
   FETCH_CHAT,
   moveTab as MOVE_TAB,
-  SAVE_CREDENCIAL,
   TYPING_TEXT,
   FETCH_CHAT_ROOMS,
 } from '../constants/constants';
@@ -11,7 +9,6 @@ import {
   GetChatMessage,
   CreateChatMessage,
   GetChatRoomList,
-  GetChatRoomDetail,
 } from '../service/chat/chat';
 
 export const typing = data => (dispatch) => {
@@ -43,7 +40,7 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch) => {
 
 export const moveTab = (dragIndex, hoverIndex, chats) => (dispatch) => {
   const tabs = [];
-  _.forEach(chats, (item, index) => {
+  _.forEach(chats, (item) => {
     tabs.push({
       id: tabs.length + 1,
       roomName: item.roomName,
@@ -77,7 +74,7 @@ export const moveTab = (dragIndex, hoverIndex, chats) => (dispatch) => {
 export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => {
   const chats = getState().ChatReducer.chatrooms;
   const tabs = [];
-  _.forEach(chats, (item, index) => {
+  _.forEach(chats, (item) => {
     tabs.push({
       id: tabs.length + 1,
       roomName: item.roomName,
@@ -115,7 +112,7 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getSta
   //   ChatRoomMessageTimestamp : new Date()
   // }
   console.log(getState().authReducer);
-  const user = getState().authReducer.user;
+  const [user] = getState().authReducer.user;
   console.log(user);
   if (_.get(user, 'uid', false)) {
     const msg = {
@@ -134,10 +131,7 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getSta
   }
 };
 
-export const getChatRoomList = shipmentKey => (dispatch, getState) => {
-  // TODO: get chatroom filter by user?
-  const user = getState().authReducer.user;
-
+export const getChatRoomList = shipmentKey => (dispatch) => {
   GetChatRoomList(shipmentKey).subscribe({
     next: (snapshot) => {
       const originalReducer = [];
@@ -154,6 +148,7 @@ export const getChatRoomList = shipmentKey => (dispatch, getState) => {
           ChatRoomData: data,
           position: index,
         });
+        return true;
       });
 
       _.forEach(chatrooms, (c, index) => {

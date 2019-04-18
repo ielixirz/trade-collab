@@ -1,21 +1,21 @@
+/* eslint-disable filenames/match-regex */
+/* as it is component */
 import React, {
-  useEffect, useState, useRef, useCallback,
+  useEffect, useState, useRef,
 } from 'react';
 import {
-  ListGroup, ListGroupItem, Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem,
+  ListGroup, ListGroupItem, Row, Col,
 } from 'reactstrap';
-import { useMappedState, useDispatch } from 'redux-react-hook';
 import _ from 'lodash';
 import ThreeDotDropdown from './ThreeDotDropdown';
 import CopyModal from './CopyModal';
-import { fetchFiles } from '../actions/fileActions';
 
-const FileList = (props) => {
+const FileList = (chatFiles) => {
   const [chatFile, setChatFile] = useState(false);
   const copyModalRef = useRef(null);
 
   useEffect(() => {
-    setChatFile(props.chatFile);
+    setChatFile(chatFiles);
   });
 
   const preventParentCollapse = (e) => {

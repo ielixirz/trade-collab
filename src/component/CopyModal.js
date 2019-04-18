@@ -1,11 +1,13 @@
+/* eslint-disable filenames/match-regex */
+/* as it is component */
 import React, {
-  useState, forwardRef, useRef, useImperativeHandle, useCallback,
+  useState, forwardRef, useImperativeHandle, useCallback,
 } from 'react';
 import {
   Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader,
 } from 'reactstrap';
 import Select from 'react-select';
-import { useMappedState, useDispatch } from 'redux-react-hook';
+import { useMappedState } from 'redux-react-hook';
 import _ from 'lodash';
 import { EditChatRoomFileLink } from '../service/chat/chat';
 
@@ -13,22 +15,19 @@ const CopyModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
   const [fileName, setFileName] = useState('-');
   const [file, setFile] = useState(null);
-  const [message, setMessage] = useState('');
   const [chatroomOption, setChatroomOption] = useState([]);
   const [copyChatroom, setCopyChatroom] = useState([]);
 
-  const mapState = useCallback(
-    state => ({
-      chatrooms: state.ChatReducer.chatrooms,
-    }),
-    [],
-  );
-
-  const chatrooms = useMappedState(mapState);
-  const messageRef = useRef();
-
   const toggle = () => {
     setModal(!modal);
+  };
+
+  const handleChatroomSelectChange = (value) => {
+    setCopyChatroom(value);
+  };
+
+  const preventParentCollapse = (e) => {
+    e.stopPropagation();
   };
 
   const copy = () => {
@@ -39,6 +38,34 @@ const CopyModal = forwardRef((props, ref) => {
     });
     toggle();
   };
+
+  const mapChatroom = (chatrooms) => {
+    const tempChatroomOption = [];
+    Object.keys(chatrooms).forEach((key) => {
+      if (key !== 'custom') {
+        const room = chatrooms[key];
+        tempChatroomOption.push({
+          value: {
+            shipmentKey: room.ShipmentKey,
+            chatroomKey: room.ChatRoomKey,
+            file: room.ChatRoomData.ChatRoomFileLink,
+
+          },
+          label: room.roomName,
+        });
+      }
+    });
+    setChatroomOption(tempChatroomOption);
+  };
+
+  const mapState = useCallback(
+    state => ({
+      chatrooms: state.ChatReducer.chatrooms,
+    }),
+    [],
+  );
+
+  const chatrooms = useMappedState(mapState);
 
   useImperativeHandle(ref, () => ({
 
@@ -52,37 +79,6 @@ const CopyModal = forwardRef((props, ref) => {
     },
 
   }));
-
-  const mapChatroom = (chatrooms) => {
-    const chatroomOption = [];
-    Object.keys(chatrooms).forEach((key) => {
-      if (key !== 'custom') {
-        const room = chatrooms[key];
-        chatroomOption.push({
-          value: {
-            shipmentKey: room.ShipmentKey,
-            chatroomKey: room.ChatRoomKey,
-            file: room.ChatRoomData.ChatRoomFileLink,
-
-          },
-          label: room.roomName,
-        });
-      }
-    });
-    setChatroomOption(chatroomOption);
-  };
-
-  const handleMessageChange = (event) => {
-    setMessage(event.target.value);
-  };
-
-  const handleChatroomSelectChange = (value) => {
-    setCopyChatroom(value);
-  };
-
-  const preventParentCollapse = (e) => {
-    e.stopPropagation();
-  };
 
   return (
     <Modal isOpen={modal} toggle={toggle} className="upload-modal">

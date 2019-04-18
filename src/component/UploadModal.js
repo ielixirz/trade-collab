@@ -1,3 +1,5 @@
+/* eslint-disable filenames/match-regex */
+/* as it is component */
 import React, {
   useState, forwardRef, useRef, useImperativeHandle,
 } from 'react';
@@ -5,14 +7,13 @@ import {
   Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader,
 } from 'reactstrap';
 
-import { useDispatch } from 'redux-react-hook';
 import { PutFile, GetMetaDataFromStorageRefPath, GetURLFromStorageRefPath } from '../service/storage/managestorage';
 import { EditChatRoomFileLink } from '../service/chat/chat';
 
 import { CreateShipmentFile } from '../service/shipment/shipment';
 
 
-const UploadModal = forwardRef((props, ref) => {
+const UploadModal = forwardRef((chatFile, sendMessage, ref) => {
   const [modal, setModal] = useState(false);
   const [fileName, setFileName] = useState('-');
   const [file, setFile] = useState(null);
@@ -20,13 +21,27 @@ const UploadModal = forwardRef((props, ref) => {
   const [chatRoomKey, setChatRoomKey] = useState(null);
   const [message, setMessage] = useState('');
 
-  const dispatch = useDispatch();
-
   const messageRef = useRef();
 
   const toggle = () => {
     setModal(!modal);
   };
+
+  useImperativeHandle(ref, () => ({
+
+    // eslint-disable-next-line no-shadow
+    triggerUploading(file, shipmentKey, chatRoomKey) {
+      console.log(file);
+      if (file !== undefined) {
+        setFileName(file.name);
+        setFile(file);
+      }
+      setChatRoomKey(chatRoomKey);
+      setShipmentKey(shipmentKey);
+      toggle();
+    },
+
+  }));
 
   const upload = () => {
     if (file !== null) {
@@ -37,7 +52,7 @@ const UploadModal = forwardRef((props, ref) => {
           console.log(err);
           alert(err.message);
         },
-        complete: (snapshot) => {
+        complete: () => {
           GetMetaDataFromStorageRefPath(storageRefPath)
             .subscribe({
               next: (metaData) => {
@@ -52,7 +67,7 @@ const UploadModal = forwardRef((props, ref) => {
 
                 GetURLFromStorageRefPath(metaData.ref).subscribe({
                   next: (url) => {
-                    const editedChatFile = props.chatFile;
+                    const editedChatFile = chatFile;
                     editedChatFile.push(
                       {
                         FileName: fileName,
@@ -80,23 +95,8 @@ const UploadModal = forwardRef((props, ref) => {
       });
     }
     toggle();
-    props.sendMessage(chatRoomKey, shipmentKey, `${message} [ ${fileName} ]`);
+    sendMessage(chatRoomKey, shipmentKey, `${message} [ ${fileName} ]`);
   };
-
-  useImperativeHandle(ref, () => ({
-
-    triggerUploading(file, shipmentKey, chatRoomKey) {
-      console.log(file);
-      if (file !== undefined) {
-        setFileName(file.name);
-        setFile(file);
-      }
-      setChatRoomKey(chatRoomKey);
-      setShipmentKey(shipmentKey);
-      toggle();
-    },
-
-  }));
 
   const handleMessageChange = (event) => {
     setMessage(event.target.value);
