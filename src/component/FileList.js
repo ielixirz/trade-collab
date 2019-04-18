@@ -8,10 +8,12 @@ import {
 import _ from 'lodash';
 import ThreeDotDropdown from './ThreeDotDropdown';
 import CopyModal from './CopyModal';
+import EditFileModal from './EditFileModal';
 
-const FileList = ({ chatFiles }) => {
+const FileList = ({ chatFiles, shipmentKey, chatroomKey }) => {
   const [chatFile, setChatFile] = useState(false);
   const copyModalRef = useRef(null);
+  const editModalRef = useRef(null);
 
   useEffect(() => {
     setChatFile(chatFiles);
@@ -38,7 +40,8 @@ const FileList = ({ chatFiles }) => {
     <div>
       <ListGroup onClick={preventParentCollapse} flush>
         <CopyModal ref={copyModalRef} />
-        {_.map(chatFile, s => (
+        <EditFileModal ref={editModalRef} shipmentKey={shipmentKey} chatroomKey={chatroomKey} />
+        {_.map(chatFile, (s, index) => (
           <ListGroupItem tag="a">
             <span style={fileListDateStyle}>{new Date(s.FileCreateTimestamp).toDateString()}</span>
             <Row>
@@ -58,6 +61,10 @@ const FileList = ({ chatFiles }) => {
                     {
                       text: 'Copy',
                       function: () => copyModalRef.current.triggerCopying(s),
+                    },
+                    {
+                      text: 'Edit',
+                      function: () => editModalRef.current.triggerEditing(index, chatFile),
                     },
                   ]}
                 />
