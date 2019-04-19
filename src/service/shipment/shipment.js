@@ -37,21 +37,24 @@ export const EditShipment = (ShipmentKey, Data) => from(
     .set(Data, { merge: true }),
 );
 
-export const GetShipmentList = (QueryStatus, QueryFieldName, QueryFieldDirection = 'asc') => {
+export const GetShipmentList = (
+  QueryStatus,
+  QueryFieldName,
+  QueryFieldDirection = 'asc',
+  LimitNumber = 25,
+) => {
   const DefaultQuery = ShipmentRefPath().orderBy('ShipmentCreateTimestamp', 'desc');
 
   if (QueryStatus && QueryFieldName) {
     return collection(
-      DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection).where(
-        'ShipmentStatus',
-        '==',
-        QueryStatus,
-      ),
+      DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection)
+        .where('ShipmentStatus', '==', QueryStatus)
+        .limit(LimitNumber),
     );
   }
-  if (QueryStatus) return collection(DefaultQuery.where('ShipmentStatus', '==', QueryStatus));
-  if (QueryFieldName) return collection(DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection));
-  return collection(DefaultQuery);
+  if (QueryStatus) return collection(DefaultQuery.where('ShipmentStatus', '==', QueryStatus).limit(LimitNumber));
+  if (QueryFieldName) return collection(DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection).limit(LimitNumber));
+  return collection(DefaultQuery).limit(LimitNumber);
 };
 
 export const GetShipmentDetail = ShipmentKey => doc(ShipmentRefPath().doc(ShipmentKey));

@@ -37,9 +37,9 @@ const ChatRoomMessageRefPathOrderByNewerTimestamp = (ShipmentKey, ChatRoomKey) =
 
 export const CreateChatMessage = (ShipmentKey, ChatRoomKey, Data) => from(ChatRoomMessageRefPath(ShipmentKey, ChatRoomKey).add(Data));
 
-export const GetChatMessage = (ShipmentKey, ChatRoomKey) => collection(ChatRoomMessageRefPathOrderByNewerTimestamp(ShipmentKey, ChatRoomKey)).pipe(
-  map(docs => docs.map(d => d.data())),
-);
+export const GetChatMessage = (ShipmentKey, ChatRoomKey, LimitNumber = 25) => collection(
+  ChatRoomMessageRefPathOrderByNewerTimestamp(ShipmentKey, ChatRoomKey).limit(LimitNumber),
+).pipe(map(docs => docs.map(d => d.data())));
 
 // Example Data CreateChatRoom
 
