@@ -54,7 +54,7 @@ export const GetShipmentList = (
   }
   if (QueryStatus) return collection(DefaultQuery.where('ShipmentStatus', '==', QueryStatus).limit(LimitNumber));
   if (QueryFieldName) return collection(DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection).limit(LimitNumber));
-  return collection(DefaultQuery).limit(LimitNumber);
+  return collection(DefaultQuery.limit(LimitNumber));
 };
 
 export const GetShipmentDetail = ShipmentKey => doc(ShipmentRefPath().doc(ShipmentKey));
