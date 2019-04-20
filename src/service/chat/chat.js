@@ -22,7 +22,7 @@ const ChatRoomMessageRefPath = (ShipmentKey, ChatRoomKey) => FirebaseApp.firesto
   .doc(ChatRoomKey)
   .collection('ChatRoomMessage');
 
-const ChatRoomMessageRefPathOrderByNewerTimestamp = (ShipmentKey, ChatRoomKey) => ChatRoomMessageRefPath(ShipmentKey, ChatRoomKey).orderBy('ChatRoomMessageTimestamp', 'asc');
+const ChatRoomMessageRefPathOrderByNewerTimestamp = (ShipmentKey, ChatRoomKey) => ChatRoomMessageRefPath(ShipmentKey, ChatRoomKey).orderBy('ChatRoomMessageTimestamp', 'desc');
 
 // Example Data CreateChatMessage
 
