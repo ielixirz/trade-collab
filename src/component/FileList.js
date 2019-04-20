@@ -36,9 +36,14 @@ const FileList = ({ chatFiles, shipmentKey, chatroomKey }) => {
     color: 'grey',
   };
 
+  const fileListGroupStyle = {
+    height: '30vh',
+    overflow: 'scroll',
+  };
+
   return (
     <div>
-      <ListGroup onClick={preventParentCollapse} flush>
+      <ListGroup onClick={preventParentCollapse} flush style={fileListGroupStyle}>
         <CopyModal ref={copyModalRef} />
         <EditFileModal ref={editModalRef} shipmentKey={shipmentKey} chatroomKey={chatroomKey} />
         {_.map(chatFile, (s, index) => (
