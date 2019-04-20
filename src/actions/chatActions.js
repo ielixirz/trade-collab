@@ -5,11 +5,7 @@ import {
   TYPING_TEXT,
   FETCH_CHAT_ROOMS,
 } from '../constants/constants';
-import {
-  GetChatMessage,
-  CreateChatMessage,
-  GetChatRoomList,
-} from '../service/chat/chat';
+import { GetChatMessage, CreateChatMessage, GetChatRoomList } from '../service/chat/chat';
 
 export const typing = data => (dispatch) => {
   const text = data.target.value;
@@ -112,7 +108,8 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getSta
   //   ChatRoomMessageTimestamp : new Date()
   // }
   console.log(getState().authReducer);
-  const [user] = getState().authReducer.user;
+  // eslint-disable-next-line prefer-destructuring
+  const user = getState().authReducer.user;
   console.log(user);
   if (_.get(user, 'uid', false)) {
     const msg = {
