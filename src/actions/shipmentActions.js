@@ -3,25 +3,25 @@ import { FETCH_SHIPMENT_LIST } from '../constants/constants';
 import { GetShipmentList } from '../service/shipment/shipment';
 
 let shipmentsObservable = GetShipmentList('', '', 'asc').subscribe();
-export const fetchShipments = (typeStatus: any) => (dispatch) => {
+export const fetchShipments = (typeStatus: any) => dispatch => {
   let shipments = [];
   shipmentsObservable.unsubscribe();
   shipmentsObservable = GetShipmentList(typeStatus, '', 'asc').subscribe({
-    next: (res) => {
+    next: res => {
       shipments = _.map(res, item => ({
         uid: item.id,
-        ...item.data(),
+        ...item.data()
       }));
       dispatch({
         type: FETCH_SHIPMENT_LIST,
-        payload: shipments,
+        payload: shipments
       });
       console.log(shipments);
     },
-    error: (err) => {
+    error: err => {
       console.log(err);
     },
-    complete: () => {},
+    complete: () => {}
   });
 };
 export const test = () => null;

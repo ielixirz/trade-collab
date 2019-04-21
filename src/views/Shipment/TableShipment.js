@@ -1,5 +1,5 @@
 import React from 'react';
-import './Chat.css';
+import './Shipment.css';
 
 import _ from 'lodash';
 import BootstrapTable from 'react-bootstrap-table-next';

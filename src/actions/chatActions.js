@@ -3,40 +3,40 @@ import {
   FETCH_CHAT,
   moveTab as MOVE_TAB,
   TYPING_TEXT,
-  FETCH_CHAT_ROOMS,
+  FETCH_CHAT_ROOMS
 } from '../constants/constants';
 import { GetChatMessage, CreateChatMessage, GetChatRoomList } from '../service/chat/chat';
 
-export const typing = data => (dispatch) => {
+export const typing = data => dispatch => {
   const text = data.target.value;
   console.log(text);
   dispatch({
     type: TYPING_TEXT,
-    text,
+    text
   });
 };
 
-export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch) => {
+export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => dispatch => {
   console.log('trigger Fetch');
   GetChatMessage(ShipmentKey, ChatRoomKey).subscribe({
-    next: (res) => {
+    next: res => {
       dispatch({
         type: FETCH_CHAT,
         id: ChatRoomKey,
-        payload: res,
+        payload: res
       });
     },
-    error: (err) => {
+    error: err => {
       console.log(err);
       alert(err.message);
     },
-    complete: () => {},
+    complete: () => {}
   });
 };
 
-export const moveTab = (dragIndex, hoverIndex, chats) => (dispatch) => {
+export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
   const tabs = [];
-  _.forEach(chats, (item) => {
+  _.forEach(chats, item => {
     tabs.push({
       id: tabs.length + 1,
       roomName: item.roomName,
@@ -44,7 +44,7 @@ export const moveTab = (dragIndex, hoverIndex, chats) => (dispatch) => {
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
       ChatRoomData: item.ChatRoomData,
-      position: item.position,
+      position: item.position
     });
   });
 
@@ -61,7 +61,7 @@ export const moveTab = (dragIndex, hoverIndex, chats) => (dispatch) => {
       chatMsg: item.chatMsg,
       active: item.active,
       ChatRoomData: item.ChatRoomData,
-      position: index,
+      position: index
     };
   });
   dispatch({ type: MOVE_TAB, payload: originalReducer });
@@ -70,7 +70,7 @@ export const moveTab = (dragIndex, hoverIndex, chats) => (dispatch) => {
 export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => {
   const chats = getState().ChatReducer.chatrooms;
   const tabs = [];
-  _.forEach(chats, (item) => {
+  _.forEach(chats, item => {
     tabs.push({
       id: tabs.length + 1,
       roomName: item.roomName,
@@ -78,12 +78,12 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
       ChatRoomData: item.ChatRoomData,
-      position: item.index,
+      position: item.index
     });
   });
   const newTabs = tabs.map(tab => ({
     ...tab,
-    active: tab.id === selectedID,
+    active: tab.id === selectedID
   }));
   const originalReducer = [];
   _.forEach(newTabs, (item, index) => {
@@ -93,7 +93,7 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
       roomName: item.roomName,
       active: item.active,
       ChatRoomData: item.ChatRoomData,
-      position: index,
+      position: index
     };
   });
   dispatch({ type: MOVE_TAB, payload: originalReducer });
@@ -116,21 +116,21 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getSta
       ChatRoomMessageSender: _.get(user, 'email', 0),
       ChatRoomMessageContext: text,
       ChatRoomMessageType: 'Text',
-      ChatRoomMessageTimestamp: new Date(),
+      ChatRoomMessageTimestamp: new Date()
     };
     CreateChatMessage(ShipmentKey, ChatRoomKey, msg);
     dispatch({
       type: TYPING_TEXT,
-      text: '',
+      text: ''
     });
   } else {
     alert('please Sign in');
   }
 };
 
-export const getChatRoomList = shipmentKey => (dispatch) => {
+export const getChatRoomList = shipmentKey => dispatch => {
   GetChatRoomList(shipmentKey).subscribe({
-    next: (snapshot) => {
+    next: snapshot => {
       const originalReducer = [];
       const chatrooms = [];
       snapshot.map((d, index) => {
@@ -143,7 +143,7 @@ export const getChatRoomList = shipmentKey => (dispatch) => {
           ChatRoomKey: chatRoomKey,
           ShipmentKey: shipmentKey,
           ChatRoomData: data,
-          position: index,
+          position: index
         });
         return true;
       });
@@ -155,7 +155,7 @@ export const getChatRoomList = shipmentKey => (dispatch) => {
           roomName: c.ChatRoomData.ChatRoomName,
           active: c.active,
           ChatRoomData: c.ChatRoomData,
-          position: index,
+          position: index
         };
       });
 
@@ -165,18 +165,18 @@ export const getChatRoomList = shipmentKey => (dispatch) => {
         roomName: '+',
         active: false,
         ChatRoomData: [],
-        position: chatrooms.length,
+        position: chatrooms.length
       };
 
       dispatch({
         type: FETCH_CHAT_ROOMS,
-        payload: originalReducer,
+        payload: originalReducer
       });
     },
-    error: (err) => {
+    error: err => {
       console.log(err);
       alert(err.message);
     },
-    complete: () => {},
+    complete: () => {}
   });
 };
