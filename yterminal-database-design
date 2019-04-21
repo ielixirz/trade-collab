@@ -1,7 +1,5 @@
 +Shipment
     >ShipmentKey
-        ShipmentReference (array<object>)
-            [{ "RefOwner" : "Seller" , "RefID" : "Ref1234" , "RefTimestampUpdate" : "1234567673242"  }]
         ShipmentSellerCompanyName (string)
         ShipmentSourceLocation (string)
         ShipmentBuyerCompanyName (string)
@@ -20,6 +18,11 @@
             [{ UserKey : "123" , Premission : "ShipmentOwner"  }, { UserKey : "123" , Premission : "ShipmentOwner"  } , { UserKey : "123" , Premission : "See Only"  } ]
         ShipmentShareList (array<string>)
             ['Shipper','ShipmentDetail','Consignee']
+        +ShipmentReference (array<object>)
+            >ShipmentReferenceKey
+                ShipmentReferenceID (string)
+                ShipmentReferenceCompanyName (string)
+                ShipmentReferenceCompanyKey (string)
         +ShipmentShareData
                 >Shipper
                     ShipperCompanyName (string)
