@@ -313,6 +313,7 @@ class Chat extends Component {
                         if (event.key === 'Enter') {
                           console.log('Enter press', event);
                           this.props.sendMessage(ChatRoomKey, ShipmentKey, text);
+                          this.scrollChatToBottom();
                         }
                       }}
                     />
@@ -326,6 +327,7 @@ class Chat extends Component {
                         color="default1"
                         onClick={() => {
                           this.props.sendMessage(ChatRoomKey, ShipmentKey, text);
+                          this.scrollChatToBottom();
                         }}
                       >
                         {' '}
@@ -444,9 +446,7 @@ class Chat extends Component {
       </>
     );
   }
-  componentDidUpdate() {
-    this.scrollChatToBottom();
-  }
+  componentDidUpdate() {}
 
   componentDidMount() {
     this.props.getChatRoomList(`HDTPONlnceJeG5yAA1Zy`); //MOCK SHIPMENT KEY
