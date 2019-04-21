@@ -18,7 +18,7 @@ const ProfilePanel = (props) => {
       <Row style={{ height: '100%' }}>
         <Col xs={2} className="col-profile-pic">
           <Dropdown style={{ height: '100%', top: '14%' }}>
-            <DropdownToggle className="profile-pic-btn">
+            <DropdownToggle className="network-pic-btn">
               <img
                 style={{ width: '70%' }}
                 src="../../assets/img/avatars/6.jpg"
