@@ -1,0 +1,85 @@
+.network-container {
+  background-color: rgb(247, 247, 247);
+  position: fixed !important;
+  top: 6%;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.network-btn-icon {
+  padding-left: 2rem;
+  padding-top: 0.2rem;
+  float: left;
+}
+
+.profile-container {
+  background-color: white;
+  width: 100%;
+  height: 30%;
+  box-shadow: 1px 5px 5px rgba(0, 0, 0, 0.02);
+}
+
+.profile-pic-btn {
+  background-color: white;
+  outline: none;
+  border: none;
+  width: 100%;
+  padding-right: 0px;
+}
+
+.profile-pic-btn:hover {
+  background-color: white;
+  border: 0;
+}
+
+.profile-pic-btn:focus {
+  box-shadow: none;
+}
+
+.profile-email {
+  color: grey;
+}
+
+.profile-btn {
+  font-size: medium;
+  font-weight: bold;
+  width: 75%;
+  margin-bottom: 1rem;
+  color: #16a085;
+  border-color: #16a085;
+  background-color: white;
+  border: 2px solid;
+}
+
+.profile-btn.create {
+  height: 5vh;
+  color: white;
+  background-color: #16a085;
+}
+
+.profile-btn:hover {
+  color: white;
+  border-color: #16a085;
+  background-color: #16a085;
+}
+
+.col-profile-info {
+  margin-top: 2.5rem;
+  padding-left: 0px;
+}
+
+.col-profile-pic {
+  padding-right: 0px;
+}
+
+.col-profile-button {
+  margin-top: 3rem;
+  padding-left: 0px;
+}
+
+.company-container {
+  background-color: white;
+  width: 100%;
+  height: 30%;
+}
