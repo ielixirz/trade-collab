@@ -16,9 +16,29 @@ export const typing = data => dispatch => {
   });
 };
 
-export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => dispatch => {
-  console.log('trigger Fetch');
-  GetChatMessage(ShipmentKey, ChatRoomKey).subscribe({
+export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getState) => {
+  const chats = getState().ChatReducer.chatroomsMsg[ChatRoomKey].chatMsg.length;
+
+  GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
+    next: res => {
+      dispatch({
+        type: FETCH_CHAT,
+        id: ChatRoomKey,
+        payload: res
+      });
+    },
+    error: err => {
+      console.log(err);
+      alert(err.message);
+    },
+    complete: () => {}
+  });
+};
+
+export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getState) => {
+  const chats = getState().ChatReducer.chatroomsMsg[ChatRoomKey].chatMsg.length;
+
+  GetChatMessage(ShipmentKey, ChatRoomKey, chats + 25).subscribe({
     next: res => {
       dispatch({
         type: FETCH_CHAT,

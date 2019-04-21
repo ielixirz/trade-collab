@@ -142,7 +142,7 @@ img{ max-width:100%;}
 .messaging { padding: 0 0 50px 0;}
 .msg_history {
   height: 75vh;
-  overflow-y: auto;
+  overflow: auto;
   padding-right: 10px;
   display: flex; flex-direction: column-reverse;
 }

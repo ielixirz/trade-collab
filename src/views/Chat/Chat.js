@@ -1,5 +1,5 @@
 import React, { Component, useContext, useReducer } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import InfiniteScroll from 'react-infinite-scroller';
 import {
   Collapse,
   Button,
@@ -25,6 +25,7 @@ import { PutFile } from '../../service/storage/managestorage';
 
 import {
   typing,
+  fetchMoreMessage,
   fetchChatMessage,
   sendMessage,
   moveTab,
@@ -246,7 +247,14 @@ class Chat extends Component {
                 onDrop={event => this.onFileDrop(event, ShipmentKey, ChatRoomKey)}
               >
                 <div
+                  id="chathistory"
                   className="msg_history"
+                  onScroll={() => {
+                    let div = document.getElementById('chathistory').scrollTop;
+                    if (div === 0) {
+                      this.props.fetchMoreMessage(ChatRoomKey, ShipmentKey);
+                    }
+                  }}
                   ref={el => {
                     this.msgChatRef = el;
                   }}
@@ -512,5 +520,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { typing, fetchChatMessage, sendMessage, moveTab, selectTab, getChatRoomList }
+  { typing, fetchChatMessage, fetchMoreMessage, sendMessage, moveTab, selectTab, getChatRoomList }
 )(Chat);
