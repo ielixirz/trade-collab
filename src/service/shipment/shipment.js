@@ -9,10 +9,13 @@ const ShipmentFileRefPath = ShipmentKey => FirebaseApp.firestore()
   .doc(ShipmentKey)
   .collection('ShipmentFile');
 
+const ShipmentReferenceRefPath = ShipmentKey => FirebaseApp.firestore()
+  .collection('Shipment')
+  .doc(ShipmentKey)
+  .collection('ShipmentReference');
+
 /* ex. CreateShipment
   {
-      ShipmentReference (array<object>)
-        [{ "RefOwner" : "Seller" , "RefID" : "Ref1234" , "RefTimestampUpdate" : "1234567673242"  }]
       ShipmentSellerCompanyName (string)
       ShipmentSourceLocation (string)
       ShipmentBuyerCompanyName (string)
@@ -69,7 +72,9 @@ export const GetShipmentDetail = ShipmentKey => doc(ShipmentRefPath().doc(Shipme
   }
 */
 
-export const CreateShipmentFile = (ShipmentKey, Data) => from(ShipmentFileRefPath(ShipmentKey).add(Data));
+export const CreateShipmentFile = (ShipmentKey, Data) => from(
+  ShipmentFileRefPath(ShipmentKey).add(Data),
+);
 
 export const DeleteShipmetFile = (ShipmentKey, ShipmentFileKey) => from(
   ShipmentFileRefPath(ShipmentKey)
@@ -78,3 +83,19 @@ export const DeleteShipmetFile = (ShipmentKey, ShipmentFileKey) => from(
 );
 
 export const GetShipmentFileList = ShipmentKey => collection(ShipmentFileRefPath(ShipmentKey).orderBy('FileCreateTimestamp', 'desc'));
+
+/* Example data CreateShipmentReference
+{
+  ShipmentReferenceID (string)
+  ShipmentReferenceCompanyName (string)
+  ShipmentReferenceCompanyKey (string)
+}
+*/
+
+export const CreateShipmentReference = (ShipmentKey, Data) => from(
+  ShipmentReferenceRefPath(ShipmentKey).add(Data),
+);
+
+export const GetShipmentReferenceList = ShipmentKey => collection(
+  ShipmentReferenceRefPath(ShipmentKey),
+);
