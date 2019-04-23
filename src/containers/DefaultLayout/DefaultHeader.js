@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import {
   Badge,
   DropdownItem,
@@ -7,7 +7,6 @@ import {
   DropdownToggle,
   Nav,
   NavItem,
-  NavLink,
   UncontrolledDropdown,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
@@ -48,26 +47,30 @@ class DefaultHeader extends Component {
         />
         <Nav className="d-md-down-none">
           <NavItem className="px-1" style={styles.marginNav}>
-            <Link className="cool-link" to="/shipment" style={styles.fontNav}>
+            <NavLink activeClassName="cool-think" to="/shipment" style={styles.fontNav}>
               Shipments
-            </Link>
+            </NavLink>
           </NavItem>
           <NavItem className="px-1" style={styles.marginNav}>
-            <Link className="cool-link" to="/chat" style={styles.fontNav}>
+            <NavLink activeClassName="cool-think" to="/chat" style={styles.fontNav}>
               Chat
-            </Link>
+            </NavLink>
           </NavItem>
           <NavItem className="px-1" style={styles.marginNav}>
-            <Link className="cool-link" to="/network" style={styles.fontNav}>
+            <NavLink activeClassName="cool-think" to="/network" style={styles.fontNav}>
               Networks
-            </Link>
+            </NavLink>
           </NavItem>
         </Nav>
         <Nav className="ml-auto" navbar style={styles.marginNav}>
           <NavItem className="d-md-down-none">
-            <NavLink href="#">
+            <NavLink to="/network">
               <i className="fa fa-bell-o fa-lg" style={{ fontWeight: 'bold', color: 'black' }} />
-              <Badge pill color="danger">
+              <Badge
+                pill
+                color="danger"
+                style={{ marginLeft: -8, position: 'absolute', bottom: 10 }}
+              >
                 5
               </Badge>
             </NavLink>
@@ -109,7 +112,6 @@ const mapStateToProps = (state) => {
 const styles = {
   fontNav: {
     color: '#3B3B3B',
-    fontWeight: 'bold',
     textDecoration: 'none',
     fontSize: 16,
   },
