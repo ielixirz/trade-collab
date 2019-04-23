@@ -4,9 +4,10 @@ import React from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
 
 const MainDataTable = ({
-  data, column, cssClass, isBorder, wraperClass,
+  data, column, cssClass, isBorder, wraperClass, toolkitbaseProps,
 }) => (
   <BootstrapTable
+    {...toolkitbaseProps}
     wrapperClasses={wraperClass}
     classes={cssClass}
     keyField="id"
