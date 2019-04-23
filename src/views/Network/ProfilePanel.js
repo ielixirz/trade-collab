@@ -7,6 +7,8 @@ import {
 import MainDataTable from '../../component/MainDataTable';
 import ThreeDotDropdown from '../../component/ThreeDotDropdown';
 
+import { profileColumns } from '../../constants/network';
+
 const mockProfile = {
   fullname: 'John Jerald',
   email: 'john@gmail.com',
@@ -192,59 +194,6 @@ const mockDataTable = [
   },
 ];
 
-const dataColumns = [
-  {
-    dataField: 'company',
-    text: 'Company Name: (ID)',
-    style: {
-      width: '30%',
-    },
-    headerStyle: {
-      width: '30%',
-    },
-  },
-  {
-    dataField: 'position',
-    text: 'Position:',
-    style: {
-      width: '20%',
-    },
-    headerStyle: {
-      width: '20%',
-    },
-  },
-  {
-    dataField: 'role',
-    text: 'Role:',
-    style: {
-      width: '20%',
-    },
-    headerStyle: {
-      width: '20%',
-    },
-  },
-  {
-    dataField: 'status',
-    text: 'Status',
-    style: {
-      width: '20%',
-    },
-    headerStyle: {
-      width: '20%',
-    },
-  },
-  {
-    dataField: 'button',
-    text: '',
-    style: {
-      width: '10%',
-    },
-    headerStyle: {
-      width: '10%',
-    },
-  },
-];
-
 const ProfilePanel = (props) => {
   const [userProfile, setUserProfile] = useState(mockProfile);
 
@@ -326,7 +275,7 @@ const ProfilePanel = (props) => {
       >
         <MainDataTable
           data={mockDataTable}
-          column={dataColumns}
+          column={profileColumns}
           cssClass="profile-table"
           wraperClass="profile-table-wraper"
           isBorder={false}

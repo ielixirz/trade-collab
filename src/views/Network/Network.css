@@ -123,6 +123,27 @@
   width: 60%;
 }
 
+.role-filter-select {
+  margin-left: 0.8rem;
+  width: 70%;
+}
+
+.incoming-request-container {
+  margin-left: 5rem;
+  margin-right: 5rem;
+  height: 30%;
+  background-color: white;
+  margin-top: 0.5rem;
+}
+
+.company-member-container {
+  margin-left: 5rem;
+  margin-right: 5rem;
+  height: 35%;
+  background-color: white;
+  margin-top: 0.5rem;
+}
+
 /* Profile DataTable */
 
 .table.profile-table {
@@ -159,3 +180,49 @@ tbody tr {
 }
 
 /* Company DataTable */
+
+.company-table-label {
+  padding-top: 1.5rem;
+  margin-left: 2.5rem;
+}
+
+.table.company-table {
+  margin-top: 1rem;
+}
+
+.company-table-wraper {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.table.company-table > tbody {
+  display: block;
+  height: 55vh; /* Just for the demo          */
+  overflow-y: auto; /* Trigger vertical scroll    */
+  overflow-x: hidden; /* Hide the horizontal scroll */
+}
+
+thead,
+tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed; /* even columns width , fix width of table too*/
+}
+
+.table.company-table > thead > tr > th {
+  color: #9b9b9b;
+  border-color: #f4f4f4;
+  border-width: thin;
+  border-bottom: 1;
+  border-top: none;
+  font-size: medium;
+}
+
+.table.company-table > tbody > tr {
+  background-color: white;
+  font-size: large;
+}
+
+.table.company-table > tbody > tr > td {
+  border: none;
+}
