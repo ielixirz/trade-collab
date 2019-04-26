@@ -1,7 +1,9 @@
 /* eslint-disable filenames/match-regex */
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
+
 import {
-  Row, Col, DropdownToggle, Dropdown, Button,
+  Row, Col, DropdownToggle, Dropdown, Button, Input, Label,
 } from 'reactstrap';
 
 import MainDataTable from '../../component/MainDataTable';
@@ -196,6 +198,14 @@ const mockDataTable = [
 
 const ProfilePanel = (props) => {
   const [userProfile, setUserProfile] = useState(mockProfile);
+  const [isEdit, setIsEdit] = useState(false);
+
+  const toggleEdit = () => {
+    if (isEdit) {
+      // TO-DO : fire edit service
+    }
+    setIsEdit(!isEdit);
+  };
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
@@ -216,24 +226,62 @@ const ProfilePanel = (props) => {
           <Col xs={7} className="col-profile-info">
             <Row>
               <Col sm={1} style={{ paddingLeft: '0px', paddingRight: '0px', textAlign: 'right' }}>
-                <i className="cui-pencil icons" />
+                <i
+                  className="cui-pencil icons"
+                  role="button"
+                  style={{ cursor: 'pointer' }}
+                  onClick={toggleEdit}
+                  onKeyDown={toggleEdit}
+                  tabIndex="-1"
+                />
               </Col>
               <Col xs={9}>
-                <h4>{userProfile.fullname}</h4>
+                {isEdit ? (
+                  <div>
+                    <Input
+                      style={{ width: '40%', marginBottom: '0.5rem' }}
+                      type="text"
+                      id="name"
+                      placeholder={userProfile.fullname}
+                    />
+                  </div>
+                ) : (
+                  <h4>{userProfile.fullname}</h4>
+                )}
               </Col>
             </Row>
             <Row>
               <Col xs={1} />
               <Col xs={4}>
-                <p className="profile-email">
-                  <em>{userProfile.email}</em>
-                </p>
+                {isEdit ? (
+                  <div>
+                    <Input
+                      style={{ width: '100%', marginBottom: '0.5rem' }}
+                      type="text"
+                      id="email"
+                      placeholder={userProfile.email}
+                    />
+                  </div>
+                ) : (
+                  <p className="profile-email">
+                    <em>{userProfile.email}</em>
+                  </p>
+                )}
               </Col>
             </Row>
             <Row>
               <Col xs={1} />
               <Col xs={4}>
-                <p>{userProfile.desc}</p>
+                {isEdit ? (
+                  <Input
+                    style={{ width: '100%' }}
+                    type="textarea"
+                    id="desc"
+                    placeholder={userProfile.desc}
+                  />
+                ) : (
+                  <p>{userProfile.desc}</p>
+                )}
               </Col>
             </Row>
             <Row>
@@ -285,4 +333,11 @@ const ProfilePanel = (props) => {
   );
 };
 
-export default ProfilePanel;
+const mapStateToProps = (state) => {
+  const { authReducer } = state;
+  return {
+    user: authReducer.user,
+  };
+};
+
+export default connect(mapStateToProps)(ProfilePanel);
