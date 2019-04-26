@@ -1,7 +1,5 @@
 import React, { Component, useContext, useReducer } from 'react';
-import InfiniteScroll from 'react-infinite-scroller';
 import {
-  Collapse,
   Button,
   CardBody,
   Card,
@@ -12,15 +10,9 @@ import {
   TabContent,
   Input,
   TabPane,
-  Breadcrumb,
-  ButtonGroup,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader
+  Breadcrumb
 } from 'reactstrap';
 import _ from 'lodash';
-import { GetChatMessage } from '../../service/chat/chat';
 import { PutFile } from '../../service/storage/managestorage';
 
 import {
