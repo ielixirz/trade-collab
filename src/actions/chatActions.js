@@ -17,8 +17,6 @@ export const typing = data => dispatch => {
 };
 
 export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getState) => {
-  const chats = getState().ChatReducer.chatroomsMsg[ChatRoomKey].chatMsg.length;
-
   GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
     next: res => {
       dispatch({
