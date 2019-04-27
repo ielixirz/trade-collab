@@ -334,9 +334,7 @@ export default class TableShipment extends React.Component {
               <BootstrapTable
                 rowStyle={{ textAlign: 'left' }}
                 {...props.baseProps}
-                pagination={paginationFactory(options)}
                 bordered={false}
-                wrapperClasses="boo"
               />
             </div>
           </div>

@@ -1,5 +1,4 @@
 import React, { Component, useContext, useReducer } from 'react';
-import InfiniteScroll from 'react-infinite-scroller';
 import {
   Collapse,
   Button,
