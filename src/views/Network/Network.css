@@ -1,0 +1,228 @@
+.network-container {
+  background-color: rgb(247, 247, 247);
+  position: fixed !important;
+  top: 6%;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.network-btn-icon {
+  padding-left: 2rem;
+  padding-top: 0.2rem;
+  float: left;
+}
+
+.profile-container {
+  background-color: white;
+  width: 100%;
+  height: 30%;
+  box-shadow: 1px 5px 5px rgba(0, 0, 0, 0.02);
+}
+
+.network-pic-btn {
+  background-color: white;
+  outline: none;
+  border: none;
+  width: 100%;
+  padding-right: 0px;
+}
+
+.network-pic-btn:hover {
+  background-color: white;
+  border: 0;
+}
+
+.network-pic-btn:focus {
+  box-shadow: none;
+}
+
+.profile-email {
+  color: grey;
+}
+
+.profile-btn {
+  font-size: medium;
+  font-weight: bold;
+  width: 75%;
+  margin-bottom: 1rem;
+  color: #16a085;
+  border-color: #16a085;
+  background-color: white;
+  border: 2px solid;
+}
+
+.profile-btn.create {
+  height: 5vh;
+  color: white;
+  background-color: #16a085;
+}
+
+.profile-btn:hover {
+  color: white;
+  border-color: #16a085;
+  background-color: #16a085;
+}
+
+.col-profile-info {
+  margin-top: 2.5rem;
+  padding-left: 0px;
+}
+
+.col-profile-pic {
+  padding-right: 0px;
+}
+
+.col-profile-button {
+  margin-top: 3rem;
+  padding-left: 0px;
+}
+
+.company-container {
+  background-color: white;
+  width: 100%;
+  height: 30%;
+  box-shadow: 1px 5px 5px rgba(0, 0, 0, 0.02);
+}
+
+.col-company-pic {
+  padding-right: 0px;
+}
+
+.company-access-btn {
+  font-size: small;
+  font-weight: bold;
+  width: 75%;
+  margin-top: 0.7rem;
+  margin-left: 2.5rem;
+  margin-bottom: 1rem;
+  color: #16a085;
+  border-color: #16a085;
+  background-color: white;
+  border: 2px solid;
+}
+
+.company-invite-btn {
+  font-size: medium;
+  font-weight: bold;
+  width: 20%;
+  color: white;
+  background-color: #16a085;
+  border-color: #16a085;
+  margin-left: 0.5rem;
+}
+
+.company-access-btn:hover {
+  color: white;
+  border-color: #16a085;
+  background-color: #16a085;
+}
+
+.company-invitation-select {
+  margin-left: 0.8rem;
+  width: 60%;
+}
+
+.role-filter-select {
+  margin-left: 0.8rem;
+  width: 70%;
+}
+
+.incoming-request-container {
+  margin-left: 5rem;
+  margin-right: 5rem;
+  height: 30%;
+  background-color: white;
+  margin-top: 0.5rem;
+}
+
+.company-member-container {
+  margin-left: 5rem;
+  margin-right: 5rem;
+  height: 35%;
+  background-color: white;
+  margin-top: 0.5rem;
+}
+
+/* Profile DataTable */
+
+.table.profile-table {
+  margin-top: 1rem;
+}
+
+.table.profile-table > tbody {
+  display: block;
+  height: 55vh; /* Just for the demo          */
+  overflow-y: auto; /* Trigger vertical scroll    */
+  overflow-x: hidden; /* Hide the horizontal scroll */
+}
+
+thead,
+tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed; /* even columns width , fix width of table too*/
+}
+
+.table.profile-table > thead > tr > th {
+  color: #9b9b9b;
+  border: none;
+  font-size: medium;
+}
+
+.table.profile-table > tbody > tr {
+  background-color: white;
+  font-size: large;
+}
+
+.table.profile-table > tbody > tr > td {
+  border: none;
+}
+
+/* Company DataTable */
+
+.company-table-label {
+  padding-top: 1.5rem;
+  margin-left: 2.5rem;
+}
+
+.table.company-table {
+  margin-top: 1rem;
+}
+
+.company-table-wraper {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.table.company-table > tbody {
+  display: block;
+  height: 55vh; /* Just for the demo          */
+  overflow-y: auto; /* Trigger vertical scroll    */
+  overflow-x: hidden; /* Hide the horizontal scroll */
+}
+
+thead,
+tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed; /* even columns width , fix width of table too*/
+}
+
+.table.company-table > thead > tr > th {
+  color: #9b9b9b;
+  border-color: #f4f4f4;
+  border-width: thin;
+  border-bottom: 1;
+  border-top: none;
+  font-size: medium;
+}
+
+.table.company-table > tbody > tr {
+  background-color: white;
+  font-size: large;
+}
+
+.table.company-table > tbody > tr > td {
+  border: none;
+}
