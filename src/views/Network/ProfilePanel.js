@@ -337,7 +337,7 @@ const mapStateToProps = (state) => {
   const { authReducer, userReducer } = state;
   return {
     auth: authReducer.user,
-    user: userReducer,
+    user: userReducer.userInfo,
   };
 };
 
