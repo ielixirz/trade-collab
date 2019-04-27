@@ -5,6 +5,7 @@ import authReducer from './authReducer';
 import FileReducer from './FileReducer';
 import shipmentReducer from './shipmentReducer';
 import profileReducer from './profileReducer';
+import userReducer from './userReducer';
 
 export default combineReducers({
   dataReducer,
@@ -13,4 +14,5 @@ export default combineReducers({
   FileReducer,
   shipmentReducer,
   profileReducer,
+  userReducer,
 });
