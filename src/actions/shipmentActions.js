@@ -6,7 +6,33 @@ let shipmentsObservable = GetShipmentList('', '', 'asc').subscribe();
 export const fetchShipments = (typeStatus: any) => dispatch => {
   let shipments = [];
   shipmentsObservable.unsubscribe();
-  shipmentsObservable = GetShipmentList(typeStatus, '', 'asc').subscribe({
+  shipmentsObservable = GetShipmentList(typeStatus, '', 'asc', 10).subscribe({
+    next: res => {
+      shipments = _.map(res, item => ({
+        uid: item.id,
+        ...item.data()
+      }));
+      dispatch({
+        type: FETCH_SHIPMENT_LIST,
+        payload: shipments
+      });
+      console.log(shipments);
+    },
+    error: err => {
+      console.log(err);
+    },
+    complete: () => {}
+  });
+};
+export const fetchMoreShipments = (typeStatus: any) => (dispatch, getState) => {
+  let shipments = [];
+  shipmentsObservable.unsubscribe();
+  shipmentsObservable = GetShipmentList(
+    typeStatus,
+    '',
+    'asc',
+    getState().shipmentReducer.Shipments.length + 10
+  ).subscribe({
     next: res => {
       shipments = _.map(res, item => ({
         uid: item.id,
