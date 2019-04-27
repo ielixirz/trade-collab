@@ -2,7 +2,7 @@
 import { FETCH_PROFILE_LIST, FETCH_PROFILE_DETAIL } from '../constants/constants';
 
 const INITIAL_STATE = {
-  ProfileList: {},
+  ProfileList: [],
   ProfileDetail: {},
 };
 
