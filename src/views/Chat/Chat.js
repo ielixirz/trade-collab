@@ -1,6 +1,5 @@
 import React, { Component, useContext, useReducer } from 'react';
 import {
-  Collapse,
   Button,
   CardBody,
   Card,
@@ -11,24 +10,19 @@ import {
   TabContent,
   Input,
   TabPane,
-  Breadcrumb,
-  ButtonGroup,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
+  Breadcrumb
 } from 'reactstrap';
 import _ from 'lodash';
-import { GetChatMessage } from '../../service/chat/chat';
 import { PutFile } from '../../service/storage/managestorage';
 
 import {
   typing,
+  fetchMoreMessage,
   fetchChatMessage,
   sendMessage,
   moveTab,
   selectTab,
-  getChatRoomList,
+  getChatRoomList
 } from '../../actions/chatActions';
 
 import { connect } from 'react-redux';
@@ -52,7 +46,7 @@ class Chat extends Component {
       activeTab: new Array(4).fill('1'),
       text: '',
       tabs: [],
-      onDropChatStyle: false,
+      onDropChatStyle: false
     };
 
     this.uploadModalRef = React.createRef();
@@ -60,8 +54,6 @@ class Chat extends Component {
   }
 
   renderMessage(message, i) {
-    console.log('renderMessage', message);
-
     const {
       type = 'sender',
       text = this.lorem(),
@@ -72,11 +64,10 @@ class Chat extends Component {
     let isFirstMessageOfTheDay = false;
     if (prev) {
       let t = new Date(prev.ChatRoomMessageTimestamp.seconds * 1000);
-      console.log(t.toDateString());
-      console.log(status.toDateString());
 
       if (t.toDateString() === status.toDateString()) {
         console.log('*** Same day ***');
+        isFirstMessageOfTheDay = false;
       } else {
         isFirstMessageOfTheDay = true;
       }
@@ -87,17 +78,6 @@ class Chat extends Component {
     if (type === 'sender') {
       return (
         <div key={i}>
-          {isFirstMessageOfTheDay ? (
-            <h2 class="time-background">
-              <span className="time-seperation" align="center">
-                {status.toDateString() === new Date().toDateString()
-                  ? 'Today'
-                  : status.toDateString()}
-              </span>
-            </h2>
-          ) : (
-            ''
-          )}
           <div className="incoming_msg">
             <div className="received_msg">
               <div className="received_withd_msg">
@@ -115,22 +95,22 @@ class Chat extends Component {
               </div>
             </div>
           </div>
+          {isFirstMessageOfTheDay ? (
+            <h2 class="time-background">
+              <span className="time-seperation" align="center">
+                {status.toDateString() === new Date().toDateString()
+                  ? 'Today'
+                  : status.toDateString()}
+              </span>
+            </h2>
+          ) : (
+            ''
+          )}
         </div>
       );
     } else {
       return (
         <div key={i}>
-          {isFirstMessageOfTheDay ? (
-            <h2 class="time-background">
-            <span className="time-seperation" align="center">
-              {status.toDateString() === new Date().toDateString()
-                ? 'Today'
-                : status.toDateString()}
-            </span>
-          </h2>
-          ) : (
-            ''
-          )}
           <div className="outgoing_msg">
             <div className="sent_msg">
               <Row>
@@ -146,6 +126,17 @@ class Chat extends Component {
               </Row>
             </div>
           </div>
+          {isFirstMessageOfTheDay ? (
+            <h2 class="time-background">
+              <span className="time-seperation" align="center">
+                {status.toDateString() === new Date().toDateString()
+                  ? 'Today'
+                  : status.toDateString()}
+              </span>
+            </h2>
+          ) : (
+            ''
+          )}
         </div>
       );
     }
@@ -248,7 +239,14 @@ class Chat extends Component {
                 onDrop={event => this.onFileDrop(event, ShipmentKey, ChatRoomKey)}
               >
                 <div
+                  id="chathistory"
                   className="msg_history"
+                  onScroll={() => {
+                    let div = document.getElementById('chathistory').scrollTop;
+                    if (div === 0) {
+                      this.props.fetchMoreMessage(ChatRoomKey, ShipmentKey);
+                    }
+                  }}
                   ref={el => {
                     this.msgChatRef = el;
                   }}
@@ -307,6 +305,7 @@ class Chat extends Component {
                         if (event.key === 'Enter') {
                           console.log('Enter press', event);
                           this.props.sendMessage(ChatRoomKey, ShipmentKey, text);
+                          this.scrollChatToBottom();
                         }
                       }}
                     />
@@ -320,6 +319,7 @@ class Chat extends Component {
                         color="default1"
                         onClick={() => {
                           this.props.sendMessage(ChatRoomKey, ShipmentKey, text);
+                          this.scrollChatToBottom();
                         }}
                       >
                         {' '}
@@ -357,7 +357,7 @@ class Chat extends Component {
     event.target.value = null;
     this.uploadModalRef.current.triggerUploading(file, ShipmentKey, ChatRoomKey);
     this.setState({
-      onDropChatStyle: false,
+      onDropChatStyle: false
     });
   }
 
@@ -365,7 +365,7 @@ class Chat extends Component {
     event.stopPropagation();
     event.preventDefault();
     this.setState({
-      onDropChatStyle: true,
+      onDropChatStyle: true
     });
   };
 
@@ -373,7 +373,7 @@ class Chat extends Component {
     event.stopPropagation();
     event.preventDefault();
     this.setState({
-      onDropChatStyle: false,
+      onDropChatStyle: false
     });
   };
 
@@ -410,7 +410,7 @@ class Chat extends Component {
       newTabs.push({
         id: newTabs.length + 1,
         content: 'Cute *',
-        display: <div key={newTabs.length + 1}>Cute *</div>,
+        display: <div key={newTabs.length + 1}>Cute *</div>
       });
 
       return { tabs: newTabs };
@@ -425,7 +425,7 @@ class Chat extends Component {
     const newArray = this.state.activeTab.slice();
     newArray[tabPane] = tab;
     this.setState({
-      activeTab: newArray,
+      activeTab: newArray
     });
   }
 
@@ -438,9 +438,7 @@ class Chat extends Component {
       </>
     );
   }
-  componentDidUpdate() {
-    this.scrollChatToBottom();
-  }
+  componentDidUpdate() {}
 
   componentDidMount() {
     this.props.getChatRoomList(`HDTPONlnceJeG5yAA1Zy`); //MOCK SHIPMENT KEY
@@ -453,7 +451,7 @@ class Chat extends Component {
         content: item.roomName,
         active: item.active,
         ChatRoomKey: item.ChatRoomKey,
-        ShipmentKey: item.ShipmentKey,
+        ShipmentKey: item.ShipmentKey
       });
     });
     const activeTab = tabs.filter(tab => tab.active === true);
@@ -493,9 +491,7 @@ class Chat extends Component {
           }}
           selectTab={this.props.selectTab}
           tabs={tabs}
-        >
-          <button onClick={this.addTab}>+</button>
-        </Tabs>
+        />
         <TabContent>
           {activeTab.length !== 0
             ? this.renderChat(activeTab[0].ChatRoomKey, activeTab[0].ShipmentKey)
@@ -510,11 +506,11 @@ const mapStateToProps = state => {
   const { ChatReducer, authReducer } = state;
   return {
     ChatReducer,
-    user: authReducer.user,
+    user: authReducer.user
   };
 };
 
 export default connect(
   mapStateToProps,
-  { typing, fetchChatMessage, sendMessage, moveTab, selectTab, getChatRoomList },
+  { typing, fetchChatMessage, fetchMoreMessage, sendMessage, moveTab, selectTab, getChatRoomList }
 )(Chat);

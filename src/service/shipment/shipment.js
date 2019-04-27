@@ -4,10 +4,11 @@ import { FirebaseApp } from '../firebase';
 
 const ShipmentRefPath = () => FirebaseApp.firestore().collection('Shipment');
 
-const ShipmentFileRefPath = ShipmentKey => FirebaseApp.firestore()
-  .collection('Shipment')
-  .doc(ShipmentKey)
-  .collection('ShipmentFile');
+const ShipmentFileRefPath = ShipmentKey =>
+  FirebaseApp.firestore()
+    .collection('Shipment')
+    .doc(ShipmentKey)
+    .collection('ShipmentFile');
 
 const ShipmentReferenceRefPath = ShipmentKey => FirebaseApp.firestore()
   .collection('Shipment')
@@ -34,17 +35,18 @@ const ShipmentReferenceRefPath = ShipmentKey => FirebaseApp.firestore()
 
 export const CreateShipment = Data => from(ShipmentRefPath().add(Data));
 
-export const EditShipment = (ShipmentKey, Data) => from(
-  ShipmentRefPath()
-    .doc(ShipmentKey)
-    .set(Data, { merge: true }),
-);
+export const EditShipment = (ShipmentKey, Data) =>
+  from(
+    ShipmentRefPath()
+      .doc(ShipmentKey)
+      .set(Data, { merge: true })
+  );
 
 export const GetShipmentList = (
   QueryStatus,
   QueryFieldName,
   QueryFieldDirection = 'asc',
-  LimitNumber = 25,
+  LimitNumber = 25
 ) => {
   const DefaultQuery = ShipmentRefPath().orderBy('ShipmentCreateTimestamp', 'desc');
 
@@ -52,11 +54,13 @@ export const GetShipmentList = (
     return collection(
       DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection)
         .where('ShipmentStatus', '==', QueryStatus)
-        .limit(LimitNumber),
+        .limit(LimitNumber)
     );
   }
-  if (QueryStatus) return collection(DefaultQuery.where('ShipmentStatus', '==', QueryStatus).limit(LimitNumber));
-  if (QueryFieldName) return collection(DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection).limit(LimitNumber));
+  if (QueryStatus)
+    return collection(DefaultQuery.where('ShipmentStatus', '==', QueryStatus).limit(LimitNumber));
+  if (QueryFieldName)
+    return collection(DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection).limit(LimitNumber));
   return collection(DefaultQuery.limit(LimitNumber));
 };
 
@@ -76,11 +80,12 @@ export const CreateShipmentFile = (ShipmentKey, Data) => from(
   ShipmentFileRefPath(ShipmentKey).add(Data),
 );
 
-export const DeleteShipmetFile = (ShipmentKey, ShipmentFileKey) => from(
-  ShipmentFileRefPath(ShipmentKey)
-    .doc(ShipmentFileKey)
-    .delete(),
-);
+export const DeleteShipmetFile = (ShipmentKey, ShipmentFileKey) =>
+  from(
+    ShipmentFileRefPath(ShipmentKey)
+      .doc(ShipmentFileKey)
+      .delete()
+  );
 
 export const GetShipmentFileList = ShipmentKey => collection(ShipmentFileRefPath(ShipmentKey).orderBy('FileCreateTimestamp', 'desc'));
 

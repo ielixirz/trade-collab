@@ -29,7 +29,7 @@ import { EditShipment } from '../../service/shipment/shipment';
 
 const { SearchBar } = Search;
 
-export default class TableShipment extends React.Component {
+class TableShipment extends React.Component {
   data = {
     products: [
       {
@@ -168,37 +168,21 @@ export default class TableShipment extends React.Component {
       <div>
         <Input
           type="select"
-          onChange={(e) => {
+          value={item.ShipmentStatus}
+          onChange={e => {
             const value = e.target.value;
             EditShipment(item.uid, {
               ShipmentStatus: value,
             });
           }}
         >
-          <option value="Planning" selected={item.ShipmentStatus === 'Planning' ? true : ''}>
-            Planning
-          </option>
-          <option
-            value="Order Confirmed"
-            selected={item.ShipmentStatus === 'Order Confirmed' ? true : ''}
-          >
-            Order Confirmed
-          </option>
-          <option value="In-Transit" selected={item.ShipmentStatus === 'In-Transit' ? true : ''}>
-            In-Transit
-          </option>
-          <option value="Delayed" selected={item.ShipmentStatus === 'Delayed' ? true : ''}>
-            Delayed
-          </option>
-          <option value="Delivered" selected={item.ShipmentStatus === 'Delivered' ? true : ''}>
-            Delivered
-          </option>
-          <option value="Cancelled" selected={item.ShipmentStatus === 'Cancelled' ? true : ''}>
-            Cancelled
-          </option>
-          <option value="Completed" selected={item.ShipmentStatus === 'Completed' ? true : ''}>
-            Completed
-          </option>
+          <option value="Planning">Planning</option>
+          <option value="Order Confirmed">Order Confirmed</option>
+          <option value="In-Transit">In-Transit</option>
+          <option value="Delayed">Delayed</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Completed">Completed</option>
         </Input>
       </div>
     );
@@ -337,9 +321,7 @@ export default class TableShipment extends React.Component {
               <BootstrapTable
                 rowStyle={{ textAlign: 'left' }}
                 {...props.baseProps}
-                pagination={paginationFactory(options)}
                 bordered={false}
-                wrapperClasses="boo"
               />
             </div>
           </div>
@@ -348,3 +330,5 @@ export default class TableShipment extends React.Component {
     );
   }
 }
+
+export default TableShipment;
