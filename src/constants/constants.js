@@ -16,3 +16,7 @@ export const FETCH_FILES = 'FETCH_FILES';
 // Chat
 export const FETCH_CHAT = 'FETCH_CHAT';
 export const FETCH_CHAT_ROOMS = 'FETCH_CHAT_ROOMS';
+
+// User
+
+export const FETCH_USER_DETAIL = 'FETCH_USER';
