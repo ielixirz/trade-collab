@@ -1,5 +1,6 @@
 import { FILL_CREDENCIAL, SAVE_CREDENCIAL } from '../constants/constants';
 import { LoginWithEmail } from '../service/auth/login';
+import { getUserInfoDetail } from './userActions';
 
 export const typinglogin = data => (dispatch) => {
   // eslint-disable-next-line prefer-destructuring
@@ -20,6 +21,8 @@ export const login = data => (dispatch) => {
         type: SAVE_CREDENCIAL,
         payload: res.user,
       });
+
+      dispatch(getUserInfoDetail(res.user.uid));
 
       window.location.replace('/');
     },

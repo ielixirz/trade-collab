@@ -5,8 +5,7 @@ import { GetUserInfoDetail } from '../service/user/user';
 export const getUserInfoDetail = userInfoKey => (dispatch) => {
   GetUserInfoDetail(userInfoKey).subscribe({
     next: (snapshot) => {
-      const originalReducer = {};
-
+      let originalReducer = {};
       originalReducer = {
         UserInfoUsername: snapshot.UserInfoUsername,
         UserInfoEmail: snapshot.UserInfoEmail,

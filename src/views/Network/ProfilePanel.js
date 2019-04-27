@@ -334,9 +334,10 @@ const ProfilePanel = (props) => {
 };
 
 const mapStateToProps = (state) => {
-  const { authReducer } = state;
+  const { authReducer, userReducer } = state;
   return {
-    user: authReducer.user,
+    auth: authReducer.user,
+    user: userReducer,
   };
 };
 
