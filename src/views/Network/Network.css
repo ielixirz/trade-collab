@@ -202,6 +202,13 @@ tbody tr {
   overflow-x: hidden; /* Hide the horizontal scroll */
 }
 
+.table.company-table.member > tbody {
+  display: block;
+  height: 15vh; /* Just for the demo          */
+  overflow-y: auto; /* Trigger vertical scroll    */
+  overflow-x: hidden; /* Hide the horizontal scroll */
+}
+
 thead,
 tbody tr {
   display: table;
