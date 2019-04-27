@@ -19,6 +19,37 @@ const mockCompany = {
   website: 'www.website.com',
 };
 
+const mockMember = [
+  {
+    name: 'John Jerald',
+    email: 'john@gmail.com',
+    position: 'AAAAA',
+    role: 'Admin',
+    status: 'Active',
+  },
+  {
+    name: 'ABC BCS',
+    email: 'john@gmail.com',
+    position: 'AAAAA',
+    role: 'Admin',
+    status: 'Active',
+  },
+  {
+    name: 'OOPP OOPPP',
+    email: 'john@gmail.com',
+    position: 'AAAAA',
+    role: 'Admin',
+    status: 'Active',
+  },
+  {
+    name: 'Jim buttcaller',
+    email: 'john@gmail.com',
+    position: 'AAAAA',
+    role: 'Admin',
+    status: 'Active',
+  },
+];
+
 const { SearchBar } = Search;
 
 const CompanyPanel = (props) => {
@@ -100,13 +131,17 @@ const CompanyPanel = (props) => {
         />
       </div>
       <div className="company-member-container">
-        <ToolkitProvider keyField="id" data={[]} columns={memberDataColumns} search>
+        <ToolkitProvider keyField="name" data={mockMember} columns={memberDataColumns} search>
           {toolKitProps => (
             <div>
               <div className="company-table-label">
                 <Row>
                   <Col xs={7} style={{ paddingLeft: 0 }}>
-                    <h4>Members (3)</h4>
+                    <h4>
+Members (
+                      {mockMember.length}
+)
+                    </h4>
                   </Col>
                   <Col xs={3} style={{ paddingRight: 0 }}>
                     <SearchBar
@@ -129,9 +164,9 @@ const CompanyPanel = (props) => {
               </div>
               <MainDataTable
                 toolkitbaseProps={{ ...toolKitProps.baseProps }}
-                data={[]}
+                data={mockMember}
                 column={memberDataColumns}
-                cssClass="company-table"
+                cssClass="company-table member"
                 wraperClass="company-table-wraper"
                 isBorder={false}
                 toolkit="search"
