@@ -1,15 +1,18 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import {
-  Row, Col, DropdownToggle, Dropdown, Button, Input, Label,
+  Row, Col, DropdownToggle, Dropdown, Button, Input,
 } from 'reactstrap';
 
 import MainDataTable from '../../component/MainDataTable';
 import ThreeDotDropdown from '../../component/ThreeDotDropdown';
 
 import { profileColumns } from '../../constants/network';
+
+import { UpdateProfile } from '../../service/user/profile';
 
 const mockProfile = {
   fullname: 'John Jerald',
@@ -196,15 +199,39 @@ const mockDataTable = [
   },
 ];
 
-const ProfilePanel = (props) => {
+const ProfilePanel = ({ currentProfile, auth }) => {
   const [userProfile, setUserProfile] = useState(mockProfile);
   const [isEdit, setIsEdit] = useState(false);
 
+  useEffect(() => {
+    setUserProfile(currentProfile);
+  });
+
   const toggleEdit = () => {
     if (isEdit) {
-      // TO-DO : fire edit service
+      UpdateProfile(auth.uid, currentProfile.id, userProfile);
     }
     setIsEdit(!isEdit);
+  };
+
+  const handleProfileInputChange = (event) => {
+    const editedUserProfile = userProfile;
+    const inputName = event.target.id;
+    const inputValue = event.target.value;
+
+    if (inputName === 'name') {
+      const firstnameSurname = inputValue.trim().split(' ');
+      [editedUserProfile.ProfileFirstname, editedUserProfile.ProfileSurname] = [
+        firstnameSurname[0],
+        firstnameSurname[1],
+      ];
+    } else if (inputName === 'email') {
+      editedUserProfile.ProfileEmail = inputValue;
+    } else if (inputName === 'desc') {
+      editedUserProfile.Description = inputValue;
+    }
+
+    setUserProfile(editedUserProfile);
   };
 
   return (
@@ -231,7 +258,7 @@ const ProfilePanel = (props) => {
                   role="button"
                   style={{ cursor: 'pointer' }}
                   onClick={toggleEdit}
-                  onKeyDown={toggleEdit}
+                  onKeyDown={null}
                   tabIndex="-1"
                 />
               </Col>
@@ -242,11 +269,12 @@ const ProfilePanel = (props) => {
                       style={{ width: '40%', marginBottom: '0.5rem' }}
                       type="text"
                       id="name"
-                      placeholder={userProfile.fullname}
+                      placeholder={`${userProfile.ProfileFirstname} ${userProfile.ProfileSurname}`}
+                      onChange={handleProfileInputChange}
                     />
                   </div>
                 ) : (
-                  <h4>{userProfile.fullname}</h4>
+                  <h4>{`${userProfile.ProfileFirstname} ${userProfile.ProfileSurname}`}</h4>
                 )}
               </Col>
             </Row>
@@ -259,12 +287,13 @@ const ProfilePanel = (props) => {
                       style={{ width: '100%', marginBottom: '0.5rem' }}
                       type="text"
                       id="email"
-                      placeholder={userProfile.email}
+                      placeholder={userProfile.ProfileEmail}
+                      onChange={handleProfileInputChange}
                     />
                   </div>
                 ) : (
                   <p className="profile-email">
-                    <em>{userProfile.email}</em>
+                    <em>{userProfile.ProfileEmail}</em>
                   </p>
                 )}
               </Col>
@@ -277,10 +306,13 @@ const ProfilePanel = (props) => {
                     style={{ width: '100%' }}
                     type="textarea"
                     id="desc"
-                    placeholder={userProfile.desc}
+                    placeholder={
+                      userProfile.Description === undefined ? '-' : userProfile.Description
+                    }
+                    onChange={handleProfileInputChange}
                   />
                 ) : (
-                  <p>{userProfile.desc}</p>
+                  <p>{userProfile.Description === undefined ? '-' : userProfile.Description}</p>
                 )}
               </Col>
             </Row>
@@ -334,10 +366,11 @@ const ProfilePanel = (props) => {
 };
 
 const mapStateToProps = (state) => {
-  const { authReducer, userReducer } = state;
+  const { authReducer, userReducer, profileReducer } = state;
   return {
     auth: authReducer.user,
-    user: userReducer.userInfo,
+    user: userReducer.UserInfo,
+    currentProfile: profileReducer.ProfileList[0],
   };
 };
 
