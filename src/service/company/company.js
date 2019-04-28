@@ -1,5 +1,7 @@
 import { collection, doc } from 'rxfire/firestore';
 import { from } from 'rxjs';
+import { take } from 'rxjs/operators';
+
 import { FirebaseApp } from '../firebase';
 
 const CompanyRefPath = () => FirebaseApp.firestore().collection('Company');
@@ -26,3 +28,11 @@ export const UpdateCompany = (CompanyKey, Data) => from(
 );
 
 export const GetCompanyDetail = CompanyKey => doc(CompanyRefPath().doc(CompanyKey));
+
+export const CheckAvaliableCompanyID = CompanyID => collection(CompanyRefPath().where('CompanyID', '==', CompanyID)).pipe(take(1));
+
+export const SetCompanyID = (CompanyKey, CompanyID) => from(
+  CompanyRefPath()
+    .doc(CompanyKey)
+    .set({ CompanyID }, { merge: true }),
+);
