@@ -36,3 +36,9 @@ export const SetCompanyID = (CompanyKey, CompanyID) => from(
     .doc(CompanyKey)
     .set({ CompanyID }, { merge: true }),
 );
+
+export const SetCompanyImageLink = (CompanyKey, CompanyImageLink) => from(
+  CompanyRefPath()
+    .doc(CompanyKey)
+    .set({ CompanyImageLink }, { merge: true }),
+);
