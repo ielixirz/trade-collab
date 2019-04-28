@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 
 import {
@@ -9,6 +9,7 @@ import {
 
 import MainDataTable from '../../component/MainDataTable';
 import ThreeDotDropdown from '../../component/ThreeDotDropdown';
+import CreateCompanyModal from '../../component/CreateCompanyModal';
 
 import { profileColumns } from '../../constants/network';
 
@@ -202,6 +203,7 @@ const mockDataTable = [
 const ProfilePanel = ({ currentProfile, auth }) => {
   const [userProfile, setUserProfile] = useState(mockProfile);
   const [isEdit, setIsEdit] = useState(false);
+  const createCompanyModalRef = useRef(null);
 
   useEffect(() => {
     setUserProfile(currentProfile);
@@ -237,6 +239,7 @@ const ProfilePanel = ({ currentProfile, auth }) => {
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <div className="profile-container">
+        <CreateCompanyModal ref={createCompanyModalRef} />
         <Row style={{ height: '100%' }}>
           <Col xs={2} className="col-profile-pic">
             <Dropdown style={{ height: '100%', top: '14%' }}>
@@ -337,7 +340,10 @@ const ProfilePanel = ({ currentProfile, auth }) => {
               </Button>
             </Row>
             <Row>
-              <Button className="profile-btn create">
+              <Button
+                className="profile-btn create"
+                onClick={() => createCompanyModalRef.current.triggerCreateCompany()}
+              >
                 <i className="fa fa-plus-circle network-btn-icon" />
                 Create New Company
               </Button>
