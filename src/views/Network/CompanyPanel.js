@@ -1,6 +1,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+
 import {
   Row, Col, DropdownToggle, Dropdown, Button, Label, Input,
 } from 'reactstrap';
@@ -10,6 +12,8 @@ import Select from 'react-select';
 import MainDataTable from '../../component/MainDataTable';
 
 import { incomingRequestColumns, memberDataColumns } from '../../constants/network';
+
+import { UpdateCompany, GetCompanyDetail } from '../../service/company/company';
 
 const mockCompany = {
   name: 'Fresh Produce Co. Ltd.',
@@ -56,11 +60,43 @@ const CompanyPanel = (props) => {
   const [company, setCompany] = useState(mockCompany);
   const [isEdit, setIsEdit] = useState(false);
 
+  useEffect(() => {
+    GetCompanyDetail('oFT40OYTReLd6GQR1kIv').subscribe({
+      next: (snapshot) => {
+        const data = snapshot.data();
+        setCompany(data);
+      },
+      error: (err) => {
+        console.log(err);
+        alert(err.message);
+      },
+      complete: () => {
+        'TO DO LOG';
+      },
+    });
+  }, []);
+
   const toggleEdit = () => {
     if (isEdit) {
-      // TO-DO : fire edit service
+      UpdateCompany('oFT40OYTReLd6GQR1kIv', company);
     }
     setIsEdit(!isEdit);
+  };
+
+  const handleCompanyInputChange = (event) => {
+    const editedCompany = company;
+    const inputName = event.target.id;
+    const inputValue = event.target.value;
+
+    if (inputName === 'name') {
+      editedCompany.CompanyName = inputValue;
+    } else if (inputName === 'tel') {
+      editedCompany.CompanyTelNumber = inputValue;
+    } else if (inputName === 'desc') {
+      editedCompany.CompanyAboutUs = inputValue;
+    }
+
+    setCompany(editedCompany);
   };
 
   return (
@@ -91,11 +127,12 @@ const CompanyPanel = (props) => {
                     style={{ width: '100%', marginBottom: '0.5rem', paddingRight: '5rem' }}
                     type="text"
                     id="name"
-                    placeholder={company.name}
+                    placeholder={company.CompanyName}
+                    onChange={handleCompanyInputChange}
                   />
                 </div>
               ) : (
-                <h4>{company.name}</h4>
+                <h4>{company.CompanyName}</h4>
               )}
               <i
                 className="cui-pencil icons"
@@ -115,7 +152,7 @@ const CompanyPanel = (props) => {
               <p className="profile-email">
                 <em>
                   ID:
-                  {company.id}
+                  {company.CompanyID}
                 </em>
               </p>
             </Row>
@@ -126,11 +163,12 @@ const CompanyPanel = (props) => {
                     style={{ width: '80%', marginBottom: '0.5rem', paddingRight: '5rem' }}
                     type="text"
                     id="tel"
-                    placeholder={company.tel}
+                    placeholder={company.CompanyTelNumber}
+                    onChange={handleCompanyInputChange}
                   />
                 </div>
               ) : (
-                <p style={{ marginBottom: '0.1rem' }}>{company.tel}</p>
+                <p style={{ marginBottom: '0.1rem' }}>{company.CompanyTelNumber}</p>
               )}
             </Row>
             <Row>
@@ -139,14 +177,15 @@ const CompanyPanel = (props) => {
                   style={{ width: '50%' }}
                   type="textarea"
                   id="desc"
-                  placeholder={company.desc}
+                  placeholder={company.CompanyAboutUs}
+                  onChange={handleCompanyInputChange}
                 />
               ) : (
-                <p>{company.desc}</p>
+                <p>{company.CompanyAboutUs}</p>
               )}
             </Row>
             <Row style={{ paddingTop: '2rem' }}>
-              <a href="/#/network">{company.website}</a>
+              <a href="/#/network">{company.CompanyWebsiteUrl}</a>
             </Row>
           </Col>
           <Col xs={4} style={{ marginTop: '1.5rem' }}>
@@ -230,4 +269,13 @@ Members (
   );
 };
 
-export default CompanyPanel;
+const mapStateToProps = (state) => {
+  const { authReducer, userReducer, profileReducer } = state;
+  return {
+    auth: authReducer.user,
+    user: userReducer.UserInfo,
+    currentProfile: profileReducer.ProfileList[0],
+  };
+};
+
+export default connect(mapStateToProps)(CompanyPanel);
