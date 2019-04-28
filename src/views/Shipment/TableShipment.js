@@ -23,6 +23,7 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
+  Tooltip,
 } from 'reactstrap';
 import { createDataTable } from '../../utils/tool';
 import { EditShipment } from '../../service/shipment/shipment';
@@ -30,6 +31,21 @@ import { EditShipment } from '../../service/shipment/shipment';
 const { SearchBar } = Search;
 
 class TableShipment extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.toggle = this.toggle.bind(this);
+    this.state = {
+      tooltipOpen: false,
+    };
+  }
+
+  toggle() {
+    this.setState({
+      tooltipOpen: !this.state.tooltipOpen,
+    });
+  }
+
   data = {
     products: [
       {
@@ -124,7 +140,6 @@ class TableShipment extends React.Component {
   };
 
   renderRefComponent(index, ref) {
-    console.log(ref);
     return (
       <div>
         <p id={`popover${index}`}>{ref.RefID}</p>
@@ -169,7 +184,7 @@ class TableShipment extends React.Component {
         <Input
           type="select"
           value={item.ShipmentStatus}
-          onChange={e => {
+          onChange={(e) => {
             const value = e.target.value;
             EditShipment(item.uid, {
               ShipmentStatus: value,
@@ -184,6 +199,29 @@ class TableShipment extends React.Component {
           <option value="Cancelled">Cancelled</option>
           <option value="Completed">Completed</option>
         </Input>
+      </div>
+    );
+  }
+
+  renderDescription(index, des) {
+    return (
+      <div>
+        <span style={{ color: 'black' }} href="#" id="DisabledAutoHideExample">
+          <i className="fa fa-tag fa-lg" />
+        </span>
+        <Tooltip
+          placement="bottom"
+          isOpen={this.state.tooltipOpen}
+          autohide={false}
+          target="DisabledAutoHideExample"
+          toggle={this.toggle}
+          style={{ backgroundColor: 'white' }}
+        >
+          <p style={{ color: 'black', textDecoration: 'underline' }}>
+            Price and describtion of goods
+          </p>
+          <p style={{ color: 'black' }}>{des}</p>
+        </Tooltip>
       </div>
     );
   }
@@ -209,6 +247,7 @@ class TableShipment extends React.Component {
           Product: _.get(item, 'ShipmentProductName', ''),
           ETD: new Date(etd.seconds * 1000).toLocaleString(),
           ETA: new Date(eta.seconds * 1000).toLocaleString(),
+          '': this.renderDescription(index, _.get(item, 'ShipmentPriceDescription', '')),
           Status: this.renderStatusComponent(item),
         };
       });
