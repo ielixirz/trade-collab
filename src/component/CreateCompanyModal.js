@@ -26,7 +26,7 @@ const CreateCompanyModal = forwardRef((props, ref) => {
   };
 
   const handleCompanyInputChange = (event) => {
-    const createCompany = {};
+    const createCompany = company;
     const inputValue = event.target.value;
     const inputName = event.target.id;
 
@@ -47,16 +47,8 @@ const CreateCompanyModal = forwardRef((props, ref) => {
     setCompany(createCompany);
   };
 
-  //   const preventParentCollapse = (e) => {
-  //     e.stopPropagation();
-  //   };
-
   const create = () => {
-    // _.each(copyChatroom, (room) => {
-    //   const copiedChatRoomFileLink = room.value.file;
-    //   copiedChatRoomFileLink.push(file);
-    //   EditChatRoomFileLink(room.value.shipmentKey, room.value.chatroomKey, copiedChatRoomFileLink);
-    // });
+    CreateCompany(company);
     toggle();
   };
 
