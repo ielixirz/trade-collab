@@ -21,10 +21,7 @@ export const login = data => (dispatch) => {
         type: SAVE_CREDENCIAL,
         payload: res.user,
       });
-
-      dispatch(getUserInfoDetail(res.user.uid));
-
-      window.location.replace('/');
+      window.location.replace('#/shipment');
     },
     error: (err) => {
       console.log(err);
