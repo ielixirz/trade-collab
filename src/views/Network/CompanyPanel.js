@@ -2,7 +2,7 @@
 /* eslint-disable filenames/match-regex */
 import React, { useState } from 'react';
 import {
-  Row, Col, DropdownToggle, Dropdown, Button, Label,
+  Row, Col, DropdownToggle, Dropdown, Button, Label, Input,
 } from 'reactstrap';
 
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
@@ -19,10 +19,49 @@ const mockCompany = {
   website: 'www.website.com',
 };
 
+const mockMember = [
+  {
+    name: 'John Jerald',
+    email: 'john@gmail.com',
+    position: 'AAAAA',
+    role: 'Admin',
+    status: 'Active',
+  },
+  {
+    name: 'ABC BCS',
+    email: 'john@gmail.com',
+    position: 'AAAAA',
+    role: 'Admin',
+    status: 'Active',
+  },
+  {
+    name: 'OOPP OOPPP',
+    email: 'john@gmail.com',
+    position: 'AAAAA',
+    role: 'Admin',
+    status: 'Active',
+  },
+  {
+    name: 'Jim buttcaller',
+    email: 'john@gmail.com',
+    position: 'AAAAA',
+    role: 'Admin',
+    status: 'Active',
+  },
+];
+
 const { SearchBar } = Search;
 
 const CompanyPanel = (props) => {
   const [company, setCompany] = useState(mockCompany);
+  const [isEdit, setIsEdit] = useState(false);
+
+  const toggleEdit = () => {
+    if (isEdit) {
+      // TO-DO : fire edit service
+    }
+    setIsEdit(!isEdit);
+  };
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
@@ -46,8 +85,31 @@ const CompanyPanel = (props) => {
           </Col>
           <Col xs={6} style={{ marginTop: '1.5rem' }}>
             <Row>
-              <h4>{company.name}</h4>
-              <i className="cui-pencil icons" style={{ marginLeft: '2rem', fontSize: 'medium' }} />
+              {isEdit ? (
+                <div>
+                  <Input
+                    style={{ width: '100%', marginBottom: '0.5rem', paddingRight: '5rem' }}
+                    type="text"
+                    id="name"
+                    placeholder={company.name}
+                  />
+                </div>
+              ) : (
+                <h4>{company.name}</h4>
+              )}
+              <i
+                className="cui-pencil icons"
+                role="button"
+                style={{
+                  marginLeft: '1rem',
+                  marginTop: '0.1rem',
+                  fontSize: 'medium',
+                  cursor: 'pointer',
+                }}
+                onClick={toggleEdit}
+                onKeyDown={null}
+                tabIndex="-1"
+              />
             </Row>
             <Row>
               <p className="profile-email">
@@ -58,12 +120,32 @@ const CompanyPanel = (props) => {
               </p>
             </Row>
             <Row>
-              <p style={{ marginBottom: '0.1rem' }}>{company.tel}</p>
+              {isEdit ? (
+                <div>
+                  <Input
+                    style={{ width: '80%', marginBottom: '0.5rem', paddingRight: '5rem' }}
+                    type="text"
+                    id="tel"
+                    placeholder={company.tel}
+                  />
+                </div>
+              ) : (
+                <p style={{ marginBottom: '0.1rem' }}>{company.tel}</p>
+              )}
             </Row>
             <Row>
-              <p>{company.desc}</p>
+              {isEdit ? (
+                <Input
+                  style={{ width: '50%' }}
+                  type="textarea"
+                  id="desc"
+                  placeholder={company.desc}
+                />
+              ) : (
+                <p>{company.desc}</p>
+              )}
             </Row>
-            <Row style={{ paddingTop: '3rem' }}>
+            <Row style={{ paddingTop: '2rem' }}>
               <a href="/#/network">{company.website}</a>
             </Row>
           </Col>
@@ -100,13 +182,17 @@ const CompanyPanel = (props) => {
         />
       </div>
       <div className="company-member-container">
-        <ToolkitProvider keyField="id" data={[]} columns={memberDataColumns} search>
+        <ToolkitProvider keyField="name" data={mockMember} columns={memberDataColumns} search>
           {toolKitProps => (
             <div>
               <div className="company-table-label">
                 <Row>
                   <Col xs={7} style={{ paddingLeft: 0 }}>
-                    <h4>Members (3)</h4>
+                    <h4>
+Members (
+                      {mockMember.length}
+)
+                    </h4>
                   </Col>
                   <Col xs={3} style={{ paddingRight: 0 }}>
                     <SearchBar
@@ -129,9 +215,9 @@ const CompanyPanel = (props) => {
               </div>
               <MainDataTable
                 toolkitbaseProps={{ ...toolKitProps.baseProps }}
-                data={[]}
+                data={mockMember}
                 column={memberDataColumns}
-                cssClass="company-table"
+                cssClass="company-table member"
                 wraperClass="company-table-wraper"
                 isBorder={false}
                 toolkit="search"

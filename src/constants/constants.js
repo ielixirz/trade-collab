@@ -18,5 +18,11 @@ export const FETCH_CHAT = 'FETCH_CHAT';
 export const FETCH_CHAT_ROOMS = 'FETCH_CHAT_ROOMS';
 
 // User
-
 export const FETCH_USER_DETAIL = 'FETCH_USER';
+
+// Profile
+export const FETCH_PROFILE_LIST = 'FETCH_PROFILE_LIST';
+export const FETCH_PROFILE_DETAIL = 'FETCH_PROFILE_DETAIL';
+
+// Company
+export const FETCH_COMPANY_DETAIL = 'FETCH_COMPANY_DETAIL';
