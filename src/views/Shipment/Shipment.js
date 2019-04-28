@@ -13,7 +13,7 @@ import {
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import TableShipment from './TableShipment';
-import { fetchShipments } from '../../actions/shipmentActions';
+import { fetchShipments, fetchMoreShipments } from '../../actions/shipmentActions';
 
 class Shipment extends Component {
   constructor(props) {
@@ -115,7 +115,18 @@ class Shipment extends Component {
             </Button>
           </Col>
         </Nav>
-        <TabContent activeTab={this.state.activeTab}>
+        <TabContent
+          activeTab={this.state.activeTab}
+          id="content"
+          className={'boo'}
+          onScroll={e => {
+            let obj = document.getElementById('content');
+            const isTrigger = obj.scrollTop == obj.scrollHeight - obj.offsetHeight;
+            if (isTrigger) {
+              this.props.fetchMoreShipments();
+            }
+          }}
+        >
           <TabPane tabId="1">
             <Row>
               <Col sm="12">
@@ -176,5 +187,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { fetchShipments }
+  { fetchShipments, fetchMoreShipments }
 )(Shipment);

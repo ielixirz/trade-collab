@@ -199,7 +199,8 @@ input {
 
 div.boo {
   border: 0px solid white;
-  height: 550px;
+  height: 50vh;
+  overflow: auto;
 }
 
 p {

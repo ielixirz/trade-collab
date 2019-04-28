@@ -4,6 +4,7 @@ import ChatReducer from './ChatReducer';
 import authReducer from './authReducer';
 import FileReducer from './FileReducer';
 import shipmentReducer from './shipmentReducer';
+import profileReducer from './profileReducer';
 import userReducer from './userReducer';
 
 export default combineReducers({
@@ -12,5 +13,6 @@ export default combineReducers({
   authReducer,
   FileReducer,
   shipmentReducer,
+  profileReducer,
   userReducer,
 });

@@ -56,6 +56,7 @@ export const GetShipmentList = (
     );
   }
   if (QueryStatus) return collection(DefaultQuery.where('ShipmentStatus', '==', QueryStatus).limit(LimitNumber));
+  // eslint-disable-next-line max-len
   if (QueryFieldName) return collection(DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection).limit(LimitNumber));
   return collection(DefaultQuery.limit(LimitNumber));
 };
@@ -72,9 +73,8 @@ export const GetShipmentDetail = ShipmentKey => doc(ShipmentRefPath().doc(Shipme
   }
 */
 
-export const CreateShipmentFile = (ShipmentKey, Data) => from(
-  ShipmentFileRefPath(ShipmentKey).add(Data),
-);
+// eslint-disable-next-line max-len
+export const CreateShipmentFile = (ShipmentKey, Data) => from(ShipmentFileRefPath(ShipmentKey).add(Data));
 
 export const DeleteShipmetFile = (ShipmentKey, ShipmentFileKey) => from(
   ShipmentFileRefPath(ShipmentKey)
@@ -92,10 +92,14 @@ export const GetShipmentFileList = ShipmentKey => collection(ShipmentFileRefPath
 }
 */
 
-export const CreateShipmentReference = (ShipmentKey, Data) => from(
-  ShipmentReferenceRefPath(ShipmentKey).add(Data),
-);
+// eslint-disable-next-line max-len
+export const CreateShipmentReference = (ShipmentKey, Data) => from(ShipmentReferenceRefPath(ShipmentKey).add(Data));
 
-export const GetShipmentReferenceList = ShipmentKey => collection(
-  ShipmentReferenceRefPath(ShipmentKey),
+// eslint-disable-next-line max-len
+export const GetShipmentReferenceList = ShipmentKey => collection(ShipmentReferenceRefPath(ShipmentKey));
+
+export const UpdateShipmentReference = (ShipmentKey, ShipmentReferenceKey, Data) => from(
+  ShipmentReferenceRefPath(ShipmentKey)
+    .doc(ShipmentReferenceKey)
+    .add(Data, { merge: true }),
 );
