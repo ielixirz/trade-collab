@@ -24,3 +24,5 @@ export const UpdateCompany = (CompanyKey, Data) => from(
     .doc(CompanyKey)
     .set(Data, { merge: true }),
 );
+
+export const GetCompanyDetail = CompanyKey => doc(CompanyRefPath().doc(CompanyKey));
