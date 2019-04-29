@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 
 import {
@@ -14,6 +14,11 @@ import MainDataTable from '../../component/MainDataTable';
 import { incomingRequestColumns, memberDataColumns } from '../../constants/network';
 
 import { UpdateCompany, GetCompanyDetail } from '../../service/company/company';
+import {
+  PutFile,
+  GetMetaDataFromStorageRefPath,
+  GetURLFromStorageRefPath,
+} from '../../service/storage/managestorage';
 
 const mockCompany = {
   name: 'Fresh Produce Co. Ltd.',
@@ -59,6 +64,7 @@ const { SearchBar } = Search;
 const CompanyPanel = (props) => {
   const [company, setCompany] = useState(mockCompany);
   const [isEdit, setIsEdit] = useState(false);
+  const fileInput = useRef(null);
 
   useEffect(() => {
     GetCompanyDetail('oFT40OYTReLd6GQR1kIv').subscribe({
@@ -71,7 +77,7 @@ const CompanyPanel = (props) => {
         alert(err.message);
       },
       complete: () => {
-        'TO DO LOG';
+        console.log('TO DO LOG');
       },
     });
   }, []);
@@ -99,19 +105,61 @@ const CompanyPanel = (props) => {
     setCompany(editedCompany);
   };
 
+  const browseFile = () => {
+    fileInput.current.value = null;
+    fileInput.current.click();
+  };
+
+  const changeCompanyPic = (file) => {
+    const companyKey = 'oFT40OYTReLd6GQR1kIv';
+    const editedCompany = company;
+    const storageRefPath = `/Company/${companyKey}/${new Date().valueOf()}${file.name}`;
+    PutFile(storageRefPath, file).subscribe({
+      next: () => {
+        console.log('TODO: UPLOAD PROGRESS');
+      },
+      error: (err) => {
+        console.log(err);
+        alert(err.message);
+      },
+      complete: () => {
+        GetMetaDataFromStorageRefPath(storageRefPath).subscribe({
+          next: (metaData) => {
+            GetURLFromStorageRefPath(metaData.ref).subscribe({
+              next: (url) => {
+                editedCompany.CompanyImageLink = url;
+                UpdateCompany(companyKey, editedCompany);
+              },
+              complete: () => {},
+            });
+          },
+        });
+      },
+    });
+  };
+
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <div className="company-container">
+        <input
+          type="file"
+          id="file"
+          ref={fileInput}
+          style={{ display: 'none' }}
+          onChange={event => changeCompanyPic(event.target.files[0])}
+        />
         <Row style={{ height: '100%' }}>
           <Col xs={2} className="col-company-pic">
             <Dropdown>
               <DropdownToggle className="network-pic-btn">
-                <img
-                  style={{ width: '70%' }}
-                  src="../../assets/img/avatars/6.jpg"
-                  className="img-avatar"
-                  alt="admin@bootstrapmaster.com"
-                />
+                <div role="button" onClick={browseFile} onKeyDown={null} tabIndex="-1">
+                  <img
+                    style={{ width: '70%' }}
+                    src={company.CompanyImageLink}
+                    className="img-avatar"
+                    alt="admin@bootstrapmaster.com"
+                  />
+                </div>
               </DropdownToggle>
             </Dropdown>
             <Button className="company-access-btn">
