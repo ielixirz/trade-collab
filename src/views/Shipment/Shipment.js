@@ -8,12 +8,13 @@ import {
   Container,
   Button,
   Row,
-  Col
+  Col,
 } from 'reactstrap';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import TableShipment from './TableShipment';
 import { fetchShipments, fetchMoreShipments } from '../../actions/shipmentActions';
+import MemberModal from '../../component/MemberModal';
 
 class Shipment extends Component {
   constructor(props) {
@@ -22,7 +23,7 @@ class Shipment extends Component {
     this.toggle = this.toggle.bind(this);
     this.state = {
       activeTab: '1',
-      typeShipment: ''
+      typeShipment: '',
     };
   }
 
@@ -40,7 +41,7 @@ class Shipment extends Component {
   toggle(tab) {
     if (this.state.activeTab !== tab) {
       this.setState({
-        activeTab: tab
+        activeTab: tab,
       });
     }
   }
@@ -58,7 +59,9 @@ class Shipment extends Component {
                 this.setState({ typeShipment: '' });
               }}
             >
-              <span style={styles.title}>Alert</span> <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Alert</span>
+              {' '}
+              <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -69,7 +72,9 @@ class Shipment extends Component {
                 this.setState({ typeShipment: 'Planning' });
               }}
             >
-              <span style={styles.title}>Plan</span> <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Plan</span>
+              {' '}
+              <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -80,7 +85,9 @@ class Shipment extends Component {
                 this.setState({ typeShipment: 'active' });
               }}
             >
-              <span style={styles.title}>Active</span> <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Active</span>
+              {' '}
+              <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -91,7 +98,9 @@ class Shipment extends Component {
                 this.setState({ typeShipment: 'Delivered' });
               }}
             >
-              <span style={styles.title}>Complete</span> <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Complete</span>
+              {' '}
+              <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -102,7 +111,9 @@ class Shipment extends Component {
                 this.setState({ typeShipment: 'Cancelled' });
               }}
             >
-              <i className="icon-close" /> <span style={styles.title}>Cancel</span>
+              <i className="icon-close" />
+              {' '}
+              <span style={styles.title}>Cancel</span>
             </NavLink>
           </NavItem>
           <Col>
@@ -110,17 +121,18 @@ class Shipment extends Component {
               style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 10 }}
               className="float-right"
             >
-              <i className="fa fa-plus-circle" style={{ color: 'white' }} />{' '}
+              <i className="fa fa-plus-circle" style={{ color: 'white' }} />
               <span style={{ fontWeight: 'bold', color: 'white' }}>Create New Shipment</span>
             </Button>
+            <MemberModal />
           </Col>
         </Nav>
         <TabContent
           activeTab={this.state.activeTab}
           id="content"
-          className={'boo'}
-          onScroll={e => {
-            let obj = document.getElementById('content');
+          className="boo"
+          onScroll={(e) => {
+            const obj = document.getElementById('content');
             const isTrigger = obj.scrollTop == obj.scrollHeight - obj.offsetHeight;
             if (isTrigger) {
               this.props.fetchMoreShipments();
@@ -172,20 +184,20 @@ const styles = {
   title: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#707070'
+    color: '#707070',
   },
   lineTab: {
     color: '#EAEAEA',
     opacity: 0.8,
-    marginLeft: 20
-  }
+    marginLeft: 20,
+  },
 };
 
 const mapStateToProps = state => ({
-  shipments: state.shipmentReducer.Shipments
+  shipments: state.shipmentReducer.Shipments,
 });
 
 export default connect(
   mapStateToProps,
-  { fetchShipments, fetchMoreShipments }
+  { fetchShipments, fetchMoreShipments },
 )(Shipment);

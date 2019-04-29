@@ -1,0 +1,21 @@
+.modal-header {
+  border-bottom: 0 none;
+}
+
+.modal-footer {
+  border-top: 0 none;
+}
+
+.modal-content {
+  width: 750px;
+  margin-left: -150px;
+}
+
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 2px solid #333;
+  margin: 1em 0;
+  padding: 0;
+}
