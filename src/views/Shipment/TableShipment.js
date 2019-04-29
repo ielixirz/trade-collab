@@ -206,14 +206,14 @@ class TableShipment extends React.Component {
   renderDescription(index, des) {
     return (
       <div>
-        <span style={{ color: 'black' }} href="#" id="DisabledAutoHideExample">
+        <span style={{ color: 'black' }} href="#" id={`DisabledAutoHideExample${index}`}>
           <i className="fa fa-tag fa-lg" />
         </span>
         <Tooltip
           placement="bottom"
           isOpen={this.state.tooltipOpen}
           autohide={false}
-          target="DisabledAutoHideExample"
+          target={`DisabledAutoHideExample${index}`}
           toggle={this.toggle}
           style={{ backgroundColor: 'white' }}
         >
