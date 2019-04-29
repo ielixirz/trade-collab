@@ -14,6 +14,11 @@ import CreateCompanyModal from '../../component/CreateCompanyModal';
 import { profileColumns } from '../../constants/network';
 
 import { UpdateProfile } from '../../service/user/profile';
+import {
+  PutFile,
+  GetMetaDataFromStorageRefPath,
+  GetURLFromStorageRefPath,
+} from '../../service/storage/managestorage';
 
 const mockProfile = {
   fullname: 'John Jerald',
@@ -204,10 +209,11 @@ const ProfilePanel = ({ currentProfile, auth }) => {
   const [userProfile, setUserProfile] = useState(mockProfile);
   const [isEdit, setIsEdit] = useState(false);
   const createCompanyModalRef = useRef(null);
+  const fileInput = useRef(null);
 
   useEffect(() => {
     setUserProfile(currentProfile);
-  });
+  }, []);
 
   const toggleEdit = () => {
     if (isEdit) {
@@ -236,20 +242,63 @@ const ProfilePanel = ({ currentProfile, auth }) => {
     setUserProfile(editedUserProfile);
   };
 
+  const browseFile = () => {
+    fileInput.current.value = null;
+    fileInput.current.click();
+  };
+
+  const changeProfilePic = (file) => {
+    const editedUserProfile = userProfile;
+    const storageRefPath = `/Profile/${currentProfile.id}/${new Date().valueOf()}${file.name}`;
+    PutFile(storageRefPath, file).subscribe({
+      next: () => {
+        console.log('TODO: UPLOAD PROGRESS');
+      },
+      error: (err) => {
+        console.log(err);
+        alert(err.message);
+      },
+      complete: () => {
+        GetMetaDataFromStorageRefPath(storageRefPath).subscribe({
+          next: (metaData) => {
+            GetURLFromStorageRefPath(metaData.ref).subscribe({
+              next: (url) => {
+                editedUserProfile.UserInfoProfileImageLink = url;
+                UpdateProfile(auth.uid, currentProfile.id, editedUserProfile);
+              },
+              complete: () => {
+                window.location.reload();
+              },
+            });
+          },
+        });
+      },
+    });
+  };
+
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <div className="profile-container">
         <CreateCompanyModal ref={createCompanyModalRef} />
+        <input
+          type="file"
+          id="file"
+          ref={fileInput}
+          style={{ display: 'none' }}
+          onChange={event => changeProfilePic(event.target.files[0])}
+        />
         <Row style={{ height: '100%' }}>
           <Col xs={2} className="col-profile-pic">
             <Dropdown style={{ height: '100%', top: '14%' }}>
               <DropdownToggle className="network-pic-btn">
-                <img
-                  style={{ width: '70%' }}
-                  src="../../assets/img/avatars/6.jpg"
-                  className="img-avatar"
-                  alt="admin@bootstrapmaster.com"
-                />
+                <div role="button" onClick={browseFile} onKeyDown={null} tabIndex="-1">
+                  <img
+                    style={{ width: '70%' }}
+                    src={userProfile.UserInfoProfileImageLink}
+                    className="img-avatar"
+                    alt="admin@bootstrapmaster.com"
+                  />
+                </div>
               </DropdownToggle>
             </Dropdown>
           </Col>
