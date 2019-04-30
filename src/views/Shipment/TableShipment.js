@@ -10,7 +10,6 @@ import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.m
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import Select from 'react-select';
-
 import {
   Row,
   Col,
@@ -25,27 +24,14 @@ import {
   InputGroupText,
   Tooltip,
 } from 'reactstrap';
+import { NoteShipment } from './NoteShipment';
+
 import { createDataTable } from '../../utils/tool';
 import { EditShipment } from '../../service/shipment/shipment';
 
 const { SearchBar } = Search;
 
 class TableShipment extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.toggle = this.toggle.bind(this);
-    this.state = {
-      tooltipOpen: false,
-    };
-  }
-
-  toggle() {
-    this.setState({
-      tooltipOpen: !this.state.tooltipOpen,
-    });
-  }
-
   data = {
     products: [
       {
@@ -206,22 +192,7 @@ class TableShipment extends React.Component {
   renderDescription(index, des) {
     return (
       <div>
-        <span style={{ color: 'black' }} href="#" id={`DisabledAutoHideExample${index}`}>
-          <i className="fa fa-tag fa-lg" />
-        </span>
-        <Tooltip
-          placement="bottom"
-          isOpen={this.state.tooltipOpen}
-          autohide={false}
-          target={`DisabledAutoHideExample${index}`}
-          toggle={this.toggle}
-          style={{ backgroundColor: 'white' }}
-        >
-          <p style={{ color: 'black', textDecoration: 'underline' }}>
-            Price and describtion of goods
-          </p>
-          <p style={{ color: 'black' }}>{des}</p>
-        </Tooltip>
+        <NoteShipment key={index} item={des} id={index} />
       </div>
     );
   }
