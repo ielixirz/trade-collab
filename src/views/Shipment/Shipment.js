@@ -16,22 +16,42 @@ import {
   FormGroup,
   Label,
   Input,
-  FormText
+  FormText,
+  Dropdown,
+  DropdownToggle,
+  DropdownItem,
+  DropdownMenu,
+  UncontrolledDropdown
 } from 'reactstrap';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import TableShipment from './TableShipment';
 import { fetchShipments, fetchMoreShipments } from '../../actions/shipmentActions';
+import './Shipment.css';
 
+const style = {
+  optionStyle: role => {
+    fontWeight: role === 'Freight Forwarder' ? 'bold' : 'normal';
+  }
+};
 class Shipment extends Component {
   constructor(props) {
     super(props);
 
     this.toggle = this.toggle.bind(this);
+    this.dropdown = this.dropdown.bind(this);
     this.state = {
       activeTab: '1',
       typeShipment: '',
-      modal: false
+      input: {
+        role: '',
+        form: '',
+        to: '',
+        product: '',
+        ref: ''
+      },
+      modal: false,
+      dropdownOpen: false
     };
 
     this.modal = this.modal.bind(this);
@@ -39,6 +59,11 @@ class Shipment extends Component {
   modal() {
     this.setState(prevState => ({
       modal: !prevState.modal
+    }));
+  }
+  dropdown() {
+    this.setState(prevState => ({
+      dropdownOpen: !prevState.dropdownOpen
     }));
   }
   componentDidMount() {
@@ -59,41 +84,79 @@ class Shipment extends Component {
       });
     }
   }
-
+  setRole(role) {
+    this.setState({
+      input: {
+        ...this.state.input,
+        role: role
+      }
+    });
+  }
   render() {
-    console.log('this state is', this.props);
+    console.log('this state is', this.state);
+    const { role } = this.state.input;
     return (
       <div>
         <Modal isOpen={this.state.modal} toggle={this.modal} className={this.props.className}>
           <ModalHeader toggle={this.modal}>
-            <p>
-              <h2>Create New Shipment</h2>
-            </p>
+            <h2>Create New Shipment</h2>
           </ModalHeader>
           <ModalBody>
+            <div>
+              <span className="left">Are you Exporting or Importing (Select One)</span>
+              <span className="right">
+                <UncontrolledDropdown>
+                  <DropdownToggle tag="p" caret>
+                    Neither one of these?
+                  </DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem disabled>Switch role for this shipment</DropdownItem>
+                    <DropdownItem
+                      onClick={() => {
+                        this.setRole('Freight Forwarder');
+                      }}
+                      style={style.optionStyle(role)}
+                    >
+                      Freight Forwarder
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={() => {
+                        this.setRole('Custom Broker');
+                      }}
+                      style={style.optionStyle(role)}
+                    >
+                      Custom Broker {role === 'Custom Broker' ? '/' : null}
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+              </span>
+              ​
+            </div>
+
             <Form>
               <Row form>
-                <Col md={6}>
-                  <FormGroup>
-                    <Label for="exampleEmail">Email</Label>
-                    <Input
-                      type="email"
-                      name="email"
-                      id="exampleEmail"
-                      placeholder="with a placeholder"
-                    />
-                  </FormGroup>
+                <Col md={3}>
+                  <Button
+                    color="yterminal"
+                    onClick={() => {
+                      this.setRole('Exporting');
+                    }}
+                    disabled={role === 'Exporting'}
+                  >
+                    Exporting
+                  </Button>
                 </Col>
-                <Col md={6}>
-                  <FormGroup>
-                    <Label for="examplePassword">Password</Label>
-                    <Input
-                      type="password"
-                      name="password"
-                      id="examplePassword"
-                      placeholder="password placeholder"
-                    />
-                  </FormGroup>
+                <Col md={2}>
+                  <Button
+                    color="yterminal"
+                    onClick={() => {
+                      this.setRole('Importing');
+                    }}
+                    disabled={role === 'Importing'}
+                  >
+                    Importing
+                  </Button>
                 </Col>
               </Row>
               <FormGroup>
