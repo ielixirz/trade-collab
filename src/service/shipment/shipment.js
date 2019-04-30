@@ -14,6 +14,11 @@ const ShipmentReferenceRefPath = ShipmentKey => FirebaseApp.firestore()
   .doc(ShipmentKey)
   .collection('ShipmentReference');
 
+const ShipmentMasterDataRefPath = ShipmentKey => FirebaseApp.firestore()
+  .collection('Shipment')
+  .doc(ShipmentKey)
+  .collection('ShipmentShareData');
+
 /* ex. CreateShipment
   {
       ShipmentSellerCompanyName (string)
@@ -102,4 +107,13 @@ export const UpdateShipmentReference = (ShipmentKey, ShipmentReferenceKey, Data)
   ShipmentReferenceRefPath(ShipmentKey)
     .doc(ShipmentReferenceKey)
     .add(Data, { merge: true }),
+);
+
+// eslint-disable-next-line max-len
+export const GetShipmentMasterDataDetail = (ShipmentKey, GroupType) => doc(ShipmentMasterDataRefPath(ShipmentKey).doc(GroupType));
+
+export const UpdateShipmetMasterDataDetail = (ShipmentKey, GroupType, Data) => from(
+  ShipmentMasterDataRefPath(ShipmentKey)
+    .doc(GroupType)
+    .update(Data),
 );
