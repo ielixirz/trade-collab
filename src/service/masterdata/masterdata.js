@@ -86,8 +86,18 @@ export const GetMasterDataChatRoom = (ShipmentKey, ChatRoomKey) => {
 };
 
 // eslint-disable-next-line max-len
-export const GetPrivateMasterDataChatRoom = (ShipmentKey, ChatRoomKey) => doc(ChatRoomRefPath(ShipmentKey, ChatRoomKey)).pipe(
-  map(ChatRoomData => ChatRoomData.data().ChatRoomPrivateShareDataList),
-  // eslint-disable-next-line max-len
-  concatMap(ChatRoomPrivateShareDataList => ChatRoomPrivateShareDataList.map(PrivateShareDataItem => GetChatRoomPrivateMasterDataDetail(ShipmentKey, ChatRoomKey, PrivateShareDataItem))),
-);
+export const GetPrivateMasterDataChatRoom = (ShipmentKey, ChatRoomKey) => {
+  const ArrayOfObserable = doc(ChatRoomRefPath(ShipmentKey, ChatRoomKey)).pipe(
+    map(ChatRoomData => ChatRoomData.data().ChatRoomPrivateShareDataList),
+    take(1),
+    // eslint-disable-next-line max-len
+  );
+
+  return combineLatest(ArrayOfObserable).pipe(
+    concatMap(col => combineLatest(col)),
+    concatMap(ShareDataItem => ShareDataItem),
+    // eslint-disable-next-line max-len
+    mergeMap(ShareDataItem => GetChatRoomPrivateMasterDataDetail(ShipmentKey, ChatRoomKey, ShareDataItem)),
+    toArray(),
+  );
+};
