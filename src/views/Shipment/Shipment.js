@@ -81,12 +81,36 @@ class Shipment extends Component {
       ShipmentCreateTimestamp (timestamp)
   }
 */
-    CreateShipment({
-      ShipmentSellerCompanyName: input.from
-    });
+    let parameter = {};
+    switch (input.role) {
+      case 1:
+        parameter.ShipmentCreatorType = 'Importer';
+        break;
+      case 2:
+        parameter.ShipmentCreatorType = 'Exporter';
+        break;
+      case 3:
+        parameter.ShipmentCreatorType = 'Freight Forwarder';
+        break;
+      case 4:
+        parameter.ShipmentCreatorType = 'Custom Broker';
+        break;
+    }
+    parameter.ShipmentProductName = input.product;
+    parameter.ShipmentCreatorUserKey = this.props.user.uid;
+    if (input.role > 2) {
+      if (input.bound === 1) {
+        parameter.ShipmentCreatorType = `Inbound ${parameter.ShipmentCreatorType}`;
+      } else {
+        parameter.ShipmentCreatorType = `Outbound ${parameter.ShipmentCreatorType}`;
+      }
+    }
+    parameter.ShipmentCreateTimestamp = new Date().getTime();
+    CreateShipment(parameter);
 
     this.setState(prevState => ({
-      modal: !prevState.modal
+      modal: !prevState.modal,
+      input: {}
     }));
   }
   dropdown() {
@@ -165,7 +189,7 @@ class Shipment extends Component {
   };
   render() {
     const { role, bound, method, type } = this.state.input;
-    console.log(role);
+    console.log(this.props.user);
     return (
       <div>
         <Modal isOpen={this.state.modal} toggle={this.modal} className={this.props.className}>
@@ -479,7 +503,12 @@ class Shipment extends Component {
           >
             <Col md={4} />
             <Col md="6">
-              <Button color="success" onClick={this.modal}>
+              <Button
+                color="success"
+                onClick={() => {
+                  this.createShipment();
+                }}
+              >
                 Create
               </Button>{' '}
             </Col>
@@ -620,7 +649,8 @@ const styles = {
 };
 
 const mapStateToProps = state => ({
-  shipments: state.shipmentReducer.Shipments
+  shipments: state.shipmentReducer.Shipments,
+  user: state.authReducer.user
 });
 
 export default connect(
