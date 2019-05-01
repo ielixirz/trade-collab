@@ -4,7 +4,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 
 import {
-  Row, Col, DropdownToggle, Dropdown, Button, Input,
+  Row,
+  Col,
+  DropdownToggle,
+  Dropdown,
+  Button,
+  Input,
+  ButtonGroup,
+  ButtonToolbar,
 } from 'reactstrap';
 
 import MainDataTable from '../../component/MainDataTable';
@@ -26,17 +33,62 @@ const mockProfile = {
   desc: 'Fruit Exporter from coconut land',
 };
 
+// This function will be move after actual company fetching is complete
+const renderStatus = (status) => {
+  if (status === 'Invited') {
+    return (
+      <div>
+        <ButtonGroup>
+          <Button className="profile-company-status-btn reject">Reject</Button>
+        </ButtonGroup>
+        <ButtonGroup>
+          <Button className="profile-company-status-btn join">Join</Button>
+        </ButtonGroup>
+      </div>
+    );
+  }
+  if (status === 'Deactivated') {
+    return (
+      <span style={{ color: '#AFAFAF' }}>
+        <b>Deactivated</b>
+      </span>
+    );
+  }
+  if (status === 'Active') {
+    return (
+      <span style={{ color: '#16A085' }}>
+        <b>Active</b>
+      </span>
+    );
+  }
+  if (status === 'Pending') {
+    return (
+      <span style={{ color: '#F4BC4D' }}>
+        <b>Pending</b>
+      </span>
+    );
+  }
+  if (status === 'Reject') {
+    return (
+      <span style={{ color: '#AFAFAF' }}>
+        <b>Reject</b>
+      </span>
+    );
+  }
+  return '';
+};
+
 const mockDataTable = [
   {
     company: 'Fresh Produce',
     position: 'CEO',
     role: 'Owner(Admin)',
-    status: 'Active',
+    status: renderStatus('Active'),
     button: (
       <ThreeDotDropdown
         options={[
           {
-            text: 'Download',
+            text: 'Leave',
             function: null,
           },
         ]}
@@ -47,12 +99,12 @@ const mockDataTable = [
     company: 'Fresh Produce',
     position: 'CEO',
     role: 'Owner(Admin)',
-    status: 'Active',
+    status: renderStatus('Reject'),
     button: (
       <ThreeDotDropdown
         options={[
           {
-            text: 'Download',
+            text: 'Leave',
             function: null,
           },
         ]}
@@ -63,12 +115,12 @@ const mockDataTable = [
     company: 'Fresh Produce',
     position: 'CEO',
     role: 'Owner(Admin)',
-    status: 'Active',
+    status: renderStatus('Pending'),
     button: (
       <ThreeDotDropdown
         options={[
           {
-            text: 'Download',
+            text: 'Leave',
             function: null,
           },
         ]}
@@ -79,12 +131,12 @@ const mockDataTable = [
     company: 'Fresh Produce',
     position: 'CEO',
     role: 'Owner(Admin)',
-    status: 'Active',
+    status: renderStatus('Deactivated'),
     button: (
       <ThreeDotDropdown
         options={[
           {
-            text: 'Download',
+            text: 'Leave',
             function: null,
           },
         ]}
@@ -95,12 +147,12 @@ const mockDataTable = [
     company: 'Fresh Produce',
     position: 'CEO',
     role: 'Owner(Admin)',
-    status: 'Active',
+    status: renderStatus('Invited'),
     button: (
       <ThreeDotDropdown
         options={[
           {
-            text: 'Download',
+            text: 'Leave',
             function: null,
           },
         ]}
@@ -111,12 +163,12 @@ const mockDataTable = [
     company: 'Fresh Produce',
     position: 'CEO',
     role: 'Owner(Admin)',
-    status: 'Active',
+    status: renderStatus('Active'),
     button: (
       <ThreeDotDropdown
         options={[
           {
-            text: 'Download',
+            text: 'Leave',
             function: null,
           },
         ]}
@@ -127,12 +179,12 @@ const mockDataTable = [
     company: 'Fresh Produce',
     position: 'CEO',
     role: 'Owner(Admin)',
-    status: 'Active',
+    status: renderStatus('Active'),
     button: (
       <ThreeDotDropdown
         options={[
           {
-            text: 'Download',
+            text: 'Leave',
             function: null,
           },
         ]}
@@ -143,12 +195,12 @@ const mockDataTable = [
     company: 'Fresh Produce',
     position: 'CEO',
     role: 'Owner(Admin)',
-    status: 'Active',
+    status: renderStatus('Active'),
     button: (
       <ThreeDotDropdown
         options={[
           {
-            text: 'Download',
+            text: 'Leave',
             function: null,
           },
         ]}
@@ -159,12 +211,12 @@ const mockDataTable = [
     company: 'Fresh Produce',
     position: 'CEO',
     role: 'Owner(Admin)',
-    status: 'Active',
+    status: renderStatus('Active'),
     button: (
       <ThreeDotDropdown
         options={[
           {
-            text: 'Download',
+            text: 'Leave',
             function: null,
           },
         ]}
@@ -175,12 +227,12 @@ const mockDataTable = [
     company: 'Fresh Produce',
     position: 'CEO',
     role: 'Owner(Admin)',
-    status: 'Active',
+    status: renderStatus('Active'),
     button: (
       <ThreeDotDropdown
         options={[
           {
-            text: 'Download',
+            text: 'Leave',
             function: null,
           },
         ]}
@@ -191,12 +243,44 @@ const mockDataTable = [
     company: 'Fresh Produce',
     position: 'CEO',
     role: 'Owner(Admin)',
-    status: 'Active',
+    status: renderStatus('Active'),
     button: (
       <ThreeDotDropdown
         options={[
           {
-            text: 'Download',
+            text: 'Leave',
+            function: null,
+          },
+        ]}
+      />
+    ),
+  },
+  {
+    company: 'Fresh Produce',
+    position: 'CEO',
+    role: 'Owner(Admin)',
+    status: renderStatus('Active'),
+    button: (
+      <ThreeDotDropdown
+        options={[
+          {
+            text: 'Leave',
+            function: null,
+          },
+        ]}
+      />
+    ),
+  },
+  {
+    company: 'Fresh Produce',
+    position: 'CEO',
+    role: 'Owner(Admin)',
+    status: renderStatus('Active'),
+    button: (
+      <ThreeDotDropdown
+        options={[
+          {
+            text: 'Leave',
             function: null,
           },
         ]}
