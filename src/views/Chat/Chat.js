@@ -13,6 +13,7 @@ import {
   Breadcrumb,
   UncontrolledCollapse
 } from 'reactstrap';
+import EdiText from 'react-editext';
 import _ from 'lodash';
 import { PutFile } from '../../service/storage/managestorage';
 
@@ -33,7 +34,7 @@ import ShipmentSide from './ShipmentSide';
 import FileSide from './FileSide';
 
 import UploadModal from '../../component/UploadModal';
-import { CreateChatRoom } from '../../service/chat/chat';
+import { CreateChatRoom, EditChatRoom } from '../../service/chat/chat';
 import './Chat.css';
 
 class Chat extends Component {
@@ -48,6 +49,7 @@ class Chat extends Component {
       activeTab: new Array(4).fill('1'),
       text: '',
       tabs: [],
+      roomeditor: {},
       onDropChatStyle: false
     };
 
@@ -693,7 +695,15 @@ class Chat extends Component {
     _.forEach(chats, (item, index) => {
       tabs.push({
         id: tabs.length + 1,
-        content: item.roomName,
+        content: (
+          <EdiText
+            type="text"
+            value={item.roomName}
+            onSave={val => {
+              console.log(val);
+            }}
+          />
+        ),
         active: item.active,
         ChatRoomKey: item.ChatRoomKey,
         ShipmentKey: item.ShipmentKey
@@ -715,9 +725,54 @@ class Chat extends Component {
     let tabs = [];
 
     _.forEach(chats, (item, index) => {
+      let content = (
+        <div
+          onDoubleClick={() => {
+            console.log('double Click');
+            this.setState({
+              roomeditor: {
+                roomName: item.roomName,
+                ChatRoomKey: item.ChatRoomKey,
+                ShipmentKey: item.ShipmentKey
+              }
+            });
+          }}
+        >
+          {item.roomName}
+        </div>
+      );
+      if (
+        this.state.roomeditor.ShipmentKey === item.ShipmentKey &&
+        this.state.roomeditor.ChatRoomKey === item.ChatRoomKey
+      ) {
+        content = (
+          <div>
+            <Input
+              value={this.state.roomeditor.roomName}
+              type={'text'}
+              onChange={e => {
+                this.setState({
+                  roomeditor: {
+                    ...this.state.roomeditor,
+                    roomName: e.target.value
+                  }
+                });
+              }}
+              onKeyDown={button => {
+                if (button.key === 'Enter') {
+                  EditChatRoom(item.ShipmentKey, item.ChatRoomKey, {
+                    ChatRoomName: this.state.roomeditor.roomName
+                  });
+                  this.setState({ roomeditor: {} });
+                }
+              }}
+            />
+          </div>
+        );
+      }
       tabs.push({
         id: tabs.length + 1,
-        content: item.roomName,
+        content: content,
         active: item.active,
         ChatRoomKey: item.ChatRoomKey,
         ShipmentKey: item.ShipmentKey,
@@ -740,7 +795,7 @@ class Chat extends Component {
         <TabContent>
           {activeTab.length !== 0
             ? this.renderChat(activeTab[0].ChatRoomKey, activeTab[0].ShipmentKey)
-            : ''}
+            : 'no'}
         </TabContent>
       </div>
     );
