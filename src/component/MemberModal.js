@@ -67,7 +67,7 @@ class MemberModal extends React.Component {
               </Col>
               <Col xs="6" sm="3" right>
                 <span style={{ color: '#707070' }} className="float-right">
-                  Role in shipment
+                  Role in shipment:
                 </span>
               </Col>
               <Col xs="6" sm="3">
@@ -77,9 +77,9 @@ class MemberModal extends React.Component {
               </Col>
             </Row>
             <hr />
-            <MemberInChat title="individual" individual />
-            <MemberInChat title="fresh product" individual={false} />
-            <MemberInChat title="tp venture" individual={false} />
+            <MemberInChat title="Individual" individual />
+            <MemberInChat title="Fresh product" individual={false} />
+            <MemberInChat title="Tp venture" individual={false} />
           </ModalBody>
         </Modal>
       </div>

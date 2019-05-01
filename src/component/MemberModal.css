@@ -19,3 +19,13 @@ hr {
   margin: 1em 0;
   padding: 0;
 }
+
+.badge-role {
+  display: inline-block;
+  min-width: 1em;
+  padding: 0.15em;
+  border-radius: 38%;
+  font-size: 12px;
+  text-align: center;
+  background: 'white';
+}
