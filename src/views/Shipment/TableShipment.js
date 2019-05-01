@@ -198,8 +198,8 @@ class TableShipment extends React.Component {
       input = _.map(this.props.input, (item, index) => {
         const etd = _.get(item, 'ShipmentETD', 0);
         const eta = _.get(item, 'ShipmentETAPort', 0);
-
         return {
+          uid: _.get(item, 'uid', ''),
           Ref: this.renderRefComponent(index, _.get(item, 'ShipmentReference', 'input your Ref')),
           Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
           Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
@@ -286,6 +286,15 @@ class TableShipment extends React.Component {
         </div>
       );
     };
+    const rowEvents = {
+      onClick: (e, row, rowIndex) => {
+        console.log(this.props);
+
+        if (e.target.tagName !== 'SELECT') {
+          window.location.replace(`#/chat/${row.uid}`);
+        }
+      }
+    };
     return (
       <ToolkitProvider keyField="id" data={data} columns={columns} search>
         {props => (
@@ -318,6 +327,7 @@ class TableShipment extends React.Component {
                 rowStyle={{ textAlign: 'left' }}
                 {...props.baseProps}
                 bordered={false}
+                rowEvents={rowEvents}
               />
             </div>
           </div>

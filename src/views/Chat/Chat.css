@@ -121,6 +121,10 @@ img{ max-width:100%;}
   min-height: 48px;
   width: 100%;
 }
+.react-tabs-tab {
+  max-width: 550px !important;
+  min-width: 40px !important;
+}
 .user-name {
  font-weight: bolder;
 }
@@ -145,6 +149,13 @@ img{ max-width:100%;}
   overflow: auto;
   padding-right: 10px;
   display: flex; flex-direction: column-reverse;
+}
+.btn-yterminal {
+
+  color: #23282c;
+  background-color: #ffffff;
+  border-color: #16A085;
+  opacity: 1;
 }
 .btn-default{
   color: #000000;
