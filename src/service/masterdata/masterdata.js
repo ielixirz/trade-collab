@@ -4,6 +4,7 @@ import { take, map, concatMap } from 'rxjs/operators';
 import { FirebaseApp } from '../firebase';
 
 import { GetShipmentMasterDataDetail } from '../shipment/shipment';
+import { GetChatRoomPrivateMasterDataDetail } from '../chat/chat';
 
 const MasterDataRefPath = () => FirebaseApp.firestore().collection('MasterShipmentData');
 
@@ -44,4 +45,11 @@ export const GetMasterDataChatRoom = (ShipmentKey, ChatRoomKey) => doc(ChatRoomR
   map(ChatRoomData => ChatRoomData.data().ChatRoomShareDataList),
   // eslint-disable-next-line max-len
   concatMap(ChatRoomShareDataList => ChatRoomShareDataList.map(ShareDataItem => GetShipmentMasterDataDetail(ShipmentKey, ShareDataItem))),
+);
+
+// eslint-disable-next-line max-len
+export const GetPrivateMasterDataChatRoom = (ShipmentKey, ChatRoomKey) => doc(ChatRoomRefPath(ShipmentKey, ChatRoomKey)).pipe(
+  map(ChatRoomData => ChatRoomData.data().ChatRoomPrivateShareDataList),
+  // eslint-disable-next-line max-len
+  concatMap(ChatRoomPrivateShareDataList => ChatRoomPrivateShareDataList.map(PrivateShareDataItem => GetChatRoomPrivateMasterDataDetail(ShipmentKey, ChatRoomKey, PrivateShareDataItem))),
 );
