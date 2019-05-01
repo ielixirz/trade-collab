@@ -1,5 +1,6 @@
 import { collection, doc } from 'rxfire/firestore';
 import { from } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { FirebaseApp } from '../firebase';
 
 const ShipmentRefPath = () => FirebaseApp.firestore().collection('Shipment');
@@ -110,7 +111,7 @@ export const UpdateShipmentReference = (ShipmentKey, ShipmentReferenceKey, Data)
 );
 
 // eslint-disable-next-line max-len
-export const GetShipmentMasterDataDetail = (ShipmentKey, GroupType) => doc(ShipmentMasterDataRefPath(ShipmentKey).doc(GroupType));
+export const GetShipmentMasterDataDetail = (ShipmentKey, GroupType) => doc(ShipmentMasterDataRefPath(ShipmentKey).doc(GroupType)).pipe(take(1));
 
 export const UpdateShipmetMasterDataDetail = (ShipmentKey, GroupType, Data) => from(
   ShipmentMasterDataRefPath(ShipmentKey)
