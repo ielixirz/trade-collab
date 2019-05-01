@@ -23,8 +23,12 @@ const DefaultHeader = React.lazy(() => import('./DefaultHeader'));
 class DefaultLayout extends Component {
   componentDidMount() {
     /* THIS PART IS WORK IN PROGRESS, NEED TO REVISE TO ENABLE FULLY FUNCTIONAL FOR MULTIPLE PROFILE SELECTION */
-    this.props.getUserInfoDetail(this.props.auth.uid);
-    this.props.getProlfileList(this.props.auth.uid);
+    try {
+      this.props.getUserInfoDetail(this.props.auth.uid);
+      this.props.getProlfileList(this.props.auth.uid);
+    } catch (e) {
+      this.props.history.push('/login');
+    }
   }
 
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>;
@@ -47,15 +51,17 @@ class DefaultLayout extends Component {
             <Container fluid>
               <Suspense fallback={this.loading()}>
                 <Switch>
-                  {routes.map((route, idx) => (route.component ? (
-                    <Route
-                      key={idx}
-                      path={route.path}
-                      exact={route.exact}
-                      name={route.name}
-                      render={props => <route.component {...props} />}
-                    />
-                  ) : null))}
+                  {routes.map((route, idx) =>
+                    route.component ? (
+                      <Route
+                        key={idx}
+                        path={route.path}
+                        exact={route.exact}
+                        name={route.name}
+                        render={props => <route.component {...props} />}
+                      />
+                    ) : null
+                  )}
                 </Switch>
               </Suspense>
             </Container>
@@ -71,14 +77,14 @@ class DefaultLayout extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   const { authReducer } = state;
   return {
-    auth: authReducer.user,
+    auth: authReducer.user
   };
 };
 
 export default connect(
   mapStateToProps,
-  { getUserInfoDetail, getProlfileList },
+  { getUserInfoDetail, getProlfileList }
 )(DefaultLayout);
