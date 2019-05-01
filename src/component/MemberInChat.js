@@ -11,8 +11,8 @@ import {
   Media,
   Badge,
 } from 'reactstrap';
-
 import RoleBadges from './RoleBadges.js';
+import ListMember from './ListMember.js';
 
 const styles = {
   arrow: {
@@ -38,7 +38,7 @@ class MemberInChat extends Component {
     return (
       <div>
         <Row>
-          <Col xs="6" sm="6" className="text-left">
+          <Col xs="6" sm="7" className="text-left">
             {this.state.collapse ? (
               <span style={styles.arrow}>
                 <i className="fa fa-caret-up" style={styles.icons} />
@@ -52,8 +52,12 @@ class MemberInChat extends Component {
               {this.props.title}
             </span>
           </Col>
-          <Col xs="6" sm="3" />
-          <Col xs="6" sm="3" />
+          <Col xs="6" sm="3">
+            <div style={{ marginLeft: -5 }}>
+              {this.props.individual ? null : <RoleBadges roleBadges="E" />}
+            </div>
+          </Col>
+          <Col xs="6" sm="2" />
         </Row>
         {this.props.individual ? (
           <div />
@@ -61,32 +65,8 @@ class MemberInChat extends Component {
           <hr style={{ borderTopWidth: 1, borderStyle: 'solid', borderColor: '#333' }} />
         )}
         <Collapse isOpen={this.state.collapse}>
-          <ListGroup flush>
-            <ListGroupItem disabled tag="a" href="#">
-              <Row>
-                <Col xs="6" sm="7" className="text-left">
-                  <span>
-                    <img
-                      style={{ borderRadius: 15 }}
-                      src="https://image.flaticon.com/icons/svg/21/21104.svg"
-                      alt="image"
-                      width="30"
-                      height="30"
-                    />
-                  </span>
-                  <span style={{ marginLeft: 10 }}>Kael the invoker</span>
-                  <br />
-                  <span style={{ marginLeft: 40, fontSize: 12 }}>invoker@dot2.com</span>
-                </Col>
-                <Col xs="6" sm="3">
-                  <RoleBadges roleBadges="CE" />
-                </Col>
-                <Col xs="6" sm="2">
-                  <i className="fa fa-trash-o" style={{ opacity: 0.7, marginLeft: 60 }} />
-                </Col>
-              </Row>
-            </ListGroupItem>
-          </ListGroup>
+          <ListMember />
+          <ListMember />
         </Collapse>
       </div>
     );

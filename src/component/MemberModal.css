@@ -20,10 +20,17 @@ hr {
   padding: 0;
 }
 
+hr.listHr {
+  border-top: 1px solid #fff;
+}
+
 .badge-role {
   display: inline-block;
-  min-width: 1em;
-  padding: 0.15em;
+  min-width: 2em;
+  padding-left: 0.4em;
+  padding-right: 0.4em;
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
   border-radius: 38%;
   font-size: 12px;
   text-align: center;

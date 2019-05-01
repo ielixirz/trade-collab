@@ -72,13 +72,13 @@ class MemberModal extends React.Component {
               </Col>
               <Col xs="6" sm="3">
                 <span style={{ color: '#16A085', textAlign: 'right' }} className="float-right">
-                  (what is this?)
+                  <div style={{ marginBottom: -10 }}>(what is this?)</div>
                 </span>
               </Col>
             </Row>
             <hr />
             <MemberInChat title="Individual" individual />
-            <MemberInChat title="Fresh product" individual={false} />
+            <MemberInChat title="Fresh product" individual={false} allRows={['cd', 'ef', 'c']} />
             <MemberInChat title="Tp venture" individual={false} />
           </ModalBody>
         </Modal>
