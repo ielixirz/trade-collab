@@ -29,11 +29,6 @@ import TableShipment from './TableShipment';
 import { fetchShipments, fetchMoreShipments } from '../../actions/shipmentActions';
 import './Shipment.css';
 
-const style = {
-  optionStyle: role => {
-    fontWeight: role === 'Freight Forwarder' ? 'bold' : 'normal';
-  }
-};
 class Shipment extends Component {
   constructor(props) {
     super(props);
@@ -45,7 +40,7 @@ class Shipment extends Component {
       typeShipment: '',
       input: {
         role: '',
-        form: '',
+        from: '',
         to: '',
         product: '',
         ref: ''
@@ -53,7 +48,7 @@ class Shipment extends Component {
       modal: false,
       dropdownOpen: false
     };
-
+    this.writeText = this.writeText.bind(this);
     this.modal = this.modal.bind(this);
   }
   modal() {
@@ -92,8 +87,17 @@ class Shipment extends Component {
       }
     });
   }
+  writeText(e) {
+    const { name, value } = e.target;
+
+    this.setState({
+      input: {
+        ...this.state.input,
+        [name]: value
+      }
+    });
+  }
   render() {
-    console.log('this state is', this.state);
     const { role } = this.state.input;
     return (
       <div>
@@ -102,6 +106,10 @@ class Shipment extends Component {
             <h2>Create New Shipment</h2>
           </ModalHeader>
           <ModalBody>
+            <div>
+              <span className="left">Are you Exporting or Importing (Select One)</span>
+            </div>
+            <br />
             <div>
               <span className="left">Are you Exporting or Importing (Select One)</span>
               <span className="right">
@@ -115,7 +123,9 @@ class Shipment extends Component {
                       onClick={() => {
                         this.setRole('Freight Forwarder');
                       }}
-                      style={style.optionStyle(role)}
+                      style={{
+                        fontWeight: role === 'Freight Forwarder' ? 'bold' : 'normal'
+                      }}
                     >
                       Freight Forwarder
                     </DropdownItem>
@@ -124,9 +134,11 @@ class Shipment extends Component {
                       onClick={() => {
                         this.setRole('Custom Broker');
                       }}
-                      style={style.optionStyle(role)}
+                      style={{
+                        fontWeight: role === 'Custom Broker' ? 'bold' : 'normal'
+                      }}
                     >
-                      Custom Broker {role === 'Custom Broker' ? '/' : null}
+                      Custom Broker
                     </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>
@@ -159,46 +171,64 @@ class Shipment extends Component {
                   </Button>
                 </Col>
               </Row>
-              <FormGroup>
-                <Label for="exampleAddress">Address</Label>
-                <Input type="text" name="address" id="exampleAddress" placeholder="1234 Main St" />
-              </FormGroup>
-              <FormGroup>
-                <Label for="exampleAddress2">Address 2</Label>
-                <Input
-                  type="text"
-                  name="address2"
-                  id="exampleAddress2"
-                  placeholder="Apartment, studio, or floor"
-                />
-              </FormGroup>
-              <Row form>
-                <Col md={6}>
-                  <FormGroup>
-                    <Label for="exampleCity">City</Label>
-                    <Input type="text" name="city" id="exampleCity" />
-                  </FormGroup>
-                </Col>
-                <Col md={4}>
-                  <FormGroup>
-                    <Label for="exampleState">State</Label>
-                    <Input type="text" name="state" id="exampleState" />
-                  </FormGroup>
-                </Col>
-                <Col md={2}>
-                  <FormGroup>
-                    <Label for="exampleZip">Zip</Label>
-                    <Input type="text" name="zip" id="exampleZip" />
-                  </FormGroup>
-                </Col>
-              </Row>
-              <FormGroup check>
-                <Input type="checkbox" name="check" id="exampleCheck" />
-                <Label for="exampleCheck" check>
-                  Check me out
+              <br />
+              <FormGroup row>
+                <Label for="From" sm={2}>
+                  From
                 </Label>
+                <Col sm={10}>
+                  <Input
+                    type="text"
+                    name="from"
+                    id="from"
+                    onChange={this.writeText}
+                    value={this.state.input.from}
+                  />
+                </Col>
               </FormGroup>
-              <Button>Sign in</Button>
+
+              <FormGroup row>
+                <Label for="To" sm={2}>
+                  To
+                </Label>
+                <Col sm={10}>
+                  <Input
+                    type="text"
+                    name="to"
+                    id="to"
+                    onChange={this.writeText}
+                    value={this.state.input.to}
+                  />
+                </Col>
+              </FormGroup>
+              <FormGroup row>
+                <Label for="Product" sm={2}>
+                  Product
+                </Label>
+                <Col sm={10}>
+                  <Input
+                    type="text"
+                    name="product"
+                    id="product"
+                    onChange={this.writeText}
+                    value={this.state.input.product}
+                  />
+                </Col>
+              </FormGroup>
+              <FormGroup row>
+                <Label for="Ref" sm={2}>
+                  Ref
+                </Label>
+                <Col sm={10}>
+                  <Input
+                    type="text"
+                    name="ref"
+                    id="ref"
+                    onChange={this.writeText}
+                    value={this.state.input.ref}
+                  />
+                </Col>
+              </FormGroup>
             </Form>
           </ModalBody>
           <ModalFooter>

@@ -124,7 +124,6 @@ class TableShipment extends React.Component {
   };
 
   renderRefComponent(index, ref) {
-    console.log(ref);
     return (
       <div>
         <p id={`popover${index}`}>{ref.RefID}</p>
