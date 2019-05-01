@@ -31,8 +31,16 @@ export class NoteShipment extends React.Component {
           target={`Popover-${this.props.id}`}
           toggle={this.toggle}
         >
-          <PopoverHeader>Price and Description of goods</PopoverHeader>
-          <PopoverBody>{this.props.item}</PopoverBody>
+          <PopoverHeader>
+            <span style={{ textDecorationLine: 'underline' }}>Price and Description of goods</span>
+          </PopoverHeader>
+          <PopoverBody>
+            {this.props.item}
+            <br />
+            <div className="seenby">
+              <span style={{ color: '#707070', fontSize: 9 }}>seen by A.B.C</span>
+            </div>
+          </PopoverBody>
         </Popover>
       </span>
     );

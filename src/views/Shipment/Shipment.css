@@ -102,8 +102,18 @@ input {
 .popover {
   max-width: 1000px;
   width: 300px;
+  border: 1px solid rgba(6, 207, 168, 1);
 }
-.active_chat {
+.popover-header {
+  background-color: '#fff';
+  border-bottom: 0px solid #fff;
+}
+
+.popover.bottom > .arrow {
+  border-bottom-color: rgba(6, 207, 168, 1) !important;
+}
+
+.popover. .active_chat {
   background: #ebebeb;
 }
 
@@ -205,4 +215,8 @@ div.boo {
 
 p {
   cursor: pointer;
+}
+
+div.seenby {
+  text-align: right;
 }
