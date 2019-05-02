@@ -15,41 +15,56 @@ export const typing = data => dispatch => {
     text
   });
 };
+let chatroom = {};
 
 export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getState) => {
-  GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
-    next: res => {
-      dispatch({
-        type: FETCH_CHAT,
-        id: ChatRoomKey,
-        payload: res
-      });
-    },
-    error: err => {
-      console.log(err);
-      alert(err.message);
-    },
-    complete: () => {}
-  });
+  let room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}`, false);
+  if (room) {
+    room.unsubscribe();
+  }
+  _.set(
+    chatroom,
+    `${ShipmentKey}.${ChatRoomKey}`,
+    GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
+      next: res => {
+        dispatch({
+          type: FETCH_CHAT,
+          id: ChatRoomKey,
+          payload: res
+        });
+      },
+      error: err => {
+        console.log(err);
+        alert(err.message);
+      },
+      complete: () => {}
+    })
+  );
 };
-
 export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getState) => {
   const chats = getState().ChatReducer.chatroomsMsg[ChatRoomKey].chatMsg.length;
-
-  GetChatMessage(ShipmentKey, ChatRoomKey, chats + 25).subscribe({
-    next: res => {
-      dispatch({
-        type: FETCH_CHAT,
-        id: ChatRoomKey,
-        payload: res
-      });
-    },
-    error: err => {
-      console.log(err);
-      alert(err.message);
-    },
-    complete: () => {}
-  });
+  let room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}`, false);
+  if (room) {
+    room.unsubscribe();
+  }
+  _.set(
+    chatroom,
+    `${ShipmentKey}.${ChatRoomKey}`,
+    GetChatMessage(ShipmentKey, ChatRoomKey, chats + 25).subscribe({
+      next: res => {
+        dispatch({
+          type: FETCH_CHAT,
+          id: ChatRoomKey,
+          payload: res
+        });
+      },
+      error: err => {
+        console.log(err);
+        alert(err.message);
+      },
+      complete: () => {}
+    })
+  );
 };
 
 export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
