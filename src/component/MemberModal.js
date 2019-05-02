@@ -58,7 +58,7 @@ class MemberModal extends React.Component {
             <InputGroup>
               <InputGroupAddon addonType="prepend">
                 <Button>
-                  <span style={{ color: '#fff', fontWeight: 'bold' }}>Invite new member</span>
+                  <span style={{ color: '#fff', fontWeight: 'bold' }}>Invite new member:</span>
                 </Button>
               </InputGroupAddon>
               <Input placeholder="...input email address" />
