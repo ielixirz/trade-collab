@@ -28,7 +28,7 @@ export const createDataTable = (input) => {
     }
     if (item === 'alert') {
       return {
-        text: _.get(LABEL, item, item),
+        text: '',
         dataField: item,
         sort: false,
         headerStyle: () => ({ width: '50px' }),
