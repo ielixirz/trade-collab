@@ -5,18 +5,17 @@ import _ from 'lodash';
 import BootstrapTable from 'react-bootstrap-table-next';
 
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
-import paginationFactory from 'react-bootstrap-table2-paginator';
+
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import Select from 'react-select';
-
 import {
   Row,
   Col,
   Button,
   UncontrolledPopover,
-  FormGroup,
+  Badge,
   Label,
   Input,
   PopoverBody,
@@ -24,6 +23,9 @@ import {
   InputGroupAddon,
   InputGroupText
 } from 'reactstrap';
+
+import { NoteShipment } from './NoteShipment';
+import { AlertShipment } from './AlertShipment';
 import { createDataTable } from '../../utils/tool';
 import { EditShipment } from '../../service/shipment/shipment';
 
@@ -185,6 +187,31 @@ class TableShipment extends React.Component {
     );
   }
 
+  renderDescription(index, item) {
+    return (
+      <div>
+        <NoteShipment key={index} item={item} id={index} />
+      </div>
+    );
+  }
+
+  renderAlertComponent(index, item) {
+    return (
+      <div>
+        {item.seen ? (
+          <Badge color="danger" pill style={{ marginBottom: -15 }}>
+            2
+          </Badge>
+        ) : null}
+        <div className="showdot">
+          <div className="showthatdot">
+            <AlertShipment key={index} item={item} id={index} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   render() {
     let data = [];
     let columns = [];
@@ -199,14 +226,16 @@ class TableShipment extends React.Component {
         const etd = _.get(item, 'ShipmentETD', 0);
         const eta = _.get(item, 'ShipmentETAPort', 0);
         return {
-          uid: _.get(item, 'uid', ''),
+          alert: this.renderAlertComponent(index, item),
           Ref: this.renderRefComponent(index, _.get(item, 'ShipmentReference', 'input your Ref')),
           Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
           Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
           Product: _.get(item, 'ShipmentProductName', ''),
           ETD: new Date(etd.seconds * 1000).toLocaleString(),
           ETA: new Date(eta.seconds * 1000).toLocaleString(),
-          Status: this.renderStatusComponent(item)
+          '': this.renderDescription(index, item),
+          Status: this.renderStatusComponent(item),
+          uid: _.get(item, 'uid', '')
         };
       });
       input = createDataTable(input);
@@ -288,9 +317,9 @@ class TableShipment extends React.Component {
     };
     const rowEvents = {
       onClick: (e, row, rowIndex) => {
-        console.log(this.props);
+        console.log(e.target.tagName);
 
-        if (e.target.tagName !== 'SELECT') {
+        if (e.target.tagName !== 'SELECT' && e.target.tagName !== 'I') {
           window.location.replace(`#/chat/${row.uid}`);
         }
       }
