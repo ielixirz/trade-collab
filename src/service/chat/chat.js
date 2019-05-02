@@ -115,3 +115,9 @@ export const UpdateChatRoomMember = (ShipmentKey, ChatRoomKey, ChatRoomMemberKey
     .doc(ChatRoomMemberKey)
     .set(Data, { merge: true }),
 );
+
+export const DeleteChatRoomMember = (ShipmentKey, ChatRoomKey, ChatRoomMemberKey) => from(
+  ChatRoomMemberRefPath(ShipmentKey, ChatRoomKey)
+    .doc(ChatRoomMemberKey)
+    .delete(),
+);
