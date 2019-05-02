@@ -1,4 +1,9 @@
-import React, { Component, useContext, useReducer } from 'react';
+/* eslint-disable react/prop-types */
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/sort-comp */
+/* eslint-disable import/no-unresolved */
+/* eslint-disable filenames/match-regex */
+import React, { Component } from 'react';
 import {
   Button,
   CardBody,
@@ -11,12 +16,14 @@ import {
   Input,
   TabPane,
   Breadcrumb,
-  UncontrolledCollapse
+  UncontrolledCollapse,
 } from 'reactstrap';
 import EdiText from 'react-editext';
 import _ from 'lodash';
+import { connect } from 'react-redux';
+import Tabs from 'react-draggable-tabs';
 import { PutFile } from '../../service/storage/managestorage';
-
+import MemberModal from '../../component/MemberModal';
 import {
   typing,
   fetchMoreMessage,
@@ -24,12 +31,9 @@ import {
   sendMessage,
   moveTab,
   selectTab,
-  getChatRoomList
+  getChatRoomList,
 } from '../../actions/chatActions';
 
-import { connect } from 'react-redux';
-
-import Tabs from 'react-draggable-tabs';
 import ShipmentSide from './ShipmentSide';
 import FileSide from './FileSide';
 
@@ -50,7 +54,7 @@ class Chat extends Component {
       text: '',
       tabs: [],
       roomeditor: {},
-      onDropChatStyle: false
+      onDropChatStyle: false,
     };
 
     this.uploadModalRef = React.createRef();
@@ -59,15 +63,15 @@ class Chat extends Component {
 
   createChatRoom(room) {
     const {
-      match: { params }
+      match: { params },
     } = this.props;
     console.log('Create', room);
-    let croom = CreateChatRoom(_.get(params, 'shipmentkey', 'HDTPONlnceJeG5yAA1Zy'), {
-      ChatRoomName: room
+    const croom = CreateChatRoom(_.get(params, 'shipmentkey', 'HDTPONlnceJeG5yAA1Zy'), {
+      ChatRoomName: room,
     }).subscribe({
-      complete: result => {
+      complete: (result) => {
         console.log(result);
-      }
+      },
     });
   }
 
@@ -76,12 +80,12 @@ class Chat extends Component {
       type = 'sender',
       text = this.lorem(),
       name = 'Anonymous',
-      status = new Date()
+      status = new Date(),
     } = message;
-    let prev = _.get(message, 'prev', false);
+    const prev = _.get(message, 'prev', false);
     let isFirstMessageOfTheDay = false;
     if (prev) {
-      let t = new Date(prev.ChatRoomMessageTimestamp.seconds * 1000);
+      const t = new Date(prev.ChatRoomMessageTimestamp.seconds * 1000);
 
       if (t.toDateString() === status.toDateString()) {
         console.log('*** Same day ***');
@@ -102,50 +106,24 @@ class Chat extends Component {
                 <Row>
                   <Col xs="8">
                     <p>
-                      <span className="user-name">{name}</span> <br />
+                      <span className="user-name">{name}</span>
+                      {' '}
+                      <br />
                       {text}
                     </p>
                   </Col>
                   <Col xs={4}>
-                    <span className="time_date"> {status.toLocaleTimeString()}</span>
+                    <span className="time_date">
+                      {' '}
+                      {status.toLocaleTimeString()}
+                    </span>
                   </Col>
                 </Row>
               </div>
             </div>
           </div>
           {isFirstMessageOfTheDay ? (
-            <h2 class="time-background">
-              <span className="time-seperation" align="center">
-                {status.toDateString() === new Date().toDateString()
-                  ? 'Today'
-                  : status.toDateString()}
-              </span>
-            </h2>
-          ) : (
-            ''
-          )}
-        </div>
-      );
-    } else {
-      return (
-        <div key={i}>
-          <div className="outgoing_msg">
-            <div className="sent_msg">
-              <Row>
-                <Col xs={4}>
-                  <span className="time_date"> {status.toLocaleTimeString()}</span>
-                </Col>
-                <Col>
-                  <p>
-                    <span className="user-name">{name}</span> <br />
-                    {text}
-                  </p>
-                </Col>
-              </Row>
-            </div>
-          </div>
-          {isFirstMessageOfTheDay ? (
-            <h2 class="time-background">
+            <h2 className="time-background">
               <span className="time-seperation" align="center">
                 {status.toDateString() === new Date().toDateString()
                   ? 'Today'
@@ -158,6 +136,41 @@ class Chat extends Component {
         </div>
       );
     }
+    return (
+      <div key={i}>
+        <div className="outgoing_msg">
+          <div className="sent_msg">
+            <Row>
+              <Col xs={4}>
+                <span className="time_date">
+                  {' '}
+                  {status.toLocaleTimeString()}
+                </span>
+              </Col>
+              <Col>
+                <p>
+                  <span className="user-name">{name}</span>
+                  {' '}
+                  <br />
+                  {text}
+                </p>
+              </Col>
+            </Row>
+          </div>
+        </div>
+        {isFirstMessageOfTheDay ? (
+          <h2 className="time-background">
+            <span className="time-seperation" align="center">
+              {status.toDateString() === new Date().toDateString()
+                ? 'Today'
+                : status.toDateString()}
+            </span>
+          </h2>
+        ) : (
+          ''
+        )}
+      </div>
+    );
   }
 
   renderChat(ChatRoomKey = '', ShipmentKey = '') {
@@ -175,14 +188,14 @@ class Chat extends Component {
             <Row
               style={{
                 marginTop: '100px',
-                marginBottom: '100px'
+                marginBottom: '100px',
               }}
             >
               <Col />
               <Col className="text-lg-center">
                 <Button
                   style={{
-                    width: '250px'
+                    width: '250px',
                   }}
                   color="yterminal"
                   size="lg"
@@ -197,7 +210,7 @@ class Chat extends Component {
               <Col className="text-lg-center">
                 <Button
                   style={{
-                    width: '250px'
+                    width: '250px',
                   }}
                   color="yterminal"
                   size="lg"
@@ -214,7 +227,7 @@ class Chat extends Component {
             <Row
               style={{
                 marginTop: '100px',
-                marginBottom: '100px'
+                marginBottom: '100px',
               }}
             >
               <Col />
@@ -223,7 +236,7 @@ class Chat extends Component {
                   color="yterminal"
                   size="lg"
                   style={{
-                    width: '250px'
+                    width: '250px',
                   }}
                   active
                   onClick={() => {
@@ -238,7 +251,7 @@ class Chat extends Component {
                   color="yterminal"
                   size="lg"
                   style={{
-                    width: '250px'
+                    width: '250px',
                   }}
                   active
                   onClick={() => {
@@ -252,7 +265,7 @@ class Chat extends Component {
             </Row>
             <Row>
               <Col />
-              <Col md={'auto'}>
+              <Col md="auto">
                 <a href="#" id="toggler">
                   {' '}
                   Non of the above? - See Other Parties
@@ -262,7 +275,7 @@ class Chat extends Component {
             </Row>
             <Row>
               <Col />
-              <Col md={'auto'}>
+              <Col md="auto">
                 <UncontrolledCollapse toggler="#toggler">
                   <Row>
                     <Col>
@@ -270,7 +283,7 @@ class Chat extends Component {
                         color="yterminal"
                         size="lg"
                         style={{
-                          width: '600px'
+                          width: '600px',
                         }}
                         active
                         onClick={() => {
@@ -288,7 +301,7 @@ class Chat extends Component {
                       size="lg"
                       style={{
                         width: '200px',
-                        marginRight: '200px'
+                        marginRight: '200px',
                       }}
                       active
                       onClick={() => {
@@ -301,7 +314,7 @@ class Chat extends Component {
                       color="yterminal"
                       size="lg"
                       style={{
-                        width: '200px'
+                        width: '200px',
                       }}
                       active
                       onClick={() => {
@@ -311,14 +324,15 @@ class Chat extends Component {
                       Importer
                     </Button>
                   </Row>
-                  <br />{' '}
+                  <br />
+                  {' '}
                   <Row>
                     <Button
                       color="yterminal"
                       size="lg"
                       style={{
                         width: '200px',
-                        marginRight: '200px'
+                        marginRight: '200px',
                       }}
                       active
                       onClick={() => {
@@ -331,7 +345,7 @@ class Chat extends Component {
                       color="yterminal"
                       size="lg"
                       style={{
-                        width: '200px'
+                        width: '200px',
                       }}
                       active
                       onClick={() => {
@@ -341,14 +355,15 @@ class Chat extends Component {
                       Inbound Forwarder
                     </Button>
                   </Row>
-                  <br />{' '}
+                  <br />
+                  {' '}
                   <Row>
                     <Button
                       color="yterminal"
                       size="lg"
                       style={{
                         width: '200px',
-                        marginRight: '200px'
+                        marginRight: '200px',
                       }}
                       active
                       onClick={() => {
@@ -361,7 +376,7 @@ class Chat extends Component {
                       color="yterminal"
                       size="lg"
                       style={{
-                        width: '200px'
+                        width: '200px',
                       }}
                       active
                       onClick={() => {
@@ -371,14 +386,15 @@ class Chat extends Component {
                       Inbound Custom Broker
                     </Button>
                   </Row>
-                  <br />{' '}
+                  <br />
+                  {' '}
                   <Row>
                     <Button
                       color="yterminal"
                       size="lg"
                       style={{
                         width: '200px',
-                        marginRight: '200px'
+                        marginRight: '200px',
                       }}
                       onClick={() => {
                         this.createChatRoom('Outbound Trucking');
@@ -391,7 +407,7 @@ class Chat extends Component {
                       color="yterminal"
                       size="lg"
                       style={{
-                        width: '200px'
+                        width: '200px',
                       }}
                       active
                       onClick={() => {
@@ -401,14 +417,15 @@ class Chat extends Component {
                       Inbound Trucking
                     </Button>
                   </Row>
-                  <br />{' '}
+                  <br />
+                  {' '}
                   <Row>
                     <Button
                       color="yterminal"
                       size="lg"
                       style={{
                         width: '200px',
-                        marginRight: '200px'
+                        marginRight: '200px',
                       }}
                       active
                       onClick={() => {
@@ -421,7 +438,7 @@ class Chat extends Component {
                       color="yterminal"
                       size="lg"
                       style={{
-                        width: '200px'
+                        width: '200px',
                       }}
                       active
                       onClick={() => {
@@ -439,155 +456,140 @@ class Chat extends Component {
           </CardBody>
         </Card>
       );
-    } else {
-      let chat = _.get(this.props, `ChatReducer.chatroomsMsg.${ChatRoomKey}`, []);
-      let chatMsg = chat.length === 0 ? [] : chat.chatMsg;
-      const text = this.props.ChatReducer.text;
-      return (
-        <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
-          <Row
-            style={{
-              backgroundColor: 'white',
-              borderBottom: '1px solid #707070'
-            }}
-          >
-            <Breadcrumb className="chat-toolbar">
-              <Button
-                className="invite-btn"
-                style={{
-                  marginLeft: '2rem',
-                  marginRight: '1rem',
-                  color: 'white',
-                  backgroundColor: '#16A085'
+    }
+    const chat = _.get(this.props, `ChatReducer.chatroomsMsg.${ChatRoomKey}`, []);
+    const chatMsg = chat.length === 0 ? [] : chat.chatMsg;
+    const text = this.props.ChatReducer.text;
+    return (
+      <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
+        <Row
+          style={{
+            backgroundColor: 'white',
+            borderBottom: '1px solid #707070',
+          }}
+        >
+          <Breadcrumb className="chat-toolbar">
+            <MemberModal buttonLabel="Invite" />
+            <Button className="btn-chat-label">|</Button>
+            <Button className="btn-chat-label">
+              <i style={{ marginRight: '0.5rem' }} className="fa  fa-users fa-lg" />
+              14
+            </Button>
+            <Button className="btn-chat-label">|</Button>
+            <Button className="btn-chat-label">Ref#1234</Button>
+          </Breadcrumb>
+        </Row>
+        <Row>
+          <Col xs="8" style={{ backgroundColor: 'white', marginTop: '0.5rem' }}>
+            <div
+              className="mesgs"
+              style={this.state.onDropChatStyle === false ? {} : { opacity: '0.5' }}
+              onDragOver={this.onDragOver}
+              onDragLeave={this.onDragLeave}
+              onDrop={event => this.onFileDrop(event, ShipmentKey, ChatRoomKey)}
+            >
+              <div
+                id="chathistory"
+                className="msg_history"
+                onScroll={() => {
+                  const div = document.getElementById('chathistory').scrollTop;
+                  if (div === 0) {
+                    this.props.fetchMoreMessage(ChatRoomKey, ShipmentKey);
+                  }
+                }}
+                ref={(el) => {
+                  this.msgChatRef = el;
                 }}
               >
-                <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
-                Invite
-              </Button>
-              <Button className="btn-chat-label">|</Button>
-              <Button className="btn-chat-label">
-                <i style={{ marginRight: '0.5rem' }} className="fa  fa-users fa-lg" />
-                14
-              </Button>
-              <Button className="btn-chat-label">|</Button>
-              <Button className="btn-chat-label">Ref#1234</Button>
-            </Breadcrumb>
-          </Row>
-          <Row>
-            <Col xs="8" style={{ backgroundColor: 'white', marginTop: '0.5rem' }}>
-              <div
-                className="mesgs"
-                style={this.state.onDropChatStyle === false ? {} : { opacity: '0.5' }}
-                onDragOver={this.onDragOver}
-                onDragLeave={this.onDragLeave}
-                onDrop={event => this.onFileDrop(event, ShipmentKey, ChatRoomKey)}
-              >
-                <div
-                  id="chathistory"
-                  className="msg_history"
-                  onScroll={() => {
-                    let div = document.getElementById('chathistory').scrollTop;
-                    if (div === 0) {
-                      this.props.fetchMoreMessage(ChatRoomKey, ShipmentKey);
-                    }
-                  }}
-                  ref={el => {
-                    this.msgChatRef = el;
-                  }}
-                >
-                  {chatMsg.map((msg, i) => {
-                    var t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
-                    let type = 'sender';
+                {chatMsg.map((msg, i) => {
+                  const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
+                  let type = 'sender';
 
-                    if (_.get(this.props, 'user.email', '0') === msg.ChatRoomMessageSender) {
-                      type = 'reciever';
-                    }
-                    let message = {
-                      type: type,
-                      text: msg.ChatRoomMessageContext,
-                      name: msg.ChatRoomMessageSender,
-                      status: t,
-                      prev: chatMsg[i - 1]
-                    };
+                  if (_.get(this.props, 'user.email', '0') === msg.ChatRoomMessageSender) {
+                    type = 'reciever';
+                  }
+                  const message = {
+                    type,
+                    text: msg.ChatRoomMessageContext,
+                    name: msg.ChatRoomMessageSender,
+                    status: t,
+                    prev: chatMsg[i - 1],
+                  };
 
-                    return this.renderMessage(message, i);
-                  })}
-                </div>
-                <div className="type_msg">
-                  <UploadModal
-                    chatFile={
-                      this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink
-                    }
-                    sendMessage={this.props.sendMessage}
-                    ref={this.uploadModalRef}
-                  />
-                  <InputGroup>
-                    <InputGroupAddon addonType="prepend">
-                      <Button color="default" onClick={() => this.browseFile(ShipmentKey)}>
-                        {' '}
-                        <i className="fa fa-plus fa-lg" />
-                      </Button>
-                      <input
-                        type="file"
-                        id="file"
-                        ref={this.fileInput}
-                        style={{ display: 'none' }}
-                        onChange={event =>
-                          this.uploadModalRef.current.triggerUploading(
-                            event.target.files[0],
-                            ShipmentKey,
-                            ChatRoomKey
-                          )
-                        }
-                      />
-                    </InputGroupAddon>
-                    <Input
-                      placeholder="type...."
-                      value={text}
-                      onChange={this.props.typing}
-                      onKeyPress={event => {
-                        if (event.key === 'Enter') {
-                          console.log('Enter press', event);
-                          this.props.sendMessage(ChatRoomKey, ShipmentKey, text);
-                          this.scrollChatToBottom();
-                        }
-                      }}
-                    />
-                    <InputGroupAddon addonType="append">
-                      <Button color="default1"> @</Button>
-                      <Button color="default1">
-                        {' '}
-                        <i className="fa fa-smile-o fa-lg" />
-                      </Button>
-                      <Button
-                        color="default1"
-                        onClick={() => {
-                          this.props.sendMessage(ChatRoomKey, ShipmentKey, text);
-                          this.scrollChatToBottom();
-                        }}
-                      >
-                        {' '}
-                        <i className="fa fa-paper-plane-o fa-lg" />
-                      </Button>
-                    </InputGroupAddon>
-                  </InputGroup>
-                </div>
+                  return this.renderMessage(message, i);
+                })}
               </div>
-            </Col>
-            <Col xs="4" style={{ paddingLeft: '0.3rem', marginTop: '0.6rem' }}>
-              <FileSide
-                chatFile={
-                  this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink
-                }
-                shipmentKey={ShipmentKey}
-                chatroomKey={ChatRoomKey}
-              />
-              <ShipmentSide />
-            </Col>
-          </Row>
-        </div>
-      );
-    }
+              <div className="type_msg">
+                <UploadModal
+                  chatFile={
+                    this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink
+                  }
+                  sendMessage={this.props.sendMessage}
+                  ref={this.uploadModalRef}
+                />
+                <InputGroup>
+                  <InputGroupAddon addonType="prepend">
+                    <Button color="default" onClick={() => this.browseFile(ShipmentKey)}>
+                      {' '}
+                      <i className="fa fa-plus fa-lg" />
+                    </Button>
+                    <input
+                      type="file"
+                      id="file"
+                      ref={this.fileInput}
+                      style={{ display: 'none' }}
+                      onChange={event => this.uploadModalRef.current.triggerUploading(
+                        event.target.files[0],
+                        ShipmentKey,
+                        ChatRoomKey,
+                      )
+                      }
+                    />
+                  </InputGroupAddon>
+                  <Input
+                    placeholder="type...."
+                    value={text}
+                    onChange={this.props.typing}
+                    onKeyPress={(event) => {
+                      if (event.key === 'Enter') {
+                        console.log('Enter press', event);
+                        this.props.sendMessage(ChatRoomKey, ShipmentKey, text);
+                        this.scrollChatToBottom();
+                      }
+                    }}
+                  />
+                  <InputGroupAddon addonType="append">
+                    <Button color="default1"> @</Button>
+                    <Button color="default1">
+                      {' '}
+                      <i className="fa fa-smile-o fa-lg" />
+                    </Button>
+                    <Button
+                      color="default1"
+                      onClick={() => {
+                        this.props.sendMessage(ChatRoomKey, ShipmentKey, text);
+                        this.scrollChatToBottom();
+                      }}
+                    >
+                      {' '}
+                      <i className="fa fa-paper-plane-o fa-lg" />
+                    </Button>
+                  </InputGroupAddon>
+                </InputGroup>
+              </div>
+            </div>
+          </Col>
+          <Col xs="4" style={{ paddingLeft: '0.3rem', marginTop: '0.6rem' }}>
+            <FileSide
+              chatFile={this.props.ChatReducer.chatrooms[ChatRoomKey].ChatRoomData.ChatRoomFileLink}
+              shipmentKey={ShipmentKey}
+              chatroomKey={ChatRoomKey}
+            />
+            <ShipmentSide />
+          </Col>
+        </Row>
+      </div>
+    );
   }
 
   browseFile() {
@@ -597,31 +599,31 @@ class Chat extends Component {
 
   onFileDrop(event, ShipmentKey, ChatRoomKey) {
     event.preventDefault();
-    let file = event.dataTransfer.items[0].getAsFile();
+    const file = event.dataTransfer.items[0].getAsFile();
     event.target.value = null;
     this.uploadModalRef.current.triggerUploading(file, ShipmentKey, ChatRoomKey);
     this.setState({
-      onDropChatStyle: false
+      onDropChatStyle: false,
     });
   }
 
-  onDragOver = event => {
+  onDragOver = (event) => {
     event.stopPropagation();
     event.preventDefault();
     this.setState({
-      onDropChatStyle: true
+      onDropChatStyle: true,
     });
   };
 
-  onDragLeave = event => {
+  onDragLeave = (event) => {
     event.stopPropagation();
     event.preventDefault();
     this.setState({
-      onDropChatStyle: false
+      onDropChatStyle: false,
     });
   };
 
-  onDragEnter = event => {
+  onDragEnter = (event) => {
     event.preventDefault();
   };
 
@@ -635,7 +637,7 @@ class Chat extends Component {
 
   closedTab(removedIndex, removedID) {
     this.setState((state, props) => {
-      let newTabs = [...state.tabs];
+      const newTabs = [...state.tabs];
       newTabs.splice(removedIndex, 1);
 
       if (state.tabs[removedIndex].active && newTabs.length !== 0) {
@@ -650,11 +652,11 @@ class Chat extends Component {
 
   addTab() {
     this.setState((state, props) => {
-      let newTabs = [...state.tabs];
+      const newTabs = [...state.tabs];
       newTabs.push({
         id: newTabs.length + 1,
         content: 'Cute *',
-        display: <div key={newTabs.length + 1}>Cute *</div>
+        display: <div key={newTabs.length + 1}>Cute *</div>,
       });
 
       return { tabs: newTabs };
@@ -669,7 +671,7 @@ class Chat extends Component {
     const newArray = this.state.activeTab.slice();
     newArray[tabPane] = tab;
     this.setState({
-      activeTab: newArray
+      activeTab: newArray,
     });
   }
 
@@ -682,16 +684,17 @@ class Chat extends Component {
       </>
     );
   }
-  componentDidUpdate() {}
+
+  // componentDidUpdate() {}
 
   componentDidMount() {
     const {
-      match: { params }
+      match: { params },
     } = this.props;
-    this.props.getChatRoomList(params.shipmentkey); //MOCK SHIPMENT KEY
-    let chats = this.props.ChatReducer.chatrooms;
+    this.props.getChatRoomList(params.shipmentkey); // MOCK SHIPMENT KEY
+    const chats = this.props.ChatReducer.chatrooms;
     console.log(chats);
-    let tabs = [];
+    const tabs = [];
     _.forEach(chats, (item, index) => {
       tabs.push({
         id: tabs.length + 1,
@@ -699,23 +702,24 @@ class Chat extends Component {
           <EdiText
             type="text"
             value={item.roomName}
-            onSave={val => {
+            onSave={(val) => {
               console.log(val);
             }}
           />
         ),
         active: item.active,
         ChatRoomKey: item.ChatRoomKey,
-        ShipmentKey: item.ShipmentKey
+        ShipmentKey: item.ShipmentKey,
       });
     });
     const activeTab = tabs.filter(tab => tab.active === true);
-    _.forEach(tabs, tab => {
+    _.forEach(tabs, (tab) => {
       this.props.fetchChatMessage(tab.ChatRoomKey, tab.ShipmentKey);
     });
   }
+
   movetab(dragIndex, hoverIndex) {
-    let chats = this.props.ChatReducer.chatrooms;
+    const chats = this.props.ChatReducer.chatrooms;
 
     this.props.moveTab(dragIndex, hoverIndex);
   }
@@ -733,8 +737,8 @@ class Chat extends Component {
               roomeditor: {
                 roomName: item.roomName,
                 ChatRoomKey: item.ChatRoomKey,
-                ShipmentKey: item.ShipmentKey
-              }
+                ShipmentKey: item.ShipmentKey,
+              },
             });
           }}
         >
@@ -742,26 +746,26 @@ class Chat extends Component {
         </div>
       );
       if (
-        this.state.roomeditor.ShipmentKey === item.ShipmentKey &&
-        this.state.roomeditor.ChatRoomKey === item.ChatRoomKey
+        this.state.roomeditor.ShipmentKey === item.ShipmentKey
+        && this.state.roomeditor.ChatRoomKey === item.ChatRoomKey
       ) {
         content = (
           <div>
             <Input
               value={this.state.roomeditor.roomName}
-              type={'text'}
-              onChange={e => {
+              type="text"
+              onChange={(e) => {
                 this.setState({
                   roomeditor: {
                     ...this.state.roomeditor,
-                    roomName: e.target.value
-                  }
+                    roomName: e.target.value,
+                  },
                 });
               }}
-              onKeyDown={button => {
+              onKeyDown={(button) => {
                 if (button.key === 'Enter') {
                   EditChatRoom(item.ShipmentKey, item.ChatRoomKey, {
-                    ChatRoomName: this.state.roomeditor.roomName
+                    ChatRoomName: this.state.roomeditor.roomName,
                   });
                   this.setState({ roomeditor: {} });
                 }
@@ -772,11 +776,11 @@ class Chat extends Component {
       }
       tabs.push({
         id: tabs.length + 1,
-        content: content,
+        content,
         active: item.active,
         ChatRoomKey: item.ChatRoomKey,
         ShipmentKey: item.ShipmentKey,
-        position: item.position
+        position: item.position,
       });
     });
     tabs = _.sortBy(tabs, 'position');
@@ -802,15 +806,23 @@ class Chat extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { ChatReducer, authReducer } = state;
   return {
     ChatReducer,
-    user: authReducer.user
+    user: authReducer.user,
   };
 };
 
 export default connect(
   mapStateToProps,
-  { typing, fetchChatMessage, fetchMoreMessage, sendMessage, moveTab, selectTab, getChatRoomList }
+  {
+    typing,
+    fetchChatMessage,
+    fetchMoreMessage,
+    sendMessage,
+    moveTab,
+    selectTab,
+    getChatRoomList,
+  },
 )(Chat);
