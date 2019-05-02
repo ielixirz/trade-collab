@@ -27,7 +27,7 @@ export class AlertShipment extends React.Component {
         });
       }}
     >
-      unPin
+      <p>unPin</p>
     </span>
   );
 
@@ -39,7 +39,7 @@ export class AlertShipment extends React.Component {
         });
       }}
     >
-      Pin
+      <p>Pin</p>
     </span>
   );
 
@@ -58,7 +58,7 @@ export class AlertShipment extends React.Component {
           <PopoverBody>
             {this.props.item.pin ? this.renderUnpin() : this.renderPin()}
             <br />
-            <span>Replicate Shipment</span>
+            <p>Replicate Shipment</p>
           </PopoverBody>
         </Popover>
       </div>
