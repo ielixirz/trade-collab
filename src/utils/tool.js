@@ -18,21 +18,28 @@ export const createDataTable = (input) => {
         hidden: true,
       };
     }
-    if (item === 'id') {
-      return {
-        text: _.get(LABEL, item, item),
-        dataField: item,
-        sort: true,
-        headerStyle: () => ({ width: '80px', textAlign: 'center' }),
-        hidden: true,
-      };
-    }
     if (item === '') {
       return {
         text: _.get(LABEL, item, item),
         dataField: item,
         sort: false,
         headerStyle: () => ({ width: '50px' }),
+      };
+    }
+    if (item === 'alert') {
+      return {
+        text: _.get(LABEL, item, item),
+        dataField: item,
+        sort: false,
+        headerStyle: () => ({ width: '50px' }),
+      };
+    }
+    if (item === 'Ref') {
+      return {
+        text: _.get(LABEL, item, item),
+        dataField: item,
+        sort: false,
+        headerStyle: () => ({ textAlign: 'left' }),
       };
     }
     if (item === 'id') {

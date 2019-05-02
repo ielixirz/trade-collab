@@ -32,6 +32,7 @@ export class NoteShipment extends React.Component {
     <div>
       <input
         type="text"
+        style={{ width: '100%', height: 100 }}
         defaultValue={this.state.value}
         ref="theTextInput"
         onChange={(e) => {
@@ -65,21 +66,9 @@ export class NoteShipment extends React.Component {
           target={`Popover-${this.props.id}`}
           toggle={this.toggle}
         >
-          <PopoverHeader>
-            <span style={{ textDecorationLine: 'underline' }}>Price and Description of goods</span>
-          </PopoverHeader>
           <PopoverBody>
-            {/* <Input
-              value={this.state.roomeditor.roomName}
-              type="text"
-              onKeyDown={(button) => {
-                if (button.key === 'Enter') {
-                  EditShipment(this.props.item.uid, {
-                    ShipmentPriceDescription: value,
-                  });
-                }
-              }}
-            /> */}
+            <span style={{ textDecorationLine: 'underline' }}>Price and Description of goods</span>
+            <br />
             {this.state.isInEditMode ? this.renderEditView() : this.renderDefaultView()}
             <br />
             <div className="seenby">
