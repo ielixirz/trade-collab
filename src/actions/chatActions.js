@@ -42,7 +42,8 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
   );
 };
 export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getState) => {
-  const chats = getState().ChatReducer.chatroomsMsg[ChatRoomKey].chatMsg.length;
+  let chats = _.get(getState().ChatReducer, `chatroomsMsg.${ChatRoomKey}.chatMsg`, []).length;
+
   let room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}`, false);
   if (room) {
     room.unsubscribe();
