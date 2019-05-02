@@ -202,6 +202,9 @@ input {
   margin-bottom: 10px;
   padding: 5px;
 }
+td{
+  cursor: pointer;
+}
 .msg_send_btn {
   background: #05728f none repeat scroll 0 0;
   border: medium none;
