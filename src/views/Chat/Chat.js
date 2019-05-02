@@ -1,4 +1,9 @@
-import React, { Component, useContext, useReducer } from 'react';
+/* eslint-disable react/prop-types */
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/sort-comp */
+/* eslint-disable import/no-unresolved */
+/* eslint-disable filenames/match-regex */
+import React, { Component } from 'react';
 import {
   Button,
   CardBody,
@@ -11,7 +16,9 @@ import {
   Input,
   TabPane,
   Breadcrumb,
+  UncontrolledCollapse,
 } from 'reactstrap';
+import EdiText from 'react-editext';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import Tabs from 'react-draggable-tabs';
@@ -27,11 +34,12 @@ import {
   getChatRoomList,
 } from '../../actions/chatActions';
 
-import './Chat.css';
 import ShipmentSide from './ShipmentSide';
 import FileSide from './FileSide';
 
 import UploadModal from '../../component/UploadModal';
+import { CreateChatRoom, EditChatRoom } from '../../service/chat/chat';
+import './Chat.css';
 
 class Chat extends Component {
   constructor(props) {
@@ -45,11 +53,26 @@ class Chat extends Component {
       activeTab: new Array(4).fill('1'),
       text: '',
       tabs: [],
+      roomeditor: {},
       onDropChatStyle: false,
     };
 
     this.uploadModalRef = React.createRef();
     this.fileInput = React.createRef();
+  }
+
+  createChatRoom(room) {
+    const {
+      match: { params },
+    } = this.props;
+    console.log('Create', room);
+    const croom = CreateChatRoom(_.get(params, 'shipmentkey', 'HDTPONlnceJeG5yAA1Zy'), {
+      ChatRoomName: room,
+    }).subscribe({
+      complete: (result) => {
+        console.log(result);
+      },
+    });
   }
 
   renderMessage(message, i) {
@@ -170,12 +193,32 @@ class Chat extends Component {
             >
               <Col />
               <Col className="text-lg-center">
-                <Button color="primary" size="lg" active>
+                <Button
+                  style={{
+                    width: '250px',
+                  }}
+                  color="yterminal"
+                  size="lg"
+                  active
+                  onClick={() => {
+                    this.createChatRoom('Inbound Custom Broker');
+                  }}
+                >
                   Inbound Custom Broker
                 </Button>
               </Col>
               <Col className="text-lg-center">
-                <Button color="primary" size="lg" active>
+                <Button
+                  style={{
+                    width: '250px',
+                  }}
+                  color="yterminal"
+                  size="lg"
+                  active
+                  onClick={() => {
+                    this.createChatRoom('Inbound Forwarder');
+                  }}
+                >
                   Inbound Forwarder
                 </Button>
               </Col>
@@ -189,14 +232,224 @@ class Chat extends Component {
             >
               <Col />
               <Col className="text-lg-center">
-                <Button color="primary" size="lg" active>
+                <Button
+                  color="yterminal"
+                  size="lg"
+                  style={{
+                    width: '250px',
+                  }}
+                  active
+                  onClick={() => {
+                    this.createChatRoom('Importer');
+                  }}
+                >
                   Importer
                 </Button>
               </Col>
               <Col className="text-lg-center">
-                <Button color="primary" size="lg" active>
+                <Button
+                  color="yterminal"
+                  size="lg"
+                  style={{
+                    width: '250px',
+                  }}
+                  active
+                  onClick={() => {
+                    this.createChatRoom('Outbound Forwarder');
+                  }}
+                >
                   Outbound Forwarder
                 </Button>
+              </Col>
+              <Col />
+            </Row>
+            <Row>
+              <Col />
+              <Col md="auto">
+                <a href="#" id="toggler">
+                  {' '}
+                  Non of the above? - See Other Parties
+                </a>
+              </Col>
+              <Col />
+            </Row>
+            <Row>
+              <Col />
+              <Col md="auto">
+                <UncontrolledCollapse toggler="#toggler">
+                  <Row>
+                    <Col>
+                      <Button
+                        color="yterminal"
+                        size="lg"
+                        style={{
+                          width: '600px',
+                        }}
+                        active
+                        onClick={() => {
+                          this.createChatRoom('Blank Chat');
+                        }}
+                      >
+                        Blank Chat
+                      </Button>
+                    </Col>
+                  </Row>
+                  <br />
+                  <Row>
+                    <Button
+                      color="yterminal"
+                      size="lg"
+                      style={{
+                        width: '200px',
+                        marginRight: '200px',
+                      }}
+                      active
+                      onClick={() => {
+                        this.createChatRoom('Exporter');
+                      }}
+                    >
+                      Exporter
+                    </Button>
+                    <Button
+                      color="yterminal"
+                      size="lg"
+                      style={{
+                        width: '200px',
+                      }}
+                      active
+                      onClick={() => {
+                        this.createChatRoom('Importer');
+                      }}
+                    >
+                      Importer
+                    </Button>
+                  </Row>
+                  <br />
+                  {' '}
+                  <Row>
+                    <Button
+                      color="yterminal"
+                      size="lg"
+                      style={{
+                        width: '200px',
+                        marginRight: '200px',
+                      }}
+                      active
+                      onClick={() => {
+                        this.createChatRoom('Outbound Forwarder');
+                      }}
+                    >
+                      Outbound Forwarder
+                    </Button>
+                    <Button
+                      color="yterminal"
+                      size="lg"
+                      style={{
+                        width: '200px',
+                      }}
+                      active
+                      onClick={() => {
+                        this.createChatRoom('Inbound Forwarder');
+                      }}
+                    >
+                      Inbound Forwarder
+                    </Button>
+                  </Row>
+                  <br />
+                  {' '}
+                  <Row>
+                    <Button
+                      color="yterminal"
+                      size="lg"
+                      style={{
+                        width: '200px',
+                        marginRight: '200px',
+                      }}
+                      active
+                      onClick={() => {
+                        this.createChatRoom('Outbound Custom Broker');
+                      }}
+                    >
+                      Outbound Custom Broker
+                    </Button>
+                    <Button
+                      color="yterminal"
+                      size="lg"
+                      style={{
+                        width: '200px',
+                      }}
+                      active
+                      onClick={() => {
+                        this.createChatRoom('Inbound Custom Broker');
+                      }}
+                    >
+                      Inbound Custom Broker
+                    </Button>
+                  </Row>
+                  <br />
+                  {' '}
+                  <Row>
+                    <Button
+                      color="yterminal"
+                      size="lg"
+                      style={{
+                        width: '200px',
+                        marginRight: '200px',
+                      }}
+                      onClick={() => {
+                        this.createChatRoom('Outbound Trucking');
+                      }}
+                      active
+                    >
+                      Outbound Trucking
+                    </Button>
+                    <Button
+                      color="yterminal"
+                      size="lg"
+                      style={{
+                        width: '200px',
+                      }}
+                      active
+                      onClick={() => {
+                        this.createChatRoom('Inbound Trucking');
+                      }}
+                    >
+                      Inbound Trucking
+                    </Button>
+                  </Row>
+                  <br />
+                  {' '}
+                  <Row>
+                    <Button
+                      color="yterminal"
+                      size="lg"
+                      style={{
+                        width: '200px',
+                        marginRight: '200px',
+                      }}
+                      active
+                      onClick={() => {
+                        this.createChatRoom('Exporter Warehouse');
+                      }}
+                    >
+                      Exporter Warehouse
+                    </Button>
+                    <Button
+                      color="yterminal"
+                      size="lg"
+                      style={{
+                        width: '200px',
+                      }}
+                      active
+                      onClick={() => {
+                        this.createChatRoom('Importer Warehouse');
+                      }}
+                    >
+                      Importer Warehouse
+                    </Button>
+                  </Row>
+                  <br />
+                </UncontrolledCollapse>
               </Col>
               <Col />
             </Row>
@@ -432,17 +685,28 @@ class Chat extends Component {
     );
   }
 
-  componentDidUpdate() {}
+  // componentDidUpdate() {}
 
   componentDidMount() {
-    this.props.getChatRoomList('HDTPONlnceJeG5yAA1Zy'); // MOCK SHIPMENT KEY
+    const {
+      match: { params },
+    } = this.props;
+    this.props.getChatRoomList(params.shipmentkey); // MOCK SHIPMENT KEY
     const chats = this.props.ChatReducer.chatrooms;
     console.log(chats);
     const tabs = [];
     _.forEach(chats, (item, index) => {
       tabs.push({
         id: tabs.length + 1,
-        content: item.roomName,
+        content: (
+          <EdiText
+            type="text"
+            value={item.roomName}
+            onSave={(val) => {
+              console.log(val);
+            }}
+          />
+        ),
         active: item.active,
         ChatRoomKey: item.ChatRoomKey,
         ShipmentKey: item.ShipmentKey,
@@ -465,9 +729,54 @@ class Chat extends Component {
     let tabs = [];
 
     _.forEach(chats, (item, index) => {
+      let content = (
+        <div
+          onDoubleClick={() => {
+            console.log('double Click');
+            this.setState({
+              roomeditor: {
+                roomName: item.roomName,
+                ChatRoomKey: item.ChatRoomKey,
+                ShipmentKey: item.ShipmentKey,
+              },
+            });
+          }}
+        >
+          {item.roomName}
+        </div>
+      );
+      if (
+        this.state.roomeditor.ShipmentKey === item.ShipmentKey
+        && this.state.roomeditor.ChatRoomKey === item.ChatRoomKey
+      ) {
+        content = (
+          <div>
+            <Input
+              value={this.state.roomeditor.roomName}
+              type="text"
+              onChange={(e) => {
+                this.setState({
+                  roomeditor: {
+                    ...this.state.roomeditor,
+                    roomName: e.target.value,
+                  },
+                });
+              }}
+              onKeyDown={(button) => {
+                if (button.key === 'Enter') {
+                  EditChatRoom(item.ShipmentKey, item.ChatRoomKey, {
+                    ChatRoomName: this.state.roomeditor.roomName,
+                  });
+                  this.setState({ roomeditor: {} });
+                }
+              }}
+            />
+          </div>
+        );
+      }
       tabs.push({
         id: tabs.length + 1,
-        content: item.roomName,
+        content,
         active: item.active,
         ChatRoomKey: item.ChatRoomKey,
         ShipmentKey: item.ShipmentKey,
@@ -490,7 +799,7 @@ class Chat extends Component {
         <TabContent>
           {activeTab.length !== 0
             ? this.renderChat(activeTab[0].ChatRoomKey, activeTab[0].ShipmentKey)
-            : ''}
+            : 'no'}
         </TabContent>
       </div>
     );

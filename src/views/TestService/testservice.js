@@ -5,7 +5,8 @@ import { LoginWithEmail } from '../../service/auth/login';
 import { VerificationEmail, AuthStage } from '../../service/auth/manageuser';
 import { Register, RegisterWithEmail } from '../../service/auth/register';
 import { UpdateUserInfo } from '../../service/user/user';
-import { GetShipmentList } from '../../service/shipment/shipment'
+import { GetShipmentList } from '../../service/shipment/shipment';
+import { GetMasterDataChatRoom } from '../../service/masterdata/masterdata';
 
 const TestService = () => {
   const [count, setCount] = useState(0);
@@ -93,12 +94,13 @@ const TestService = () => {
     // GetShipmentList('Planning','','').subscribe(res => {
     //   console.log(res.map( d => d.data()))
     // })
-    
+
     // GetShipmentList(null,null,'').subscribe(console.log)
 
-    
+    // Test Master Data
+    // /Shipment/0eoacRfk5QFTTBAg2SS3/ChatRoom/NDYDyonv15IlkpZsK9kt
 
-    
+    GetMasterDataChatRoom('0eoacRfk5QFTTBAg2SS3', 'NDYDyonv15IlkpZsK9kt');
   }, []);
 
   return (

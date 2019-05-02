@@ -22,7 +22,7 @@ import {
   PopoverBody,
   InputGroup,
   InputGroupAddon,
-  InputGroupText,
+  InputGroupText
 } from 'reactstrap';
 import { createDataTable } from '../../utils/tool';
 import { EditShipment } from '../../service/shipment/shipment';
@@ -39,7 +39,7 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning'],
+        status: ['intransit', 'planning']
       },
       {
         ref: 'INVPT',
@@ -48,7 +48,7 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning'],
+        status: ['intransit', 'planning']
       },
       {
         ref: 'INVPT',
@@ -57,7 +57,7 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning'],
+        status: ['intransit', 'planning']
       },
       {
         ref: 'INVPT',
@@ -66,7 +66,7 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning'],
+        status: ['intransit', 'planning']
       },
       {
         ref: 'INVPT',
@@ -75,7 +75,7 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning'],
+        status: ['intransit', 'planning']
       },
       {
         ref: 'INVPT',
@@ -84,47 +84,46 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning'],
-      },
+        status: ['intransit', 'planning']
+      }
     ],
     columns: [
       {
         dataField: 'ref',
-        text: 'Ref:',
+        text: 'Ref:'
       },
       {
         dataField: 'seller',
         text: 'Seller',
-        sort: true,
+        sort: true
       },
       {
         dataField: 'buyer',
         text: 'Buyer',
-        sort: true,
+        sort: true
       },
       {
         dataField: 'product',
-        text: 'Product',
+        text: 'Product'
       },
       {
         dataField: 'etd',
         text: 'ETD',
-        sort: true,
+        sort: true
       },
       {
         dataField: 'eta',
         text: 'ETA',
-        sort: true,
+        sort: true
       },
       {
         dataField: 'status',
-        text: 'Status',
-      },
-    ],
+        text: 'Status'
+      }
+    ]
   };
 
   renderRefComponent(index, ref) {
-    console.log(ref);
     return (
       <div>
         <p id={`popover${index}`}>{ref.RefID}</p>
@@ -140,9 +139,7 @@ class TableShipment extends React.Component {
                     name={`shipmentRef${index}`}
                     value={ref.RefID}
                   />
-                  Ref #1 : (
-                  {ref.RefOwner}
-)
+                  Ref #1 : ({ref.RefOwner})
                 </Label>
               </Col>
               <Col xs={5}>
@@ -172,7 +169,7 @@ class TableShipment extends React.Component {
           onChange={e => {
             const value = e.target.value;
             EditShipment(item.uid, {
-              ShipmentStatus: value,
+              ShipmentStatus: value
             });
           }}
         >
@@ -201,15 +198,15 @@ class TableShipment extends React.Component {
       input = _.map(this.props.input, (item, index) => {
         const etd = _.get(item, 'ShipmentETD', 0);
         const eta = _.get(item, 'ShipmentETAPort', 0);
-
         return {
+          uid: _.get(item, 'uid', ''),
           Ref: this.renderRefComponent(index, _.get(item, 'ShipmentReference', 'input your Ref')),
           Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
           Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
           Product: _.get(item, 'ShipmentProductName', ''),
           ETD: new Date(etd.seconds * 1000).toLocaleString(),
           ETA: new Date(eta.seconds * 1000).toLocaleString(),
-          Status: this.renderStatusComponent(item),
+          Status: this.renderStatusComponent(item)
         };
       });
       input = createDataTable(input);
@@ -220,7 +217,7 @@ class TableShipment extends React.Component {
       mode: 'checkbox',
       clickToSelect: true,
       hideSelectColumn: true,
-      bgColor: '#F5FBFA',
+      bgColor: '#F5FBFA'
     };
     const pageListRenderer = ({ pages, onPageChange }) => {
       const pageWithoutIndication = pages.filter(p => typeof p.page !== 'string');
@@ -237,7 +234,7 @@ class TableShipment extends React.Component {
     };
     const sizePerPageRenderer = ({ options, currSizePerPage, onSizePerPageChange }) => (
       <div className="btn-group" role="group">
-        {options.map((option) => {
+        {options.map(option => {
           const isSelect = currSizePerPage === `${option.page}`;
           return (
             <button
@@ -254,11 +251,11 @@ class TableShipment extends React.Component {
     );
     const options = {
       pageListRenderer,
-      sizePerPageRenderer,
+      sizePerPageRenderer
     };
-    const MySearch = (props) => {
+    const MySearch = props => {
       let input;
-      const handleClick = (event) => {
+      const handleClick = event => {
         const query = event.target.value;
         props.onSearch(query);
       };
@@ -289,6 +286,15 @@ class TableShipment extends React.Component {
         </div>
       );
     };
+    const rowEvents = {
+      onClick: (e, row, rowIndex) => {
+        console.log(this.props);
+
+        if (e.target.tagName !== 'SELECT') {
+          window.location.replace(`#/chat/${row.uid}`);
+        }
+      }
+    };
     return (
       <ToolkitProvider keyField="id" data={data} columns={columns} search>
         {props => (
@@ -311,8 +317,7 @@ class TableShipment extends React.Component {
                   <span style={{ fontWeight: 'bold', color: 'white' }}>Save</span>
                 </Button>
                 <Button style={{ backgroundColor: 'white', marginTop: 2, marginRight: 10 }}>
-                  <i className="icons cui-pencil" style={{ color: 'black' }} />
-                  {' '}
+                  <i className="icons cui-pencil" style={{ color: 'black' }} />{' '}
                   <span style={{ fontWeight: 'bold', color: '#707070' }}>Edit</span>
                 </Button>
               </Col>
@@ -322,6 +327,7 @@ class TableShipment extends React.Component {
                 rowStyle={{ textAlign: 'left' }}
                 {...props.baseProps}
                 bordered={false}
+                rowEvents={rowEvents}
               />
             </div>
           </div>

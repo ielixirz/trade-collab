@@ -11,11 +11,11 @@ const TestService = React.lazy(() => import('./views/TestService/testservice'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
-  { path: '/chat', name: 'chat', component: Chat },
+  { path: '/chat/:shipmentkey', name: 'chat', component: Chat },
   { path: '/shipment', name: 'shipment', component: Shipment },
   { path: '/network', name: 'network', component: Network },
   { path: '/mockdata', name: 'mockdata', component: MockData },
-  { path: '/testservice', name: 'testservice', component: TestService },
+  { path: '/testservice', name: 'testservice', component: TestService }
 ];
 
 export default routes;

@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { collection, doc } from 'rxfire/firestore';
 import { from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { FirebaseApp } from '../firebase';
 
 const ShipmentRefPath = ShipmentKey =>
@@ -27,6 +27,14 @@ const ChatRoomMessageRefPath = (ShipmentKey, ChatRoomKey) =>
 
 const ChatRoomMessageRefPathOrderByNewerTimestamp = (ShipmentKey, ChatRoomKey) =>
   ChatRoomMessageRefPath(ShipmentKey, ChatRoomKey).orderBy('ChatRoomMessageTimestamp', 'desc');
+
+const ChatRoomPrivateShareDataRefPath = (ShipmentKey, ChatRoomKey) =>
+  FirebaseApp.firestore()
+    .collection('Shipment')
+    .doc(ShipmentKey)
+    .collection('ChatRoom')
+    .doc(ChatRoomKey)
+    .collection('ChatRoomPrivateShareData');
 
 // Example Data CreateChatMessage
 
@@ -79,3 +87,14 @@ export const GetChatRoomList = ShipmentKey => collection(ShipmentRefPath(Shipmen
 
 export const GetChatRoomDetail = (ShipmentKey, ChatRoomKey) =>
   doc(ChatRoomRefPath(ShipmentKey, ChatRoomKey));
+
+// eslint-disable-next-line max-len
+export const GetChatRoomPrivateMasterDataDetail = (ShipmentKey, ChatRoomKey, GroupType) =>
+  doc(ChatRoomPrivateShareDataRefPath(ShipmentKey, ChatRoomKey).doc(GroupType)).pipe(take(1));
+
+export const UpdateShipmetMasterDataDetail = (ShipmentKey, ChatRoomKey, GroupType, Data) =>
+  from(
+    ChatRoomPrivateShareDataRefPath(ShipmentKey, ChatRoomKey)
+      .doc(GroupType)
+      .update(Data)
+  );
