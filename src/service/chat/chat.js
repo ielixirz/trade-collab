@@ -94,4 +94,18 @@ export const UpdateShipmetMasterDataDetail = (ShipmentKey, ChatRoomKey, GroupTyp
     .update(Data),
 );
 
-// export const AddChatRoomMember = (ShipmentKey, ChatRoomKey, Data) =>
+/* ex. AddChatRoomMember
+
+{
+  ChatRoomMemberUserKey (string)
+  ChatRoomMemberName (string)
+  ChatRoomMemberEmail (string)
+  ChatRoomMemberName (string)
+  ChatRoomMemberImageURL (string)
+  ChatRoomMemberRole (string)
+  ChatRoomMemberCompanyName (string)
+  ChatRoomMemberCompanyKey (string)
+}
+*/
+
+export const AddChatRoomMember = (ShipmentKey, ChatRoomKey, Data) => from(ChatRoomMemberRefPath(ShipmentKey, ChatRoomKey, Data));
