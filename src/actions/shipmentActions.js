@@ -6,7 +6,7 @@ let shipmentsObservable = GetShipmentList('', '', 'asc').subscribe();
 export const fetchShipments = (typeStatus: any) => dispatch => {
   let shipments = [];
   shipmentsObservable.unsubscribe();
-  shipmentsObservable = GetShipmentList(typeStatus, '', 'asc', 10).subscribe({
+  shipmentsObservable = GetShipmentList(typeStatus, '', 'asc', 20).subscribe({
     next: res => {
       shipments = _.map(res, item => ({
         uid: item.id,

@@ -603,6 +603,7 @@ class Shipment extends Component {
           id="content"
           className="boo"
           onScroll={e => {
+            console.log(e);
             const obj = document.getElementById('content');
             const isTrigger = obj.scrollTop === obj.scrollHeight - obj.offsetHeight;
             if (isTrigger) {
@@ -655,8 +656,7 @@ const styles = {
   title: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#707070',
-    cursor: 'pointer'
+    color: '#707070'
   },
   lineTab: {
     color: '#EAEAEA',
