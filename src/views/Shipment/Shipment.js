@@ -301,7 +301,7 @@ class Shipment extends Component {
                 </UncontrolledDropdown>
               </span>
             </div>
-
+            <br />
             <Form>
               {role > 2 ? (
                 <Row form>
