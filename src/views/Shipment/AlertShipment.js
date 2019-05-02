@@ -1,6 +1,7 @@
 /* eslint react/no-multi-comp: 0, react/prop-types: 0 */
 import React from 'react';
-import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
+import { Popover, PopoverBody } from 'reactstrap';
+import { EditShipment } from '../../service/shipment/shipment';
 
 export class AlertShipment extends React.Component {
   constructor(props) {
@@ -18,6 +19,30 @@ export class AlertShipment extends React.Component {
     });
   }
 
+  renderUnpin = () => (
+    <span
+      onClick={() => {
+        EditShipment(this.props.item.uid, {
+          Pin: false,
+        });
+      }}
+    >
+      unPin
+    </span>
+  );
+
+  renderPin = () => (
+    <span
+      onClick={() => {
+        EditShipment(this.props.item.uid, {
+          Pin: true,
+        });
+      }}
+    >
+      Pin
+    </span>
+  );
+
   render() {
     return (
       <div>
@@ -31,7 +56,7 @@ export class AlertShipment extends React.Component {
           toggle={this.toggle}
         >
           <PopoverBody>
-            <span onClick="">Pin</span>
+            {this.props.item.pin ? this.renderUnpin() : this.renderPin()}
             <br />
             <span>Replicate Shipment</span>
           </PopoverBody>

@@ -57,8 +57,19 @@ export class NoteShipment extends React.Component {
   render() {
     return (
       <span>
-        <span id={`Popover-${this.props.id}`}>
-          <i className="fa fa-tag fa-lg" />
+        <span
+          id={`Popover-${this.props.id}`}
+          onClick={() => {
+            EditShipment(this.props.item.uid, {
+              seen: true,
+            });
+          }}
+        >
+          {this.props.item.seen ? (
+            <i className="fa fa-tag fa-lg" />
+          ) : (
+            <i className="fa fa-tag fa-lg" style={{ opacity: 0.5 }} />
+          )}
         </span>
         <Popover
           placement="bottom"

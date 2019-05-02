@@ -225,8 +225,10 @@ div.seenby {
   display: none;
 }
 .showdot {
-  width: 80px;
+  width: 10px;
   height: 20px;
+  margin-left: -10px;
+  margin-top: -20px;
 }
 .showdot:hover .showthatdot {
   display: block;

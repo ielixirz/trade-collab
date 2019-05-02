@@ -15,7 +15,7 @@ import {
   Col,
   Button,
   UncontrolledPopover,
-  FormGroup,
+  Badge,
   Label,
   Input,
   PopoverBody,
@@ -199,9 +199,16 @@ class TableShipment extends React.Component {
 
   renderAlertComponent(index, item) {
     return (
-      <div className="showdot">
-        <div className="showthatdot">
-          <AlertShipment key={index} item={item} id={index} />
+      <div>
+        {item.seen ? (
+          <Badge color="danger" pill style={{ marginBottom: -15 }}>
+            2
+          </Badge>
+        ) : null}
+        <div className="showdot">
+          <div className="showthatdot">
+            <AlertShipment key={index} item={item} id={index} />
+          </div>
         </div>
       </div>
     );
