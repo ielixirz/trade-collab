@@ -44,7 +44,6 @@
                 ChatRoomType (string)
                 ChatRoomFileLink (Array<object>)
                     [ {FileName : "FileA.jpg" , FileUrl : "'https://firebasestorage.googleapis.com'" , FileCreateTimestamp : "123123124124124" , FilePath : "/Shipment/{ShipmentKey}/ShipmentFile/{FileKey}" }]
-                ChatRoomMember ()
                 ChatRoomParticipleNotificationToken (Array<string>)
                 ChatRoomShareDataList (Array<string>)
                     ['Shipper','ShipmentDetail']
@@ -62,6 +61,16 @@
                         ChatRoomMessageFileUrl (string) *Optional
                         ChatRoomMessageType (string) ['Text','Emoji','Image']
                         ChatRoomMessageTimestamp (timestamp)
+                +ChatRoomMember
+                    >ChatRoomMemberKey
+                        ChatRoomMemberUserKey (string)
+                        ChatRoomMemberName (string)
+                        ChatRoomMemberEmail (string)
+                        ChatRoomMemberName (string)
+                        ChatRoomMemberImageURL (string)
+                        ChatRoomMemberRole (string)
+                        ChatRoomMemberCompanyName (string)
+                        ChatRoomMemberCompanyKey (string)
 
         +ShipmentFile
             >FileKey
