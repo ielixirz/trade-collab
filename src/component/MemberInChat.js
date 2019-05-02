@@ -49,7 +49,7 @@ class MemberInChat extends Component {
               </span>
             )}
             <span onClick={this.toggle} style={{}}>
-              {this.props.title}
+              <span style={{ cursor: 'pointer' }}>{this.props.title}</span>
             </span>
           </Col>
           <Col xs="6" sm="3">
