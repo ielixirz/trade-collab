@@ -1,7 +1,8 @@
 import React from 'react';
 import {
-  Button, Popover, PopoverHeader, PopoverBody,
+  Input, Popover, PopoverHeader, PopoverBody,
 } from 'reactstrap';
+import { EditShipment } from '../../service/shipment/shipment';
 
 export class NoteShipment extends React.Component {
   constructor(props) {
@@ -10,14 +11,47 @@ export class NoteShipment extends React.Component {
     this.toggle = this.toggle.bind(this);
     this.state = {
       popoverOpen: false,
+      value: this.props.item.ShipmentPriceDescription,
+      isInEditMode: false,
     };
   }
+
+  changeEditMode = () => {
+    this.setState({
+      isInEditMode: !this.state.isInEditMode,
+    });
+  };
 
   toggle() {
     this.setState({
       popoverOpen: !this.state.popoverOpen,
     });
   }
+
+  renderEditView = () => (
+    <div>
+      <input
+        type="text"
+        defaultValue={this.state.value}
+        ref="theTextInput"
+        onChange={(e) => {
+          this.setState({
+            value: this.refs.theTextInput.value,
+          });
+        }}
+        onKeyDown={(button) => {
+          if (button.key === 'Enter') {
+            EditShipment(this.props.item.uid, {
+              ShipmentPriceDescription: this.state.value,
+            });
+            this.setState({ isInEditMode: false });
+          }
+        }}
+      />
+    </div>
+  );
+
+  renderDefaultView = () => <div onDoubleClick={this.changeEditMode}>{this.state.value}</div>;
 
   render() {
     return (
@@ -35,7 +69,18 @@ export class NoteShipment extends React.Component {
             <span style={{ textDecorationLine: 'underline' }}>Price and Description of goods</span>
           </PopoverHeader>
           <PopoverBody>
-            {this.props.item}
+            {/* <Input
+              value={this.state.roomeditor.roomName}
+              type="text"
+              onKeyDown={(button) => {
+                if (button.key === 'Enter') {
+                  EditShipment(this.props.item.uid, {
+                    ShipmentPriceDescription: value,
+                  });
+                }
+              }}
+            /> */}
+            {this.state.isInEditMode ? this.renderEditView() : this.renderDefaultView()}
             <br />
             <div className="seenby">
               <span style={{ color: '#707070', fontSize: 9 }}>seen by A.B.C</span>

@@ -189,10 +189,10 @@ class TableShipment extends React.Component {
     );
   }
 
-  renderDescription(index, des) {
+  renderDescription(index, item) {
     return (
       <div>
-        <NoteShipment key={index} item={des} id={index} />
+        <NoteShipment key={index} item={item} id={index} />
       </div>
     );
   }
@@ -218,7 +218,7 @@ class TableShipment extends React.Component {
           Product: _.get(item, 'ShipmentProductName', ''),
           ETD: new Date(etd.seconds * 1000).toLocaleString(),
           ETA: new Date(eta.seconds * 1000).toLocaleString(),
-          '': this.renderDescription(index, _.get(item, 'ShipmentPriceDescription', '')),
+          '': this.renderDescription(index, item),
           Status: this.renderStatusComponent(item),
         };
       });

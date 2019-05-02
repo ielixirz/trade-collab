@@ -35,6 +35,14 @@ export const createDataTable = (input) => {
         headerStyle: () => ({ width: '50px' }),
       };
     }
+    if (item === 'id') {
+      return {
+        text: _.get(LABEL, item, item),
+        dataField: item,
+        sort: true,
+        hidden: true,
+      };
+    }
     return {
       text: _.get(LABEL, item, item),
       dataField: item,
