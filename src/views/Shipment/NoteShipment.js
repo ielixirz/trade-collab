@@ -78,8 +78,7 @@ export class NoteShipment extends React.Component {
           toggle={this.toggle}
         >
           <PopoverBody>
-            <span style={{ textDecorationLine: 'underline' }}>Price and Description of goods</span>
-            <br />
+            <p style={{ textDecorationLine: 'underline' }}>Price and Description of goods</p>
             {this.state.isInEditMode ? this.renderEditView() : this.renderDefaultView()}
             <br />
             <div className="seenby">
