@@ -12,29 +12,25 @@ img {
   width: 40%;
   border-right: 1px solid #c4c4c4;
 }
-.right{
-  float:right;
+.right {
+  float: right;
 }
 
-.left{
-  float:left;
+.left {
+  float: left;
 }
-
-
-
 
 .btn-yterminal {
-
-
   color: #23282c;
   background-color: #ffffff;
   border-color: #c8ced3;
   opacity: 0.5;
 }
-.btn.disabled, .btn:disabled{
+.btn.disabled,
+.btn:disabled {
   color: #23282c;
   background-color: #ffffff;
-  border-color: #16A085;
+  border-color: #16a085;
   opacity: 1;
 }
 .inbox_msg {
@@ -47,8 +43,8 @@ img {
 }
 .modal-content {
   width: 650px;
-  padding-right:5px;
-  padding-left:5px
+  padding-right: 5px;
+  padding-left: 5px;
 }
 .recent_heading {
   float: left;
@@ -243,6 +239,10 @@ div.boo {
 }
 
 p {
+  cursor: pointer;
+}
+
+i {
   cursor: pointer;
 }
 
