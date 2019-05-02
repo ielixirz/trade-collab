@@ -40,7 +40,17 @@ class MemberModal extends React.Component {
 
     return (
       <div>
-        <Button color="info" onClick={this.toggle}>
+        <Button
+          className="invite-btn"
+          style={{
+            marginLeft: '2rem',
+            marginRight: '1rem',
+            color: 'white',
+            backgroundColor: '#16A085',
+          }}
+          onClick={this.toggle}
+        >
+          <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
           {this.props.buttonLabel}
         </Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
