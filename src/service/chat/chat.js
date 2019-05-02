@@ -4,37 +4,39 @@ import { from } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { FirebaseApp } from '../firebase';
 
-const ShipmentRefPath = ShipmentKey =>
-  FirebaseApp.firestore()
-    .collection('Shipment')
-    .doc(ShipmentKey)
-    .collection('ChatRoom');
+const ShipmentRefPath = ShipmentKey => FirebaseApp.firestore()
+  .collection('Shipment')
+  .doc(ShipmentKey)
+  .collection('ChatRoom');
 
-const ChatRoomRefPath = (ShipmentKey, ChatRoomKey) =>
-  FirebaseApp.firestore()
-    .collection('Shipment')
-    .doc(ShipmentKey)
-    .collection('ChatRoom')
-    .doc(ChatRoomKey);
+const ChatRoomRefPath = (ShipmentKey, ChatRoomKey) => FirebaseApp.firestore()
+  .collection('Shipment')
+  .doc(ShipmentKey)
+  .collection('ChatRoom')
+  .doc(ChatRoomKey);
 
-const ChatRoomMessageRefPath = (ShipmentKey, ChatRoomKey) =>
-  FirebaseApp.firestore()
-    .collection('Shipment')
-    .doc(ShipmentKey)
-    .collection('ChatRoom')
-    .doc(ChatRoomKey)
-    .collection('ChatRoomMessage');
+const ChatRoomMessageRefPath = (ShipmentKey, ChatRoomKey) => FirebaseApp.firestore()
+  .collection('Shipment')
+  .doc(ShipmentKey)
+  .collection('ChatRoom')
+  .doc(ChatRoomKey)
+  .collection('ChatRoomMessage');
 
-const ChatRoomMessageRefPathOrderByNewerTimestamp = (ShipmentKey, ChatRoomKey) =>
-  ChatRoomMessageRefPath(ShipmentKey, ChatRoomKey).orderBy('ChatRoomMessageTimestamp', 'desc');
+const ChatRoomMessageRefPathOrderByNewerTimestamp = (ShipmentKey, ChatRoomKey) => ChatRoomMessageRefPath(ShipmentKey, ChatRoomKey).orderBy('ChatRoomMessageTimestamp', 'desc');
 
-const ChatRoomPrivateShareDataRefPath = (ShipmentKey, ChatRoomKey) =>
-  FirebaseApp.firestore()
-    .collection('Shipment')
-    .doc(ShipmentKey)
-    .collection('ChatRoom')
-    .doc(ChatRoomKey)
-    .collection('ChatRoomPrivateShareData');
+const ChatRoomPrivateShareDataRefPath = (ShipmentKey, ChatRoomKey) => FirebaseApp.firestore()
+  .collection('Shipment')
+  .doc(ShipmentKey)
+  .collection('ChatRoom')
+  .doc(ChatRoomKey)
+  .collection('ChatRoomPrivateShareData');
+
+const ChatRoomMemberRefPath = (ShipmentKey, ChatRoomKey) => FirebaseApp.firestore()
+  .collection('Shipment')
+  .doc(ShipmentKey)
+  .collection('ChatRoom')
+  .doc(ChatRoomKey)
+  .collection('ChatRoomMember');
 
 // Example Data CreateChatMessage
 
@@ -47,13 +49,11 @@ const ChatRoomPrivateShareDataRefPath = (ShipmentKey, ChatRoomKey) =>
 }
 */
 
-export const CreateChatMessage = (ShipmentKey, ChatRoomKey, Data) =>
-  from(ChatRoomMessageRefPath(ShipmentKey, ChatRoomKey).add(Data));
+export const CreateChatMessage = (ShipmentKey, ChatRoomKey, Data) => from(ChatRoomMessageRefPath(ShipmentKey, ChatRoomKey).add(Data));
 
-export const GetChatMessage = (ShipmentKey, ChatRoomKey, LimitNumber = 25) =>
-  collection(
-    ChatRoomMessageRefPathOrderByNewerTimestamp(ShipmentKey, ChatRoomKey).limit(LimitNumber)
-  ).pipe(map(docs => docs.map(d => d.data())));
+export const GetChatMessage = (ShipmentKey, ChatRoomKey, LimitNumber = 25) => collection(
+  ChatRoomMessageRefPathOrderByNewerTimestamp(ShipmentKey, ChatRoomKey).limit(LimitNumber),
+).pipe(map(docs => docs.map(d => d.data())));
 
 // Example Data CreateChatRoom
 
@@ -73,28 +73,25 @@ export const GetChatMessage = (ShipmentKey, ChatRoomKey, LimitNumber = 25) =>
 
 export const CreateChatRoom = (ShipmentKey, Data) => from(ShipmentRefPath(ShipmentKey).add(Data));
 
-export const EditChatRoom = (ShipmentKey, ChatRoomKey, Data) =>
-  from(ChatRoomRefPath(ShipmentKey, ChatRoomKey).update(Data));
+export const EditChatRoom = (ShipmentKey, ChatRoomKey, Data) => from(ChatRoomRefPath(ShipmentKey, ChatRoomKey).update(Data));
 
 /* Example Data AddChatRoomFileLink
   [ {FileName : "FileA.jpg" , FileUrl : "'https://firebasestorage.googleapis.com'" , FileCreateTimestamp : "123123124124124" , FilePath : "/Shipment/{ShipmentKey}/ShipmentFile/{FileKey}" }]
 */
 
-export const EditChatRoomFileLink = (ShipmentKey, ChatRoomKey, Data) =>
-  from(ChatRoomRefPath(ShipmentKey, ChatRoomKey).set({ ChatRoomFileLink: Data }, { merge: true }));
+export const EditChatRoomFileLink = (ShipmentKey, ChatRoomKey, Data) => from(ChatRoomRefPath(ShipmentKey, ChatRoomKey).set({ ChatRoomFileLink: Data }, { merge: true }));
 
 export const GetChatRoomList = ShipmentKey => collection(ShipmentRefPath(ShipmentKey));
 
-export const GetChatRoomDetail = (ShipmentKey, ChatRoomKey) =>
-  doc(ChatRoomRefPath(ShipmentKey, ChatRoomKey));
+export const GetChatRoomDetail = (ShipmentKey, ChatRoomKey) => doc(ChatRoomRefPath(ShipmentKey, ChatRoomKey));
 
 // eslint-disable-next-line max-len
-export const GetChatRoomPrivateMasterDataDetail = (ShipmentKey, ChatRoomKey, GroupType) =>
-  doc(ChatRoomPrivateShareDataRefPath(ShipmentKey, ChatRoomKey).doc(GroupType)).pipe(take(1));
+export const GetChatRoomPrivateMasterDataDetail = (ShipmentKey, ChatRoomKey, GroupType) => doc(ChatRoomPrivateShareDataRefPath(ShipmentKey, ChatRoomKey).doc(GroupType)).pipe(take(1));
 
-export const UpdateShipmetMasterDataDetail = (ShipmentKey, ChatRoomKey, GroupType, Data) =>
-  from(
-    ChatRoomPrivateShareDataRefPath(ShipmentKey, ChatRoomKey)
-      .doc(GroupType)
-      .update(Data)
-  );
+export const UpdateShipmetMasterDataDetail = (ShipmentKey, ChatRoomKey, GroupType, Data) => from(
+  ChatRoomPrivateShareDataRefPath(ShipmentKey, ChatRoomKey)
+    .doc(GroupType)
+    .update(Data),
+);
+
+// export const AddChatRoomMember = (ShipmentKey, ChatRoomKey, Data) =>
