@@ -14,7 +14,6 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import TableShipment from './TableShipment';
 import { fetchShipments, fetchMoreShipments } from '../../actions/shipmentActions';
-import MemberModal from '../../component/MemberModal';
 
 class Shipment extends Component {
   constructor(props) {
@@ -124,7 +123,6 @@ class Shipment extends Component {
               <i className="fa fa-plus-circle" style={{ color: 'white' }} />
               <span style={{ fontWeight: 'bold', color: 'white' }}>Create New Shipment</span>
             </Button>
-            <MemberModal />
           </Col>
         </Nav>
         <TabContent
