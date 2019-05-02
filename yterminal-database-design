@@ -1,7 +1,5 @@
 +Shipment
     >ShipmentKey
-        ShipmentReference (array<object>)
-            [{ "RefOwner" : "Seller" , "RefID" : "Ref1234" , "RefTimestampUpdate" : "1234567673242"  }]
         ShipmentSellerCompanyName (string)
         ShipmentSourceLocation (string)
         ShipmentBuyerCompanyName (string)
@@ -20,6 +18,11 @@
             [{ UserKey : "123" , Premission : "ShipmentOwner"  }, { UserKey : "123" , Premission : "ShipmentOwner"  } , { UserKey : "123" , Premission : "See Only"  } ]
         ShipmentShareList (array<string>)
             ['Shipper','ShipmentDetail','Consignee']
+        +ShipmentReference (array<object>)
+            >ShipmentReferenceKey
+                ShipmentReferenceID (string)
+                ShipmentReferenceCompanyName (string)
+                ShipmentReferenceCompanyKey (string)
         +ShipmentShareData
                 >Shipper
                     ShipperCompanyName (string)
@@ -38,9 +41,9 @@
         +ChatRoom
             >ChatRoomKey
                 ChatRoomName (string)
+                ChatRoomType (string)
                 ChatRoomFileLink (Array<object>)
                     [ {FileName : "FileA.jpg" , FileUrl : "'https://firebasestorage.googleapis.com'" , FileCreateTimestamp : "123123124124124" , FilePath : "/Shipment/{ShipmentKey}/ShipmentFile/{FileKey}" }]
-                ChatRoomMember ()
                 ChatRoomParticipleNotificationToken (Array<string>)
                 ChatRoomShareDataList (Array<string>)
                     ['Shipper','ShipmentDetail']
@@ -58,6 +61,16 @@
                         ChatRoomMessageFileUrl (string) *Optional
                         ChatRoomMessageType (string) ['Text','Emoji','Image']
                         ChatRoomMessageTimestamp (timestamp)
+                +ChatRoomMember
+                    >ChatRoomMemberKey
+                        ChatRoomMemberUserKey (string)
+                        ChatRoomMemberName (string)
+                        ChatRoomMemberEmail (string)
+                        ChatRoomMemberName (string)
+                        ChatRoomMemberImageURL (string)
+                        ChatRoomMemberRole (string)
+                        ChatRoomMemberCompanyName (string)
+                        ChatRoomMemberCompanyKey (string)
 
         +ShipmentFile
             >FileKey

@@ -1,20 +1,46 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable filenames/match-regex */
 import React, { Component } from 'react';
 
 import {
-  Collapse, CardBody, Card, Row, Col
+  Collapse, CardBody, Card, Row, Col,
 } from 'reactstrap';
 import FileList from '../../component/FileList';
 
+const styles = {
+  button: {},
+  boxColor: { fontSize: 20, color: 'gold', marginRight: 7 },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#707070',
+  },
+  arrow: {
+    fontSize: 20,
+    marginLeft: 5,
+    color: '#707070',
+  },
+  status: {
+    color: '#58CADB',
+  },
+  card: {
+    marginBottom: '0.2rem',
+    marginRight: '0.2rem',
+  },
+};
+
 class FileSide extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       collapse: false,
     };
     this.triggerCollapse = this.triggerCollapse.bind(this);
   }
+
   triggerCollapse() {
-    this.setState(state => ({ collapse: !state.collapse }))
+    this.setState(state => ({ collapse: !state.collapse }));
   }
 
   render() {
@@ -25,47 +51,34 @@ class FileSide extends Component {
             <Row>
               <Col xs="10" className="text-left">
                 <span style={styles.boxColor}>
-                  <i className="fa fa-file"></i></span>
-                <span style={styles.title}>Shared Files</span></Col>
+                  <i className="fa fa-file" />
+                </span>
+                <span style={styles.title}>Shared Files</span>
+              </Col>
               <Col xs="2" className="text-right">
-                {this.state.collapse ?
-                  <span style={styles.arrow}><i className="fa fa-angle-down"></i></span> :
-                  <span style={styles.arrow}><i className="fa fa-angle-right"></i></span>
-                }
+                {this.state.collapse ? (
+                  <span style={styles.arrow}>
+                    <i className="fa fa-angle-down" />
+                  </span>
+                ) : (
+                  <span style={styles.arrow}>
+                    <i className="fa fa-angle-right" />
+                  </span>
+                )}
               </Col>
             </Row>
             <Collapse isOpen={this.state.collapse}>
-              <FileList chatFile={this.props.chatFile} />
+              <FileList
+                chatFiles={this.props.chatFile}
+                shipmentKey={this.props.shipmentKey}
+                chatroomKey={this.props.chatroomKey}
+              />
             </Collapse>
           </CardBody>
-
         </Card>
-
       </div>
-    )
+    );
   }
 }
 
-const styles = {
-  button: {},
-  boxColor: { fontSize: 20, color: 'gold', marginRight: 7 },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#707070'
-  },
-  arrow: {
-    fontSize: 20,
-    marginLeft: 5,
-    color: '#707070'
-  },
-  status: {
-    color: '#58CADB'
-  },
-  card: {
-    marginBottom: '0.2rem',
-    marginRight: '0.2rem'
-  }
-}
-
-export default FileSide
+export default FileSide;

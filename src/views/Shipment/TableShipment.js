@@ -1,35 +1,40 @@
 import React from 'react';
-import './Chat.css';
+import './Shipment.css';
 
 import _ from 'lodash';
 import BootstrapTable from 'react-bootstrap-table-next';
 
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
-import paginationFactory from 'react-bootstrap-table2-paginator';
+
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
+import { fetchMoreShipments, fetchShipments } from '../../actions/shipmentActions';
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import Select from 'react-select';
-
 import {
   Row,
   Col,
   Button,
   UncontrolledPopover,
-  FormGroup,
+  Badge,
   Label,
   Input,
   PopoverBody,
   InputGroup,
   InputGroupAddon,
-  InputGroupText
+  InputGroupText,
+  TabContent
 } from 'reactstrap';
+
+import { NoteShipment } from './NoteShipment';
+import { AlertShipment } from './AlertShipment';
 import { createDataTable } from '../../utils/tool';
 import { EditShipment } from '../../service/shipment/shipment';
+import { connect } from 'react-redux';
 
 const { SearchBar } = Search;
 
-export default class TableShipment extends React.Component {
+class TableShipment extends React.Component {
   data = {
     products: [
       {
@@ -122,9 +127,14 @@ export default class TableShipment extends React.Component {
       }
     ]
   };
+  componentDidMount() {
+    let table = document.getElementById('tableshipment');
+    table.setAttribute('onScroll', e => {
+      console.log(e);
+    });
+  }
 
   renderRefComponent(index, ref) {
-    console.log(ref);
     return (
       <div>
         <p id={`popover${index}`}>{ref.RefID}</p>
@@ -166,6 +176,7 @@ export default class TableShipment extends React.Component {
       <div>
         <Input
           type="select"
+          value={item.ShipmentStatus}
           onChange={e => {
             const value = e.target.value;
             EditShipment(item.uid, {
@@ -173,31 +184,39 @@ export default class TableShipment extends React.Component {
             });
           }}
         >
-          <option value="Planning" selected={item.ShipmentStatus === 'Planning' ? true : ''}>
-            Planning
-          </option>
-          <option
-            value="Order Confirmed"
-            selected={item.ShipmentStatus === 'Order Confirmed' ? true : ''}
-          >
-            Order Confirmed
-          </option>
-          <option value="In-Transit" selected={item.ShipmentStatus === 'In-Transit' ? true : ''}>
-            In-Transit
-          </option>
-          <option value="Delayed" selected={item.ShipmentStatus === 'Delayed' ? true : ''}>
-            Delayed
-          </option>
-          <option value="Delivered" selected={item.ShipmentStatus === 'Delivered' ? true : ''}>
-            Delivered
-          </option>
-          <option value="Cancelled" selected={item.ShipmentStatus === 'Cancelled' ? true : ''}>
-            Cancelled
-          </option>
-          <option value="Completed" selected={item.ShipmentStatus === 'Completed' ? true : ''}>
-            Completed
-          </option>
+          <option value="Planning">Planning</option>
+          <option value="Order Confirmed">Order Confirmed</option>
+          <option value="In-Transit">In-Transit</option>
+          <option value="Delayed">Delayed</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Completed">Completed</option>
         </Input>
+      </div>
+    );
+  }
+
+  renderDescription(index, item) {
+    return (
+      <div>
+        <NoteShipment key={index} item={item} id={index} />
+      </div>
+    );
+  }
+
+  renderAlertComponent(index, item) {
+    return (
+      <div>
+        {item.seen ? (
+          <Badge color="danger" pill style={{ marginBottom: -15 }}>
+            2
+          </Badge>
+        ) : null}
+        <div className="showdot">
+          <div className="showthatdot">
+            <AlertShipment key={index} item={item} id={index} />
+          </div>
+        </div>
       </div>
     );
   }
@@ -215,15 +234,17 @@ export default class TableShipment extends React.Component {
       input = _.map(this.props.input, (item, index) => {
         const etd = _.get(item, 'ShipmentETD', 0);
         const eta = _.get(item, 'ShipmentETAPort', 0);
-
         return {
+          alert: this.renderAlertComponent(index, item),
           Ref: this.renderRefComponent(index, _.get(item, 'ShipmentReference', 'input your Ref')),
           Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
           Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
           Product: _.get(item, 'ShipmentProductName', ''),
           ETD: new Date(etd.seconds * 1000).toLocaleString(),
           ETA: new Date(eta.seconds * 1000).toLocaleString(),
-          Status: this.renderStatusComponent(item)
+          '': this.renderDescription(index, item),
+          Status: this.renderStatusComponent(item),
+          uid: _.get(item, 'uid', '')
         };
       });
       input = createDataTable(input);
@@ -273,7 +294,7 @@ export default class TableShipment extends React.Component {
     const MySearch = props => {
       let input;
       const handleClick = event => {
-        let query = event.target.value;
+        const query = event.target.value;
         props.onSearch(query);
       };
       return (
@@ -302,6 +323,21 @@ export default class TableShipment extends React.Component {
           </InputGroup>
         </div>
       );
+    };
+    const rowEvents = {
+      onClick: (e, row, rowIndex) => {
+        console.log('targetrow', e.target.tagName);
+
+        if (
+          e.target.tagName !== 'SELECT' &&
+          e.target.tagName !== 'I' &&
+          e.target.tagName !== 'DIV' &&
+          e.target.tagName !== 'INPUT' &&
+          e.target.tagName !== 'P'
+        ) {
+          window.location.replace(`#/chat/${row.uid}`);
+        }
+      }
     };
     return (
       <ToolkitProvider keyField="id" data={data} columns={columns} search>
@@ -332,11 +368,11 @@ export default class TableShipment extends React.Component {
             </Row>
             <div className="table">
               <BootstrapTable
+                id={'tableshipment'}
                 rowStyle={{ textAlign: 'left' }}
                 {...props.baseProps}
-                pagination={paginationFactory(options)}
                 bordered={false}
-                wrapperClasses="boo"
+                rowEvents={rowEvents}
               />
             </div>
           </div>
@@ -345,3 +381,10 @@ export default class TableShipment extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({});
+
+export default connect(
+  mapStateToProps,
+  { fetchMoreShipments }
+)(TableShipment);

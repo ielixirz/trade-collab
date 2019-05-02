@@ -1,33 +1,37 @@
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable filenames/match-regex */
 import React, { Component, Suspense } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { Container } from 'reactstrap';
+import { connect } from 'react-redux';
 
-import {
-  AppAside,
-  AppBreadcrumb,
-  AppFooter,
-  AppHeader,
-  AppSidebar,
-  AppSidebarFooter,
-  AppSidebarForm,
-  AppSidebarHeader,
-  AppSidebarMinimizer,
-  AppSidebarNav
-} from '@coreui/react';
+import { AppAside, AppHeader } from '@coreui/react';
 // sidebar nav config
-import navigation from '../../_nav';
 // routes config
 import routes from '../../routes';
 import './DefaultLayout.css';
 
+import { getUserInfoDetail } from '../../actions/userActions';
+import { getProlfileList } from '../../actions/profileActions';
+
 const DefaultAside = React.lazy(() => import('./DefaultAside'));
-const DefaultFooter = React.lazy(() => import('./DefaultFooter'));
 const DefaultHeader = React.lazy(() => import('./DefaultHeader'));
 
 class DefaultLayout extends Component {
-  loading = () => (
-    <div className="animated fadeIn pt-1 text-center">Loading...</div>
-  );
+  componentDidMount() {
+    /* THIS PART IS WORK IN PROGRESS, NEED TO REVISE TO ENABLE FULLY FUNCTIONAL FOR MULTIPLE PROFILE SELECTION */
+    try {
+      this.props.getUserInfoDetail(this.props.auth.uid);
+      this.props.getProlfileList(this.props.auth.uid);
+    } catch (e) {
+      this.props.history.push('/login');
+    }
+  }
+
+  loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>;
 
   signOut(e) {
     e.preventDefault();
@@ -47,8 +51,8 @@ class DefaultLayout extends Component {
             <Container fluid>
               <Suspense fallback={this.loading()}>
                 <Switch>
-                  {routes.map((route, idx) => {
-                    return route.component ? (
+                  {routes.map((route, idx) =>
+                    route.component ? (
                       <Route
                         key={idx}
                         path={route.path}
@@ -56,8 +60,8 @@ class DefaultLayout extends Component {
                         name={route.name}
                         render={props => <route.component {...props} />}
                       />
-                    ) : null;
-                  })}
+                    ) : null
+                  )}
                 </Switch>
               </Suspense>
             </Container>
@@ -73,4 +77,14 @@ class DefaultLayout extends Component {
   }
 }
 
-export default DefaultLayout;
+const mapStateToProps = state => {
+  const { authReducer } = state;
+  return {
+    auth: authReducer.user
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  { getUserInfoDetail, getProlfileList }
+)(DefaultLayout);

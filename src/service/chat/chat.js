@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { collection, doc } from 'rxfire/firestore';
 import { from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { FirebaseApp } from '../firebase';
 
 const ShipmentRefPath = ShipmentKey => FirebaseApp.firestore()
@@ -22,7 +22,21 @@ const ChatRoomMessageRefPath = (ShipmentKey, ChatRoomKey) => FirebaseApp.firesto
   .doc(ChatRoomKey)
   .collection('ChatRoomMessage');
 
-const ChatRoomMessageRefPathOrderByNewerTimestamp = (ShipmentKey, ChatRoomKey) => ChatRoomMessageRefPath(ShipmentKey, ChatRoomKey).orderBy('ChatRoomMessageTimestamp', 'asc');
+const ChatRoomMessageRefPathOrderByNewerTimestamp = (ShipmentKey, ChatRoomKey) => ChatRoomMessageRefPath(ShipmentKey, ChatRoomKey).orderBy('ChatRoomMessageTimestamp', 'desc');
+
+const ChatRoomPrivateShareDataRefPath = (ShipmentKey, ChatRoomKey) => FirebaseApp.firestore()
+  .collection('Shipment')
+  .doc(ShipmentKey)
+  .collection('ChatRoom')
+  .doc(ChatRoomKey)
+  .collection('ChatRoomPrivateShareData');
+
+const ChatRoomMemberRefPath = (ShipmentKey, ChatRoomKey) => FirebaseApp.firestore()
+  .collection('Shipment')
+  .doc(ShipmentKey)
+  .collection('ChatRoom')
+  .doc(ChatRoomKey)
+  .collection('ChatRoomMember');
 
 // Example Data CreateChatMessage
 
@@ -37,9 +51,9 @@ const ChatRoomMessageRefPathOrderByNewerTimestamp = (ShipmentKey, ChatRoomKey) =
 
 export const CreateChatMessage = (ShipmentKey, ChatRoomKey, Data) => from(ChatRoomMessageRefPath(ShipmentKey, ChatRoomKey).add(Data));
 
-export const GetChatMessage = (ShipmentKey, ChatRoomKey) => collection(ChatRoomMessageRefPathOrderByNewerTimestamp(ShipmentKey, ChatRoomKey)).pipe(
-  map(docs => docs.map(d => d.data())),
-);
+export const GetChatMessage = (ShipmentKey, ChatRoomKey, LimitNumber = 25) => collection(
+  ChatRoomMessageRefPathOrderByNewerTimestamp(ShipmentKey, ChatRoomKey).limit(LimitNumber),
+).pipe(map(docs => docs.map(d => d.data())));
 
 // Example Data CreateChatRoom
 
@@ -70,3 +84,40 @@ export const EditChatRoomFileLink = (ShipmentKey, ChatRoomKey, Data) => from(Cha
 export const GetChatRoomList = ShipmentKey => collection(ShipmentRefPath(ShipmentKey));
 
 export const GetChatRoomDetail = (ShipmentKey, ChatRoomKey) => doc(ChatRoomRefPath(ShipmentKey, ChatRoomKey));
+
+// eslint-disable-next-line max-len
+export const GetChatRoomPrivateMasterDataDetail = (ShipmentKey, ChatRoomKey, GroupType) => doc(ChatRoomPrivateShareDataRefPath(ShipmentKey, ChatRoomKey).doc(GroupType)).pipe(take(1));
+
+export const UpdateShipmetMasterDataDetail = (ShipmentKey, ChatRoomKey, GroupType, Data) => from(
+  ChatRoomPrivateShareDataRefPath(ShipmentKey, ChatRoomKey)
+    .doc(GroupType)
+    .update(Data),
+);
+
+/* ex. AddChatRoomMember
+
+{
+  ChatRoomMemberUserKey (string)
+  ChatRoomMemberName (string)
+  ChatRoomMemberEmail (string)
+  ChatRoomMemberName (string)
+  ChatRoomMemberImageURL (string)
+  ChatRoomMemberRole (string)
+  ChatRoomMemberCompanyName (string)
+  ChatRoomMemberCompanyKey (string)
+}
+*/
+
+export const AddChatRoomMember = (ShipmentKey, ChatRoomKey, Data) => from(ChatRoomMemberRefPath(ShipmentKey, ChatRoomKey).add(Data));
+
+export const UpdateChatRoomMember = (ShipmentKey, ChatRoomKey, ChatRoomMemberKey, Data) => from(
+  ChatRoomMemberRefPath(ShipmentKey, ChatRoomKey)
+    .doc(ChatRoomMemberKey)
+    .set(Data, { merge: true }),
+);
+
+export const DeleteChatRoomMember = (ShipmentKey, ChatRoomKey, ChatRoomMemberKey) => from(
+  ChatRoomMemberRefPath(ShipmentKey, ChatRoomKey)
+    .doc(ChatRoomMemberKey)
+    .delete(),
+);

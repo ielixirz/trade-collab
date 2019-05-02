@@ -1,3 +1,6 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable filenames/match-regex */
+/* as it is component */
 import React, {
   useState, forwardRef, useRef, useImperativeHandle,
 } from 'react';
@@ -5,12 +8,14 @@ import {
   Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader,
 } from 'reactstrap';
 
-import { useDispatch } from 'redux-react-hook';
-import { PutFile, GetMetaDataFromStorageRefPath, GetURLFromStorageRefPath } from '../service/storage/managestorage';
+import {
+  PutFile,
+  GetMetaDataFromStorageRefPath,
+  GetURLFromStorageRefPath,
+} from '../service/storage/managestorage';
 import { EditChatRoomFileLink } from '../service/chat/chat';
 
 import { CreateShipmentFile } from '../service/shipment/shipment';
-
 
 const UploadModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
@@ -20,71 +25,14 @@ const UploadModal = forwardRef((props, ref) => {
   const [chatRoomKey, setChatRoomKey] = useState(null);
   const [message, setMessage] = useState('');
 
-  const dispatch = useDispatch();
-
   const messageRef = useRef();
 
   const toggle = () => {
     setModal(!modal);
   };
 
-  const upload = () => {
-    if (file !== null) {
-      const storageRefPath = `/Shipment/${shipmentKey}/${new Date().valueOf()}${fileName}`;
-      PutFile(storageRefPath, file).subscribe({
-        next: () => { console.log('TODO: UPLOAD PROGRESS'); },
-        error: (err) => {
-          console.log(err);
-          alert(err.message);
-        },
-        complete: (snapshot) => {
-          GetMetaDataFromStorageRefPath(storageRefPath)
-            .subscribe({
-              next: (metaData) => {
-                CreateShipmentFile(shipmentKey,
-                  {
-                    FileName: metaData.name,
-                    FileUrl: metaData.fullPath,
-                    FileCreateTimestamp: metaData.timeCreated,
-                    FileOwnerKey: 'mockKey',
-                    FileStorgeReference: metaData.fullPath,
-                  });
-
-                GetURLFromStorageRefPath(metaData.ref).subscribe({
-                  next: (url) => {
-                    const editedChatFile = props.chatFile;
-                    editedChatFile.push(
-                      {
-                        FileName: fileName,
-                        FileUrl: url,
-                        FileCreateTimestamp: metaData.timeCreated,
-                        FilePath: metaData.fullPath,
-                      },
-                    );
-                    EditChatRoomFileLink(shipmentKey, chatRoomKey, editedChatFile);
-                  },
-                  error: (err) => {
-                    console.log(err);
-                    alert(err.message);
-                  },
-                  complete: () => { 'TO DO LOG'; },
-                });
-              },
-              error: (err) => {
-                console.log(err);
-                alert(err.message);
-              },
-              complete: () => { 'TO DO LOG'; },
-            });
-        },
-      });
-    }
-    toggle();
-    props.sendMessage(chatRoomKey, shipmentKey, `${message} [ ${fileName} ]`);
-  };
-
   useImperativeHandle(ref, () => ({
-
+    // eslint-disable-next-line no-shadow
     triggerUploading(file, shipmentKey, chatRoomKey) {
       console.log(file);
       if (file !== undefined) {
@@ -95,8 +43,64 @@ const UploadModal = forwardRef((props, ref) => {
       setShipmentKey(shipmentKey);
       toggle();
     },
-
   }));
+
+  const upload = () => {
+    if (file !== null) {
+      const storageRefPath = `/Shipment/${shipmentKey}/${new Date().valueOf()}${fileName}`;
+      PutFile(storageRefPath, file).subscribe({
+        next: () => {
+          console.log('TODO: UPLOAD PROGRESS');
+        },
+        error: (err) => {
+          console.log(err);
+          alert(err.message);
+        },
+        complete: () => {
+          GetMetaDataFromStorageRefPath(storageRefPath).subscribe({
+            next: (metaData) => {
+              CreateShipmentFile(shipmentKey, {
+                FileName: metaData.name,
+                FileUrl: metaData.fullPath,
+                FileCreateTimestamp: metaData.timeCreated,
+                FileOwnerKey: 'mockKey',
+                FileStorgeReference: metaData.fullPath,
+              });
+
+              GetURLFromStorageRefPath(metaData.ref).subscribe({
+                next: (url) => {
+                  const editedChatFile = props.chatFile === undefined ? [] : props.chatFile;
+                  editedChatFile.push({
+                    FileName: fileName,
+                    FileUrl: url,
+                    FileCreateTimestamp: metaData.timeCreated,
+                    FilePath: metaData.fullPath,
+                  });
+                  EditChatRoomFileLink(shipmentKey, chatRoomKey, editedChatFile);
+                },
+                error: (err) => {
+                  console.log(err);
+                  alert(err.message);
+                },
+                complete: () => {
+                  'TO DO LOG';
+                },
+              });
+            },
+            error: (err) => {
+              console.log(err);
+              alert(err.message);
+            },
+            complete: () => {
+              'TO DO LOG';
+            },
+          });
+        },
+      });
+    }
+    toggle();
+    props.sendMessage(chatRoomKey, shipmentKey, `${message} [ ${fileName} ]`);
+  };
 
   const handleMessageChange = (event) => {
     setMessage(event.target.value);
@@ -104,7 +108,9 @@ const UploadModal = forwardRef((props, ref) => {
 
   return (
     <Modal isOpen={modal} toggle={toggle} className="upload-modal">
-      <ModalHeader toggle={toggle}><b>Upload a file</b></ModalHeader>
+      <ModalHeader toggle={toggle}>
+        <b>Upload a file</b>
+      </ModalHeader>
       <ModalBody>
         <Input
           type="textarea"
@@ -116,17 +122,15 @@ const UploadModal = forwardRef((props, ref) => {
           value={message}
           onChange={handleMessageChange}
         />
-        <Label htmlFor="filename" style={{ marginTop: '0.5rem' }}><b>File name</b></Label>
-        <Input
-          type="text"
-          id="filename"
-          placeholder=""
-          disabled
-          value={fileName}
-        />
+        <Label htmlFor="filename" style={{ marginTop: '0.5rem' }}>
+          <b>File name</b>
+        </Label>
+        <Input type="text" id="filename" placeholder="" disabled value={fileName} />
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={upload}>Upload</Button>
+        <Button color="primary" onClick={upload}>
+          Upload
+        </Button>
         {' '}
       </ModalFooter>
     </Modal>

@@ -1,5 +1,6 @@
 import { collection, doc } from 'rxfire/firestore';
 import { from } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { FirebaseApp } from '../firebase';
 
 const ShipmentRefPath = () => FirebaseApp.firestore().collection('Shipment');
@@ -9,10 +10,18 @@ const ShipmentFileRefPath = ShipmentKey => FirebaseApp.firestore()
   .doc(ShipmentKey)
   .collection('ShipmentFile');
 
+const ShipmentReferenceRefPath = ShipmentKey => FirebaseApp.firestore()
+  .collection('Shipment')
+  .doc(ShipmentKey)
+  .collection('ShipmentReference');
+
+const ShipmentMasterDataRefPath = ShipmentKey => FirebaseApp.firestore()
+  .collection('Shipment')
+  .doc(ShipmentKey)
+  .collection('ShipmentShareData');
+
 /* ex. CreateShipment
   {
-      ShipmentReference (array<object>)
-        [{ "RefOwner" : "Seller" , "RefID" : "Ref1234" , "RefTimestampUpdate" : "1234567673242"  }]
       ShipmentSellerCompanyName (string)
       ShipmentSourceLocation (string)
       ShipmentBuyerCompanyName (string)
@@ -37,21 +46,25 @@ export const EditShipment = (ShipmentKey, Data) => from(
     .set(Data, { merge: true }),
 );
 
-export const GetShipmentList = (QueryStatus, QueryFieldName, QueryFieldDirection = 'asc') => {
+export const GetShipmentList = (
+  QueryStatus,
+  QueryFieldName,
+  QueryFieldDirection = 'asc',
+  LimitNumber = 25,
+) => {
   const DefaultQuery = ShipmentRefPath().orderBy('ShipmentCreateTimestamp', 'desc');
 
   if (QueryStatus && QueryFieldName) {
     return collection(
-      DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection).where(
-        'ShipmentStatus',
-        '==',
-        QueryStatus,
-      ),
+      DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection)
+        .where('ShipmentStatus', '==', QueryStatus)
+        .limit(LimitNumber),
     );
   }
-  if (QueryStatus) return collection(DefaultQuery.where('ShipmentStatus', '==', QueryStatus));
-  if (QueryFieldName) return collection(DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection));
-  return collection(DefaultQuery);
+  if (QueryStatus) return collection(DefaultQuery.where('ShipmentStatus', '==', QueryStatus).limit(LimitNumber));
+  // eslint-disable-next-line max-len
+  if (QueryFieldName) return collection(DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection).limit(LimitNumber));
+  return collection(DefaultQuery.limit(LimitNumber));
 };
 
 export const GetShipmentDetail = ShipmentKey => doc(ShipmentRefPath().doc(ShipmentKey));
@@ -66,6 +79,7 @@ export const GetShipmentDetail = ShipmentKey => doc(ShipmentRefPath().doc(Shipme
   }
 */
 
+// eslint-disable-next-line max-len
 export const CreateShipmentFile = (ShipmentKey, Data) => from(ShipmentFileRefPath(ShipmentKey).add(Data));
 
 export const DeleteShipmetFile = (ShipmentKey, ShipmentFileKey) => from(
@@ -75,3 +89,32 @@ export const DeleteShipmetFile = (ShipmentKey, ShipmentFileKey) => from(
 );
 
 export const GetShipmentFileList = ShipmentKey => collection(ShipmentFileRefPath(ShipmentKey).orderBy('FileCreateTimestamp', 'desc'));
+
+/* Example data CreateShipmentReference
+{
+  ShipmentReferenceID (string)
+  ShipmentReferenceCompanyName (string)
+  ShipmentReferenceCompanyKey (string)
+}
+*/
+
+// eslint-disable-next-line max-len
+export const CreateShipmentReference = (ShipmentKey, Data) => from(ShipmentReferenceRefPath(ShipmentKey).add(Data));
+
+// eslint-disable-next-line max-len
+export const GetShipmentReferenceList = ShipmentKey => collection(ShipmentReferenceRefPath(ShipmentKey));
+
+export const UpdateShipmentReference = (ShipmentKey, ShipmentReferenceKey, Data) => from(
+  ShipmentReferenceRefPath(ShipmentKey)
+    .doc(ShipmentReferenceKey)
+    .add(Data, { merge: true }),
+);
+
+// eslint-disable-next-line max-len
+export const GetShipmentMasterDataDetail = (ShipmentKey, GroupType) => doc(ShipmentMasterDataRefPath(ShipmentKey).doc(GroupType)).pipe(take(1));
+
+export const UpdateShipmetMasterDataDetail = (ShipmentKey, GroupType, Data) => from(
+  ShipmentMasterDataRefPath(ShipmentKey)
+    .doc(GroupType)
+    .update(Data),
+);
