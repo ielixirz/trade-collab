@@ -1,8 +1,10 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { connect } from 'react-redux';
+
 import {
-  Row, Col, DropdownToggle, Dropdown, Button, Label,
+  Row, Col, DropdownToggle, Dropdown, Button, Label, Input,
 } from 'reactstrap';
 
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
@@ -10,6 +12,13 @@ import Select from 'react-select';
 import MainDataTable from '../../component/MainDataTable';
 
 import { incomingRequestColumns, memberDataColumns } from '../../constants/network';
+
+import { UpdateCompany, GetCompanyDetail } from '../../service/company/company';
+import {
+  PutFile,
+  GetMetaDataFromStorageRefPath,
+  GetURLFromStorageRefPath,
+} from '../../service/storage/managestorage';
 
 const mockCompany = {
   name: 'Fresh Produce Co. Ltd.',
@@ -54,20 +63,103 @@ const { SearchBar } = Search;
 
 const CompanyPanel = (props) => {
   const [company, setCompany] = useState(mockCompany);
+  const [isEdit, setIsEdit] = useState(false);
+  const fileInput = useRef(null);
+
+  useEffect(() => {
+    GetCompanyDetail('oFT40OYTReLd6GQR1kIv').subscribe({
+      next: (snapshot) => {
+        const data = snapshot.data();
+        setCompany(data);
+      },
+      error: (err) => {
+        console.log(err);
+        alert(err.message);
+      },
+      complete: () => {
+        console.log('TO DO LOG');
+      },
+    });
+  }, []);
+
+  const toggleEdit = () => {
+    if (isEdit) {
+      UpdateCompany('oFT40OYTReLd6GQR1kIv', company);
+    }
+    setIsEdit(!isEdit);
+  };
+
+  const handleCompanyInputChange = (event) => {
+    const editedCompany = company;
+    const inputName = event.target.id;
+    const inputValue = event.target.value;
+
+    if (inputName === 'name') {
+      editedCompany.CompanyName = inputValue;
+    } else if (inputName === 'tel') {
+      editedCompany.CompanyTelNumber = inputValue;
+    } else if (inputName === 'desc') {
+      editedCompany.CompanyAboutUs = inputValue;
+    }
+
+    setCompany(editedCompany);
+  };
+
+  const browseFile = () => {
+    fileInput.current.value = null;
+    fileInput.current.click();
+  };
+
+  const changeCompanyPic = (file) => {
+    const companyKey = 'oFT40OYTReLd6GQR1kIv';
+    const editedCompany = company;
+    const storageRefPath = `/Company/${companyKey}/${new Date().valueOf()}${file.name}`;
+    PutFile(storageRefPath, file).subscribe({
+      next: () => {
+        console.log('TODO: UPLOAD PROGRESS');
+      },
+      error: (err) => {
+        console.log(err);
+        alert(err.message);
+      },
+      complete: () => {
+        GetMetaDataFromStorageRefPath(storageRefPath).subscribe({
+          next: (metaData) => {
+            GetURLFromStorageRefPath(metaData.ref).subscribe({
+              next: (url) => {
+                editedCompany.CompanyImageLink = url;
+                UpdateCompany(companyKey, editedCompany);
+              },
+              complete: () => {},
+            });
+          },
+        });
+      },
+    });
+  };
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <div className="company-container">
+        <input
+          type="file"
+          id="file"
+          ref={fileInput}
+          style={{ display: 'none' }}
+          onChange={event => changeCompanyPic(event.target.files[0])}
+        />
         <Row style={{ height: '100%' }}>
           <Col xs={2} className="col-company-pic">
             <Dropdown>
               <DropdownToggle className="network-pic-btn">
-                <img
-                  style={{ width: '70%' }}
-                  src="../../assets/img/avatars/6.jpg"
-                  className="img-avatar"
-                  alt="admin@bootstrapmaster.com"
-                />
+                <div role="button" onClick={browseFile} onKeyDown={null} tabIndex="-1">
+                  <img
+                    style={{ width: '70%' }}
+                    src={company.CompanyImageLink}
+                    className="img-avatar"
+                    alt="admin@bootstrapmaster.com"
+                  />
+                </div>
               </DropdownToggle>
             </Dropdown>
             <Button className="company-access-btn">
@@ -77,25 +169,71 @@ const CompanyPanel = (props) => {
           </Col>
           <Col xs={6} style={{ marginTop: '1.5rem' }}>
             <Row>
-              <h4>{company.name}</h4>
-              <i className="cui-pencil icons" style={{ marginLeft: '2rem', fontSize: 'medium' }} />
+              {isEdit ? (
+                <div>
+                  <Input
+                    style={{ width: '100%', marginBottom: '0.5rem', paddingRight: '5rem' }}
+                    type="text"
+                    id="name"
+                    placeholder={company.CompanyName}
+                    onChange={handleCompanyInputChange}
+                  />
+                </div>
+              ) : (
+                <h4>{company.CompanyName}</h4>
+              )}
+              <i
+                className="cui-pencil icons"
+                role="button"
+                style={{
+                  marginLeft: '1rem',
+                  marginTop: '0.1rem',
+                  fontSize: 'medium',
+                  cursor: 'pointer',
+                }}
+                onClick={toggleEdit}
+                onKeyDown={null}
+                tabIndex="-1"
+              />
             </Row>
             <Row>
               <p className="profile-email">
                 <em>
                   ID:
-                  {company.id}
+                  {company.CompanyID}
                 </em>
               </p>
             </Row>
             <Row>
-              <p style={{ marginBottom: '0.1rem' }}>{company.tel}</p>
+              {isEdit ? (
+                <div>
+                  <Input
+                    style={{ width: '80%', marginBottom: '0.5rem', paddingRight: '5rem' }}
+                    type="text"
+                    id="tel"
+                    placeholder={company.CompanyTelNumber}
+                    onChange={handleCompanyInputChange}
+                  />
+                </div>
+              ) : (
+                <p style={{ marginBottom: '0.1rem' }}>{company.CompanyTelNumber}</p>
+              )}
             </Row>
             <Row>
-              <p>{company.desc}</p>
+              {isEdit ? (
+                <Input
+                  style={{ width: '50%' }}
+                  type="textarea"
+                  id="desc"
+                  placeholder={company.CompanyAboutUs}
+                  onChange={handleCompanyInputChange}
+                />
+              ) : (
+                <p>{company.CompanyAboutUs}</p>
+              )}
             </Row>
-            <Row style={{ paddingTop: '3rem' }}>
-              <a href="/#/network">{company.website}</a>
+            <Row style={{ paddingTop: '2rem' }}>
+              <a href="/#/network">{company.CompanyWebsiteUrl}</a>
             </Row>
           </Col>
           <Col xs={4} style={{ marginTop: '1.5rem' }}>
@@ -179,4 +317,13 @@ Members (
   );
 };
 
-export default CompanyPanel;
+const mapStateToProps = (state) => {
+  const { authReducer, userReducer, profileReducer } = state;
+  return {
+    auth: authReducer.user,
+    user: userReducer.UserInfo,
+    currentProfile: profileReducer.ProfileList[0],
+  };
+};
+
+export default connect(mapStateToProps)(CompanyPanel);
