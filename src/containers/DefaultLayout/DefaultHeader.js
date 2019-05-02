@@ -52,11 +52,6 @@ class DefaultHeader extends Component {
             </NavLink>
           </NavItem>
           <NavItem className="px-1" style={styles.marginNav}>
-            <NavLink activeClassName="cool-think" to="/chat" style={styles.fontNav}>
-              Chat
-            </NavLink>
-          </NavItem>
-          <NavItem className="px-1" style={styles.marginNav}>
             <NavLink activeClassName="cool-think" to="/network" style={styles.fontNav}>
               Networks
             </NavLink>
