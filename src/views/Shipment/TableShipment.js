@@ -1,3 +1,6 @@
+/* eslint-disable class-methods-use-this */
+/* eslint-disable import/order */
+/* eslint-disable filenames/match-regex */
 import React from 'react';
 import './Shipment.css';
 
@@ -23,7 +26,7 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
-  TabContent
+  TabContent,
 } from 'reactstrap';
 
 import { NoteShipment } from './NoteShipment';
@@ -44,7 +47,7 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning']
+        status: ['intransit', 'planning'],
       },
       {
         ref: 'INVPT',
@@ -53,7 +56,7 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning']
+        status: ['intransit', 'planning'],
       },
       {
         ref: 'INVPT',
@@ -62,7 +65,7 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning']
+        status: ['intransit', 'planning'],
       },
       {
         ref: 'INVPT',
@@ -71,7 +74,7 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning']
+        status: ['intransit', 'planning'],
       },
       {
         ref: 'INVPT',
@@ -80,7 +83,7 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning']
+        status: ['intransit', 'planning'],
       },
       {
         ref: 'INVPT',
@@ -89,47 +92,48 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning']
-      }
+        status: ['intransit', 'planning'],
+      },
     ],
     columns: [
       {
         dataField: 'ref',
-        text: 'Ref:'
+        text: 'Ref:',
       },
       {
         dataField: 'seller',
         text: 'Seller',
-        sort: true
+        sort: true,
       },
       {
         dataField: 'buyer',
         text: 'Buyer',
-        sort: true
+        sort: true,
       },
       {
         dataField: 'product',
-        text: 'Product'
+        text: 'Product',
       },
       {
         dataField: 'etd',
         text: 'ETD',
-        sort: true
+        sort: true,
       },
       {
         dataField: 'eta',
         text: 'ETA',
-        sort: true
+        sort: true,
       },
       {
         dataField: 'status',
-        text: 'Status'
-      }
-    ]
+        text: 'Status',
+      },
+    ],
   };
+
   componentDidMount() {
-    let table = document.getElementById('tableshipment');
-    table.setAttribute('onScroll', e => {
+    const table = document.getElementById('tableshipment');
+    table.setAttribute('onScroll', (e) => {
       console.log(e);
     });
   }
@@ -150,7 +154,9 @@ class TableShipment extends React.Component {
                     name={`shipmentRef${index}`}
                     value={ref.RefID}
                   />
-                  Ref #1 : ({ref.RefOwner})
+                  Ref #1 : (
+                  {ref.RefOwner}
+)
                 </Label>
               </Col>
               <Col xs={5}>
@@ -177,10 +183,10 @@ class TableShipment extends React.Component {
         <Input
           type="select"
           value={item.ShipmentStatus}
-          onChange={e => {
+          onChange={(e) => {
             const value = e.target.value;
             EditShipment(item.uid, {
-              ShipmentStatus: value
+              ShipmentStatus: value,
             });
           }}
         >
@@ -244,7 +250,7 @@ class TableShipment extends React.Component {
           ETA: new Date(eta.seconds * 1000).toLocaleString(),
           '': this.renderDescription(index, item),
           Status: this.renderStatusComponent(item),
-          uid: _.get(item, 'uid', '')
+          uid: _.get(item, 'uid', ''),
         };
       });
       input = createDataTable(input);
@@ -255,7 +261,7 @@ class TableShipment extends React.Component {
       mode: 'checkbox',
       clickToSelect: true,
       hideSelectColumn: true,
-      bgColor: '#F5FBFA'
+      bgColor: '#F5FBFA',
     };
     const pageListRenderer = ({ pages, onPageChange }) => {
       const pageWithoutIndication = pages.filter(p => typeof p.page !== 'string');
@@ -272,7 +278,7 @@ class TableShipment extends React.Component {
     };
     const sizePerPageRenderer = ({ options, currSizePerPage, onSizePerPageChange }) => (
       <div className="btn-group" role="group">
-        {options.map(option => {
+        {options.map((option) => {
           const isSelect = currSizePerPage === `${option.page}`;
           return (
             <button
@@ -289,11 +295,11 @@ class TableShipment extends React.Component {
     );
     const options = {
       pageListRenderer,
-      sizePerPageRenderer
+      sizePerPageRenderer,
     };
-    const MySearch = props => {
+    const MySearch = (props) => {
       let input;
-      const handleClick = event => {
+      const handleClick = (event) => {
         const query = event.target.value;
         props.onSearch(query);
       };
@@ -329,15 +335,15 @@ class TableShipment extends React.Component {
         console.log('targetrow', e.target.tagName);
 
         if (
-          e.target.tagName !== 'SELECT' &&
-          e.target.tagName !== 'I' &&
-          e.target.tagName !== 'DIV' &&
-          e.target.tagName !== 'INPUT' &&
-          e.target.tagName !== 'P'
+          e.target.tagName !== 'SELECT'
+          && e.target.tagName !== 'I'
+          && e.target.tagName !== 'DIV'
+          && e.target.tagName !== 'INPUT'
+          && e.target.tagName !== 'P'
         ) {
           window.location.replace(`#/chat/${row.uid}`);
         }
-      }
+      },
     };
     return (
       <ToolkitProvider keyField="id" data={data} columns={columns} search>
@@ -361,18 +367,21 @@ class TableShipment extends React.Component {
                   <span style={{ fontWeight: 'bold', color: 'white' }}>Save</span>
                 </Button>
                 <Button style={{ backgroundColor: 'white', marginTop: 2, marginRight: 10 }}>
-                  <i className="icons cui-pencil" style={{ color: 'black' }} />{' '}
+                  <i className="icons cui-pencil" style={{ color: 'black' }} />
+                  {' '}
                   <span style={{ fontWeight: 'bold', color: '#707070' }}>Edit</span>
                 </Button>
               </Col>
             </Row>
             <div className="table">
               <BootstrapTable
-                id={'tableshipment'}
-                rowStyle={{ textAlign: 'left' }}
+                id="tableshipment"
                 {...props.baseProps}
                 bordered={false}
                 rowEvents={rowEvents}
+                columns={columns}
+                wrapperClasses="shipment-table-wraper"
+                classes="shipment-table"
               />
             </div>
           </div>
@@ -386,5 +395,5 @@ const mapStateToProps = state => ({});
 
 export default connect(
   mapStateToProps,
-  { fetchMoreShipments }
+  { fetchMoreShipments },
 )(TableShipment);
