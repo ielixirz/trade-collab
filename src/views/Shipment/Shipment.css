@@ -176,7 +176,6 @@ input {
   width: 100%;
 }
 
-
 .outgoing_msg {
   overflow: hidden;
   margin: 26px 0 26px;
@@ -203,7 +202,7 @@ input {
   padding: 5px;
 }
 
-td{
+td {
   cursor: pointer;
 }
 .msg_send_btn {
@@ -224,14 +223,11 @@ td{
   padding: 0 0 50px 0;
 }
 
-
 div.boo {
   border: 0px solid white;
   height: 90vh;
-  overflow: auto;
-
+  /* overflow: auto; */
 }
-
 
 p {
   cursor: pointer;
@@ -256,4 +252,39 @@ div.seenby {
 }
 .showdot:hover .showthatdot {
   display: block;
+}
+
+/* Shipment DataTable */
+
+.table.shipment-table {
+  margin-top: 1rem;
+}
+
+.table.shipment-table > tbody {
+  display: block;
+  height: 70vh; /* Just for the demo          */
+  overflow-y: auto; /* Trigger vertical scroll    */
+  overflow-x: hidden; /* Hide the horizontal scroll */
+}
+
+thead,
+tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed; /* even columns width , fix width of table too*/
+}
+
+.table.shipment-table > thead > tr > th {
+  color: #9b9b9b;
+  border-top: none;
+  font-size: medium;
+}
+
+.table.shipment-table > tbody > tr {
+  background-color: white;
+  font-size: large;
+}
+
+.table.shipment-table > tbody > tr > td {
+  border: none;
 }
