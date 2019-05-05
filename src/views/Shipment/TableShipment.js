@@ -335,7 +335,7 @@ class TableShipment extends React.Component {
           e.target.tagName !== 'INPUT' &&
           e.target.tagName !== 'P'
         ) {
-          window.location.replace(`#/chat/${row.uid}`);
+          window.location.pathname = `#/chat/${row.uid}`;
         }
       }
     };
