@@ -114,7 +114,7 @@ const RequestToJoinModal = forwardRef((props, ref) => {
           hidden={!(isSearchActive && !isSearchFound)}
         >
           <span style={{ cursor: 'pointer', margin: 'auto' }}>
-            <b>Company not Found</b>
+            <b>Company not found</b>
           </span>
         </Row>
         <Label htmlFor="note" style={{ marginTop: '0.5rem' }}>
