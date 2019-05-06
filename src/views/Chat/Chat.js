@@ -16,7 +16,7 @@ import {
   Input,
   TabPane,
   Breadcrumb,
-  UncontrolledCollapse
+  UncontrolledCollapse,
 } from 'reactstrap';
 import EdiText from 'react-editext';
 import _ from 'lodash';
@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import Tabs from 'react-draggable-tabs';
 import { PutFile } from '../../service/storage/managestorage';
 import MemberModal from '../../component/MemberModal';
+import MemberInvite from '../../component/MemberInvite';
 import {
   typing,
   fetchMoreMessage,
@@ -31,7 +32,7 @@ import {
   sendMessage,
   moveTab,
   selectTab,
-  getChatRoomList
+  getChatRoomList,
 } from '../../actions/chatActions';
 
 import ShipmentSide from './ShipmentSide';
@@ -54,7 +55,7 @@ class Chat extends Component {
       text: '',
       tabs: [],
       roomeditor: {},
-      onDropChatStyle: false
+      onDropChatStyle: false,
     };
 
     this.uploadModalRef = React.createRef();
@@ -63,20 +64,20 @@ class Chat extends Component {
 
   createChatRoom(room) {
     const {
-      match: { params }
+      match: { params },
     } = this.props;
     console.log('Create', room);
-    let shipmentkey = _.get(params, 'shipmentkey', 'HDTPONlnceJeG5yAA1Zy');
+    const shipmentkey = _.get(params, 'shipmentkey', 'HDTPONlnceJeG5yAA1Zy');
     const croom = CreateChatRoom(shipmentkey, {
-      ChatRoomName: room
+      ChatRoomName: room,
     }).subscribe({
-      next: result => {
-        let data = result.path.split('/');
+      next: (result) => {
+        const data = result.path.split('/');
         this.props.fetchChatMessage(data[data.length - 1], shipmentkey);
       },
-      complete: result => {
+      complete: (result) => {
         console.log(result);
-      }
+      },
     });
   }
 
@@ -85,7 +86,7 @@ class Chat extends Component {
       type = 'sender',
       text = this.lorem(),
       name = 'Anonymous',
-      status = new Date()
+      status = new Date(),
     } = message;
     const prev = _.get(message, 'prev', false);
     let isFirstMessageOfTheDay = false;
@@ -111,12 +112,17 @@ class Chat extends Component {
                 <Row>
                   <Col xs="8">
                     <p>
-                      <span className="user-name">{name}</span> <br />
+                      <span className="user-name">{name}</span>
+                      {' '}
+                      <br />
                       {text}
                     </p>
                   </Col>
                   <Col xs={4}>
-                    <span className="time_date"> {status.toLocaleTimeString()}</span>
+                    <span className="time_date">
+                      {' '}
+                      {status.toLocaleTimeString()}
+                    </span>
                   </Col>
                 </Row>
               </div>
@@ -142,11 +148,16 @@ class Chat extends Component {
           <div className="sent_msg">
             <Row>
               <Col xs={4}>
-                <span className="time_date"> {status.toLocaleTimeString()}</span>
+                <span className="time_date">
+                  {' '}
+                  {status.toLocaleTimeString()}
+                </span>
               </Col>
               <Col>
                 <p>
-                  <span className="user-name">{name}</span> <br />
+                  <span className="user-name">{name}</span>
+                  {' '}
+                  <br />
                   {text}
                 </p>
               </Col>
@@ -183,14 +194,14 @@ class Chat extends Component {
             <Row
               style={{
                 marginTop: '100px',
-                marginBottom: '100px'
+                marginBottom: '100px',
               }}
             >
               <Col />
               <Col className="text-lg-center">
                 <Button
                   style={{
-                    width: '250px'
+                    width: '250px',
                   }}
                   color="yterminal"
                   size="lg"
@@ -205,7 +216,7 @@ class Chat extends Component {
               <Col className="text-lg-center">
                 <Button
                   style={{
-                    width: '250px'
+                    width: '250px',
                   }}
                   color="yterminal"
                   size="lg"
@@ -222,7 +233,7 @@ class Chat extends Component {
             <Row
               style={{
                 marginTop: '100px',
-                marginBottom: '100px'
+                marginBottom: '100px',
               }}
             >
               <Col />
@@ -231,7 +242,7 @@ class Chat extends Component {
                   color="yterminal"
                   size="lg"
                   style={{
-                    width: '250px'
+                    width: '250px',
                   }}
                   active
                   onClick={() => {
@@ -246,7 +257,7 @@ class Chat extends Component {
                   color="yterminal"
                   size="lg"
                   style={{
-                    width: '250px'
+                    width: '250px',
                   }}
                   active
                   onClick={() => {
@@ -278,7 +289,7 @@ class Chat extends Component {
                         color="yterminal"
                         size="lg"
                         style={{
-                          width: '600px'
+                          width: '600px',
                         }}
                         active
                         onClick={() => {
@@ -296,7 +307,7 @@ class Chat extends Component {
                       size="lg"
                       style={{
                         width: '200px',
-                        marginRight: '200px'
+                        marginRight: '200px',
                       }}
                       active
                       onClick={() => {
@@ -309,7 +320,7 @@ class Chat extends Component {
                       color="yterminal"
                       size="lg"
                       style={{
-                        width: '200px'
+                        width: '200px',
                       }}
                       active
                       onClick={() => {
@@ -319,14 +330,15 @@ class Chat extends Component {
                       Importer
                     </Button>
                   </Row>
-                  <br />{' '}
+                  <br />
+                  {' '}
                   <Row>
                     <Button
                       color="yterminal"
                       size="lg"
                       style={{
                         width: '200px',
-                        marginRight: '200px'
+                        marginRight: '200px',
                       }}
                       active
                       onClick={() => {
@@ -339,7 +351,7 @@ class Chat extends Component {
                       color="yterminal"
                       size="lg"
                       style={{
-                        width: '200px'
+                        width: '200px',
                       }}
                       active
                       onClick={() => {
@@ -349,14 +361,15 @@ class Chat extends Component {
                       Inbound Forwarder
                     </Button>
                   </Row>
-                  <br />{' '}
+                  <br />
+                  {' '}
                   <Row>
                     <Button
                       color="yterminal"
                       size="lg"
                       style={{
                         width: '200px',
-                        marginRight: '200px'
+                        marginRight: '200px',
                       }}
                       active
                       onClick={() => {
@@ -369,7 +382,7 @@ class Chat extends Component {
                       color="yterminal"
                       size="lg"
                       style={{
-                        width: '200px'
+                        width: '200px',
                       }}
                       active
                       onClick={() => {
@@ -379,14 +392,15 @@ class Chat extends Component {
                       Inbound Custom Broker
                     </Button>
                   </Row>
-                  <br />{' '}
+                  <br />
+                  {' '}
                   <Row>
                     <Button
                       color="yterminal"
                       size="lg"
                       style={{
                         width: '200px',
-                        marginRight: '200px'
+                        marginRight: '200px',
                       }}
                       onClick={() => {
                         this.createChatRoom('Outbound Trucking');
@@ -399,7 +413,7 @@ class Chat extends Component {
                       color="yterminal"
                       size="lg"
                       style={{
-                        width: '200px'
+                        width: '200px',
                       }}
                       active
                       onClick={() => {
@@ -409,14 +423,15 @@ class Chat extends Component {
                       Inbound Trucking
                     </Button>
                   </Row>
-                  <br />{' '}
+                  <br />
+                  {' '}
                   <Row>
                     <Button
                       color="yterminal"
                       size="lg"
                       style={{
                         width: '200px',
-                        marginRight: '200px'
+                        marginRight: '200px',
                       }}
                       active
                       onClick={() => {
@@ -429,7 +444,7 @@ class Chat extends Component {
                       color="yterminal"
                       size="lg"
                       style={{
-                        width: '200px'
+                        width: '200px',
                       }}
                       active
                       onClick={() => {
@@ -456,16 +471,13 @@ class Chat extends Component {
         <Row
           style={{
             backgroundColor: 'white',
-            borderBottom: '1px solid #707070'
+            borderBottom: '1px solid #707070',
           }}
         >
           <Breadcrumb className="chat-toolbar">
-            <MemberModal buttonLabel="Invite" />
+            <MemberInvite buttonLabel="Invite" />
             <Button className="btn-chat-label">|</Button>
-            <Button className="btn-chat-label">
-              <i style={{ marginRight: '0.5rem' }} className="fa  fa-users fa-lg" />
-              14
-            </Button>
+            <MemberModal buttonLabel="14" />
             <Button className="btn-chat-label">|</Button>
             <Button className="btn-chat-label">Ref#1234</Button>
           </Breadcrumb>
@@ -488,7 +500,7 @@ class Chat extends Component {
                     this.props.fetchMoreMessage(ChatRoomKey, ShipmentKey);
                   }
                 }}
-                ref={el => {
+                ref={(el) => {
                   this.msgChatRef = el;
                 }}
               >
@@ -504,7 +516,7 @@ class Chat extends Component {
                     text: msg.ChatRoomMessageContext,
                     name: msg.ChatRoomMessageSender,
                     status: t,
-                    prev: chatMsg[i - 1]
+                    prev: chatMsg[i - 1],
                   };
 
                   return this.renderMessage(message, i);
@@ -529,12 +541,11 @@ class Chat extends Component {
                       id="file"
                       ref={this.fileInput}
                       style={{ display: 'none' }}
-                      onChange={event =>
-                        this.uploadModalRef.current.triggerUploading(
-                          event.target.files[0],
-                          ShipmentKey,
-                          ChatRoomKey
-                        )
+                      onChange={event => this.uploadModalRef.current.triggerUploading(
+                        event.target.files[0],
+                        ShipmentKey,
+                        ChatRoomKey,
+                      )
                       }
                     />
                   </InputGroupAddon>
@@ -542,7 +553,7 @@ class Chat extends Component {
                     placeholder="type...."
                     value={text}
                     onChange={this.props.typing}
-                    onKeyPress={event => {
+                    onKeyPress={(event) => {
                       if (event.key === 'Enter') {
                         console.log('Enter press', event);
                         console.log(ChatRoomKey, ShipmentKey, text);
@@ -598,27 +609,27 @@ class Chat extends Component {
     event.target.value = null;
     this.uploadModalRef.current.triggerUploading(file, ShipmentKey, ChatRoomKey);
     this.setState({
-      onDropChatStyle: false
+      onDropChatStyle: false,
     });
   }
 
-  onDragOver = event => {
+  onDragOver = (event) => {
     event.stopPropagation();
     event.preventDefault();
     this.setState({
-      onDropChatStyle: true
+      onDropChatStyle: true,
     });
   };
 
-  onDragLeave = event => {
+  onDragLeave = (event) => {
     event.stopPropagation();
     event.preventDefault();
     this.setState({
-      onDropChatStyle: false
+      onDropChatStyle: false,
     });
   };
 
-  onDragEnter = event => {
+  onDragEnter = (event) => {
     event.preventDefault();
   };
 
@@ -651,7 +662,7 @@ class Chat extends Component {
       newTabs.push({
         id: newTabs.length + 1,
         content: 'Cute *',
-        display: <div key={newTabs.length + 1}>Cute *</div>
+        display: <div key={newTabs.length + 1}>Cute *</div>,
       });
 
       return { tabs: newTabs };
@@ -666,7 +677,7 @@ class Chat extends Component {
     const newArray = this.state.activeTab.slice();
     newArray[tabPane] = tab;
     this.setState({
-      activeTab: newArray
+      activeTab: newArray,
     });
   }
 
@@ -684,7 +695,7 @@ class Chat extends Component {
 
   componentDidMount() {
     const {
-      match: { params }
+      match: { params },
     } = this.props;
     this.props.getChatRoomList(params.shipmentkey); // MOCK SHIPMENT KEY
     const chats = this.props.ChatReducer.chatrooms;
@@ -696,17 +707,17 @@ class Chat extends Component {
           <EdiText
             type="text"
             value={item.roomName}
-            onSave={val => {
+            onSave={(val) => {
               console.log(val);
             }}
           />
         ),
         active: item.active,
         ChatRoomKey: item.ChatRoomKey,
-        ShipmentKey: item.ShipmentKey
+        ShipmentKey: item.ShipmentKey,
       });
     });
-    _.forEach(tabs, tab => {
+    _.forEach(tabs, (tab) => {
       this.props.fetchChatMessage(tab.ChatRoomKey, tab.ShipmentKey);
     });
   }
@@ -730,8 +741,8 @@ class Chat extends Component {
               roomeditor: {
                 roomName: item.roomName,
                 ChatRoomKey: item.ChatRoomKey,
-                ShipmentKey: item.ShipmentKey
-              }
+                ShipmentKey: item.ShipmentKey,
+              },
             });
           }}
         >
@@ -739,26 +750,26 @@ class Chat extends Component {
         </div>
       );
       if (
-        this.state.roomeditor.ShipmentKey === item.ShipmentKey &&
-        this.state.roomeditor.ChatRoomKey === item.ChatRoomKey
+        this.state.roomeditor.ShipmentKey === item.ShipmentKey
+        && this.state.roomeditor.ChatRoomKey === item.ChatRoomKey
       ) {
         content = (
           <div>
             <Input
               value={this.state.roomeditor.roomName}
               type="text"
-              onChange={e => {
+              onChange={(e) => {
                 this.setState({
                   roomeditor: {
                     ...this.state.roomeditor,
-                    roomName: e.target.value
-                  }
+                    roomName: e.target.value,
+                  },
                 });
               }}
-              onKeyDown={button => {
+              onKeyDown={(button) => {
                 if (button.key === 'Enter') {
                   EditChatRoom(item.ShipmentKey, item.ChatRoomKey, {
-                    ChatRoomName: this.state.roomeditor.roomName
+                    ChatRoomName: this.state.roomeditor.roomName,
                   });
                   this.setState({ roomeditor: {} });
                 }
@@ -773,7 +784,7 @@ class Chat extends Component {
         active: item.active,
         ChatRoomKey: item.ChatRoomKey,
         ShipmentKey: item.ShipmentKey,
-        position: item.position
+        position: item.position,
       });
     });
     tabs = _.sortBy(tabs, 'position');
@@ -799,11 +810,11 @@ class Chat extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { ChatReducer, authReducer } = state;
   return {
     ChatReducer,
-    user: authReducer.user
+    user: authReducer.user,
   };
 };
 
@@ -816,6 +827,6 @@ export default connect(
     sendMessage,
     moveTab,
     selectTab,
-    getChatRoomList
-  }
+    getChatRoomList,
+  },
 )(Chat);

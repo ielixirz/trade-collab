@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import _ from 'lodash';
 
 const LABEL = {
@@ -23,7 +24,13 @@ export const createDataTable = (input) => {
         text: _.get(LABEL, item, item),
         dataField: item,
         sort: false,
-        headerStyle: () => ({ width: '50px' }),
+        style: {
+          width: '2.5%',
+        },
+        headerAlign: 'center',
+        headerStyle: {
+          width: '2.5%',
+        },
       };
     }
     if (item === 'alert') {
@@ -31,7 +38,13 @@ export const createDataTable = (input) => {
         text: '',
         dataField: item,
         sort: false,
-        headerStyle: () => ({ width: '50px' }),
+        style: {
+          width: '5%',
+        },
+        headerAlign: 'center',
+        headerStyle: {
+          width: '5%',
+        },
       };
     }
     if (item === 'Ref') {
@@ -39,7 +52,29 @@ export const createDataTable = (input) => {
         text: _.get(LABEL, item, item),
         dataField: item,
         sort: false,
-        headerStyle: () => ({ textAlign: 'left' }),
+        style: {
+          width: '12%',
+        },
+        headerAlign: 'left',
+        align: 'left',
+        headerStyle: {
+          width: '12%',
+        },
+      };
+    }
+    if (item === 'Product') {
+      return {
+        text: _.get(LABEL, item, item),
+        dataField: item,
+        sort: false,
+        style: {
+          width: '20%',
+        },
+        headerAlign: 'center',
+        align: 'center',
+        headerStyle: {
+          width: '20%',
+        },
       };
     }
     if (item === 'id') {
@@ -54,6 +89,9 @@ export const createDataTable = (input) => {
       text: _.get(LABEL, item, item),
       dataField: item,
       sort: true,
+      headerAlign: 'center',
+      align: 'center',
+      width: '15%',
     };
   });
 

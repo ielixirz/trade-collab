@@ -1,16 +1,15 @@
+/* eslint-disable filenames/match-regex */
 import React from 'react';
 import {
   Button,
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   InputGroup,
   InputGroupAddon,
   Input,
   Row,
   Col,
-  UncontrolledCollapse,
 } from 'reactstrap';
 import './MemberModal.css';
 import MemberInChat from './MemberInChat';
@@ -33,26 +32,17 @@ class MemberModal extends React.Component {
 
   render() {
     const closeBtn = (
-      <button className="close" onClick={this.toggle}>
+      <button type="submit" className="close" onClick={this.toggle}>
         &times;
       </button>
     );
 
     return (
       <div>
-        <Button
-          className="invite-btn"
-          style={{
-            marginLeft: '2rem',
-            marginRight: '1rem',
-            color: 'white',
-            backgroundColor: '#16A085',
-          }}
-          onClick={this.toggle}
-        >
-          <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
+        <button type="submit" className="button buttonInvite" onClick={this.toggle}>
+          <i style={{ marginRight: '0.5rem' }} className="fa  fa-users fa-lg" />
           {this.props.buttonLabel}
-        </Button>
+        </button>
         <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
           <ModalHeader toggle={this.toggle} close={closeBtn}>
             <InputGroup>
