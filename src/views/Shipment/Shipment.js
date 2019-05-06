@@ -656,7 +656,8 @@ const styles = {
   title: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#707070'
+    color: '#707070',
+    cursor: 'pointer',
   },
   lineTab: {
     color: '#EAEAEA',
