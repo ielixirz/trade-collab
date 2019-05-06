@@ -39,13 +39,23 @@ select {
   color: black;
 }
 
-input[type='checkbox'] {
-  -ms-transform: scale(2); /* IE */
-  -moz-transform: scale(2); /* FF */
-  -webkit-transform: scale(2); /* Safari and Chrome */
-  -o-transform: scale(2); /* Opera */
+input[type='text']:focus {
+  background-color: rgb(235, 247, 244);
 }
 
-input[type='text']:focus {
+input[type='password'],
+select {
+  width: 100%;
+  padding: 12px 20px;
+  padding-left: 8px;
+  margin: 15px 2px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: black;
+}
+
+input[type='password']:focus {
   background-color: rgb(235, 247, 244);
 }

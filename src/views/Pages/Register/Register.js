@@ -6,6 +6,7 @@ import {
   Card, CardBody, Col, Container, Row, CardTitle, CardSubtitle,
 } from 'reactstrap';
 import './register.css';
+import './checkbox.scss';
 
 const styles = {
   marginInput: { marginLeft: 40, marginRight: 40 },
@@ -30,6 +31,24 @@ const styles = {
 };
 
 class Register extends Component {
+  state = {
+    email: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+  };
+
+  handleChange = (e) => {
+    this.setState({
+      [e.target.id]: e.target.value,
+    });
+  };
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(this.state);
+  };
+
   render() {
     return (
       <div className="app flex-row align-items-center">
@@ -51,23 +70,45 @@ class Register extends Component {
                   </div>
                 </CardSubtitle>
                 <CardBody className="p-4">
-                  <form>
+                  <form onSubmit={this.handleSubmit}>
                     <div style={styles.marginInput}>
-                      <input type="text" id="email" name="email" placeholder="Email" />
+                      <input
+                        type="text"
+                        id="email"
+                        name="email"
+                        placeholder="Email"
+                        onChange={this.handleChange}
+                      />
                     </div>
                     <div style={styles.marginInput}>
-                      <input type="text" id="fname" name="fname" placeholder="Firstname" />
+                      <input
+                        type="text"
+                        id="firstName"
+                        name="fname"
+                        placeholder="Firstname"
+                        onChange={this.handleChange}
+                      />
                     </div>
                     <div style={styles.marginInput}>
-                      <input type="text" id="sname" name="sname" placeholder="Surname" />
+                      <input
+                        type="text"
+                        id="lastName"
+                        name="sname"
+                        placeholder="Surname"
+                        onChange={this.handleChange}
+                      />
                     </div>
                     <div style={styles.marginInput}>
-                      <input type="text" id="password" name="password" placeholder="Password" />
+                      <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Password"
+                        onChange={this.handleChange}
+                      />
                     </div>
                     <div style={styles.marginInputCheckbox}>
-                      <div style={{ marginTop: 0, marginRight: 10 }}>
-                        <input type="checkbox" id="term" name="term" />
-                      </div>
+                      <input type="checkbox" id="term" onChange={this.handleChange} />
                       <p style={styles.agreeTerm}>I agree to Y-Terminal</p>
                       <p style={styles.termCon}>Term & condition</p>
                     </div>
