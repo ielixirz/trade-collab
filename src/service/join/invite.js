@@ -55,3 +55,11 @@ export const UpdateCompanyInvitationStatus = (CompanyKey, InvitationKey, Status)
       .update({ UserInvitationStatus: Status }),
   ),
 );
+
+export const UpdateUserInvitationStatus = (CompanyKey, InvitationKey, Status) => from(
+  collection(
+    UserInvitationRefPath(CompanyKey)
+      .doc(InvitationKey)
+      .update({ UserInvitationStatus: Status }),
+  ),
+);
