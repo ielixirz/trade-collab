@@ -47,3 +47,11 @@ export const CreateCompanyInvitation = (CompanyKey, Data) => from(collection(Com
 
 // eslint-disable-next-line max-len
 export const CreateUserInvitation = (UserKey, Data) => from(collection(UserInvitationRefPath(UserKey).add(Data)));
+
+export const UpdateCompanyInvitationStatus = (CompanyKey, InvitationKey, Status) => from(
+  collection(
+    CompanyInvitationRefPath(CompanyKey)
+      .doc(InvitationKey)
+      .update({ UserInvitationStatus: Status }),
+  ),
+);
