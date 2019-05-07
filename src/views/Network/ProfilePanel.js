@@ -367,7 +367,7 @@ const ProfilePanel = ({ currentProfile, auth }) => {
     <div style={{ width: '100%', height: '100%' }}>
       <div className="profile-container">
         <CreateCompanyModal ref={createCompanyModalRef} />
-        <RequestToJoinModal ref={requestToJoinModalRef} />
+        <RequestToJoinModal ref={requestToJoinModalRef} userId={auth.uid} />
         <input
           type="file"
           id="file"

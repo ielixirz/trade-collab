@@ -41,6 +41,8 @@ const RequestToJoinModal = forwardRef((props, ref) => {
   };
 
   const sendRequest = () => {
+    const selectedCompanyID = foundCompany[selectedIndex].id;
+    const userID = props.userId;
     // const editedChatRoomFileLink = chatFile;
     // console.log(editedChatRoomFileLink);
     // editedChatRoomFileLink[editIndex].FileName = editedFileName;
@@ -49,7 +51,6 @@ const RequestToJoinModal = forwardRef((props, ref) => {
   };
 
   const selectCompany = (index) => {
-    console.log(index);
     setSelectedIndex(index);
   };
 
@@ -59,7 +60,10 @@ const RequestToJoinModal = forwardRef((props, ref) => {
     CheckAvaliableCompanyName(searchText).subscribe({
       next: (snapshot) => {
         snapshot.forEach((doc) => {
-          foundCompanyArray.push(doc.data());
+          foundCompanyArray.push({
+            data: doc.data(),
+            id: doc.id,
+          });
         });
       },
       error: (err) => {
@@ -130,9 +134,9 @@ const RequestToJoinModal = forwardRef((props, ref) => {
               <img
                 style={{ width: '100%', margin: 'auto' }}
                 src={
-                  company.CompanyImageLink === undefined
+                  company.data.CompanyImageLink === undefined
                     ? '../assets/img/default-grey.jpg'
-                    : company.CompanyImageLink
+                    : company.data.CompanyImageLink
                 }
                 className="img-avatar"
                 alt="admin@bootstrapmaster.com"
@@ -141,7 +145,7 @@ const RequestToJoinModal = forwardRef((props, ref) => {
             <Col xs={5} style={{ margin: 'auto' }}>
               <span style={{ fontSize: 'medium' }}>
                 {' '}
-                {company.CompanyName}
+                {company.data.CompanyName}
                 {' '}
               </span>
               {' '}
@@ -165,7 +169,13 @@ const RequestToJoinModal = forwardRef((props, ref) => {
         <Label htmlFor="note" style={{ marginTop: '0.5rem' }}>
           <b>Note</b>
         </Label>
-        <Input type="textarea" id="note" placeholder="Write message..." value={note} />
+        <Input
+          type="textarea"
+          id="note"
+          placeholder="Write message..."
+          onChange={handleInputNoteChange}
+          value={note}
+        />
       </ModalBody>
       <ModalFooter>
         <Button
