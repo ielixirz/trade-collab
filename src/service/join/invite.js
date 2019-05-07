@@ -8,3 +8,8 @@ const CompanyInvitationRefPath = CompanyKey => FirebaseApp.firestore()
   .collection('Company')
   .doc(CompanyKey)
   .collection('CompanyInvitation');
+
+const UserInvitationRefPath = UserKey => FirebaseApp.firestore()
+  .collection('User')
+  .doc(UserKey)
+  .collection('UserInvitation');
