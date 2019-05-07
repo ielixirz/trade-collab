@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { FETCH_SHIPMENT_LIST } from '../constants/constants';
-import { GetShipmentList } from '../service/shipment/shipment';
+import { CreateShipmentReference, GetShipmentList } from '../service/shipment/shipment';
 
 let shipmentsObservable = GetShipmentList('', '', 'asc').subscribe();
 export const fetchShipments = (typeStatus: any) => dispatch => {
@@ -24,6 +24,17 @@ export const fetchShipments = (typeStatus: any) => dispatch => {
     complete: () => {}
   });
 };
+
+export const addShipmentReference = (ShipmentKey, Data) => dispatch => {
+  const CreateShipmentReference = (ShipmentKey, Data).subscribe({
+    complete: result => {
+      console.log('add Ref Result is', result);
+    }
+  });
+
+  CreateShipmentReference.unsubscribe();
+};
+
 export const fetchMoreShipments = (typeStatus: any) => (dispatch, getState) => {
   let shipments = [];
   shipmentsObservable.unsubscribe();
