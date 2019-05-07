@@ -58,3 +58,11 @@ export const UpdateCompanyRequestStatus = (CompanyKey, RequestKey, Status) => fr
       .update({ UserRequestStatus: Status }),
   ),
 );
+
+export const UpdateUserRequestStatus = (UserKey, RequestKey, Status) => from(
+  collection(
+    UserRequestRefPath(UserKey)
+      .doc(RequestKey)
+      .update({ UserRequestStatus: Status }),
+  ),
+);
