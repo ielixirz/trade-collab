@@ -29,7 +29,6 @@ const UserRequestRefPath = UserKey => FirebaseApp.firestore()
     }
 */
 
-// eslint-disable-next-line max-len
 export const CreateCompanyRequest = (CompanyKey, RequestKey, Data) => from(
   collection(
     CompanyRequestRefPath(CompanyKey)
@@ -37,3 +36,16 @@ export const CreateCompanyRequest = (CompanyKey, RequestKey, Data) => from(
       .set(Data),
   ),
 );
+
+/* CreateUserRequest
+    {
+        CompanyRequestReference (reference)
+        CompanyRequestCompanyKey (string)
+        CompanyRequestCompanyName (string)
+        CompanyRequestNote (string)
+        CompanyRequestTimestamp (timestamp)
+        CompanyRequestStatus (string) ('Cancel','Pending')
+    }
+*/
+
+export const CreateUserRequest = (UserKey, Data) => from(collection(UserRequestRefPath(UserKey).add(Data)));
