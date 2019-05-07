@@ -71,3 +71,11 @@ export const DeleteCompanyInvitation = (CompanyKey, InvitationKey) => from(
       .delete(),
   ),
 );
+
+export const DeleteUserInvitation = (UserKey, InvitationKey) => from(
+  collection(
+    CompanyInvitationRefPath(UserKey)
+      .doc(InvitationKey)
+      .delete(),
+  ),
+);
