@@ -30,3 +30,18 @@ const UserInvitationRefPath = UserKey => FirebaseApp.firestore()
 */
 
 export const CreateCompanyInvitation = (CompanyKey, Data) => from(collection(CompanyInvitationRefPath(CompanyKey).add(Data)));
+
+/*  CreateUserInvitation
+  {
+    CompanyInvitationReference (reference)
+    CompanyInvitationCompanyKey (string)
+    CompanyInvitationName (string)
+    CompanyInvitationEmail (string)
+    CompanyInvitationPosition (string)
+    CompanyInvitationRole (string)
+    CompanyInvitationTimestamp (timestamp)
+    CompanyInvitationStatus (string) ('Reject','Approve','Pending')
+  }
+*/
+
+export const CreateUserInvitation = (UserKey, Data) => from(collection(UserInvitationRefPath(UserKey).add(Data)));
