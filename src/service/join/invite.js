@@ -29,6 +29,7 @@ const UserInvitationRefPath = UserKey => FirebaseApp.firestore()
   }
 */
 
+// eslint-disable-next-line max-len
 export const CreateCompanyInvitation = (CompanyKey, Data) => from(collection(CompanyInvitationRefPath(CompanyKey).add(Data)));
 
 /*  CreateUserInvitation
@@ -44,4 +45,5 @@ export const CreateCompanyInvitation = (CompanyKey, Data) => from(collection(Com
   }
 */
 
+// eslint-disable-next-line max-len
 export const CreateUserInvitation = (UserKey, Data) => from(collection(UserInvitationRefPath(UserKey).add(Data)));
