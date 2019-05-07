@@ -7,6 +7,7 @@ import {
 } from 'reactstrap';
 import './register.css';
 import './checkbox.scss';
+import { RegisterUser } from '../../../service/auth/register';
 
 const styles = {
   marginInput: { marginLeft: 40, marginRight: 40 },
@@ -32,10 +33,11 @@ const styles = {
 
 class Register extends Component {
   state = {
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
+    Email: '',
+    Password: '',
+    Firstname: '',
+    Surname: '',
+    AccountType: '',
   };
 
   handleChange = (e) => {
@@ -46,7 +48,15 @@ class Register extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    console.log(this.state);
+    console.log('state form', this.state);
+    RegisterUser(this.state).subscribe({
+      next: (result) => {
+        console.log('result', result);
+      },
+      complete: (result) => {
+        console.log(result);
+      },
+    });
   };
 
   render() {
@@ -74,7 +84,7 @@ class Register extends Component {
                     <div style={styles.marginInput}>
                       <input
                         type="text"
-                        id="email"
+                        id="Email"
                         name="email"
                         placeholder="Email"
                         onChange={this.handleChange}
@@ -83,7 +93,7 @@ class Register extends Component {
                     <div style={styles.marginInput}>
                       <input
                         type="text"
-                        id="firstName"
+                        id="Firstname"
                         name="fname"
                         placeholder="Firstname"
                         onChange={this.handleChange}
@@ -92,7 +102,7 @@ class Register extends Component {
                     <div style={styles.marginInput}>
                       <input
                         type="text"
-                        id="lastName"
+                        id="Surname"
                         name="sname"
                         placeholder="Surname"
                         onChange={this.handleChange}
@@ -101,7 +111,7 @@ class Register extends Component {
                     <div style={styles.marginInput}>
                       <input
                         type="password"
-                        id="password"
+                        id="Password"
                         name="password"
                         placeholder="Password"
                         onChange={this.handleChange}
