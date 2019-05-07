@@ -25,7 +25,7 @@ const UserRequestRefPath = UserKey => FirebaseApp.firestore()
         UserRequestEmail (string)
         UserRequestNote (string)
         UserRequestTimestamp (timestamp)
-        UserInvitationStatus (string) ('Reject','Approve','Pending')
+        UserRequestStatus (string) ('Reject','Approve','Pending')
     }
 */
 
@@ -64,5 +64,21 @@ export const UpdateUserRequestStatus = (UserKey, RequestKey, Status) => from(
     UserRequestRefPath(UserKey)
       .doc(RequestKey)
       .update({ UserRequestStatus: Status }),
+  ),
+);
+
+export const DeleteCompanyRequest = (CompanyKey, RequestKey) => from(
+  collection(
+    CompanyRequestRefPath(CompanyKey)
+      .doc(RequestKey)
+      .delete(),
+  ),
+);
+
+export const DeleteUserRequest = (UserKey, RequestKey) => from(
+  collection(
+    CompanyRequestRefPath(UserKey)
+      .doc(RequestKey)
+      .delete(),
   ),
 );
