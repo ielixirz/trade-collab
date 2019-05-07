@@ -15,7 +15,9 @@ import {
   InputGroup,
   InputGroupAddon,
 } from 'reactstrap';
-import { EditChatRoomFileLink } from '../service/chat/chat';
+import _ from 'lodash';
+
+import { CheckAvaliableCompanyName } from '../service/company/company';
 
 const RequestToJoinModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
@@ -23,6 +25,8 @@ const RequestToJoinModal = forwardRef((props, ref) => {
   const [note, setNote] = useState('');
   const [isSearchFound, setIsSearchFound] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const [foundCompany, setFoundCompany] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(null);
 
   const toggle = () => {
     setModal(!modal);
@@ -44,8 +48,34 @@ const RequestToJoinModal = forwardRef((props, ref) => {
     toggle();
   };
 
+  const selectCompany = (index) => {
+    console.log(index);
+    setSelectedIndex(index);
+  };
+
   const searchCompany = () => {
-    setIsSearchActive(true);
+    setSelectedIndex(null);
+    const foundCompanyArray = [];
+    CheckAvaliableCompanyName(searchText).subscribe({
+      next: (snapshot) => {
+        snapshot.forEach((doc) => {
+          foundCompanyArray.push(doc.data());
+        });
+      },
+      error: (err) => {
+        console.log(err);
+        alert(err.message);
+      },
+      complete: () => {
+        setIsSearchActive(true);
+        if (foundCompanyArray.length > 0) {
+          setFoundCompany(foundCompanyArray);
+          setIsSearchFound(true);
+        } else {
+          setIsSearchFound(false);
+        }
+      },
+    });
   };
 
   useImperativeHandle(ref, () => ({
@@ -86,29 +116,44 @@ const RequestToJoinModal = forwardRef((props, ref) => {
             </Button>
           </InputGroupAddon>
         </InputGroup>
-        <Row
-          style={{ marginTop: '1rem', marginBottom: '1rem' }}
-          hidden={!(isSearchActive && isSearchFound)}
-        >
-          <Col xs={3}>
-            <img
-              style={{ width: '100%', margin: 'auto' }}
-              src="../assets/img/default-grey.jpg"
-              className="img-avatar"
-              alt="admin@bootstrapmaster.com"
-            />
-          </Col>
-          <Col xs={5} style={{ margin: 'auto' }}>
-            <span style={{ fontSize: 'medium' }}> Fresh Produce Co. Ltd. </span>
-            {' '}
-          </Col>
-          <Col xs={3} style={{ margin: 'auto' }}>
-            <span style={{ cursor: 'pointer' }}>
-              <b>See Profile</b>
-            </span>
-            {' '}
-          </Col>
-        </Row>
+        {_.map(foundCompany, (company, index) => (
+          <Row
+            className={
+              index === selectedIndex
+                ? 'search-company-selection active'
+                : 'search-company-selection'
+            }
+            hidden={!(isSearchActive && isSearchFound)}
+            onClick={() => selectCompany(index)}
+          >
+            <Col xs={3}>
+              <img
+                style={{ width: '100%', margin: 'auto' }}
+                src={
+                  company.CompanyImageLink === undefined
+                    ? '../assets/img/default-grey.jpg'
+                    : company.CompanyImageLink
+                }
+                className="img-avatar"
+                alt="admin@bootstrapmaster.com"
+              />
+            </Col>
+            <Col xs={5} style={{ margin: 'auto' }}>
+              <span style={{ fontSize: 'medium' }}>
+                {' '}
+                {company.CompanyName}
+                {' '}
+              </span>
+              {' '}
+            </Col>
+            <Col xs={3} style={{ margin: 'auto' }}>
+              <span style={{ cursor: 'pointer' }}>
+                <b>See Profile</b>
+              </span>
+              {' '}
+            </Col>
+          </Row>
+        ))}
         <Row
           style={{ marginTop: '1rem', marginBottom: '1rem' }}
           hidden={!(isSearchActive && !isSearchFound)}
