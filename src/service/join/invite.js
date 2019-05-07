@@ -56,9 +56,9 @@ export const UpdateCompanyInvitationStatus = (CompanyKey, InvitationKey, Status)
   ),
 );
 
-export const UpdateUserInvitationStatus = (CompanyKey, InvitationKey, Status) => from(
+export const UpdateUserInvitationStatus = (UserKey, InvitationKey, Status) => from(
   collection(
-    UserInvitationRefPath(CompanyKey)
+    UserInvitationRefPath(UserKey)
       .doc(InvitationKey)
       .update({ UserInvitationStatus: Status }),
   ),
