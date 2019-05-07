@@ -64,7 +64,7 @@ export const UpdateUserInvitationStatus = (CompanyKey, InvitationKey, Status) =>
   ),
 );
 
-export const DeleteCompanyInvitationStatus = (CompanyKey, InvitationKey) => from(
+export const DeleteCompanyInvitation = (CompanyKey, InvitationKey) => from(
   collection(
     CompanyInvitationRefPath(CompanyKey)
       .doc(InvitationKey)
