@@ -32,34 +32,40 @@ const styles = {
 };
 
 class Register extends Component {
-  state = {
-    Email: '',
-    Password: '',
-    Firstname: '',
-    Surname: '',
-    AccountType: '',
-  };
+  // state = {
+  //   Email: '',
+  //   Password: '',
+  //   Firstname: '',
+  //   Surname: '',
+  //   AccountType: '',
+  // };
 
-  handleChange = (e) => {
-    this.setState({
-      [e.target.id]: e.target.value,
-    });
-  };
+  // handleChange = (e) => {
+  //   this.setState({
+  //     [e.target.id]: e.target.value,
+  //   });
+  // };
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('state form', this.state);
-    RegisterUser(this.state).subscribe({
-      next: (result) => {
-        console.log('result', result);
-      },
-      complete: (result) => {
-        console.log(result);
-      },
-    });
-  };
+  // handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   console.log('state form', this.state);
+  //   RegisterUser(this.state).subscribe({
+  //     next: (result) => {
+  //       console.log('result', result);
+  //     },
+  //     complete: (result) => {
+  //       console.log(result);
+  //     },
+  //   });
+  // };
+  saveAndContinue = (e) => {
+    e.preventDefault()
+    this.props.nextStep()
+}
 
   render() {
+    const { values } = this.props
+
     return (
       <div className="app flex-row align-items-center">
         <Container>
@@ -80,14 +86,15 @@ class Register extends Component {
                   </div>
                 </CardSubtitle>
                 <CardBody className="p-4">
-                  <form onSubmit={this.handleSubmit}>
+                  <form>
                     <div style={styles.marginInput}>
                       <input
                         type="text"
                         id="Email"
                         name="email"
                         placeholder="Email"
-                        onChange={this.handleChange}
+                        onChange={this.props.handleChange('Email')}
+                        defaultValue={values.Email}
                       />
                     </div>
                     <div style={styles.marginInput}>
@@ -96,7 +103,8 @@ class Register extends Component {
                         id="Firstname"
                         name="fname"
                         placeholder="Firstname"
-                        onChange={this.handleChange}
+                        defaultValue={values.Firstname}
+                        onChange={this.props.handleChange('Firstname')}
                       />
                     </div>
                     <div style={styles.marginInput}>
@@ -105,7 +113,8 @@ class Register extends Component {
                         id="Surname"
                         name="sname"
                         placeholder="Surname"
-                        onChange={this.handleChange}
+                        defaultValue={values.Surname}
+                        onChange={this.props.handleChange('Surname')}
                       />
                     </div>
                     <div style={styles.marginInput}>
@@ -114,7 +123,7 @@ class Register extends Component {
                         id="Password"
                         name="password"
                         placeholder="Password"
-                        onChange={this.handleChange}
+                        onChange={this.props.handleChange('Password')}
                       />
                     </div>
                     <div style={styles.marginInputCheckbox}>
@@ -123,7 +132,7 @@ class Register extends Component {
                       <p style={styles.termCon}>Term & condition</p>
                     </div>
                     <div className="col-sm-12 text-center">
-                      <button className="button button1" type="submit">
+                      <button className="button button1" type="submit" onClick={this.saveAndContinue}>
                         <span style={{ color: '#fff' }}>Sign Up</span>
                       </button>
                     </div>
