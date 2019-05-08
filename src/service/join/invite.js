@@ -217,3 +217,7 @@ export const CreateMultipleInvitation = (ColleaguesDataList, CompanyKey) => {
 
   // );
 };
+
+export const GetCompanyInvitation = CompanyKey => collection(CompanyInvitationRefPath(CompanyKey));
+
+export const GetUserInvitation = UserKey => collection(UserInvitationRefPath(UserKey));
