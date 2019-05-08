@@ -291,6 +291,7 @@ const mockDataTable = [
 
 const ProfilePanel = ({ currentProfile, auth }) => {
   const [userProfile, setUserProfile] = useState(mockProfile);
+  const [companyList, setCompanyList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const createCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
@@ -298,6 +299,10 @@ const ProfilePanel = ({ currentProfile, auth }) => {
   useEffect(() => {
     setUserProfile(currentProfile);
   }, []);
+
+  const fetchCompany = () => {
+    
+  };
 
   const toggleEdit = () => {
     if (isEdit) {
