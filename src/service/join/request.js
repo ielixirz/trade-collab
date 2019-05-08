@@ -82,3 +82,7 @@ export const DeleteUserRequest = (UserKey, RequestKey) => from(
       .delete(),
   ),
 );
+
+export const GetCompanyRequest = CompanyKey => collection(CompanyRequestRefPath(CompanyKey));
+
+export const GetUserRequest = UserKey => collection(UserRequestRefPath(UserKey));
