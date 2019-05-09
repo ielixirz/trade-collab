@@ -5,18 +5,16 @@ import React, { Component } from 'react';
 import { Col, Container, Row } from 'reactstrap';
 import './card.css';
 
-const styles = {};
-
 class SelectRole extends Component {
-    saveAndContinue = (e) => {
-        e.preventDefault();
-        this.props.nextStep();
-    }
+  saveAndContinue = (e) => {
+    e.preventDefault();
+    this.props.nextStep();
+  };
 
-    back  = (e) => {
-        e.preventDefault();
-        this.props.prevStep();
-    }
+  back = (e) => {
+    e.preventDefault();
+    this.props.prevStep();
+  };
 
   render() {
     return (
@@ -27,37 +25,37 @@ class SelectRole extends Component {
               <div className="card">
                 <div className="container">
                   <h2>Which describes you best ?</h2>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        flex: 1,
-                      }}
-                    >
-                      <div className="cardRole">
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      flex: 1,
+                    }}
+                  >
+                    <button className="cardRole" type="submit">
                       card
-                    </div>
-                    <div className="cardRole">
+                    </button>
+                    <button className="cardRole" type="submit">
                       card
-                    </div>
-                    <div className="cardRole">
+                    </button>
+                    <button className="cardRole" type="submit">
                       card
-                    </div>
-                    <div className="cardRole">
+                    </button>
+                    <button className="cardRole" type="submit">
                       card
-                    </div>
+                    </button>
                   </div>
-                  <div style={{ textAlign: 'center', marginTop:10}}>
+                  <div style={{ textAlign: 'center', marginTop: 10 }}>
                     <p style={{ color: '#909090' }}>
-                    It's so that we can provide the best onboarding user experience.
+                      It's so that we can provide the best onboarding user experience.
                     </p>
                   </div>
                   <div className="col-sm-12 text-center">
-                      <button className="button button1" type="submit" onClick={this.saveAndContinue}>
-                        <span style={{ color: '#fff' }}>Next</span>
-                      </button>
-                    </div>
+                    <button className="button button1" type="submit" onClick={this.saveAndContinue}>
+                      <span style={{ color: '#fff' }}>Next</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </Col>

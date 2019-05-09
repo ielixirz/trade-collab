@@ -59,12 +59,12 @@ class Register extends Component {
   //   });
   // };
   saveAndContinue = (e) => {
-    e.preventDefault()
-    this.props.nextStep()
-}
+    e.preventDefault();
+    this.props.nextStep();
+  };
 
   render() {
-    const { values } = this.props
+    const { values } = this.props;
 
     return (
       <div className="app flex-row align-items-center">
@@ -114,7 +114,7 @@ class Register extends Component {
                         name="sname"
                         placeholder="Surname"
                         defaultValue={values.Surname}
-                        onChange={this.props.handleChange('Surname')}
+                        onChange={this.props.handleChange('Lastname')}
                       />
                     </div>
                     <div style={styles.marginInput}>
@@ -132,7 +132,11 @@ class Register extends Component {
                       <p style={styles.termCon}>Term & condition</p>
                     </div>
                     <div className="col-sm-12 text-center">
-                      <button className="button button1" type="submit" onClick={this.saveAndContinue}>
+                      <button
+                        className="button button1"
+                        type="submit"
+                        onClick={this.saveAndContinue}
+                      >
                         <span style={{ color: '#fff' }}>Sign Up</span>
                       </button>
                     </div>
