@@ -5,6 +5,7 @@ import { Route, Switch } from 'react-router-dom';
 
 import CompanyPanel from './CompanyPanel';
 import ProfilePanel from './ProfilePanel';
+import SettingPanel from './SettingPanel';
 import './Network.css';
 
 class Network extends Component {
@@ -24,6 +25,12 @@ class Network extends Component {
         <Switch>
           <Route exact path="/network" name="Profile Page" component={ProfilePanel} />
           <Route exact path="/network/company" name="Company Page" component={CompanyPanel} />
+          <Route
+            exact
+            path="/network/company/settings"
+            name="Company Setting Page"
+            component={SettingPanel}
+          />
         </Switch>
       </div>
     );

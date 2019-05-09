@@ -169,3 +169,27 @@ export const memberDataColumns = [
     },
   },
 ];
+
+export const PERMISSION_LIST = [
+  {
+    permission: 'ACCOUNT_HEADER',
+  },
+  {
+    permission: 'account permission 1',
+  },
+  {
+    permission: 'account permission 2',
+  },
+  {
+    permission: 'account permission 3',
+  },
+  {
+    permission: 'VISBILITY_HEADER',
+  },
+  {
+    permission: 'visiblity permission 1',
+  },
+  {
+    permission: 'visiblity permission 2',
+  },
+];
