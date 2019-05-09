@@ -31,7 +31,7 @@ class NewProfileModal extends React.Component {
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
           <ModalHeader toggle={this.toggle} close={closeBtn} />
           <ModalBody>
-            <div style={{ paddingLeft: 100, paddingRight: 100 }}>
+            <div style={{ paddingLeft: 70, paddingRight: 70, paddingBottom: 40 }}>
               <h2 style={{ textAlign: 'center', margin: 0 }}>Add New Profile!</h2>
               <div className="text-center">
                 <img
