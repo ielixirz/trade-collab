@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { Col, Container, Row } from 'reactstrap';
 import './card.css';
 
-const styles = {};
+import NewProfileModal from '../../../component/NewProfileModal';
 
 class SelectProfile extends Component {
   render() {
@@ -51,7 +51,9 @@ class SelectProfile extends Component {
                     </div>
                   </div>
                   <div style={{ textAlign: 'center' }}>
-                    <p style={{ color: '#16a085' }}>Add New User</p>
+                    <NewProfileModal>
+                      <p style={{ color: '#16a085' }}>Add New User</p>
+                    </NewProfileModal>
                     <p style={{ color: '#16a085' }}>
                       You can have multiple users using the same e-mail address
                     </p>

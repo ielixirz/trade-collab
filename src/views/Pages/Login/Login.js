@@ -1,5 +1,7 @@
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable react/prefer-stateless-function */
+/* eslint-disable filenames/match-regex */
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import {
   Button,
   Card,
@@ -10,11 +12,8 @@ import {
   Form,
   FormGroup,
   Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
   Label,
-  Row
+  Row,
 } from 'reactstrap';
 import './login.css';
 import { connect } from 'react-redux';
@@ -92,14 +91,14 @@ class Login extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { authReducer } = state;
   return {
-    ...authReducer
+    ...authReducer,
   };
 };
 
 export default connect(
   mapStateToProps,
-  { typinglogin, login }
+  { typinglogin, login },
 )(Login);

@@ -39,7 +39,6 @@ h2 {
   margin: 25px 25px 25px 80px;
 }
 
-
 .button {
   background-color: #4caf50; /* Green */
   border: none;
@@ -66,4 +65,12 @@ h2 {
 .button1:hover {
   background-color: rgb(57, 212, 181);
   color: black;
+}
+
+.cardRole:focus {
+  background: rgb(196, 231, 245);
+}
+
+p {
+  cursor: pointer;
 }

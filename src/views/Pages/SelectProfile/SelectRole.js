@@ -6,14 +6,21 @@ import { Col, Container, Row } from 'reactstrap';
 import './card.css';
 
 class SelectRole extends Component {
-  saveAndContinue = (e) => {
-    e.preventDefault();
-    this.props.nextStep();
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      role: '',
+    };
+  }
 
-  back = (e) => {
+  setRole(r) {
+    this.setState({ role: r });
+  }
+
+  saveAndContinue = (e) => {
+    const { role } = this.state;
     e.preventDefault();
-    this.props.prevStep();
+    this.props.nextStep(role);
   };
 
   render() {
@@ -24,7 +31,7 @@ class SelectRole extends Component {
             <Col md="9" lg="7" xl="6">
               <div className="card">
                 <div className="container">
-                  <h2>Which describes you best ?</h2>
+                  <h2 style={{ textAlign: 'center' }}>Which describes you best ?</h2>
                   <div
                     style={{
                       display: 'flex',
@@ -33,17 +40,41 @@ class SelectRole extends Component {
                       flex: 1,
                     }}
                   >
-                    <button className="cardRole" type="submit">
-                      card
+                    <button
+                      className="cardRole"
+                      type="submit"
+                      onClick={() => {
+                        this.setRole('Importer');
+                      }}
+                    >
+                      Importer
                     </button>
-                    <button className="cardRole" type="submit">
-                      card
+                    <button
+                      className="cardRole"
+                      type="submit"
+                      onClick={() => {
+                        this.setRole('Exporter');
+                      }}
+                    >
+                      Exporter
                     </button>
-                    <button className="cardRole" type="submit">
-                      card
+                    <button
+                      className="cardRole"
+                      type="submit"
+                      onClick={() => {
+                        this.setRole('Freight Forwarder');
+                      }}
+                    >
+                      Freight Forwarder
                     </button>
-                    <button className="cardRole" type="submit">
-                      card
+                    <button
+                      className="cardRole"
+                      type="submit"
+                      onClick={() => {
+                        this.setRole('Custom Broker');
+                      }}
+                    >
+                      Custom Broker
                     </button>
                   </div>
                   <div style={{ textAlign: 'center', marginTop: 10 }}>
@@ -51,10 +82,16 @@ class SelectRole extends Component {
                       It's so that we can provide the best onboarding user experience.
                     </p>
                   </div>
-                  <div className="col-sm-12 text-center">
-                    <button className="button button1" type="submit" onClick={this.saveAndContinue}>
-                      <span style={{ color: '#fff' }}>Next</span>
-                    </button>
+                  <div style={{ paddingBottom: 20 }}>
+                    <div className="col-sm-12 text-center">
+                      <button
+                        className="button button1"
+                        type="submit"
+                        onClick={this.saveAndContinue}
+                      >
+                        <span style={{ color: '#fff' }}>Next</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

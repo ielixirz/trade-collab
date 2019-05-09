@@ -8,11 +8,6 @@ class Confirmation extends Component {
     this.props.nextStep();
   };
 
-  back = (e) => {
-    e.preventDefault();
-    this.props.prevStep();
-  };
-
   render() {
     const {
       values: {

@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import Register from '../Register/Register';
 import SelectRole from '../SelectProfile/SelectRole';
 import Confirmation from '../SelectProfile/Confirmation';
-import Success from '../SelectProfile/Success';
+import SelectProfile from '../SelectProfile/SelectProfile';
 
 class MainRegister extends Component {
   state = {
@@ -16,26 +16,16 @@ class MainRegister extends Component {
     AccountType: '',
   };
 
-  nextStep = () => {
+  nextStep = (r) => {
     const { step } = this.state;
     this.setState({
       step: step + 1,
-    });
-  };
-
-  prevStep = () => {
-    const { step } = this.state;
-    this.setState({
-      step: step - 1,
+      AccountType: r,
     });
   };
 
   handleChange = input => (event) => {
     this.setState({ [input]: event.target.value });
-  };
-
-  setRole = method => (e) => {
-    this.setState({ method: e });
   };
 
   render() {
@@ -56,18 +46,11 @@ class MainRegister extends Component {
           <Register nextStep={this.nextStep} handleChange={this.handleChange} values={values} />
         );
       case 2:
-        return (
-          <SelectRole
-            nextStep={this.nextStep}
-            prevStep={this.prevStep}
-            handleChange={this.handleChange}
-            values={values}
-          />
-        );
+        return <SelectRole nextStep={this.nextStep} values={values} />;
       case 3:
-        return <Confirmation nextStep={this.nextStep} prevStep={this.prevStep} values={values} />;
+        return <Confirmation nextStep={this.nextStep} values={values} />;
       case 4:
-        return <Success />;
+        return <SelectProfile />;
       default:
         return (
           <Register nextStep={this.nextStep} handleChange={this.handleChange} values={values} />

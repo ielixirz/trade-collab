@@ -60,7 +60,7 @@ class Register extends Component {
   // };
   saveAndContinue = (e) => {
     e.preventDefault();
-    this.props.nextStep();
+    this.props.nextStep('');
   };
 
   render() {
