@@ -8,6 +8,7 @@ import { UpdateUserInfo } from '../../service/user/user';
 import { GetShipmentList } from '../../service/shipment/shipment';
 import { GetMasterDataChatRoom } from '../../service/masterdata/masterdata';
 import { CreateMultipleInvitation } from '../../service/join/invite';
+import { GetProfileListFromEmail } from '../../service/user/profile';
 
 const TestService = () => {
   const [count, setCount] = useState(0);
@@ -102,6 +103,7 @@ const TestService = () => {
     //   },
     // ];
     // CreateMultipleInvitation(ColleaguesDataList, '92f7ICOn95jQyMp4oJTv').subscribe(console.log);
+    // GetProfileListFromEmail('importerMock@mi.com').subscribe(console.log);
   }, []);
 
   return (
