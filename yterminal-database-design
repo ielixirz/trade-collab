@@ -98,6 +98,7 @@
                 ProfileName (string) *(Note-Ask)
                 ProfileEmail (string)
                 ProfileProfileImageLink (string) *(Note-Ask)
+                ProfileCreateTimestamp (timestamp)
                 ProfileNotificationToken (Array<string>)
         +UserInvitation (User was recruited)
             >InvitationKey
