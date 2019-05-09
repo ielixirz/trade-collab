@@ -3,32 +3,14 @@
 /* eslint-disable filenames/match-regex */
 import React, { Component } from 'react';
 import {
-  Card, CardBody, Col, Container, Row, CardTitle, CardSubtitle,
+  Form, Col, Container, Row,
 } from 'reactstrap';
 import './register.css';
 import './checkbox.scss';
 import { RegisterUser } from '../../../service/auth/register';
 
 const styles = {
-  marginInput: { marginLeft: 40, marginRight: 40 },
-  marginInputCheckbox: {
-    marginLeft: 48,
-    marginRight: 40,
-    marginTop: 30,
-    marginBottom: 30,
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  agreeTerm: {
-    fontWeight: 'bold',
-    marginLeft: 10,
-  },
-  termCon: {
-    fontWeight: 'bold',
-    marginBottom: 5,
-    color: '#16a085',
-    marginLeft: 10,
-  },
+  marginInput: { marginLeft: 5, marginRight: 5 },
 };
 
 class Register extends Component {
@@ -71,78 +53,80 @@ class Register extends Component {
         <Container>
           <Row className="justify-content-center">
             <Col md="9" lg="7" xl="6">
-              <Card className="mx-4">
-                <CardTitle>
-                  <h2 style={{ textAlign: 'center', marginTop: 20 }}>
-                    Create new account for free!
-                  </h2>
-                </CardTitle>
-                <CardSubtitle>
-                  <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <h4 style={{ marginLeft: 60 }}>or</h4>
-                    <h4 style={{ marginLeft: 10, textDecoration: 'underline', color: '#16a085' }}>
-                      sign into your account
-                    </h4>
-                  </div>
-                </CardSubtitle>
-                <CardBody className="p-4">
-                  <form>
+              <div className="card">
+                <div
+                  style={{
+                    paddingLeft: 20,
+                    paddingRight: 20,
+                    paddingTop: 40,
+                    paddingBottom: 40,
+                  }}
+                >
+                  <h2 style={{ marginLeft: 0 }}>Create new account for free!</h2>
+                  <Form>
                     <div style={styles.marginInput}>
-                      <input
-                        type="text"
-                        id="Email"
-                        name="email"
-                        placeholder="Email"
-                        onChange={this.props.handleChange('Email')}
-                        defaultValue={values.Email}
-                      />
-                    </div>
-                    <div style={styles.marginInput}>
+                      <h4>Firstname</h4>
                       <input
                         type="text"
                         id="Firstname"
                         name="fname"
-                        placeholder="Firstname"
+                        placeholder="Enter Firstname"
+                        style={{ marginTop: 0 }}
                         defaultValue={values.Firstname}
                         onChange={this.props.handleChange('Firstname')}
                       />
                     </div>
+
                     <div style={styles.marginInput}>
+                      <h4>Surname</h4>
                       <input
                         type="text"
                         id="Surname"
                         name="sname"
-                        placeholder="Surname"
+                        placeholder="Enter Surname"
+                        style={{ marginTop: 0 }}
                         defaultValue={values.Surname}
                         onChange={this.props.handleChange('Lastname')}
                       />
                     </div>
+
                     <div style={styles.marginInput}>
+                      <h4>Email</h4>
+                      <input
+                        type="text"
+                        id="Email"
+                        name="email"
+                        style={{ marginTop: 0 }}
+                        placeholder="you@example.com"
+                        onChange={this.props.handleChange('Email')}
+                        defaultValue={values.Email}
+                      />
+                    </div>
+
+                    <div style={styles.marginInput}>
+                      <h4>Password</h4>
                       <input
                         type="password"
                         id="Password"
                         name="password"
-                        placeholder="Password"
+                        style={{ marginTop: 0 }}
+                        placeholder="Enter Password"
                         onChange={this.props.handleChange('Password')}
                       />
                     </div>
-                    <div style={styles.marginInputCheckbox}>
-                      <input type="checkbox" id="term" onChange={this.handleChange} />
-                      <p style={styles.agreeTerm}>I agree to Y-Terminal</p>
-                      <p style={styles.termCon}>Term & condition</p>
-                    </div>
+
                     <div className="col-sm-12 text-center">
                       <button
                         className="button button1"
                         type="submit"
                         onClick={this.saveAndContinue}
                       >
-                        <span style={{ color: '#fff' }}>Sign Up</span>
+                        <span style={{ color: '#fff' }}>Register</span>
                       </button>
                     </div>
-                  </form>
-                </CardBody>
-              </Card>
+                  </Form>
+                </div>
+              </div>
             </Col>
           </Row>
         </Container>
