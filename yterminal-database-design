@@ -56,7 +56,9 @@
                         .
                 +ChatRoomMessage
                     >ChatRoomMessageKey
-                        ChatRoomMessageSender (string)
+                        ChatRoomMessageSender (string) (ProlfileKey)
+                        ChatRoomMessageFirstName (string)
+                        ChatRoomMessageSurName (string)
                         ChatRoomMessageContext (string)
                         ChatRoomMessageFileUrl (string) *Optional
                         ChatRoomMessageType (string) ['Text','Emoji','Image']
