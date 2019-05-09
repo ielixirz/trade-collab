@@ -19,6 +19,7 @@ import { FirebaseApp } from '../firebase';
 import { GetUserInfoFromEmail } from '../user/user';
 import { GetProlfileList } from '../user/profile';
 import { GetCompanyDetail } from '../company/company';
+import { AddChatRoomMember } from '../chat/chat';
 
 const CompanyInvitationRefPath = CompanyKey => FirebaseApp.firestore()
   .collection('Company')
@@ -99,7 +100,7 @@ export const DeleteUserInvitation = (UserKey, InvitationKey) => from(
   ),
 );
 
-export const CreateMultipleInvitation = (ColleaguesDataList, CompanyKey) => {
+export const CreateCompanyMultipleInvitation = (ColleaguesDataList, CompanyKey) => {
   const EmailList = ColleaguesDataList.map(ColleaguesItem => ColleaguesItem.Email);
 
   const EmailListSource = from(EmailList).pipe(
@@ -165,3 +166,28 @@ export const CreateMultipleInvitation = (ColleaguesDataList, CompanyKey) => {
 export const GetCompanyInvitation = CompanyKey => collection(CompanyInvitationRefPath(CompanyKey));
 
 export const GetUserInvitation = UserKey => collection(UserInvitationRefPath(UserKey));
+
+export const CreateChatMultipleInvitation = (ChatInviteDataList, ShipmentKey, ChatRoomKey) => {
+  const EmailList = ChatInviteDataList.map(ChatInviteItem => ChatInviteItem.Email);
+
+  const EmailListSource = from(EmailList).pipe(
+    tap(a => console.log(a)),
+    concatMap(Email => GetUserInfoFromEmail(Email).pipe(take(1))),
+    map((UserInfoList) => {
+      const Data = UserInfoList[0].data();
+      const ID = UserInfoList[0].id;
+      const Doc = { ...Data, id: ID };
+      const PreloadData = _.find(ChatInviteDataList, { Email: Data.UserInfoEmail });
+
+      const PayloadData = {
+        ChatRoomMemberUserKey: Doc.id,
+        ChatRoomMemberEmail: Doc.UserInfoEmail,
+        ChatRoomMemberRole: PreloadData.Role,
+      };
+      return PayloadData;
+    }),
+    concatMap(PayloadData => AddChatRoomMember(ShipmentKey, ChatRoomKey, PayloadData)),
+  );
+
+  return EmailListSource;
+};

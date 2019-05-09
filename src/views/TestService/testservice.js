@@ -7,7 +7,10 @@ import { Register, RegisterWithEmail } from '../../service/auth/register';
 import { UpdateUserInfo } from '../../service/user/user';
 import { GetShipmentList } from '../../service/shipment/shipment';
 import { GetMasterDataChatRoom } from '../../service/masterdata/masterdata';
-import { CreateMultipleInvitation } from '../../service/join/invite';
+import {
+  CreateCompanyMultipleInvitation,
+  CreateChatMultipleInvitation,
+} from '../../service/join/invite';
 import { GetProfileListFromEmail } from '../../service/user/profile';
 
 const TestService = () => {
@@ -102,8 +105,23 @@ const TestService = () => {
     //     Position: 'Employee',
     //   },
     // ];
+    // const ChatMemberDataList = [
+    //   {
+    //     Email: 'holy-wisdom@hotmail.com',
+    //     Role: 'Importer',
+    //   },
+    //   {
+    //     Email: 'importerMock@mi.com',
+    //     Role: 'Exporter',
+    //   },
+    // ];
     // CreateMultipleInvitation(ColleaguesDataList, '92f7ICOn95jQyMp4oJTv').subscribe(console.log);
     // GetProfileListFromEmail('importerMock@mi.com').subscribe(console.log);
+    // CreateChatMultipleInvitation(
+    //   ChatMemberDataList,
+    //   '0eoacRfk5QFTTBAg2SS3',
+    //   't0RHSAlC2aMRcEHZ9oI5',
+    // ).subscribe(console.log);
   }, []);
 
   return (
