@@ -17,6 +17,7 @@ import {
 } from 'reactstrap';
 import _ from 'lodash';
 
+import { CreateUserRequest, CreateCompanyRequest } from '../service/join/request';
 import { CheckAvaliableCompanyName } from '../service/company/company';
 
 const RequestToJoinModal = forwardRef((props, ref) => {
@@ -41,12 +42,30 @@ const RequestToJoinModal = forwardRef((props, ref) => {
   };
 
   const sendRequest = () => {
-    const selectedCompanyID = foundCompany[selectedIndex].id;
-    const userID = props.userId;
-    // const editedChatRoomFileLink = chatFile;
-    // console.log(editedChatRoomFileLink);
-    // editedChatRoomFileLink[editIndex].FileName = editedFileName;
-    // EditChatRoomFileLink(props.shipmentKey, props.chatroomKey, editedChatRoomFileLink);
+    const selectedCompany = foundCompany[selectedIndex];
+    const userKey = props.userId;
+    const usrReqData = {
+      CompanyRequestReference: '',
+      CompanyRequestCompanyKey: selectedCompany.id,
+      CompanyRequestCompanyName: selectedCompany.data.CompanyName,
+      CompanyRequestNote: note,
+      CompanyRequestStatus: 'Pending',
+    };
+    CreateUserRequest(userKey, usrReqData).subscribe((result) => {
+      const usrReqKey = result.id;
+      const comReqData = {
+        UserRequestReference: usrReqKey,
+        UserRequestKey: usrReqKey,
+        UserRequestUserKey: userKey,
+        UserRequestCompanyKey: selectedCompany.id,
+        UserRequestFristname: props.profile.ProfileFirstname,
+        UserRequestSurname: props.profile.ProfileSurname,
+        UserRequestEmail: props.profile.ProfileEmail,
+        UserRequestNote: note,
+        UserRequestStatus: 'Pending',
+      };
+      CreateCompanyRequest(selectedCompany.id, usrReqKey, comReqData);
+    });
     toggle();
   };
 
