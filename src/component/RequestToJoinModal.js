@@ -42,31 +42,33 @@ const RequestToJoinModal = forwardRef((props, ref) => {
   };
 
   const sendRequest = () => {
-    const selectedCompany = foundCompany[selectedIndex];
-    const userKey = props.userId;
-    const usrReqData = {
-      CompanyRequestReference: '',
-      CompanyRequestCompanyKey: selectedCompany.id,
-      CompanyRequestCompanyName: selectedCompany.data.CompanyName,
-      CompanyRequestNote: note,
-      CompanyRequestStatus: 'Pending',
-    };
-    CreateUserRequest(userKey, usrReqData).subscribe((result) => {
-      const usrReqKey = result.id;
-      const comReqData = {
-        UserRequestReference: usrReqKey,
-        UserRequestKey: usrReqKey,
-        UserRequestUserKey: userKey,
-        UserRequestCompanyKey: selectedCompany.id,
-        UserRequestFristname: props.profile.ProfileFirstname,
-        UserRequestSurname: props.profile.ProfileSurname,
-        UserRequestEmail: props.profile.ProfileEmail,
-        UserRequestNote: note,
-        UserRequestStatus: 'Pending',
+    if (selectedIndex !== null) {
+      const selectedCompany = foundCompany[selectedIndex];
+      const userKey = props.userId;
+      const usrReqData = {
+        CompanyRequestReference: '',
+        CompanyRequestCompanyKey: selectedCompany.id,
+        CompanyRequestCompanyName: selectedCompany.data.CompanyName,
+        CompanyRequestNote: note,
+        CompanyRequestStatus: 'Pending',
       };
-      CreateCompanyRequest(selectedCompany.id, usrReqKey, comReqData);
-    });
-    toggle();
+      CreateUserRequest(userKey, usrReqData).subscribe((result) => {
+        const usrReqKey = result.id;
+        const comReqData = {
+          UserRequestReference: usrReqKey,
+          UserRequestKey: usrReqKey,
+          UserRequestUserKey: userKey,
+          UserRequestCompanyKey: selectedCompany.id,
+          UserRequestFristname: props.profile.ProfileFirstname,
+          UserRequestSurname: props.profile.ProfileSurname,
+          UserRequestEmail: props.profile.ProfileEmail,
+          UserRequestNote: note,
+          UserRequestStatus: 'Pending',
+        };
+        CreateCompanyRequest(selectedCompany.id, usrReqKey, comReqData);
+      });
+      toggle();
+    }
   };
 
   const selectCompany = (index) => {
