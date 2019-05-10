@@ -1,3 +1,5 @@
+/* eslint-disable react/prefer-stateless-function */
+/* eslint-disable filenames/match-regex */
 import React, { Component } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import {
@@ -16,6 +18,7 @@ import './DefaultLayout.css';
 import { connect } from 'react-redux';
 import logo from '../../assets/img/brand/logo.svg';
 import sygnet from '../../assets/img/brand/sygnet.svg';
+import { logout } from '../../actions/loginActions';
 
 const propTypes = {
   children: PropTypes.node,
@@ -80,7 +83,9 @@ class DefaultHeader extends Component {
               <DropdownItem>Option 1</DropdownItem>
               <DropdownItem>Option 2</DropdownItem>
               <DropdownItem divider />
-              <DropdownItem>Reset</DropdownItem>
+              <DropdownItem>
+                <a onClick={() => this.props.logout()}>logout</a>
+              </DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>
           <NavItem className="px-1" style={{ marginRight: 5 }}>
@@ -114,5 +119,5 @@ const styles = {
 };
 export default connect(
   mapStateToProps,
-  null,
+  { logout },
 )(DefaultHeader);

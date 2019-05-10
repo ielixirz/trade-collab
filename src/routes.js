@@ -18,7 +18,6 @@ const routes = [
   { path: '/network', name: 'network', component: Network },
   { path: '/mockdata', name: 'mockdata', component: MockData },
   { path: '/testservice', name: 'testservice', component: TestService },
-  { path: '/mainregister', name: 'mainregister', component: MainRegister },
   { path: '/selectprofile', name: 'selectprofile', component: SelectProfile },
 ];
 

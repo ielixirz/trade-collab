@@ -25,7 +25,7 @@ const Login = Loadable({
 });
 
 const Register = Loadable({
-  loader: () => import('./views/Pages/Register'),
+  loader: () => import('./views/Pages/Main/MainRegister'),
   loading,
 });
 

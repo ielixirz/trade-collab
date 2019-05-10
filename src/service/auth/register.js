@@ -23,6 +23,7 @@ RegisterWithEmail('holy-wisdom@hotmail.com','123456').subscribe({
 export const RegisterWithEmail = (Email, Password) => from(FirebaseApp.auth().createUserWithEmailAndPassword(Email, Password));
 
 export const RegisterUser = (Data) => {
+  console.log('check data', Data);
   const {
     Email, Password, Firstname, Surname, AccountType,
   } = Data;

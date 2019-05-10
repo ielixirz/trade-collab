@@ -1,17 +1,17 @@
 // eslint-disable-next-line filenames/match-regex
 import React, { Component } from 'react';
-import { Container, Row } from 'reactstrap';
+import { Container } from 'reactstrap';
+import { RegisterUser } from '../../../service/auth/register';
 
 class Confirmation extends Component {
   saveAndContinue = (e) => {
-    e.preventDefault();
-    this.props.nextStep();
+    this.props.nextStep(e);
   };
 
   render() {
     const {
       values: {
-        Firstname, Lastname, Email, Password, AccountType,
+        Firstname, Surname, Email, Password, AccountType,
       },
     } = this.props;
 
@@ -35,7 +35,7 @@ class Confirmation extends Component {
             </p>
             <p>
               Last Name:
-              {Lastname}
+              {Surname}
             </p>
             <p>
               Email:
@@ -50,7 +50,11 @@ class Confirmation extends Component {
               {AccountType}
             </p>
             <div className="col-sm-12 text-center">
-              <button className="button button1" type="submit" onClick={this.saveAndContinue}>
+              <button
+                className="button button1"
+                type="submit"
+                onClick={this.saveAndContinue(AccountType)}
+              >
                 <span style={{ color: '#fff' }}>Go To Terminal</span>
               </button>
             </div>

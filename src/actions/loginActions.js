@@ -1,6 +1,8 @@
 import { FILL_CREDENCIAL, SAVE_CREDENCIAL } from '../constants/constants';
 import { LoginWithEmail } from '../service/auth/login';
 import { getUserInfoDetail } from './userActions';
+import 'firebase/auth';
+import { FirebaseApp } from '../service/firebase';
 
 export const typinglogin = data => (dispatch) => {
   // eslint-disable-next-line prefer-destructuring
@@ -29,4 +31,16 @@ export const login = data => (dispatch) => {
     },
     complete: () => {},
   });
+};
+
+export const logout = () => (dispatch) => {
+  FirebaseApp.auth()
+    .signOut()
+    .then(() => {
+      dispatch({
+        type: SAVE_CREDENCIAL,
+        payload: {},
+      });
+      window.location.replace('#/login');
+    });
 };

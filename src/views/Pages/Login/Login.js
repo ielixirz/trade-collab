@@ -80,7 +80,7 @@ class Login extends Component {
                         <p>Don't have an account?</p>
                         <Link
                           className="cool-link"
-                          to="mainregister"
+                          to="register"
                           style={{ color: 'rgb(158, 193, 247)' }}
                         >
                           Sign Up here!

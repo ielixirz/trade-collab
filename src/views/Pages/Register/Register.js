@@ -86,7 +86,7 @@ class Register extends Component {
                         placeholder="Enter Surname"
                         style={{ marginTop: 0 }}
                         defaultValue={values.Surname}
-                        onChange={this.props.handleChange('Lastname')}
+                        onChange={this.props.handleChange('Surname')}
                       />
                     </div>
 
