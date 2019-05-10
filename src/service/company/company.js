@@ -29,7 +29,7 @@ export const UpdateCompany = (CompanyKey, Data) => from(
 
 export const GetCompanyDetail = CompanyKey => doc(CompanyRefPath().doc(CompanyKey));
 
-export const CheckAvaliableCompanyID = CompanyID => collection(CompanyRefPath().where('CompanyID', '==', CompanyID)).pipe(take(1));
+export const CheckAvaliableCompanyName = CompanyName => collection(CompanyRefPath().where('CompanyName', '==', CompanyName)).pipe(take(1));
 
 export const SetCompanyID = (CompanyKey, CompanyID) => from(
   CompanyRefPath()
