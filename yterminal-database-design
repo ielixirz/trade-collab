@@ -56,7 +56,9 @@
                         .
                 +ChatRoomMessage
                     >ChatRoomMessageKey
-                        ChatRoomMessageSender (string)
+                        ChatRoomMessageSender (string) (ProlfileKey)
+                        ChatRoomMessageFirstName (string)
+                        ChatRoomMessageSurName (string)
                         ChatRoomMessageContext (string)
                         ChatRoomMessageFileUrl (string) *Optional
                         ChatRoomMessageType (string) ['Text','Emoji','Image']
@@ -98,6 +100,7 @@
                 ProfileName (string) *(Note-Ask)
                 ProfileEmail (string)
                 ProfileProfileImageLink (string) *(Note-Ask)
+                ProfileCreateTimestamp (timestamp)
                 ProfileNotificationToken (Array<string>)
         +UserInvitation (User was recruited)
             >InvitationKey

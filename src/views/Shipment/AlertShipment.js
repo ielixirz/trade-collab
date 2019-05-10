@@ -1,3 +1,7 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable import/prefer-default-export */
+/* eslint-disable filenames/match-regex */
 /* eslint react/no-multi-comp: 0, react/prop-types: 0 */
 import React from 'react';
 import { Popover, PopoverBody } from 'reactstrap';
@@ -46,7 +50,7 @@ export class AlertShipment extends React.Component {
   render() {
     return (
       <div>
-        <span id={`alertover-${this.props.id}`} style={{ width: 30 }}>
+        <span id={`alertover-${this.props.id}`} style={{ width: '10px' }}>
           <i className="fa fa-ellipsis-v" />
         </span>
         <Popover
