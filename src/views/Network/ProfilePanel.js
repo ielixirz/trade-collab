@@ -17,6 +17,7 @@ import {
 import MainDataTable from '../../component/MainDataTable';
 import ThreeDotDropdown from '../../component/ThreeDotDropdown';
 import CreateCompanyModal from '../../component/CreateCompanyModal';
+import RequestToJoinModal from '../../component/RequestToJoinModal';
 
 import { profileColumns } from '../../constants/network';
 
@@ -294,8 +295,10 @@ const ProfilePanel = ({ currentProfile, auth }) => {
   const [isEdit, setIsEdit] = useState(false);
   const createCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
+  const requestToJoinModalRef = useRef(null);
 
   useEffect(() => {
+    console.log(currentProfile);
     setUserProfile(currentProfile);
   }, []);
 
@@ -364,6 +367,11 @@ const ProfilePanel = ({ currentProfile, auth }) => {
     <div style={{ width: '100%', height: '100%' }}>
       <div className="profile-container">
         <CreateCompanyModal ref={createCompanyModalRef} />
+        <RequestToJoinModal
+          ref={requestToJoinModalRef}
+          userId={auth.uid}
+          profile={currentProfile}
+        />
         <input
           type="file"
           id="file"
@@ -467,7 +475,10 @@ const ProfilePanel = ({ currentProfile, auth }) => {
               </Button>
             </Row>
             <Row>
-              <Button className="profile-btn">
+              <Button
+                onClick={() => requestToJoinModalRef.current.triggerRequestToJoin()}
+                className="profile-btn"
+              >
                 <i className="cui-graph icons network-btn-icon" />
                 Request to join Company
               </Button>
