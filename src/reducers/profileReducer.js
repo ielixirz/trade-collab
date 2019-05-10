@@ -6,7 +6,7 @@ const INITIAL_STATE = {
   ProfileDetail: {},
 };
 
-export default function reducer(state = INITIAL_STATE, action) {
+export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case FETCH_PROFILE_LIST:
       return {
@@ -22,4 +22,4 @@ export default function reducer(state = INITIAL_STATE, action) {
     default:
       return state;
   }
-}
+};

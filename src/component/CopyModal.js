@@ -32,7 +32,7 @@ const CopyModal = forwardRef((props, ref) => {
 
   const copy = () => {
     _.each(copyChatroom, (room) => {
-      const copiedChatRoomFileLink = room.value.file;
+      const copiedChatRoomFileLink = room.value.file === undefined ? [] : room.value.file;
       copiedChatRoomFileLink.push(file);
       EditChatRoomFileLink(room.value.shipmentKey, room.value.chatroomKey, copiedChatRoomFileLink);
     });
@@ -49,7 +49,6 @@ const CopyModal = forwardRef((props, ref) => {
             shipmentKey: room.ShipmentKey,
             chatroomKey: room.ChatRoomKey,
             file: room.ChatRoomData.ChatRoomFileLink,
-
           },
           label: room.roomName,
         });
@@ -68,7 +67,6 @@ const CopyModal = forwardRef((props, ref) => {
   const chatrooms = useMappedState(mapState);
 
   useImperativeHandle(ref, () => ({
-
     triggerCopying(chatFile) {
       if (chatFile !== undefined) {
         setFileName(chatFile.FileName);
@@ -77,12 +75,13 @@ const CopyModal = forwardRef((props, ref) => {
       mapChatroom(chatrooms.chatrooms);
       toggle();
     },
-
   }));
 
   return (
     <Modal isOpen={modal} toggle={toggle} className="upload-modal">
-      <ModalHeader toggle={toggle}><b>Copy a file</b></ModalHeader>
+      <ModalHeader toggle={toggle}>
+        <b>Copy a file</b>
+      </ModalHeader>
       <ModalBody>
         {/* <Input
                     style={{ marginBottom: '0.5rem' }}
@@ -95,7 +94,9 @@ const CopyModal = forwardRef((props, ref) => {
                     value={message}
                     onChange={handleMessageChange}
                 /> */}
-        <Label htmlFor="chatroom-copy"><b>Copy to</b></Label>
+        <Label htmlFor="chatroom-copy">
+          <b>Copy to</b>
+        </Label>
         <Select
           onChange={handleChatroomSelectChange}
           onClick={preventParentCollapse}
@@ -106,22 +107,19 @@ const CopyModal = forwardRef((props, ref) => {
           className="basic-multi-select"
           classNamePrefix="select"
         />
-        <Label htmlFor="filename" style={{ marginTop: '0.5rem' }}><b>File name</b></Label>
-        <Input
-          type="text"
-          id="filename"
-          placeholder=""
-          disabled
-          value={fileName}
-        />
+        <Label htmlFor="filename" style={{ marginTop: '0.5rem' }}>
+          <b>File name</b>
+        </Label>
+        <Input type="text" id="filename" placeholder="" disabled value={fileName} />
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={copy}>Copy</Button>
+        <Button color="primary" onClick={copy}>
+          Copy
+        </Button>
         {' '}
       </ModalFooter>
     </Modal>
   );
 });
-
 
 export default CopyModal;
