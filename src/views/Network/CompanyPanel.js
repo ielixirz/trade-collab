@@ -67,24 +67,23 @@ const CompanyPanel = (props) => {
   const fileInput = useRef(null);
 
   useEffect(() => {
-    GetCompanyDetail('oFT40OYTReLd6GQR1kIv').subscribe({
+    GetCompanyDetail(props.match.params.key).subscribe({
       next: (snapshot) => {
         const data = snapshot.data();
         setCompany(data);
       },
       error: (err) => {
         console.log(err);
-        alert(err.message);
       },
       complete: () => {
         console.log('TO DO LOG');
       },
     });
-  }, []);
+  });
 
   const toggleEdit = () => {
     if (isEdit) {
-      UpdateCompany('oFT40OYTReLd6GQR1kIv', company);
+      UpdateCompany(props.match.params.id, company);
     }
     setIsEdit(!isEdit);
   };
@@ -111,7 +110,7 @@ const CompanyPanel = (props) => {
   };
 
   const changeCompanyPic = (file) => {
-    const companyKey = 'oFT40OYTReLd6GQR1kIv';
+    const companyKey = props.match.params.id;
     const editedCompany = company;
     const storageRefPath = `/Company/${companyKey}/${new Date().valueOf()}${file.name}`;
     PutFile(storageRefPath, file).subscribe({

@@ -6,14 +6,7 @@ import { zip } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import {
-  Row,
-  Col,
-  DropdownToggle,
-  Dropdown,
-  Button,
-  Input,
-  ButtonGroup,
-  ButtonToolbar,
+  Row, Col, DropdownToggle, Dropdown, Button, Input, ButtonGroup,
 } from 'reactstrap';
 
 import MainDataTable from '../../component/MainDataTable';
@@ -102,6 +95,7 @@ const ProfilePanel = ({ currentProfile, auth }) => {
     ).subscribe(([requests, invitations]) => {
       requests.forEach((item) => {
         requestList.push({
+          key: item.CompanyRequestCompanyKey,
           company: item.CompanyRequestCompanyName,
           position: '-',
           role: '-',
@@ -121,6 +115,7 @@ const ProfilePanel = ({ currentProfile, auth }) => {
 
       invitations.forEach((item) => {
         inviteList.push({
+          key: item.CompanyInvitationCompanyKey,
           company: item.CompanyInvitationName,
           position: item.CompanyInvitationPosition,
           role: item.CompanyInvitationRole,
@@ -143,10 +138,9 @@ const ProfilePanel = ({ currentProfile, auth }) => {
   };
 
   useEffect(() => {
-    console.log(currentProfile);
     setUserProfile(currentProfile);
     fetchCompany(auth.uid);
-  }, []);
+  });
 
   const toggleEdit = () => {
     if (isEdit) {
@@ -207,6 +201,16 @@ const ProfilePanel = ({ currentProfile, auth }) => {
         });
       },
     });
+  };
+
+  const routeToCompany = (key) => {
+    window.location.replace(`#/network/company/${key}`);
+  };
+
+  const tableRowEvents = {
+    onClick: (e, row) => {
+      routeToCompany(row.key);
+    },
   };
 
   return (
@@ -355,6 +359,7 @@ const ProfilePanel = ({ currentProfile, auth }) => {
           cssClass="profile-table"
           wraperClass="profile-table-wraper"
           isBorder={false}
+          rowEvents={tableRowEvents}
         />
       </div>
     </div>
