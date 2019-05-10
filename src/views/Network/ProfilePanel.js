@@ -2,6 +2,8 @@
 /* eslint-disable filenames/match-regex */
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
+import { zip } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import {
   Row,
@@ -22,6 +24,9 @@ import RequestToJoinModal from '../../component/RequestToJoinModal';
 import { profileColumns } from '../../constants/network';
 
 import { UpdateProfile } from '../../service/user/profile';
+import { GetUserRequest } from '../../service/join/request';
+import { GetUserInvitation } from '../../service/join/invite';
+
 import {
   PutFile,
   GetMetaDataFromStorageRefPath,
@@ -79,217 +84,6 @@ const renderStatus = (status) => {
   return '';
 };
 
-const mockDataTable = [
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Reject'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Pending'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Deactivated'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Invited'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-];
-
 const ProfilePanel = ({ currentProfile, auth }) => {
   const [userProfile, setUserProfile] = useState(mockProfile);
   const [companyList, setCompanyList] = useState([]);
@@ -298,14 +92,61 @@ const ProfilePanel = ({ currentProfile, auth }) => {
   const fileInput = useRef(null);
   const requestToJoinModalRef = useRef(null);
 
+  const fetchCompany = (userKey) => {
+    const requestList = [];
+    const inviteList = [];
+
+    zip(
+      GetUserRequest(userKey).pipe(map(docs => docs.map(d => d.data()))),
+      GetUserInvitation(userKey).pipe(map(docs => docs.map(d => d.data()))),
+    ).subscribe(([requests, invitations]) => {
+      requests.forEach((item) => {
+        requestList.push({
+          company: item.CompanyRequestCompanyName,
+          position: '-',
+          role: '-',
+          status: renderStatus(item.CompanyRequestStatus),
+          button: (
+            <ThreeDotDropdown
+              options={[
+                {
+                  text: 'Leave',
+                  function: null,
+                },
+              ]}
+            />
+          ),
+        });
+      });
+
+      invitations.forEach((item) => {
+        inviteList.push({
+          company: item.CompanyInvitationName,
+          position: item.CompanyInvitationPosition,
+          role: item.CompanyInvitationRole,
+          status: renderStatus(item.CompanyInvitationStatus),
+          button: (
+            <ThreeDotDropdown
+              options={[
+                {
+                  text: 'Leave',
+                  function: null,
+                },
+              ]}
+            />
+          ),
+        });
+      });
+
+      setCompanyList(requestList.concat(inviteList));
+    });
+  };
+
   useEffect(() => {
     console.log(currentProfile);
     setUserProfile(currentProfile);
+    fetchCompany(auth.uid);
   }, []);
-
-  const fetchCompany = () => {
-    
-  };
 
   const toggleEdit = () => {
     if (isEdit) {
@@ -509,7 +350,7 @@ const ProfilePanel = ({ currentProfile, auth }) => {
         }}
       >
         <MainDataTable
-          data={mockDataTable}
+          data={companyList}
           column={profileColumns}
           cssClass="profile-table"
           wraperClass="profile-table-wraper"
