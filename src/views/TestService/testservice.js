@@ -10,6 +10,7 @@ import { GetMasterDataChatRoom } from '../../service/masterdata/masterdata';
 import {
   CreateCompanyMultipleInvitation,
   CreateChatMultipleInvitation,
+  IsExistInvitation,
 } from '../../service/join/invite';
 import { GetProfileListFromEmail } from '../../service/user/profile';
 
@@ -122,6 +123,7 @@ const TestService = () => {
     //   '0eoacRfk5QFTTBAg2SS3',
     //   't0RHSAlC2aMRcEHZ9oI5',
     // ).subscribe(console.log);
+    // IsExistInvitation('A0qO6SZakZ1jqZor6ara', '92f7ICOn95jQyMp4oJTv').subscribe(console.log);
   }, []);
 
   return (
