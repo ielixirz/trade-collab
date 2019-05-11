@@ -6,6 +6,11 @@ import { FirebaseApp } from '../firebase';
 
 const CompanyRefPath = () => FirebaseApp.firestore().collection('Company');
 
+const CompanyMemberRefPath = CompanyKey => FirebaseApp.firestore()
+  .collection('Company')
+  .doc(CompanyKey)
+  .collection('CompanyMember');
+
 /* Example CreateCompany
     {
         CompanyName (string)
@@ -41,4 +46,11 @@ export const SetCompanyImageLink = (CompanyKey, CompanyImageLink) => from(
   CompanyRefPath()
     .doc(CompanyKey)
     .set({ CompanyImageLink }, { merge: true }),
+);
+
+export const IsCompanyMember = (CompanyKey, UserKey) => collection(
+  CompanyInvitationRefPath(CompanyKey).where('UserInvitationUserKey', '==', UserKey),
+).pipe(
+  take(1),
+  map(Result => Result.length > 0),
 );
