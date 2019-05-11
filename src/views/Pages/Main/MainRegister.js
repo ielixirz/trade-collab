@@ -6,7 +6,7 @@ import Register from '../Register/Register';
 import SelectRole from '../SelectProfile/SelectRole';
 import Confirmation from '../SelectProfile/Confirmation';
 import { RegisterUser } from '../../../service/auth/register';
-import { login } from '../../../actions/loginActions';
+import { login, setDefault } from '../../../actions/loginActions';
 
 class MainRegister extends Component {
   state = {
@@ -37,6 +37,7 @@ class MainRegister extends Component {
     RegisterUser(this.state).subscribe({
       next: (result) => {
         console.log('result', result);
+        this.props.setDefault();
         this.props.login({ email: Email, password: Password });
       },
       complete: (result) => {
@@ -89,5 +90,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
   mapStateToProps,
-  { login },
+  { login, setDefault },
 )(MainRegister);

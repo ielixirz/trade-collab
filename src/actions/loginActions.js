@@ -15,6 +15,12 @@ export const typinglogin = data => (dispatch) => {
   });
 };
 
+export const setDefault = () => (dispatch) => {
+  dispatch({
+    type: SAVE_CREDENCIAL,
+    payload: {},
+  });
+};
 export const login = data => (dispatch) => {
   const { email, password } = data;
   LoginWithEmail(email, password).subscribe({
