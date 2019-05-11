@@ -175,10 +175,10 @@ export const inviteToCompanyColumns = [
     dataField: 'name',
     text: 'Name',
     style: {
-      width: '25%',
+      width: '30%',
     },
     headerStyle: {
-      width: '25%',
+      width: '30%',
     },
   },
   {
@@ -195,10 +195,10 @@ export const inviteToCompanyColumns = [
     dataField: 'position',
     text: 'Position',
     style: {
-      width: '25%',
+      width: '15%',
     },
     headerStyle: {
-      width: '25%',
+      width: '15%',
     },
   },
   {
@@ -209,6 +209,16 @@ export const inviteToCompanyColumns = [
     },
     headerStyle: {
       width: '25%',
+    },
+  },
+  {
+    dataField: 'remove',
+    text: '',
+    style: {
+      width: '5%',
+    },
+    headerStyle: {
+      width: '5%',
     },
   },
 ];
