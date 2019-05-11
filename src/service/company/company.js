@@ -1,6 +1,6 @@
 import { collection, doc } from 'rxfire/firestore';
 import { from } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { take, map } from 'rxjs/operators';
 
 import { FirebaseApp } from '../firebase';
 
@@ -48,9 +48,8 @@ export const SetCompanyImageLink = (CompanyKey, CompanyImageLink) => from(
     .set({ CompanyImageLink }, { merge: true }),
 );
 
-export const IsCompanyMember = (CompanyKey, UserKey) => collection(
-  CompanyInvitationRefPath(CompanyKey).where('UserInvitationUserKey', '==', UserKey),
-).pipe(
+// eslint-disable-next-line max-len
+export const IsCompanyMember = (CompanyKey, UserKey) => doc(CompanyMemberRefPath(CompanyKey).doc(UserKey)).pipe(
   take(1),
-  map(Result => Result.length > 0),
+  map(Result => !!Result.data()),
 );
