@@ -169,3 +169,56 @@ export const memberDataColumns = [
     },
   },
 ];
+
+export const inviteToCompanyColumns = [
+  {
+    dataField: 'name',
+    text: 'Name',
+    style: {
+      width: '30%',
+    },
+    headerStyle: {
+      width: '30%',
+    },
+  },
+  {
+    dataField: 'email',
+    text: 'Email',
+    style: {
+      width: '25%',
+    },
+    headerStyle: {
+      width: '25%',
+    },
+  },
+  {
+    dataField: 'position',
+    text: 'Position',
+    style: {
+      width: '15%',
+    },
+    headerStyle: {
+      width: '15%',
+    },
+  },
+  {
+    dataField: 'role',
+    text: 'Role',
+    style: {
+      width: '25%',
+    },
+    headerStyle: {
+      width: '25%',
+    },
+  },
+  {
+    dataField: 'remove',
+    text: '',
+    style: {
+      width: '5%',
+    },
+    headerStyle: {
+      width: '5%',
+    },
+  },
+];

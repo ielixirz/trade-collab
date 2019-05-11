@@ -10,6 +10,8 @@ import {
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
 import Select from 'react-select';
 import MainDataTable from '../../component/MainDataTable';
+import MultiSelectTextInput from '../../component/MultiSelectTextInput';
+import InviteToCompanyModal from '../../component/InviteToCompanyModal';
 
 import { incomingRequestColumns, memberDataColumns } from '../../constants/network';
 
@@ -63,7 +65,10 @@ const { SearchBar } = Search;
 
 const CompanyPanel = (props) => {
   const [company, setCompany] = useState(mockCompany);
+  const [invitedEmails, setinvitedEmails] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
+
+  const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
 
   useEffect(() => {
@@ -87,6 +92,10 @@ const CompanyPanel = (props) => {
       UpdateCompany('oFT40OYTReLd6GQR1kIv', company);
     }
     setIsEdit(!isEdit);
+  };
+
+  const handleInviteInputChange = (emails) => {
+    setinvitedEmails(emails);
   };
 
   const handleCompanyInputChange = (event) => {
@@ -141,6 +150,7 @@ const CompanyPanel = (props) => {
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <div className="company-container">
+        <InviteToCompanyModal ref={inviteToCompanyModalRef} />
         <input
           type="file"
           id="file"
@@ -241,15 +251,22 @@ const CompanyPanel = (props) => {
               <b>Email invitations</b>
             </Label>
             <Row>
-              <Select
-                isMulti
-                name="colors"
-                id="email-invitation"
-                className="basic-multi-select company-invitation-select"
-                classNamePrefix="select"
+              <MultiSelectTextInput
+                id="invite-email"
+                getValue={handleInviteInputChange}
                 placeholder="Enter email..."
+                className="company-invitation-select"
               />
-              <Button className="company-invite-btn">Invite</Button>
+              <Button
+                className="company-invite-btn"
+                onClick={() => inviteToCompanyModalRef.current.triggerInviteToCompany(invitedEmails, {
+                  companyName: 'Test Company Y',
+                  key: 'oFT40OYTReLd6GQR1kIv',
+                })
+                }
+              >
+                Invite
+              </Button>
             </Row>
           </Col>
         </Row>

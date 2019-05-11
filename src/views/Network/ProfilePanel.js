@@ -17,6 +17,7 @@ import {
 import MainDataTable from '../../component/MainDataTable';
 import ThreeDotDropdown from '../../component/ThreeDotDropdown';
 import CreateCompanyModal from '../../component/CreateCompanyModal';
+import InviteToCompanyModal from '../../component/InviteToCompanyModal';
 import RequestToJoinModal from '../../component/RequestToJoinModal';
 
 import { profileColumns } from '../../constants/network';
@@ -294,6 +295,7 @@ const ProfilePanel = ({ currentProfile, auth }) => {
   const [userProfile, setUserProfile] = useState(mockProfile);
   const [isEdit, setIsEdit] = useState(false);
   const createCompanyModalRef = useRef(null);
+  const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
   const requestToJoinModalRef = useRef(null);
 
@@ -367,6 +369,7 @@ const ProfilePanel = ({ currentProfile, auth }) => {
     <div style={{ width: '100%', height: '100%' }}>
       <div className="profile-container">
         <CreateCompanyModal ref={createCompanyModalRef} />
+        <InviteToCompanyModal ref={inviteToCompanyModalRef} />
         <RequestToJoinModal
           ref={requestToJoinModalRef}
           userId={auth.uid}
@@ -469,7 +472,10 @@ const ProfilePanel = ({ currentProfile, auth }) => {
           </Col>
           <Col xs={3} className="col-profile-button">
             <Row>
-              <Button className="profile-btn">
+              <Button
+                className="profile-btn"
+                onClick={() => inviteToCompanyModalRef.current.triggerInviteToCompany([])}
+              >
                 <i className="cui-user-follow icons network-btn-icon" />
                 Invite colleagues to join
               </Button>
