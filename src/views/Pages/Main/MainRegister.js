@@ -1,11 +1,12 @@
 /* eslint-disable default-case */
 /* eslint-disable filenames/match-regex */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Register from '../Register/Register';
 import SelectRole from '../SelectProfile/SelectRole';
 import Confirmation from '../SelectProfile/Confirmation';
-import SelectProfile from '../SelectProfile/SelectProfile';
 import { RegisterUser } from '../../../service/auth/register';
+import { login } from '../../../actions/loginActions';
 
 class MainRegister extends Component {
   state = {
@@ -32,16 +33,18 @@ class MainRegister extends Component {
 
   handleRegister = () => {
     console.log('state', this.state);
+    const { Email, Password } = this.state;
     RegisterUser(this.state).subscribe({
       next: (result) => {
         console.log('result', result);
+        this.props.login({ email: Email, password: Password });
+      },
+      complete: (result) => {
+        console.log(result);
       },
       error: (err) => {
         console.log('err', err);
         window.location.replace('#/login');
-      },
-      complete: (result) => {
-        console.log(result);
       },
     });
   };
@@ -77,5 +80,14 @@ class MainRegister extends Component {
     }
   }
 }
+const mapStateToProps = (state) => {
+  const { authReducer } = state;
+  return {
+    ...authReducer,
+  };
+};
 
-export default MainRegister;
+export default connect(
+  mapStateToProps,
+  { login },
+)(MainRegister);

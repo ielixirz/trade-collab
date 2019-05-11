@@ -4,8 +4,8 @@ import { Container } from 'reactstrap';
 import { RegisterUser } from '../../../service/auth/register';
 
 class Confirmation extends Component {
-  saveAndContinue = (e) => {
-    this.props.nextStep(e);
+  saveAndContinue = (r) => {
+    this.props.nextStep(r);
   };
 
   render() {
@@ -53,7 +53,9 @@ class Confirmation extends Component {
               <button
                 className="button button1"
                 type="submit"
-                onClick={this.saveAndContinue(AccountType)}
+                onClick={() => {
+                  this.saveAndContinue(AccountType);
+                }}
               >
                 <span style={{ color: '#fff' }}>Go To Terminal</span>
               </button>
