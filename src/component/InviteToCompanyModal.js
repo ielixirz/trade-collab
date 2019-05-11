@@ -63,7 +63,7 @@ const mockRoleList = [
 
 const InviteToCompanyModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(1);
   const [invitedEmails, setinvitedEmails] = useState([]);
   const [existingInvited, setExistingInvited] = useState([]);
   const [nonExistingInvited, setNonExistingInvited] = useState([]);
@@ -104,8 +104,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
     setNonExistingInvited(tempNonExist);
   };
 
-  const fetchInvitedUserDetail = () => {
-    const emails = [...invitedEmails];
+  const fetchInvitedUserDetail = (emails) => {
     const userObs = [];
     emails.forEach((email) => {
       userObs.push(
@@ -237,7 +236,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
 
   const nextStep = () => {
     setCurrentStep(currentStep + 1);
-    fetchInvitedUserDetail();
+    fetchInvitedUserDetail([...invitedEmails]);
   };
 
   const invite = () => {
@@ -260,11 +259,13 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
   };
 
   useImperativeHandle(ref, () => ({
-    triggerInviteToCompany(propinvitedEmails) {
+    triggerInviteToCompany(propinvitedEmails, propCompany) {
       if (propinvitedEmails.length === 0) {
         setCurrentStep(1);
       } else {
         setinvitedEmails(propinvitedEmails);
+        fetchInvitedUserDetail(propinvitedEmails);
+        setCompany(propCompany);
         setCurrentStep(2);
       }
       toggle();

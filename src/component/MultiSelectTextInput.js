@@ -67,6 +67,7 @@ export default class MultiSelectTextInput extends Component {
         onKeyDown={this.handleKeyDown}
         placeholder={placeholder}
         value={value}
+        className={this.props.className}
       />
     );
   }
