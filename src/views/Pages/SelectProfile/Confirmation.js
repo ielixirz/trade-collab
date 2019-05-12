@@ -10,9 +10,7 @@ class Confirmation extends Component {
 
   render() {
     const {
-      values: {
-        Firstname, Surname, Email, Password, AccountType,
-      },
+      values: { AccountType },
     } = this.props;
 
     return (
