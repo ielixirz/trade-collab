@@ -29,26 +29,6 @@ class Confirmation extends Component {
             <p style={{ fontStyle: 'italic', color: '#6A6A6A' }}>
               Welcome to your first shipment our terminal.
             </p>
-            <p>
-              First Name:
-              {Firstname}
-            </p>
-            <p>
-              Last Name:
-              {Surname}
-            </p>
-            <p>
-              Email:
-              {Email}
-            </p>
-            <p>
-              pass:
-              {Password}
-            </p>
-            <p>
-              Role:
-              {AccountType}
-            </p>
             <div className="col-sm-12 text-center">
               <button
                 className="button button1"
