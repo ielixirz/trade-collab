@@ -9,7 +9,7 @@ import {
   DropdownToggle,
   Nav,
   NavItem,
-  UncontrolledDropdown,
+  UncontrolledDropdown
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 
@@ -19,9 +19,9 @@ import { connect } from 'react-redux';
 import logo from '../../assets/img/brand/logo.svg';
 import sygnet from '../../assets/img/brand/sygnet.svg';
 import { logout } from '../../actions/loginActions';
-
+import './style.css';
 const propTypes = {
-  children: PropTypes.node,
+  children: PropTypes.node
 };
 
 const defaultProps = {};
@@ -39,13 +39,13 @@ class DefaultHeader extends Component {
             src: logo,
             width: 89,
             height: 25,
-            alt: 'CoreUI Logo',
+            alt: 'CoreUI Logo'
           }}
           minimized={{
             src: sygnet,
             width: 30,
             height: 30,
-            alt: 'Y terminal',
+            alt: 'Y terminal'
           }}
         />
         <Nav className="d-md-down-none">
@@ -61,18 +61,83 @@ class DefaultHeader extends Component {
           </NavItem>
         </Nav>
         <Nav className="ml-auto" navbar style={styles.marginNav}>
-          <NavItem className="d-md-down-none">
-            <NavLink to="/network">
-              <i className="fa fa-bell-o fa-lg" style={{ fontWeight: 'bold', color: 'black' }} />
-              <Badge
-                pill
-                color="danger"
-                style={{ marginLeft: -8, position: 'absolute', bottom: 10 }}
-              >
-                5
-              </Badge>
-            </NavLink>
-          </NavItem>
+          <UncontrolledDropdown direction="down">
+            <DropdownToggle nav>
+              <NavItem className="d-md-down-none">
+                <NavLink to="#" className="nav-link">
+                  <i className="icon-bell" />
+                  <Badge pill color="danger">
+                    5
+                  </Badge>
+                </NavLink>
+              </NavItem>
+            </DropdownToggle>
+            <DropdownMenu right className="notification" style={{ right: 'auto' }}>
+              <DropdownItem header tag="div">
+                <span
+                  style={{
+                    fontWeight: 'bold',
+                    float: 'left'
+                  }}
+                >
+                  Notification
+                </span>
+                <span
+                  style={{
+                    fontWeight: 'bold',
+                    float: 'right'
+                  }}
+                >
+                  <div>
+                    <span
+                      style={{
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Mark Read All
+                    </span>
+                    <span style={{ marginRight: 5, marginLeft: 5, opacity: 0.3 }}>|</span>
+                    <i className="icon-settings" />
+                  </div>
+                </span>
+              </DropdownItem>
+              <DropdownItem>
+                <i className="fa fa-bell-o" /> Updates<Badge color="info">42</Badge>
+              </DropdownItem>
+              <DropdownItem>
+                <i className="fa fa-envelope-o" /> Messages<Badge color="success">42</Badge>
+              </DropdownItem>
+              <DropdownItem>
+                <i className="fa fa-tasks" /> Tasks<Badge color="danger">42</Badge>
+              </DropdownItem>
+              <DropdownItem>
+                <i className="fa fa-comments" /> Comments<Badge color="warning">42</Badge>
+              </DropdownItem>
+              <DropdownItem header tag="div" className="text-center">
+                <strong>Settings</strong>
+              </DropdownItem>
+              <DropdownItem>
+                <i className="fa fa-user" /> Profile
+              </DropdownItem>
+              <DropdownItem>
+                <i className="fa fa-wrench" /> Settings
+              </DropdownItem>
+              <DropdownItem>
+                <i className="fa fa-usd" /> Payments<Badge color="secondary">42</Badge>
+              </DropdownItem>
+              <DropdownItem>
+                <i className="fa fa-file" /> Projects<Badge color="primary">42</Badge>
+              </DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem>
+                <i className="fa fa-shield" /> Lock Account
+              </DropdownItem>
+              <DropdownItem onClick={e => this.props.onLogout(e)}>
+                <i className="fa fa-lock" /> Logout
+              </DropdownItem>
+            </DropdownMenu>
+          </UncontrolledDropdown>
+
           <UncontrolledDropdown nav inNavbar style={{ marginRight: 5 }}>
             <DropdownToggle nav caret>
               <span style={styles.fontNav}>
@@ -102,10 +167,10 @@ class DefaultHeader extends Component {
 
 DefaultHeader.propTypes = propTypes;
 DefaultHeader.defaultProps = defaultProps;
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   const { authReducer } = state;
   return {
-    user: authReducer.user,
+    user: authReducer.user
   };
 };
 
@@ -113,11 +178,11 @@ const styles = {
   fontNav: {
     color: '#3B3B3B',
     textDecoration: 'none',
-    fontSize: 16,
+    fontSize: 16
   },
-  marginNav: { marginRight: 18 },
+  marginNav: { marginRight: 18 }
 };
 export default connect(
   mapStateToProps,
-  { logout },
+  { logout }
 )(DefaultHeader);

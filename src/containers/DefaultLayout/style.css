@@ -1,0 +1,10 @@
+.dropdown-header {
+height: 5vh;
+}
+.notification {
+  min-width: 400px;
+}
+.dropdown-header{
+  background:#277C83;
+  color: #ffffff;
+}
