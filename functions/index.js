@@ -55,7 +55,15 @@ exports.ApproveCompanyInvitation = functions.firestore
           UserMemberJoinedTimestamp: new Date()
         });
 
-      return Promise.all([UserCompany, CompanyMember]);
+      const UpdateCompanyInvitation = admin
+        .firestore()
+        .collection('Company')
+        .doc(newValue.CompanyInvitationCompanyKey)
+        .collection('CompanyInvitation')
+        .doc(change.after.id)
+        .set({ UserInvitationStatus: 'Approve' });
+
+      return Promise.all([UserCompany, CompanyMember, UpdateCompanyInvitation]);
     }
   });
 
@@ -69,7 +77,7 @@ exports.ApproveUserRequest = functions.firestore
       const UserCompany = admin
         .firestore()
         .collection('UserInfo')
-        .doc(newValue.UserRequestKey)
+        .doc(newValue.UserRequestUserKey)
         .collection('UserCompany')
         .add({
           UserCompanyReference: admin
