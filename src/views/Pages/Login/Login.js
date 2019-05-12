@@ -64,7 +64,9 @@ class Login extends Component {
                               required
                             />
                             <div className="text-center text-md-right">
-                              <ForgotPass>Forgot Password</ForgotPass>
+                              <ForgotPass>
+                                <p style={{ color: 'red' }}>Forgot Password</p>
+                              </ForgotPass>
                             </div>
                           </FormGroup>
                         </Col>

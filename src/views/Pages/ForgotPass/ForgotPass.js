@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import '../../../component/MemberModal.css';
+import './forgotpass.css';
 
 class ForgotPass extends React.Component {
   static propTypes = {
