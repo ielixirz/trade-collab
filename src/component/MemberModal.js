@@ -1,16 +1,18 @@
+/* eslint-disable react/button-has-type */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable filenames/match-regex */
 import React from 'react';
 import {
   Button,
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   InputGroup,
   InputGroupAddon,
   Input,
   Row,
   Col,
-  UncontrolledCollapse,
 } from 'reactstrap';
 import './MemberModal.css';
 import MemberInChat from './MemberInChat';
@@ -21,40 +23,31 @@ class MemberModal extends React.Component {
     this.state = {
       modal: false,
     };
-
-    this.toggle = this.toggle.bind(this);
   }
 
-  toggle() {
+  toggle = () => {
+    console.log('toggle');
     this.setState(prevState => ({
       modal: !prevState.modal,
     }));
-  }
+  };
+
+  renderCloseButton = () => (
+    <button className="close" onClick={this.toggle}>
+      &times;
+    </button>
+  );
 
   render() {
-    const closeBtn = (
-      <button className="close" onClick={this.toggle}>
-        &times;
-      </button>
-    );
-
+    const { count } = this.props;
     return (
       <div>
-        <Button
-          className="invite-btn"
-          style={{
-            marginLeft: '2rem',
-            marginRight: '1rem',
-            color: 'white',
-            backgroundColor: '#16A085',
-          }}
-          onClick={this.toggle}
-        >
-          <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
-          {this.props.buttonLabel}
+        <Button color="link" onClick={this.toggle}>
+          <i style={{ marginRight: '0.5rem' }} className="fa  fa-users fa-lg" />
+          {count}
         </Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
-          <ModalHeader toggle={this.toggle} close={closeBtn}>
+          <ModalHeader toggle={this.toggle} close={this.renderCloseButton()}>
             <InputGroup>
               <InputGroupAddon addonType="prepend">
                 <Button>

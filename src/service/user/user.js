@@ -38,10 +38,6 @@ export const GetUserInfoFromEmail = Email => collection(UserInfoRefPath().where(
 
 export const GetUserInfoFromUsername = Username => collection(UserInfoRefPath().where('UserInfoUsername', '==', Username));
 
-export const GetUserInfoUsername = UserInfoKey => doc(
-  UserInfoRefPath().doc(UserInfoKey),
-).pipe(map(User => User.UserInfoUsername));
+export const GetUserInfoUsername = UserInfoKey => doc(UserInfoRefPath().doc(UserInfoKey)).pipe(map(User => User.UserInfoUsername));
 
-export const GetUserInfoUserInfoNotificationToken = UserInfoKey => doc(
-  UserInfoRefPath().doc(UserInfoKey),
-).pipe(map(User => User.UserInfoNotificationToken));
+export const GetUserInfoUserInfoNotificationToken = UserInfoKey => doc(UserInfoRefPath().doc(UserInfoKey)).pipe(map(User => User.UserInfoNotificationToken));
