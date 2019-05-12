@@ -64,11 +64,26 @@ export const CreateCompanyRequest = (CompanyKey, RequestKey, Data) => from(
 // eslint-disable-next-line max-len
 export const CreateUserRequest = (UserKey, Data) => from(UserRequestRefPath(UserKey).add(Data));
 
-export const UpdateCompanyRequestStatus = (CompanyKey, RequestKey, Status) => from(
+export const UpdateCompanyRequestStatus = (
+  CompanyKey,
+  RequestKey,
+  Status,
+  RoleName,
+  RolePermissionCode,
+  Position,
+) => from(
   collection(
     CompanyRequestRefPath(CompanyKey)
       .doc(RequestKey)
-      .update({ UserRequestStatus: Status }),
+      .set(
+        {
+          UserRequestStatus: Status,
+          UserRequestRoleName: RoleName,
+          UserRequestRolePermissionCode: RolePermissionCode,
+          UserRequestPosition: Position,
+        },
+        { merge: true },
+      ),
   ),
 );
 
