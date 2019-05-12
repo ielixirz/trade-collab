@@ -10,8 +10,11 @@ import { GetMasterDataChatRoom } from '../../service/masterdata/masterdata';
 import {
   CreateCompanyMultipleInvitation,
   CreateChatMultipleInvitation,
+  IsExistInvitation,
 } from '../../service/join/invite';
 import { GetProfileListFromEmail } from '../../service/user/profile';
+
+import { IsCompanyMember } from '../../service/company/company';
 
 const TestService = () => {
   const [count, setCount] = useState(0);
@@ -122,6 +125,8 @@ const TestService = () => {
     //   '0eoacRfk5QFTTBAg2SS3',
     //   't0RHSAlC2aMRcEHZ9oI5',
     // ).subscribe(console.log);
+    // IsExistInvitation('A0qO6SZakZ1jqZor6ara', '92f7ICOn95jQyMp4oJTv').subscribe(console.log);
+    // IsCompanyMember('92f7ICOn95jQyMp4oJTv', 'A0qO6SZakZ1jqZor6ara').subscribe(console.log);
   }, []);
 
   return (
