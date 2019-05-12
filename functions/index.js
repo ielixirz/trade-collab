@@ -43,13 +43,14 @@ exports.ApproveCompanyInvitation = functions.firestore
       const CompanyMember = admin
         .firestore()
         .collection('Company')
-        .doc(context.params.UserKey)
+        .doc(newValue.CompanyInvitationCompanyKey)
         .collection('CompanyMember')
-        .add({
-          UserMemberEmail: CompanyInvitationEmail,
-          UserMemberPosition: CompanyInvitationPosition,
-          UserMemberRoleName: CompanyInvitationRole,
-          UserMatrixRolePermissionCode: CompanyInvitationRole,
+        .doc(context.params.UserKey)
+        .set({
+          UserMemberEmail: newValue.CompanyInvitationUserEmail,
+          UserMemberPosition: newValue.CompanyInvitationPosition,
+          UserMemberRoleName: newValue.CompanyInvitationRole,
+          UserMatrixRolePermissionCode: newValue.CompanyInvitationRole,
           UserMemberCompanyStandingStatus: 'Active',
           UserMemberJoinedTimestamp: new Date()
         });
@@ -64,14 +65,11 @@ exports.ApproveUserRequest = functions.firestore
     const oldValue = change.before.data();
     const newValue = change.after.data();
 
-    if (
-      oldValue.UserInvitationStatus !== 'Approve' &&
-      newValue.UserInvitationStatus === 'Approve'
-    ) {
+    if (oldValue.UserRequestStatus !== 'Approve' && newValue.UserRequestStatus === 'Approve') {
       const UserCompany = admin
         .firestore()
         .collection('UserInfo')
-        .doc(context.params.UserKey)
+        .doc(newValue.UserRequestKey)
         .collection('UserCompany')
         .add({
           UserCompanyReference: admin
@@ -84,13 +82,14 @@ exports.ApproveUserRequest = functions.firestore
       const CompanyMember = admin
         .firestore()
         .collection('Company')
-        .doc(context.params.UserKey)
+        .doc(context.params.CompanyKey)
         .collection('CompanyMember')
-        .add({
-          UserMemberEmail: UserRequestEmail,
-          UserMemberPosition: UserRequestPosition,
-          UserMemberRoleName: UserRequestRoleName,
-          UserMatrixRolePermissionCode: UserRequestRolePermissionCode,
+        .doc(newValue.UserRequestUserKey)
+        .set({
+          UserMemberEmail: newValue.UserRequestEmail,
+          UserMemberPosition: newValue.UserRequestPosition,
+          UserMemberRoleName: newValue.UserRequestRoleName,
+          UserMatrixRolePermissionCode: newValue.UserRequestRolePermissionCode,
           UserMemberCompanyStandingStatus: 'Active',
           UserMemberJoinedTimestamp: new Date()
         });
