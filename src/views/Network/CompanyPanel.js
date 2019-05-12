@@ -394,7 +394,11 @@ const CompanyPanel = (props) => {
       <div className="incoming-request-container">
         <div className="company-table-label">
           <Row>
-            <h4>Incoming Request (1)</h4>
+            <h4>
+Incoming Request (
+              {incomingRequest.length}
+)
+            </h4>
           </Row>
         </div>
         <MainDataTable
