@@ -16,6 +16,8 @@ import { GetProfileListFromEmail } from '../../service/user/profile';
 
 import { IsCompanyMember, GetCompanyMember } from '../../service/company/company';
 
+import { GetUserRequest } from '../../service/join/request';
+
 const TestService = () => {
   const [count, setCount] = useState(0);
 
@@ -129,6 +131,7 @@ const TestService = () => {
     // IsCompanyMember('92f7ICOn95jQyMp4oJTv', 'A0qO6SZakZ1jqZor6ara').subscribe(console.log);
     // GetUserCompany('nen3b2GCqSQIUyTHuFret0Yx9f02').subscribe(console.log);
     // GetCompanyMember('oFT40OYTReLd6GQR1kIv').subscribe(console.log);
+    // GetUserRequest('nen3b2GCqSQIUyTHuFret0Yx9f02').subscribe(console.log);
   }, []);
 
   return (
