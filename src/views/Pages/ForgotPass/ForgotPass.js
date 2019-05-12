@@ -1,46 +1,84 @@
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable react/prefer-stateless-function */
+/* eslint-disable react/forbid-prop-types */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable filenames/match-regex */
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import {
-  Button,
-  Card,
-  CardBody,
-  CardGroup,
-  Col,
-  Container,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-  Row,
-} from 'reactstrap';
-import { connect } from 'react-redux';
-import { typinglogin, login } from '../../../actions/loginActions';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import '../../../component/MemberModal.css';
 
-class ForgotPass extends Component {
+class ForgotPass extends React.Component {
+  static propTypes = {
+    children: PropTypes.any,
+  };
+
+  static defaultProps = {
+    children: null,
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      modal: false,
+    };
+
+    this.toggle = this.toggle.bind(this);
+  }
+
+  setInput = (field, value) => this.setState({ [field]: value });
+
+  complete = () => {
+    this.toggle();
+  };
+
+  toggle() {
+    this.setState(prevState => ({
+      modal: !prevState.modal,
+    }));
+  }
+
   render() {
+    const { children } = this.props;
+    const { modal } = this.state;
+    const closeBtn = (
+      <button className="close" onClick={this.toggle} type="submit">
+        &times;
+      </button>
+    );
     return (
-      <div className="app flex-row align-items-center">
-        <Container>
-          <Row className="justify-content-center">
-            <p>forgotpass</p>
-          </Row>
-        </Container>
+      <div>
+        <div role="button" tabIndex={0} onClick={this.toggle}>
+          {children}
+        </div>
+        <Modal isOpen={modal} toggle={this.toggle}>
+          <ModalHeader toggle={this.toggle} close={closeBtn} />
+          <ModalBody>
+            <div style={{ paddingLeft: 70, paddingRight: 70, paddingBottom: 40 }}>
+              <h2 style={{ textAlign: 'center', margin: 0 }}>Forgot Password</h2>
+
+              <form>
+                <div>
+                  <h4>Firstname</h4>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="please eneter your account&email"
+                    style={{ marginTop: 0 }}
+                    onChange={() => {}}
+                  />
+                </div>
+              </form>
+              <div className="col-sm-12 text-center">
+                <button className="button button1" type="submit" onClick={this.submit}>
+                  <span style={{ color: '#fff' }}>Reset Password</span>
+                </button>
+              </div>
+            </div>
+          </ModalBody>
+        </Modal>
       </div>
     );
   }
 }
 
-const mapStateToProps = (state) => {
-  const { authReducer } = state;
-  return {
-    ...authReducer,
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  null,
-)(ForgotPass);
+export default ForgotPass;
