@@ -55,15 +55,7 @@ exports.ApproveCompanyInvitation = functions.firestore
           UserMemberJoinedTimestamp: new Date()
         });
 
-      const UpdateCompanyInvitation = admin
-        .firestore()
-        .collection('Company')
-        .doc(newValue.CompanyInvitationCompanyKey)
-        .collection('CompanyInvitation')
-        .doc(change.after.id)
-        .set({ UserInvitationStatus: 'Approve' });
-
-      return Promise.all([UserCompany, CompanyMember, UpdateCompanyInvitation]);
+      return Promise.all([UserCompany, CompanyMember]);
     }
   });
 
