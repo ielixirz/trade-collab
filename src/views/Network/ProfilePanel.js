@@ -18,7 +18,11 @@ import { profileColumns } from '../../constants/network';
 
 import { UpdateProfile } from '../../service/user/profile';
 import { GetUserRequest } from '../../service/join/request';
-import { GetUserInvitation } from '../../service/join/invite';
+import {
+  GetUserInvitation,
+  UpdateCompanyInvitationStatus,
+  UpdateUserInvitationStatus,
+} from '../../service/join/invite';
 
 import {
   PutFile,
@@ -33,15 +37,31 @@ const mockProfile = {
 };
 
 // This function will be move after actual company fetching is complete
-const renderStatus = (status) => {
+const renderStatus = (status, keys, listener) => {
   if (status === 'Invited') {
     return (
       <div>
         <ButtonGroup>
-          <Button className="profile-company-status-btn reject">Reject</Button>
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              listener(keys, 'Reject');
+            }}
+            className="profile-company-status-btn reject"
+          >
+            Reject
+          </Button>
         </ButtonGroup>
         <ButtonGroup>
-          <Button className="profile-company-status-btn join">Join</Button>
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              listener(keys, 'Approve');
+            }}
+            className="profile-company-status-btn join"
+          >
+            Join
+          </Button>
         </ButtonGroup>
       </div>
     );
@@ -85,13 +105,24 @@ const ProfilePanel = ({ currentProfile, auth }) => {
   const fileInput = useRef(null);
   const requestToJoinModalRef = useRef(null);
 
+  const responseToInvite = (keys, status) => {
+    UpdateCompanyInvitationStatus(keys.cKey, keys.iKey, status);
+    UpdateUserInvitationStatus(keys.uKey, keys.iKey, status);
+  };
+
   const fetchCompany = (userKey) => {
     const requestList = [];
     const inviteList = [];
 
     zip(
       GetUserRequest(userKey).pipe(map(docs => docs.map(d => d.data()))),
-      GetUserInvitation(userKey).pipe(map(docs => docs.map(d => d.data()))),
+      GetUserInvitation(userKey).pipe(
+        map(docs => docs.map((d) => {
+          const data = d.data();
+          data.key = d.id;
+          return data;
+        })),
+      ),
     ).subscribe(([requests, invitations]) => {
       requests.forEach((item) => {
         requestList.push({
@@ -114,23 +145,31 @@ const ProfilePanel = ({ currentProfile, auth }) => {
       });
 
       invitations.forEach((item) => {
-        inviteList.push({
-          key: item.CompanyInvitationCompanyKey,
-          company: item.CompanyInvitationName,
-          position: item.CompanyInvitationPosition,
-          role: item.CompanyInvitationRole,
-          status: renderStatus(item.CompanyInvitationStatus),
-          button: (
-            <ThreeDotDropdown
-              options={[
-                {
-                  text: 'Leave',
-                  function: null,
-                },
-              ]}
-            />
-          ),
-        });
+        const status = item.CompanyInvitationStatus === 'Pending' ? 'Invited' : 'Reject';
+        if (status === 'Invited') {
+          const keys = {
+            uKey: userKey,
+            cKey: item.CompanyInvitationCompanyKey,
+            iKey: item.key,
+          };
+          inviteList.push({
+            key: item.CompanyInvitationCompanyKey,
+            company: item.CompanyInvitationName,
+            position: item.CompanyInvitationPosition,
+            role: item.CompanyInvitationRole,
+            status: renderStatus(status, keys, responseToInvite),
+            button: (
+              <ThreeDotDropdown
+                options={[
+                  {
+                    text: 'Leave',
+                    function: null,
+                  },
+                ]}
+              />
+            ),
+          });
+        }
       });
 
       setCompanyList(requestList.concat(inviteList));
