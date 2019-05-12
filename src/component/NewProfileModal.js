@@ -1,17 +1,48 @@
+/* eslint-disable react/forbid-prop-types */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable filenames/match-regex */
+import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import './MemberModal.css';
+import { CreateProfile } from '../service/user/profile';
 
 class NewProfileModal extends React.Component {
+  static propTypes = {
+    user: PropTypes.object.isRequired,
+    children: PropTypes.any,
+  };
+
+  static defaultProps = {
+    children: null,
+  };
+
   constructor(props) {
     super(props);
     this.state = {
       modal: false,
+      ProfileFirstname: '',
+      ProfileSurname: '',
     };
 
     this.toggle = this.toggle.bind(this);
   }
+
+  setInput = (field, value) => this.setState({ [field]: value });
+
+  submit = async () => {
+    const { user } = this.props;
+    const { ProfileFirstname, ProfileSurname } = this.state;
+    CreateProfile(user.uid, {
+      ProfileFirstname,
+      ProfileSurname,
+    }).subscribe(this.complete);
+  };
+
+  complete = () => {
+    this.toggle();
+  };
 
   toggle() {
     this.setState(prevState => ({
@@ -20,6 +51,8 @@ class NewProfileModal extends React.Component {
   }
 
   render() {
+    const { children } = this.props;
+    const { modal, ProfileFirstname, ProfileSurname } = this.state;
     const closeBtn = (
       <button className="close" onClick={this.toggle} type="submit">
         &times;
@@ -27,8 +60,10 @@ class NewProfileModal extends React.Component {
     );
     return (
       <div>
-        <div onClick={this.toggle}>{this.props.children}</div>
-        <Modal isOpen={this.state.modal} toggle={this.toggle}>
+        <div role="button" tabIndex={0} onClick={this.toggle}>
+          {children}
+        </div>
+        <Modal isOpen={modal} toggle={this.toggle}>
           <ModalHeader toggle={this.toggle} close={closeBtn} />
           <ModalBody>
             <div style={{ paddingLeft: 70, paddingRight: 70, paddingBottom: 40 }}>
@@ -61,6 +96,8 @@ class NewProfileModal extends React.Component {
                     name="fname"
                     placeholder="Enter Firstname"
                     style={{ marginTop: 0 }}
+                    value={ProfileFirstname}
+                    onChange={e => this.setInput('ProfileFirstname', e.target.value)}
                   />
                 </div>
 
@@ -72,12 +109,14 @@ class NewProfileModal extends React.Component {
                     name="sname"
                     placeholder="Enter Surname"
                     style={{ marginTop: 0 }}
+                    value={ProfileSurname}
+                    onChange={e => this.setInput('ProfileSurname', e.target.value)}
                   />
                 </div>
               </form>
               <p style={{ color: '#16A085' }}>Edit profile setting</p>
               <div className="col-sm-12 text-center">
-                <button className="button button1" type="submit">
+                <button className="button button1" type="submit" onClick={this.submit}>
                   <span style={{ color: '#fff' }}>Create Profile</span>
                 </button>
               </div>
@@ -89,4 +128,4 @@ class NewProfileModal extends React.Component {
   }
 }
 
-export default NewProfileModal;
+export default connect(state => ({ user: state.authReducer.user }))(NewProfileModal);
