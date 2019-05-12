@@ -129,6 +129,11 @@
                 UserChatRoomReference (reference)
                 UserChatRoomTimestamp (timestamp)
                 UserChatRoomLastestTimestamp (timestamp)
+        +UserCompany
+            >UserCompanyKey
+                UserCompanyReference (reference)
+                UserCompanyTimestamp (timestamp)
+
 
 +UserPersonalize
     >ProfileKey
