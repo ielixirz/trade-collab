@@ -141,7 +141,14 @@ const CompanyPanel = (props) => {
   };
 
   const responseToRequest = (keys, status) => {
-    UpdateCompanyRequestStatus(keys.cKey, keys.rKey, status);
+    UpdateCompanyRequestStatus(
+      keys.cKey,
+      keys.rKey,
+      status,
+      updateRole[keys.uKey],
+      'rolePermissionCode',
+      updatePosition[keys.uKey],
+    );
     UpdateUserRequestStatus(keys.uKey, keys.rKey, status);
   };
 
