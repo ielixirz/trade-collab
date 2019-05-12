@@ -1,0 +1,13 @@
+@supports (zoom: 2) {
+  input[type='radio'],
+  input[type='checkbox'] {
+    zoom: 2;
+  }
+}
+@supports not (zoom: 2) {
+  input[type='radio'],
+  input[type='checkbox'] {
+    transform: scale(2);
+    margin: 0px;
+  }
+}
