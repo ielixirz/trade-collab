@@ -69,7 +69,7 @@ exports.ApproveUserRequest = functions.firestore
       const UserCompany = admin
         .firestore()
         .collection('UserInfo')
-        .doc(newValue.UserRequestKey)
+        .doc(newValue.UserRequestUserKey)
         .collection('UserCompany')
         .add({
           UserCompanyReference: admin
