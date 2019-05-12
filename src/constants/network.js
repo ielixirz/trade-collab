@@ -59,10 +59,10 @@ export const incomingRequestColumns = [
     dataField: 'name',
     text: 'Name',
     style: {
-      width: '30%',
+      width: '25%',
     },
     headerStyle: {
-      width: '30%',
+      width: '25%',
     },
   },
   {
@@ -79,31 +79,37 @@ export const incomingRequestColumns = [
     dataField: 'position',
     text: 'Position',
     style: {
-      width: '20%',
+      width: '15%',
     },
     headerStyle: {
-      width: '20%',
+      width: '15%',
     },
+    headerAlign: 'center',
+    align: 'center',
   },
   {
     dataField: 'role',
     text: 'Role',
     style: {
-      width: '20%',
+      width: '15%',
     },
     headerStyle: {
-      width: '20%',
+      width: '15%',
     },
+    headerAlign: 'center',
+    align: 'center',
   },
   {
     dataField: 'status',
     text: 'Status',
     style: {
-      width: '10%',
+      width: '20%',
     },
     headerStyle: {
-      width: '10%',
+      width: '20%',
     },
+    headerAlign: 'center',
+    align: 'center',
   },
 ];
 
@@ -166,6 +172,59 @@ export const memberDataColumns = [
     },
     headerStyle: {
       width: '10%',
+    },
+  },
+];
+
+export const inviteToCompanyColumns = [
+  {
+    dataField: 'name',
+    text: 'Name',
+    style: {
+      width: '30%',
+    },
+    headerStyle: {
+      width: '30%',
+    },
+  },
+  {
+    dataField: 'email',
+    text: 'Email',
+    style: {
+      width: '25%',
+    },
+    headerStyle: {
+      width: '25%',
+    },
+  },
+  {
+    dataField: 'position',
+    text: 'Position',
+    style: {
+      width: '15%',
+    },
+    headerStyle: {
+      width: '15%',
+    },
+  },
+  {
+    dataField: 'role',
+    text: 'Role',
+    style: {
+      width: '25%',
+    },
+    headerStyle: {
+      width: '25%',
+    },
+  },
+  {
+    dataField: 'remove',
+    text: '',
+    style: {
+      width: '5%',
+    },
+    headerStyle: {
+      width: '5%',
     },
   },
 ];

@@ -201,3 +201,10 @@ export const CreateChatMultipleInvitation = (ChatInviteDataList, ShipmentKey, Ch
 
   return EmailListSource;
 };
+
+export const IsExistInvitation = (UserKey, CompanyKey) => collection(
+  CompanyInvitationRefPath(CompanyKey).where('UserInvitationUserKey', '==', UserKey),
+).pipe(
+  take(1),
+  map(Result => Result.length > 0),
+);
