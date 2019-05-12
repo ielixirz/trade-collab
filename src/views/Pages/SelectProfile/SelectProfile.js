@@ -10,15 +10,19 @@ import { Col, Container, Row } from 'reactstrap';
 import './card.css';
 
 import NewProfileModal from '../../../component/NewProfileModal';
+import { getProfileDetail } from '../../../actions/profileActions';
 
 class SelectProfile extends Component {
   static propTypes = {
+    user: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
     profiles: PropTypes.array.isRequired,
+    fetchProfile: PropTypes.isRequired,
   };
 
-  goToShipment = () => {
-    const { history } = this.props;
+  goToShipment = (profile) => {
+    const { user, history, fetchProfile } = this.props;
+    fetchProfile(user.uid, profile.id);
     history.push('/shipment');
   };
 
@@ -28,6 +32,7 @@ class SelectProfile extends Component {
       onClick={() => this.goToShipment(profile)}
       role="button"
       tabIndex={0}
+      key={profile.id}
     >
       <div
         style={{
@@ -96,4 +101,10 @@ class SelectProfile extends Component {
   }
 }
 
-export default connect(state => ({ profiles: state.profileReducer.ProfileList }))(SelectProfile);
+export default connect(
+  state => ({
+    user: state.authReducer.user,
+    profiles: state.profileReducer.ProfileList,
+  }),
+  { fetchProfile: getProfileDetail },
+)(SelectProfile);

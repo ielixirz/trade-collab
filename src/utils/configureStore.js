@@ -3,6 +3,7 @@
 import _ from 'lodash';
 /* Redux */
 import { createStore, applyMiddleware, compose } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
 import logger from 'redux-logger';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web and AsyncStorage for react-native
 
@@ -17,9 +18,10 @@ const persistConfig = {
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
+const composeEnhancers = composeWithDevTools({});
 
 export const configureStore = () => {
-  const store = createStore(persistedReducer, applyMiddleware(logger, thunk));
+  const store = createStore(persistedReducer, composeEnhancers(applyMiddleware(logger, thunk)));
   const persistor = persistStore(store);
 
   return {
