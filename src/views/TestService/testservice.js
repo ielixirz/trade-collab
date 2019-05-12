@@ -4,7 +4,7 @@ import { GetChatMessage, CreateChatMessage, GetChatRoomList } from '../../servic
 import { LoginWithEmail } from '../../service/auth/login';
 import { VerificationEmail, AuthStage } from '../../service/auth/manageuser';
 import { Register, RegisterWithEmail } from '../../service/auth/register';
-import { UpdateUserInfo } from '../../service/user/user';
+import { UpdateUserInfo, GetUserCompany } from '../../service/user/user';
 import { GetShipmentList } from '../../service/shipment/shipment';
 import { GetMasterDataChatRoom } from '../../service/masterdata/masterdata';
 import {
@@ -127,6 +127,7 @@ const TestService = () => {
     // ).subscribe(console.log);
     // IsExistInvitation('A0qO6SZakZ1jqZor6ara', '92f7ICOn95jQyMp4oJTv').subscribe(console.log);
     // IsCompanyMember('92f7ICOn95jQyMp4oJTv', 'A0qO6SZakZ1jqZor6ara').subscribe(console.log);
+    // GetUserCompany('nen3b2GCqSQIUyTHuFret0Yx9f02').subscribe(console.log);
   }, []);
 
   return (
