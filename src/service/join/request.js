@@ -76,7 +76,7 @@ export const UpdateUserRequestStatus = (UserKey, RequestKey, Status) => from(
   collection(
     UserRequestRefPath(UserKey)
       .doc(RequestKey)
-      .update({ UserRequestStatus: Status }),
+      .update({ UserRequestStatus: Status, CompanyRequestStatus: Status }),
   ),
 );
 
