@@ -17,7 +17,7 @@ export default (state = INITIAL_STATE, action) => {
     case FETCH_PROFILE_DETAIL:
       return {
         ...state,
-        UserInfo: action.payload,
+        ProfileDetail: action.payload,
       };
     default:
       return state;
