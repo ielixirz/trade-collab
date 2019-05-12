@@ -80,7 +80,7 @@ export const UpdateUserInvitationStatus = (UserKey, InvitationKey, Status) => fr
   collection(
     UserInvitationRefPath(UserKey)
       .doc(InvitationKey)
-      .update({ UserInvitationStatus: Status }),
+      .update({ CompanyInvitationStatus: Status }),
   ),
 );
 
