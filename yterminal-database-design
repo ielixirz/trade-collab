@@ -129,6 +129,11 @@
                 UserChatRoomReference (reference)
                 UserChatRoomTimestamp (timestamp)
                 UserChatRoomLastestTimestamp (timestamp)
+        +UserCompany
+            >UserCompanyKey
+                UserCompanyReference (reference)
+                UserCompanyTimestamp (timestamp)
+
 
 +UserPersonalize
     >ProfileKey
@@ -183,6 +188,9 @@
                 UserRequestEmail (string)
                 UserRequestNote (string)
                 UserRequestTimestamp (timestamp)
+                UserRequestRoleName (string)
+                UserRequestRolePermissionCode (string)
+                UserRequestPosition (string)
                 UserInvitationStatus (string) ('Reject','Approve','Pending')
         +CompanyUserMatrix
             >CompanyUserMatrixKey

@@ -139,6 +139,7 @@ export const CreateCompanyMultipleInvitation = (ColleaguesDataList, CompanyKey) 
         CompanyInvitationName: CompanyDocData.CompanyName,
         // CompanyInvitationEmail: CompanyDocData.CompanyEmail,
         CompanyInvitationEmail: '',
+        CompanyInvitationUserEmail: Email,
         CompanyInvitationPosition: PreloadData.Position,
         CompanyInvitationRole: PreloadData.Role,
         CompanyInvitationTimestamp: new Date(),
@@ -191,3 +192,10 @@ export const CreateChatMultipleInvitation = (ChatInviteDataList, ShipmentKey, Ch
 
   return EmailListSource;
 };
+
+export const IsExistInvitation = (UserKey, CompanyKey) => collection(
+  CompanyInvitationRefPath(CompanyKey).where('UserInvitationUserKey', '==', UserKey),
+).pipe(
+  take(1),
+  map(Result => Result.length > 0),
+);

@@ -9,10 +9,23 @@ const CompanyRequestRefPath = CompanyKey => FirebaseApp.firestore()
   .doc(CompanyKey)
   .collection('CompanyRequest');
 
+const CompanyRequestApproveRefPath = CompanyKey => FirebaseApp.firestore()
+  .collection('Company')
+  .doc(CompanyKey)
+  .collection('CompanyRequest')
+  .where('UserRequestStatus', '==', 'Pending');
+
 const UserRequestRefPath = UserKey => FirebaseApp.firestore()
   .collection('UserInfo')
   .doc(UserKey)
   .collection('UserRequest');
+
+const UserRequestApproveRefPath = UserKey => FirebaseApp.firestore()
+  .collection('UserInfo')
+  .doc(UserKey)
+  .collection('UserRequest')
+  .where('CompanyRequestStatus', '==', 'Pending')
+  .where('CompanyRequestStatus', '==', 'Reject');
 
 /* CreateCompanyRequest
     {
@@ -51,11 +64,26 @@ export const CreateCompanyRequest = (CompanyKey, RequestKey, Data) => from(
 // eslint-disable-next-line max-len
 export const CreateUserRequest = (UserKey, Data) => from(UserRequestRefPath(UserKey).add(Data));
 
-export const UpdateCompanyRequestStatus = (CompanyKey, RequestKey, Status) => from(
+export const UpdateCompanyRequestStatus = (
+  CompanyKey,
+  RequestKey,
+  Status,
+  RoleName,
+  RolePermissionCode,
+  Position,
+) => from(
   collection(
     CompanyRequestRefPath(CompanyKey)
       .doc(RequestKey)
-      .update({ UserRequestStatus: Status }),
+      .set(
+        {
+          UserRequestStatus: Status,
+          UserRequestRoleName: RoleName,
+          UserRequestRolePermissionCode: RolePermissionCode,
+          UserRequestPosition: Position,
+        },
+        { merge: true },
+      ),
   ),
 );
 
@@ -63,7 +91,7 @@ export const UpdateUserRequestStatus = (UserKey, RequestKey, Status) => from(
   collection(
     UserRequestRefPath(UserKey)
       .doc(RequestKey)
-      .update({ UserRequestStatus: Status }),
+      .update({ UserRequestStatus: Status, CompanyRequestStatus: Status }),
   ),
 );
 
@@ -83,6 +111,6 @@ export const DeleteUserRequest = (UserKey, RequestKey) => from(
   ),
 );
 
-export const GetCompanyRequest = CompanyKey => collection(CompanyRequestRefPath(CompanyKey));
+export const GetCompanyRequest = CompanyKey => collection(CompanyRequestApproveRefPath(CompanyKey));
 
-export const GetUserRequest = UserKey => collection(UserRequestRefPath(UserKey));
+export const GetUserRequest = UserKey => collection(UserRequestApproveRefPath(UserKey));
