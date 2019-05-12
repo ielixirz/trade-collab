@@ -63,11 +63,7 @@ class Login extends Component {
                               required
                             />
                             <div className="text-center text-md-right">
-                              <Link
-                                className="cool-link"
-                                to="/#/mainregister"
-                                style={{ color: 'red' }}
-                              >
+                              <Link className="cool-link" to="forgotpass" style={{ color: 'red' }}>
                                 Forgot Password
                               </Link>
                             </div>
