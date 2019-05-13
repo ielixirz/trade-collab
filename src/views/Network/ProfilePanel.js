@@ -39,7 +39,7 @@ const mockProfile = {
 };
 
 // This function will be move after actual company fetching is complete
-const renderStatus = (status, keys, listener) => {
+const renderStatus = (status, data, listener) => {
   if (status === 'Invited') {
     return (
       <div>
@@ -47,7 +47,7 @@ const renderStatus = (status, keys, listener) => {
           <Button
             onClick={(e) => {
               e.stopPropagation();
-              listener(keys, 'Reject');
+              listener(data, 'Reject');
             }}
             className="profile-company-status-btn reject"
           >
@@ -58,7 +58,7 @@ const renderStatus = (status, keys, listener) => {
           <Button
             onClick={(e) => {
               e.stopPropagation();
-              listener(keys, 'Approve');
+              listener(data, 'Approve');
             }}
             className="profile-company-status-btn join"
           >
@@ -146,13 +146,18 @@ const ProfilePanel = ({ currentProfile, auth }) => {
         });
       });
 
+      let invitedIndex = 0;
       invitations.forEach((item) => {
         const status = item.CompanyInvitationStatus === 'Pending' ? 'Invited' : 'Reject';
         if (status === 'Invited') {
-          const keys = {
+          const inviteData = {
             uKey: userKey,
             cKey: item.CompanyInvitationCompanyKey,
             iKey: item.key,
+            cName: item.CompanyInvitationName,
+            position: item.CompanyInvitationPosition,
+            role: item.CompanyInvitationRole,
+            invitedIndex,
           };
           inviteList.push({
             key: item.CompanyInvitationCompanyKey,
@@ -160,7 +165,7 @@ const ProfilePanel = ({ currentProfile, auth }) => {
             position: item.CompanyInvitationPosition,
             role: item.CompanyInvitationRole,
             // eslint-disable-next-line no-use-before-define
-            status: renderStatus(status, keys, responseToInvite),
+            status: renderStatus(status, inviteData, responseToInvite),
             button: (
               <ThreeDotDropdown
                 options={[
@@ -172,6 +177,7 @@ const ProfilePanel = ({ currentProfile, auth }) => {
               />
             ),
           });
+          invitedIndex += 1;
         }
       });
 
@@ -182,7 +188,7 @@ const ProfilePanel = ({ currentProfile, auth }) => {
           position: item.UserMemberPosition,
           role: item.UserMemberRoleName,
           roleKey: item.UserMatrixRolePermissionCode,
-          status: renderStatus(item.UserMemberCompanyStandingStatus, undefined, undefined),
+          status: renderStatus(item.UserMemberCompanyStandingStatus),
           button: (
             <ThreeDotDropdown
               options={[
@@ -196,22 +202,53 @@ const ProfilePanel = ({ currentProfile, auth }) => {
         });
       });
 
-      setCompanyList(joinedList.concat(requestList.concat(inviteList)));
+      setCompanyList([joinedList, inviteList, requestList]);
     });
   };
 
-  const responseToInvite = (keys, status) => {
-    UpdateCompanyInvitationStatus(keys.cKey, keys.iKey, status);
-    UpdateUserInvitationStatus(keys.uKey, keys.iKey, status);
+  const responseToInvite = (data, status) => {
+    UpdateCompanyInvitationStatus(data.cKey, data.iKey, status);
+    UpdateUserInvitationStatus(data.uKey, data.iKey, status);
     setAcceptedInvite({
-      updateKey: keys,
+      data,
       status,
     });
   };
 
+  const updateCompanyList = (invite) => {
+    const currentList = companyList;
+    if (invite.status === 'Approve') {
+      currentList[1].splice(invite.data.index, 1);
+      currentList[0].push({
+        key: invite.data.cKey,
+        company: invite.data.cName,
+        position: invite.data.position,
+        role: invite.data.role,
+        status: renderStatus('Active', undefined, undefined),
+        button: (
+          <ThreeDotDropdown
+            options={[
+              {
+                text: 'Leave',
+                function: null,
+              },
+            ]}
+          />
+        ),
+      });
+    } else {
+      currentList[1].splice(invite.data.index, 1);
+    }
+    setCompanyList(currentList);
+  };
+
   useEffect(() => {
     setUserProfile(currentProfile);
-    fetchCompany(auth.uid);
+    if (acceptedInvite) {
+      updateCompanyList(acceptedInvite);
+    } else {
+      fetchCompany(auth.uid);
+    }
   }, [acceptedInvite]);
 
   const toggleEdit = () => {
@@ -430,7 +467,7 @@ const ProfilePanel = ({ currentProfile, auth }) => {
         }}
       >
         <MainDataTable
-          data={companyList}
+          data={[].concat(...companyList)}
           column={profileColumns}
           cssClass="profile-table"
           wraperClass="profile-table-wraper"
