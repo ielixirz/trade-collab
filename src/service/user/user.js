@@ -67,7 +67,11 @@ export const GetUserCompany = (UserInfoKey) => {
       doc(UserCompanyItem).pipe(take(1)),
       doc(UserCompanyItem.collection('CompanyMember').doc(UserInfoKey)).pipe(take(1)),
     )),
-    map(CompanyData => ({ ...CompanyData[0].data(), ...CompanyData[1].data() })),
+    map((CompanyData) => {
+      const data = { ...CompanyData[0].data(), ...CompanyData[1].data() };
+      data.CompanyKey = CompanyData[0].id;
+      return data;
+    }),
     toArray(),
   );
 };

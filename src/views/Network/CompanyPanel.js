@@ -124,6 +124,7 @@ const CompanyPanel = (props) => {
   const [incomingRequest, setIncomingRequest] = useState([]);
   const [updateRole, setUpdateRole] = useState({});
   const [updatePosition, setUpdatePosition] = useState({});
+  const [acceptedRequest, setAcceptedRequest] = useState(undefined);
 
   const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
@@ -150,6 +151,10 @@ const CompanyPanel = (props) => {
       updatePosition[keys.uKey],
     );
     UpdateUserRequestStatus(keys.uKey, keys.rKey, status);
+    setAcceptedRequest({
+      updateKey: keys,
+      status,
+    });
   };
 
   const fetchIncomingRequest = (companyKey) => {
@@ -209,7 +214,8 @@ const CompanyPanel = (props) => {
         console.log('TO DO LOG');
       },
     });
-  });
+    fetchIncomingRequest(props.match.params.key);
+  }, [acceptedRequest]);
 
   const toggleEdit = () => {
     if (isEdit) {

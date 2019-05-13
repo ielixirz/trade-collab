@@ -18,6 +18,7 @@ import RequestToJoinModal from '../../component/RequestToJoinModal';
 import { profileColumns } from '../../constants/network';
 
 import { UpdateProfile } from '../../service/user/profile';
+import { GetUserCompany } from '../../service/user/user';
 import { GetUserRequest } from '../../service/join/request';
 import {
   GetUserInvitation,
@@ -102,22 +103,20 @@ const ProfilePanel = ({ currentProfile, auth }) => {
   const [userProfile, setUserProfile] = useState(mockProfile);
   const [companyList, setCompanyList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
+  const [acceptedInvite, setAcceptedInvite] = useState(undefined);
+
   const createCompanyModalRef = useRef(null);
   const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
   const requestToJoinModalRef = useRef(null);
 
-  const responseToInvite = (keys, status) => {
-    UpdateCompanyInvitationStatus(keys.cKey, keys.iKey, status);
-    UpdateUserInvitationStatus(keys.uKey, keys.iKey, status);
-  };
-
   const fetchCompany = (userKey) => {
     const requestList = [];
     const inviteList = [];
+    const joinedList = [];
 
     zip(
-      GetUserRequest(userKey).pipe(map(docs => docs.map(d => d.data()))),
+      GetUserRequest(userKey),
       GetUserInvitation(userKey).pipe(
         map(docs => docs.map((d) => {
           const data = d.data();
@@ -125,7 +124,8 @@ const ProfilePanel = ({ currentProfile, auth }) => {
           return data;
         })),
       ),
-    ).subscribe(([requests, invitations]) => {
+      GetUserCompany(userKey),
+    ).subscribe(([requests, invitations, joins]) => {
       requests.forEach((item) => {
         requestList.push({
           key: item.CompanyRequestCompanyKey,
@@ -159,6 +159,7 @@ const ProfilePanel = ({ currentProfile, auth }) => {
             company: item.CompanyInvitationName,
             position: item.CompanyInvitationPosition,
             role: item.CompanyInvitationRole,
+            // eslint-disable-next-line no-use-before-define
             status: renderStatus(status, keys, responseToInvite),
             button: (
               <ThreeDotDropdown
@@ -174,14 +175,44 @@ const ProfilePanel = ({ currentProfile, auth }) => {
         }
       });
 
-      setCompanyList(requestList.concat(inviteList));
+      joins.forEach((item) => {
+        joinedList.push({
+          key: item.CompanyKey,
+          company: item.CompanyName,
+          position: item.UserMemberPosition,
+          role: item.UserMemberRoleName,
+          roleKey: item.UserMatrixRolePermissionCode,
+          status: renderStatus(item.UserMemberCompanyStandingStatus, undefined, undefined),
+          button: (
+            <ThreeDotDropdown
+              options={[
+                {
+                  text: 'Leave',
+                  function: null,
+                },
+              ]}
+            />
+          ),
+        });
+      });
+
+      setCompanyList(joinedList.concat(requestList.concat(inviteList)));
+    });
+  };
+
+  const responseToInvite = (keys, status) => {
+    UpdateCompanyInvitationStatus(keys.cKey, keys.iKey, status);
+    UpdateUserInvitationStatus(keys.uKey, keys.iKey, status);
+    setAcceptedInvite({
+      updateKey: keys,
+      status,
     });
   };
 
   useEffect(() => {
     setUserProfile(currentProfile);
     fetchCompany(auth.uid);
-  });
+  }, [acceptedInvite]);
 
   const toggleEdit = () => {
     if (isEdit) {
