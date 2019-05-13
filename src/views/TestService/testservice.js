@@ -18,6 +18,8 @@ import { IsCompanyMember, GetCompanyMember } from '../../service/company/company
 
 import { GetUserRequest } from '../../service/join/request';
 
+import { CombineShipmentAndShipmentReference } from '../../service/shipment/shipment';
+
 const TestService = () => {
   const [count, setCount] = useState(0);
 
@@ -132,6 +134,7 @@ const TestService = () => {
     // GetUserCompany('nen3b2GCqSQIUyTHuFret0Yx9f02').subscribe(console.log);
     // GetCompanyMember('oFT40OYTReLd6GQR1kIv').subscribe(console.log);
     // GetUserRequest('nen3b2GCqSQIUyTHuFret0Yx9f02').subscribe(console.log);
+    // CombineShipmentAndShipmentReference('', '', 'asc', 100).subscribe(console.log);
   }, []);
 
   return (
