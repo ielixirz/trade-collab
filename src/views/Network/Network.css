@@ -176,6 +176,14 @@
   margin-top: 0.5rem;
 }
 
+tbody > tr {
+  cursor: pointer;
+}
+
+tbody > tr:hover {
+  background-color: #f1f1f1 !important;
+}
+
 /* Profile DataTable */
 
 .table.profile-table {

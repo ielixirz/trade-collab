@@ -124,6 +124,7 @@ const CompanyPanel = (props) => {
   const [incomingRequest, setIncomingRequest] = useState([]);
   const [updateRole, setUpdateRole] = useState({});
   const [updatePosition, setUpdatePosition] = useState({});
+  const [acceptedRequest, setAcceptedRequest] = useState(undefined);
 
   const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
@@ -150,6 +151,10 @@ const CompanyPanel = (props) => {
       updatePosition[keys.uKey],
     );
     UpdateUserRequestStatus(keys.uKey, keys.rKey, status);
+    setAcceptedRequest({
+      updateKey: keys,
+      status,
+    });
   };
 
   const fetchIncomingRequest = (companyKey) => {
@@ -197,25 +202,24 @@ const CompanyPanel = (props) => {
   };
 
   useEffect(() => {
-    GetCompanyDetail('oFT40OYTReLd6GQR1kIv').subscribe({
+    GetCompanyDetail(props.match.params.key).subscribe({
       next: (snapshot) => {
         const data = snapshot.data();
         setCompany(data);
       },
       error: (err) => {
         console.log(err);
-        alert(err.message);
       },
       complete: () => {
         console.log('TO DO LOG');
       },
     });
-    fetchIncomingRequest('oFT40OYTReLd6GQR1kIv');
-  }, []);
+    fetchIncomingRequest(props.match.params.key);
+  }, [acceptedRequest]);
 
   const toggleEdit = () => {
     if (isEdit) {
-      UpdateCompany('oFT40OYTReLd6GQR1kIv', company);
+      UpdateCompany(props.match.params.id, company);
     }
     setIsEdit(!isEdit);
   };
@@ -246,7 +250,7 @@ const CompanyPanel = (props) => {
   };
 
   const changeCompanyPic = (file) => {
-    const companyKey = 'oFT40OYTReLd6GQR1kIv';
+    const companyKey = props.match.params.id;
     const editedCompany = company;
     const storageRefPath = `/Company/${companyKey}/${new Date().valueOf()}${file.name}`;
     PutFile(storageRefPath, file).subscribe({
