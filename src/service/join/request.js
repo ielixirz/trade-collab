@@ -1,6 +1,6 @@
 import { collection, doc } from 'rxfire/firestore';
-import { from } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { from, combineLatest } from 'rxjs';
+import { take, map, tap } from 'rxjs/operators';
 
 import { FirebaseApp } from '../firebase';
 
@@ -20,11 +20,16 @@ const UserRequestRefPath = UserKey => FirebaseApp.firestore()
   .doc(UserKey)
   .collection('UserRequest');
 
-const UserRequestApproveRefPath = UserKey => FirebaseApp.firestore()
+const UserRequestPendingRefPath = UserKey => FirebaseApp.firestore()
   .collection('UserInfo')
   .doc(UserKey)
   .collection('UserRequest')
-  .where('CompanyRequestStatus', '==', 'Pending')
+  .where('CompanyRequestStatus', '==', 'Pending');
+
+const UserRequestRejectRefPath = UserKey => FirebaseApp.firestore()
+  .collection('UserInfo')
+  .doc(UserKey)
+  .collection('UserRequest')
   .where('CompanyRequestStatus', '==', 'Reject');
 
 /* CreateCompanyRequest
@@ -113,4 +118,12 @@ export const DeleteUserRequest = (UserKey, RequestKey) => from(
 
 export const GetCompanyRequest = CompanyKey => collection(CompanyRequestApproveRefPath(CompanyKey));
 
-export const GetUserRequest = UserKey => collection(UserRequestApproveRefPath(UserKey));
+export const GetUserRequest = (UserKey) => {
+  const UserRequestPending = collection(UserRequestPendingRefPath(UserKey));
+  const UserRequestReject = collection(UserRequestRejectRefPath(UserKey));
+
+  return combineLatest(UserRequestPending, UserRequestReject).pipe(
+    map(UserRequestList => UserRequestList.map(Listitem => Listitem.map(item => item.data()))),
+    map(UserRequestArray => [...UserRequestArray[0], ...UserRequestArray[1]]),
+  );
+};

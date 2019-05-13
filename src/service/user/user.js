@@ -62,8 +62,12 @@ export const GetUserCompany = (UserInfoKey) => {
   return combineLatest(UserCompany).pipe(
     concatMap(UserCompanyItem => combineLatest(UserCompanyItem)),
     concatMap(Item => Item),
-    mergeMap(UserCompanyItem => doc(UserCompanyItem).pipe(take(1))),
-    map(CompanyData => CompanyData.data()),
+    tap(a => console.log(a.collection('CompanyMember').doc(UserInfoKey).path)),
+    concatMap(UserCompanyItem => combineLatest(
+      doc(UserCompanyItem).pipe(take(1)),
+      doc(UserCompanyItem.collection('CompanyMember').doc(UserInfoKey)).pipe(take(1)),
+    )),
+    map(CompanyData => ({ ...CompanyData[0].data(), ...CompanyData[1].data() })),
     toArray(),
   );
 };
