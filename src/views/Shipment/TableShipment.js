@@ -170,7 +170,9 @@ class TableShipment extends React.Component {
     return (
       <div>
         <p id={`popover${index}`} className="text-yterminal">
-          {ref.length > 0 ? ref[0].data().ShipmentReferenceID : 'Input your Ref#!'}
+          {ref.length > 0
+            ? _.get(this.props, `refs.${shipmentKey}.${ref[0].id}`, {}).ShipmentReferenceID
+            : 'Input your Ref#!'}
         </p>
         <UncontrolledPopover
           trigger="legacy"
