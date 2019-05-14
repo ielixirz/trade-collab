@@ -128,36 +128,22 @@ const CompanyPanel = (props) => {
   const [memberList, setMemberList] = useState([]);
   const [updateRole, setUpdateRole] = useState({});
   const [updatePosition, setUpdatePosition] = useState({});
-  const [editRole, setEditRole] = useState({});
-  const [editPosition, setEditPosition] = useState({});
   const [acceptedRequest, setAcceptedRequest] = useState(undefined);
   const [isMember, setIsMember] = useState(false);
 
   const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
 
-  const handleInputPositionChange = (event, key, type) => {
-    if (type === 'request') {
-      const temp = updatePosition;
-      temp[key] = event.target.value;
-      setUpdatePosition(temp);
-    } else {
-      const temp = editPosition;
-      temp[key] = event.target.value;
-      setEditPosition(temp);
-    }
+  const handleInputPositionChange = (event, key) => {
+    const temp = updatePosition;
+    temp[key] = event.target.value;
+    setUpdatePosition(temp);
   };
 
-  const handleRoleInputChange = (input, key, type) => {
-    if (type === 'request') {
-      const temp = updateRole;
-      temp[key] = input.value.role;
-      setUpdateRole(temp);
-    } else {
-      const temp = editRole;
-      temp[key] = input.value.role;
-      setEditRole(temp);
-    }
+  const handleRoleInputChange = (input, key) => {
+    const temp = updateRole;
+    temp[key] = input.value.role;
+    setUpdateRole(temp);
   };
 
   const updateMember = (companyKey, userKey, data) => {
@@ -253,8 +239,7 @@ const CompanyPanel = (props) => {
                 type="text"
                 id="position"
                 placeholder="Position"
-                onChange={event => handleInputPositionChange(event, item.UserRequestUserKey, 'request')
-                }
+                onChange={event => handleInputPositionChange(event, item.UserRequestUserKey)}
               />
             ),
             role: (
@@ -265,7 +250,7 @@ const CompanyPanel = (props) => {
                 className="basic-multi-select"
                 classNamePrefix="select"
                 placeholder="Choose Role"
-                onChange={input => handleRoleInputChange(input, item.UserRequestUserKey, 'request')}
+                onChange={input => handleRoleInputChange(input, item.UserRequestUserKey)}
               />
             ),
             status: renderRequestStatus(
