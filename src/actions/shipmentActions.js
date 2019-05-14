@@ -1,16 +1,20 @@
 import _ from 'lodash';
 import { FETCH_SHIPMENT_LIST } from '../constants/constants';
-import { CreateShipmentReference, GetShipmentList } from '../service/shipment/shipment';
+import {
+  CombineShipmentAndShipmentReference,
+  CreateShipmentReference,
+  GetShipmentList
+} from '../service/shipment/shipment';
 
 let shipmentsObservable = GetShipmentList('', '', 'asc').subscribe();
 export const fetchShipments = (typeStatus: any) => dispatch => {
   let shipments = [];
   shipmentsObservable.unsubscribe();
-  shipmentsObservable = GetShipmentList(typeStatus, '', 'asc', 20).subscribe({
+  shipmentsObservable = CombineShipmentAndShipmentReference(typeStatus, '', 'asc', 20).subscribe({
     next: res => {
       shipments = _.map(res, item => ({
         uid: item.id,
-        ...item.data()
+        ...item
       }));
       dispatch({
         type: FETCH_SHIPMENT_LIST,
@@ -38,7 +42,7 @@ export const addShipmentReference = (ShipmentKey, Data) => dispatch => {
 export const fetchMoreShipments = (typeStatus: any) => (dispatch, getState) => {
   let shipments = [];
   shipmentsObservable.unsubscribe();
-  shipmentsObservable = GetShipmentList(
+  shipmentsObservable = CombineShipmentAndShipmentReference(
     typeStatus,
     '',
     'asc',
@@ -47,12 +51,9 @@ export const fetchMoreShipments = (typeStatus: any) => (dispatch, getState) => {
     next: res => {
       shipments = _.map(res, item => ({
         uid: item.id,
-        ...item.data()
+        ...item
       }));
-      dispatch({
-        type: FETCH_SHIPMENT_LIST,
-        payload: shipments
-      });
+
       console.log(shipments);
     },
     error: err => {
