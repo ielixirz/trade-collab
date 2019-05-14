@@ -2,6 +2,7 @@
 /* eslint-disable filenames/match-regex */
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
+import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import _ from 'lodash';
 
@@ -16,8 +17,9 @@ import MultiSelectTextInput from '../../component/MultiSelectTextInput';
 import InviteToCompanyModal from '../../component/InviteToCompanyModal';
 
 import { incomingRequestColumns, memberDataColumns } from '../../constants/network';
+import { UpdateCompany, GetCompanyDetail, GetCompanyMember } from '../../service/company/company';
+import { GetProlfileList } from '../../service/user/profile';
 
-import { UpdateCompany, GetCompanyDetail } from '../../service/company/company';
 import {
   GetCompanyRequest,
   UpdateUserRequestStatus,
@@ -37,37 +39,6 @@ const mockCompany = {
   desc: '123 ABC Rd., Bangkok 10000 Thailand',
   website: 'www.website.com',
 };
-
-const mockMember = [
-  {
-    name: 'John Jerald',
-    email: 'john@gmail.com',
-    position: 'AAAAA',
-    role: 'Admin',
-    status: 'Active',
-  },
-  {
-    name: 'ABC BCS',
-    email: 'john@gmail.com',
-    position: 'AAAAA',
-    role: 'Admin',
-    status: 'Active',
-  },
-  {
-    name: 'OOPP OOPPP',
-    email: 'john@gmail.com',
-    position: 'AAAAA',
-    role: 'Admin',
-    status: 'Active',
-  },
-  {
-    name: 'Jim buttcaller',
-    email: 'john@gmail.com',
-    position: 'AAAAA',
-    role: 'Admin',
-    status: 'Active',
-  },
-];
 
 const mockRoleList = [
   {
@@ -122,8 +93,11 @@ const CompanyPanel = (props) => {
   const [invitedEmails, setinvitedEmails] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [incomingRequest, setIncomingRequest] = useState([]);
+  const [memberList, setMemberList] = useState([]);
   const [updateRole, setUpdateRole] = useState({});
   const [updatePosition, setUpdatePosition] = useState({});
+  const [editRole, setEditRole] = useState({});
+  const [editPosition, setEditPosition] = useState({});
   const [acceptedRequest, setAcceptedRequest] = useState(undefined);
 
   const inviteToCompanyModalRef = useRef(null);
@@ -139,6 +113,39 @@ const CompanyPanel = (props) => {
     const temp = updateRole;
     temp[key] = input.value.role;
     setUpdateRole(temp);
+  };
+
+  const fetchMember = (companyKey) => {
+    GetCompanyMember(companyKey)
+      .pipe(
+        map(docs => docs.map((d) => {
+          const data = d.data();
+          data.key = d.id;
+          return data;
+        })),
+      )
+      .subscribe((data) => {
+        const members = [];
+        const profileObs = [];
+        _.forEach(data, (member) => {
+          members.push({
+            name: '-',
+            email: member.UserMemberEmail,
+            position: member.UserMemberPosition,
+            role: member.UserMemberRoleName,
+            status: member.UserMemberCompanyStandingStatus,
+          });
+          profileObs.push(
+            GetProlfileList(member.key).pipe(map(docs2 => docs2.map(d2 => d2.data()))),
+          );
+        });
+        combineLatest(profileObs).subscribe((profiles) => {
+          _.forEach(profiles, (profile, index) => {
+            members[index].name = `${profile[0].ProfileFirstname} ${profile[0].ProfileSurname}`;
+          });
+          setMemberList(members);
+        });
+      });
   };
 
   const responseToRequest = (keys, status) => {
@@ -215,6 +222,8 @@ const CompanyPanel = (props) => {
       },
     });
     fetchIncomingRequest(props.match.params.key);
+    fetchMember(props.match.params.key);
+    console.log('s');
   }, [acceptedRequest]);
 
   const toggleEdit = () => {
@@ -421,7 +430,7 @@ Incoming Request (
         />
       </div>
       <div className="company-member-container">
-        <ToolkitProvider keyField="name" data={mockMember} columns={memberDataColumns} search>
+        <ToolkitProvider keyField="name" data={memberList} columns={memberDataColumns} search>
           {toolKitProps => (
             <div>
               <div className="company-table-label">
@@ -429,7 +438,7 @@ Incoming Request (
                   <Col xs={7} style={{ paddingLeft: 0 }}>
                     <h4>
 Members (
-                      {mockMember.length}
+                      {memberList.length}
 )
                     </h4>
                   </Col>
@@ -454,7 +463,7 @@ Members (
               </div>
               <MainDataTable
                 toolkitbaseProps={{ ...toolKitProps.baseProps }}
-                data={mockMember}
+                data={memberList}
                 column={memberDataColumns}
                 cssClass="company-table member"
                 wraperClass="company-table-wraper"
