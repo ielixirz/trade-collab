@@ -26,3 +26,7 @@ export const DeleteShipmentPin = (ProfileKey, ShipmentKey) => from(
     { merge: true },
   ),
 );
+
+export const GetShipmentPin = ProfileKey => doc(UserPersonalizeRefPath(ProfileKey)).pipe(
+  map(UserPersonalizeDoc => UserPersonalizeDoc.data().ShipmentPin),
+);
