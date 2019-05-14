@@ -119,7 +119,7 @@ export const UpdateShipmentReference = (ShipmentKey, ShipmentReferenceKey, Data)
   from(
     ShipmentReferenceRefPath(ShipmentKey)
       .doc(ShipmentReferenceKey)
-      .add(Data, { merge: true })
+      .set(Data, { merge: true })
   );
 
 // eslint-disable-next-line max-len

@@ -1,5 +1,9 @@
 import _ from 'lodash';
-import { FETCH_SHIPMENT_LIST } from '../constants/constants';
+import {
+  EDIT_SHIPMENT_REF,
+  FETCH_SHIPMENT_LIST,
+  FETCH_SHIPMENT_REF_LIST
+} from '../constants/constants';
 import {
   CombineShipmentAndShipmentReference,
   CreateShipmentReference,
@@ -20,7 +24,24 @@ export const fetchShipments = (typeStatus: any) => dispatch => {
         type: FETCH_SHIPMENT_LIST,
         payload: shipments
       });
-      console.log(shipments);
+      let allrefs = [];
+      _.forEach(shipments, item => {
+        let refs = _.get(item, 'ShipmentReferenceList', []);
+        let result = [];
+        if (refs.length > 0) {
+          _.forEach(refs, ref => {
+            result[ref.id] = {
+              ShipmentReferenceKey: ref.id,
+              ...ref.data()
+            };
+          });
+        }
+        allrefs[item.ShipmentID] = result;
+      });
+      dispatch({
+        type: FETCH_SHIPMENT_REF_LIST,
+        payload: allrefs
+      });
     },
     error: err => {
       console.log(err);
@@ -29,14 +50,13 @@ export const fetchShipments = (typeStatus: any) => dispatch => {
   });
 };
 
-export const addShipmentReference = (ShipmentKey, Data) => dispatch => {
-  const CreateShipmentReference = (ShipmentKey, Data).subscribe({
-    complete: result => {
-      console.log('add Ref Result is', result);
-    }
+export const editShipmentRef = (ShipmentKey, refKey, Data) => dispatch => {
+  dispatch({
+    type: EDIT_SHIPMENT_REF,
+    id: ShipmentKey,
+    refKey: refKey,
+    payload: Data
   });
-
-  CreateShipmentReference.unsubscribe();
 };
 
 export const fetchMoreShipments = (typeStatus: any) => (dispatch, getState) => {
@@ -53,8 +73,28 @@ export const fetchMoreShipments = (typeStatus: any) => (dispatch, getState) => {
         uid: item.id,
         ...item
       }));
-
-      console.log(shipments);
+      dispatch({
+        type: FETCH_SHIPMENT_LIST,
+        payload: shipments
+      });
+      let allrefs = [];
+      _.forEach(shipments, item => {
+        let refs = _.get(item, 'ShipmentReferenceList', []);
+        let result = [];
+        if (refs.length > 0) {
+          _.forEach(refs, ref => {
+            result[ref.id] = {
+              ShipmentReferenceKey: ref.id,
+              ...ref.data()
+            };
+          });
+        }
+        allrefs[item.ShipmentID] = result;
+      });
+      dispatch({
+        type: FETCH_SHIPMENT_REF_LIST,
+        payload: allrefs
+      });
     },
     error: err => {
       console.log(err);
