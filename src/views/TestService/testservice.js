@@ -20,6 +20,8 @@ import { GetUserRequest } from '../../service/join/request';
 
 import { CombineShipmentAndShipmentReference } from '../../service/shipment/shipment';
 
+import { AddShipmentPin, DeleteShipmentPin } from '../../service/personalize/personalize';
+
 const TestService = () => {
   const [count, setCount] = useState(0);
 
@@ -135,6 +137,8 @@ const TestService = () => {
     // GetCompanyMember('oFT40OYTReLd6GQR1kIv').subscribe(console.log);
     // GetUserRequest('nen3b2GCqSQIUyTHuFret0Yx9f02').subscribe(console.log);
     // CombineShipmentAndShipmentReference('', '', 'asc', 100).subscribe(console.log);
+    // AddShipmentPin('2sYaYykLYOd5a2D4FPbV', '555555').subscribe(console.log);
+    // DeleteShipmentPin('2sYaYykLYOd5a2D4FPbV', '555555').subscribe(console.log);
   }, []);
 
   return (
