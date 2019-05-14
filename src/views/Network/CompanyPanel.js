@@ -18,7 +18,12 @@ import InviteToCompanyModal from '../../component/InviteToCompanyModal';
 import TurnAbleTextLabel from '../../component/TurnAbleTextLabel';
 
 import { incomingRequestColumns, memberDataColumns } from '../../constants/network';
-import { UpdateCompany, GetCompanyDetail, GetCompanyMember } from '../../service/company/company';
+import {
+  UpdateCompany,
+  GetCompanyDetail,
+  GetCompanyMember,
+  IsCompanyMember,
+} from '../../service/company/company';
 import { GetProlfileList } from '../../service/user/profile';
 
 import {
@@ -125,6 +130,7 @@ const CompanyPanel = (props) => {
   const [editRole, setEditRole] = useState({});
   const [editPosition, setEditPosition] = useState({});
   const [acceptedRequest, setAcceptedRequest] = useState(undefined);
+  const [isMember, setIsMember] = useState(false);
 
   const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
@@ -151,6 +157,12 @@ const CompanyPanel = (props) => {
       temp[key] = input.value.role;
       setEditRole(temp);
     }
+  };
+
+  const validateMembership = (companyKey, userKey) => {
+    IsCompanyMember(companyKey, userKey).subscribe((member) => {
+      setIsMember(member);
+    });
   };
 
   const fetchMember = (companyKey) => {
@@ -265,6 +277,7 @@ const CompanyPanel = (props) => {
   };
 
   useEffect(() => {
+    validateMembership(props.match.params.key, props.auth.uid);
     GetCompanyDetail(props.match.params.key).subscribe({
       next: (snapshot) => {
         const data = snapshot.data();
@@ -279,7 +292,6 @@ const CompanyPanel = (props) => {
     });
     fetchIncomingRequest(props.match.params.key);
     fetchMember(props.match.params.key);
-    console.log('s');
   }, [acceptedRequest]);
 
   const toggleEdit = () => {
@@ -360,17 +372,25 @@ const CompanyPanel = (props) => {
                 <div role="button" onClick={browseFile} onKeyDown={null} tabIndex="-1">
                   <img
                     style={{ width: '70%' }}
-                    src={company.CompanyImageLink}
+                    src={
+                      company.CompanyImageLink === undefined
+                        ? '../assets/img/default-grey.jpg'
+                        : company.CompanyImageLink
+                    }
                     className="img-avatar"
                     alt="admin@bootstrapmaster.com"
                   />
                 </div>
               </DropdownToggle>
             </Dropdown>
-            <Button className="company-access-btn">
-              <i className="cui-wrench icons" style={{ marginRight: '0.5rem' }} />
-              Accessibility Settings
-            </Button>
+            {isMember ? (
+              <Button className="company-access-btn">
+                <i className="cui-wrench icons" style={{ marginRight: '0.5rem' }} />
+                Accessibility Settings
+              </Button>
+            ) : (
+              ' '
+            )}
           </Col>
           <Col xs={6} style={{ marginTop: '1.5rem' }}>
             <Row>
@@ -441,95 +461,107 @@ const CompanyPanel = (props) => {
               <a href="/#/network">{company.CompanyWebsiteUrl}</a>
             </Row>
           </Col>
-          <Col xs={4} style={{ marginTop: '1.5rem' }}>
-            <Label htmlFor="email-invitation" style={{ color: 'grey' }}>
-              <b>Email invitations</b>
-            </Label>
-            <Row>
-              <MultiSelectTextInput
-                id="invite-email"
-                getValue={handleInviteInputChange}
-                placeholder="Enter email..."
-                className="company-invitation-select"
-              />
-              <Button
-                className="company-invite-btn"
-                // eslint-disable-next-line max-len
-                onClick={() => inviteToCompanyModalRef.current.triggerInviteToCompany(invitedEmails, {
-                  companyName: company.CompanyName,
-                  key: props.match.params.key,
-                })
-                }
-              >
-                Invite
-              </Button>
-            </Row>
-          </Col>
+          {isMember ? (
+            <Col xs={4} style={{ marginTop: '1.5rem' }}>
+              <Label htmlFor="email-invitation" style={{ color: 'grey' }}>
+                <b>Email invitations</b>
+              </Label>
+              <Row>
+                <MultiSelectTextInput
+                  id="invite-email"
+                  getValue={handleInviteInputChange}
+                  placeholder="Enter email..."
+                  className="company-invitation-select"
+                />
+                <Button
+                  className="company-invite-btn"
+                  // eslint-disable-next-line max-len
+                  onClick={() => inviteToCompanyModalRef.current.triggerInviteToCompany(invitedEmails, {
+                    companyName: company.CompanyName,
+                    key: props.match.params.key,
+                  })
+                  }
+                >
+                  Invite
+                </Button>
+              </Row>
+            </Col>
+          ) : (
+            ''
+          )}
         </Row>
       </div>
-      <div className="incoming-request-container">
-        <div className="company-table-label">
-          <Row>
-            <h4>
+      {isMember ? (
+        <div className="incoming-request-container">
+          <div className="company-table-label">
+            <Row>
+              <h4>
 Incoming Request (
-              {incomingRequest.length}
+                {incomingRequest.length}
 )
-            </h4>
-          </Row>
+              </h4>
+            </Row>
+          </div>
+          <MainDataTable
+            data={incomingRequest}
+            column={incomingRequestColumns}
+            cssClass="company-table"
+            wraperClass="company-table-wraper"
+            isBorder={false}
+          />
         </div>
-        <MainDataTable
-          data={incomingRequest}
-          column={incomingRequestColumns}
-          cssClass="company-table"
-          wraperClass="company-table-wraper"
-          isBorder={false}
-        />
-      </div>
-      <div className="company-member-container">
-        <ToolkitProvider keyField="name" data={memberList} columns={memberDataColumns} search>
-          {toolKitProps => (
-            <div>
-              <div className="company-table-label">
-                <Row>
-                  <Col xs={7} style={{ paddingLeft: 0 }}>
-                    <h4>
+      ) : (
+        ''
+      )}
+      {isMember ? (
+        <div className="company-member-container">
+          <ToolkitProvider keyField="name" data={memberList} columns={memberDataColumns} search>
+            {toolKitProps => (
+              <div>
+                <div className="company-table-label">
+                  <Row>
+                    <Col xs={7} style={{ paddingLeft: 0 }}>
+                      <h4>
 Members (
-                      {memberList.length}
+                        {memberList.length}
 )
-                    </h4>
-                  </Col>
-                  <Col xs={3} style={{ paddingRight: 0 }}>
-                    <SearchBar
-                      placeholder="&#xF002; Typing"
-                      style={{ width: '210%' }}
-                      {...toolKitProps.searchProps}
-                    />
-                  </Col>
-                  <Col xs={2} style={{ paddingLeft: 0 }}>
-                    <Select
-                      isMulti
-                      name="colors"
-                      id="role-filter"
-                      className="basic-multi-select role-filter-select"
-                      classNamePrefix="select"
-                      placeholder="Admin (4)"
-                    />
-                  </Col>
-                </Row>
+                      </h4>
+                    </Col>
+                    <Col xs={3} style={{ paddingRight: 0 }}>
+                      <SearchBar
+                        placeholder="&#xF002; Typing"
+                        style={{ width: '210%' }}
+                        {...toolKitProps.searchProps}
+                      />
+                    </Col>
+                    <Col xs={2} style={{ paddingLeft: 0 }}>
+                      <Select
+                        isMulti
+                        name="colors"
+                        id="role-filter"
+                        className="basic-multi-select role-filter-select"
+                        classNamePrefix="select"
+                        placeholder="Admin (4)"
+                      />
+                    </Col>
+                  </Row>
+                </div>
+                <MainDataTable
+                  toolkitbaseProps={{ ...toolKitProps.baseProps }}
+                  data={memberList}
+                  column={memberDataColumns}
+                  cssClass="company-table member"
+                  wraperClass="company-table-wraper"
+                  isBorder={false}
+                  toolkit="search"
+                />
               </div>
-              <MainDataTable
-                toolkitbaseProps={{ ...toolKitProps.baseProps }}
-                data={memberList}
-                column={memberDataColumns}
-                cssClass="company-table member"
-                wraperClass="company-table-wraper"
-                isBorder={false}
-                toolkit="search"
-              />
-            </div>
-          )}
-        </ToolkitProvider>
-      </div>
+            )}
+          </ToolkitProvider>
+        </div>
+      ) : (
+        ''
+      )}
     </div>
   );
 };
