@@ -2,18 +2,28 @@
 /* eslint-disable filenames/match-regex */
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
+import { map } from 'rxjs/operators';
+import _ from 'lodash';
 
 import {
-  Row, Col, DropdownToggle, Dropdown, Button, Label, Input,
+  Row, Col, DropdownToggle, Dropdown, Button, Label, Input, ButtonGroup,
 } from 'reactstrap';
 
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
 import Select from 'react-select';
 import MainDataTable from '../../component/MainDataTable';
+import MultiSelectTextInput from '../../component/MultiSelectTextInput';
+import InviteToCompanyModal from '../../component/InviteToCompanyModal';
 
 import { incomingRequestColumns, memberDataColumns } from '../../constants/network';
 
 import { UpdateCompany, GetCompanyDetail } from '../../service/company/company';
+import {
+  GetCompanyRequest,
+  UpdateUserRequestStatus,
+  UpdateCompanyRequestStatus,
+} from '../../service/join/request';
+
 import {
   PutFile,
   GetMetaDataFromStorageRefPath,
@@ -59,34 +69,163 @@ const mockMember = [
   },
 ];
 
+const mockRoleList = [
+  {
+    value: {
+      role: 'Admin',
+    },
+    label: 'Admin',
+  },
+  {
+    value: {
+      role: 'Manager',
+    },
+    label: 'Manager',
+  },
+  {
+    value: {
+      role: 'Staff',
+    },
+    label: 'Staff',
+  },
+];
+
 const { SearchBar } = Search;
 
+const renderStatus = (status, keys, listener) => {
+  if (status === 'Pending') {
+    return (
+      <div>
+        <ButtonGroup>
+          <Button
+            onClick={() => listener(keys, 'Reject')}
+            className="profile-company-status-btn reject"
+          >
+            Reject
+          </Button>
+        </ButtonGroup>
+        <ButtonGroup>
+          <Button
+            onClick={() => listener(keys, 'Approve')}
+            className="profile-company-status-btn join"
+          >
+            Approve
+          </Button>
+        </ButtonGroup>
+      </div>
+    );
+  }
+  return '';
+};
 const CompanyPanel = (props) => {
   const [company, setCompany] = useState(mockCompany);
+  const [invitedEmails, setinvitedEmails] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
+  const [incomingRequest, setIncomingRequest] = useState([]);
+  const [updateRole, setUpdateRole] = useState({});
+  const [updatePosition, setUpdatePosition] = useState({});
+  const [acceptedRequest, setAcceptedRequest] = useState(undefined);
+
+  const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
 
+  const handleInputPositionChange = (event, key) => {
+    const temp = updatePosition;
+    temp[key] = event.target.value;
+    setUpdatePosition(temp);
+  };
+
+  const handleRoleInputChange = (input, key) => {
+    const temp = updateRole;
+    temp[key] = input.value.role;
+    setUpdateRole(temp);
+  };
+
+  const responseToRequest = (keys, status) => {
+    UpdateCompanyRequestStatus(
+      keys.cKey,
+      keys.rKey,
+      status,
+      updateRole[keys.uKey],
+      'rolePermissionCode',
+      updatePosition[keys.uKey],
+    );
+    UpdateUserRequestStatus(keys.uKey, keys.rKey, status);
+    setAcceptedRequest({
+      updateKey: keys,
+      status,
+    });
+  };
+
+  const fetchIncomingRequest = (companyKey) => {
+    GetCompanyRequest(companyKey)
+      .pipe(map(docs => docs.map(d => d.data())))
+      .subscribe((results) => {
+        const entries = [];
+        _.forEach(results, (item) => {
+          const entry = {
+            name: `${item.UserRequestFristname} ${item.UserRequestSurname}`,
+            email: item.UserRequestEmail,
+            position: (
+              <Input
+                type="text"
+                id="position"
+                placeholder="Position"
+                onChange={event => handleInputPositionChange(event, item.UserRequestUserKey)}
+              />
+            ),
+            role: (
+              <Select
+                name="company"
+                id="company-invite"
+                options={mockRoleList}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                placeholder="Choose Role"
+                onChange={input => handleRoleInputChange(input, item.UserRequestUserKey)}
+              />
+            ),
+            status: renderStatus(
+              item.UserRequestStatus,
+              {
+                uKey: item.UserRequestUserKey,
+                cKey: item.UserRequestCompanyKey,
+                rKey: item.UserRequestKey,
+              },
+              responseToRequest,
+            ),
+          };
+          entries.push(entry);
+        });
+        setIncomingRequest(entries);
+      });
+  };
+
   useEffect(() => {
-    GetCompanyDetail('oFT40OYTReLd6GQR1kIv').subscribe({
+    GetCompanyDetail(props.match.params.key).subscribe({
       next: (snapshot) => {
         const data = snapshot.data();
         setCompany(data);
       },
       error: (err) => {
         console.log(err);
-        alert(err.message);
       },
       complete: () => {
         console.log('TO DO LOG');
       },
     });
-  }, []);
+    fetchIncomingRequest(props.match.params.key);
+  }, [acceptedRequest]);
 
   const toggleEdit = () => {
     if (isEdit) {
-      UpdateCompany('oFT40OYTReLd6GQR1kIv', company);
+      UpdateCompany(props.match.params.id, company);
     }
     setIsEdit(!isEdit);
+  };
+
+  const handleInviteInputChange = (emails) => {
+    setinvitedEmails(emails);
   };
 
   const handleCompanyInputChange = (event) => {
@@ -111,7 +250,7 @@ const CompanyPanel = (props) => {
   };
 
   const changeCompanyPic = (file) => {
-    const companyKey = 'oFT40OYTReLd6GQR1kIv';
+    const companyKey = props.match.params.id;
     const editedCompany = company;
     const storageRefPath = `/Company/${companyKey}/${new Date().valueOf()}${file.name}`;
     PutFile(storageRefPath, file).subscribe({
@@ -141,6 +280,7 @@ const CompanyPanel = (props) => {
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <div className="company-container">
+        <InviteToCompanyModal ref={inviteToCompanyModalRef} />
         <input
           type="file"
           id="file"
@@ -241,15 +381,23 @@ const CompanyPanel = (props) => {
               <b>Email invitations</b>
             </Label>
             <Row>
-              <Select
-                isMulti
-                name="colors"
-                id="email-invitation"
-                className="basic-multi-select company-invitation-select"
-                classNamePrefix="select"
+              <MultiSelectTextInput
+                id="invite-email"
+                getValue={handleInviteInputChange}
                 placeholder="Enter email..."
+                className="company-invitation-select"
               />
-              <Button className="company-invite-btn">Invite</Button>
+              <Button
+                className="company-invite-btn"
+                // eslint-disable-next-line max-len
+                onClick={() => inviteToCompanyModalRef.current.triggerInviteToCompany(invitedEmails, {
+                  companyName: company.CompanyName,
+                  key: props.match.params.key,
+                })
+                }
+              >
+                Invite
+              </Button>
             </Row>
           </Col>
         </Row>
@@ -257,11 +405,15 @@ const CompanyPanel = (props) => {
       <div className="incoming-request-container">
         <div className="company-table-label">
           <Row>
-            <h4>Incoming Request (1)</h4>
+            <h4>
+Incoming Request (
+              {incomingRequest.length}
+)
+            </h4>
           </Row>
         </div>
         <MainDataTable
-          data={[]}
+          data={incomingRequest}
           column={incomingRequestColumns}
           cssClass="company-table"
           wraperClass="company-table-wraper"

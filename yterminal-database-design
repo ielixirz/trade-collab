@@ -56,7 +56,9 @@
                         .
                 +ChatRoomMessage
                     >ChatRoomMessageKey
-                        ChatRoomMessageSender (string)
+                        ChatRoomMessageSender (string) (ProlfileKey)
+                        ChatRoomMessageFirstName (string)
+                        ChatRoomMessageSurName (string)
                         ChatRoomMessageContext (string)
                         ChatRoomMessageFileUrl (string) *Optional
                         ChatRoomMessageType (string) ['Text','Emoji','Image']
@@ -98,6 +100,7 @@
                 ProfileName (string) *(Note-Ask)
                 ProfileEmail (string)
                 ProfileProfileImageLink (string) *(Note-Ask)
+                ProfileCreateTimestamp (timestamp)
                 ProfileNotificationToken (Array<string>)
         +UserInvitation (User was recruited)
             >InvitationKey
@@ -126,6 +129,11 @@
                 UserChatRoomReference (reference)
                 UserChatRoomTimestamp (timestamp)
                 UserChatRoomLastestTimestamp (timestamp)
+        +UserCompany
+            >UserCompanyKey
+                UserCompanyReference (reference)
+                UserCompanyTimestamp (timestamp)
+
 
 +UserPersonalize
     >ProfileKey
@@ -180,6 +188,9 @@
                 UserRequestEmail (string)
                 UserRequestNote (string)
                 UserRequestTimestamp (timestamp)
+                UserRequestRoleName (string)
+                UserRequestRolePermissionCode (string)
+                UserRequestPosition (string)
                 UserInvitationStatus (string) ('Reject','Approve','Pending')
         +CompanyUserMatrix
             >CompanyUserMatrixKey
