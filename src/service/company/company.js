@@ -55,3 +55,9 @@ export const IsCompanyMember = (CompanyKey, UserKey) => doc(CompanyMemberRefPath
 );
 
 export const GetCompanyMember = CompanyKey => collection(CompanyMemberRefPath(CompanyKey));
+
+export const UpdateCompanyMember = (CompanyKey, UserInfoKey, Data) => from(
+  CompanyMemberRefPath(CompanyKey)
+    .doc(UserInfoKey)
+    .update(Data),
+);
