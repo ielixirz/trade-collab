@@ -23,6 +23,7 @@ import {
   GetCompanyDetail,
   GetCompanyMember,
   IsCompanyMember,
+  UpdateCompanyMember,
 } from '../../service/company/company';
 import { GetProlfileList } from '../../service/user/profile';
 
@@ -159,6 +160,10 @@ const CompanyPanel = (props) => {
     }
   };
 
+  const updateMember = (companyKey, userKey, data) => {
+    UpdateCompanyMember(companyKey, userKey, data);
+  };
+
   const validateMembership = (companyKey, userKey) => {
     IsCompanyMember(companyKey, userKey).subscribe((member) => {
       setIsMember(member);
@@ -186,7 +191,10 @@ const CompanyPanel = (props) => {
                 text={member.UserMemberPosition}
                 turnType="input"
                 data={{
-                  onChangeFn: event => handleInputPositionChange(event, member.key, 'member'),
+                  onChangeFn: null,
+                  onKeyPressFn: event => updateMember(companyKey, member.key, {
+                    UserMemberPosition: event.target.value,
+                  }),
                 }}
               />
             ),
@@ -196,7 +204,7 @@ const CompanyPanel = (props) => {
                 turnType="dropdown"
                 data={{
                   options: mockRoleList,
-                  onChangeFn: input => handleRoleInputChange(input, member.key, 'member'),
+                  onChangeFn: input => updateMember(companyKey, member.key, { UserMemberRoleName: input.value.role }),
                 }}
               />
             ),

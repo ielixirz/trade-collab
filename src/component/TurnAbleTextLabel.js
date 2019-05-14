@@ -20,10 +20,15 @@ const TurnAbleTextLabel = ({ text, turnType, data }) => {
       placeholder={data.placeholder}
       onChange={(event) => {
         setLabel(event.target.value);
-        data.onChangeFn(event);
+        if (data.onChangeFn !== null) {
+          data.onChangeFn(event);
+        }
       }}
       onKeyPress={(event) => {
         if (event.key === 'Enter') {
+          if (data.onKeyPressFn !== null) {
+            data.onKeyPressFn(event);
+          }
           turn();
         }
       }}
@@ -40,7 +45,9 @@ const TurnAbleTextLabel = ({ text, turnType, data }) => {
       placeholder={data.placeholder}
       onChange={(input) => {
         setLabel(input.value.role);
-        data.onChangeFn(input);
+        if (data.onChangeFn !== null) {
+          data.onChangeFn(input);
+        }
         turn();
       }}
     />
