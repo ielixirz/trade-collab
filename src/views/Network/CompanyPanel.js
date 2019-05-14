@@ -15,6 +15,7 @@ import Select from 'react-select';
 import MainDataTable from '../../component/MainDataTable';
 import MultiSelectTextInput from '../../component/MultiSelectTextInput';
 import InviteToCompanyModal from '../../component/InviteToCompanyModal';
+import TurnAbleTextLabel from '../../component/TurnAbleTextLabel';
 
 import { incomingRequestColumns, memberDataColumns } from '../../constants/network';
 import { UpdateCompany, GetCompanyDetail, GetCompanyMember } from '../../service/company/company';
@@ -63,7 +64,32 @@ const mockRoleList = [
 
 const { SearchBar } = Search;
 
-const renderStatus = (status, keys, listener) => {
+const renderMemberStatus = (status) => {
+  if (status === 'Deactivated') {
+    return (
+      <span style={{ color: '#AFAFAF' }}>
+        <b>Deactivated</b>
+      </span>
+    );
+  }
+  if (status === 'Active') {
+    return (
+      <span style={{ color: '#16A085' }}>
+        <b>Active</b>
+      </span>
+    );
+  }
+  if (status === 'Pending') {
+    return (
+      <span style={{ color: '#F4BC4D' }}>
+        <b>Pending</b>
+      </span>
+    );
+  }
+  return '';
+};
+
+const renderRequestStatus = (status, keys, listener) => {
   if (status === 'Pending') {
     return (
       <div>
@@ -103,16 +129,28 @@ const CompanyPanel = (props) => {
   const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
 
-  const handleInputPositionChange = (event, key) => {
-    const temp = updatePosition;
-    temp[key] = event.target.value;
-    setUpdatePosition(temp);
+  const handleInputPositionChange = (event, key, type) => {
+    if (type === 'request') {
+      const temp = updatePosition;
+      temp[key] = event.target.value;
+      setUpdatePosition(temp);
+    } else {
+      const temp = editPosition;
+      temp[key] = event.target.value;
+      setEditPosition(temp);
+    }
   };
 
-  const handleRoleInputChange = (input, key) => {
-    const temp = updateRole;
-    temp[key] = input.value.role;
-    setUpdateRole(temp);
+  const handleRoleInputChange = (input, key, type) => {
+    if (type === 'request') {
+      const temp = updateRole;
+      temp[key] = input.value.role;
+      setUpdateRole(temp);
+    } else {
+      const temp = editRole;
+      temp[key] = input.value.role;
+      setEditRole(temp);
+    }
   };
 
   const fetchMember = (companyKey) => {
@@ -131,16 +169,33 @@ const CompanyPanel = (props) => {
           members.push({
             name: '-',
             email: member.UserMemberEmail,
-            position: member.UserMemberPosition,
-            role: member.UserMemberRoleName,
-            status: member.UserMemberCompanyStandingStatus,
+            position: (
+              <TurnAbleTextLabel
+                text={member.UserMemberPosition}
+                turnType="input"
+                data={{
+                  onChangeFn: event => handleInputPositionChange(event, member.key, 'member'),
+                }}
+              />
+            ),
+            role: (
+              <TurnAbleTextLabel
+                text={member.UserMemberRoleName}
+                turnType="dropdown"
+                data={{
+                  options: mockRoleList,
+                  onChangeFn: input => handleRoleInputChange(input, member.key, 'member'),
+                }}
+              />
+            ),
+            status: renderMemberStatus(member.UserMemberCompanyStandingStatus),
           });
           profileObs.push(
             GetProlfileList(member.key).pipe(map(docs2 => docs2.map(d2 => d2.data()))),
           );
         });
-        combineLatest(profileObs).subscribe((profiles) => {
-          _.forEach(profiles, (profile, index) => {
+        combineLatest(profileObs).subscribe((users) => {
+          _.forEach(users, (profile, index) => {
             members[index].name = `${profile[0].ProfileFirstname} ${profile[0].ProfileSurname}`;
           });
           setMemberList(members);
@@ -178,7 +233,8 @@ const CompanyPanel = (props) => {
                 type="text"
                 id="position"
                 placeholder="Position"
-                onChange={event => handleInputPositionChange(event, item.UserRequestUserKey)}
+                onChange={event => handleInputPositionChange(event, item.UserRequestUserKey, 'request')
+                }
               />
             ),
             role: (
@@ -189,10 +245,10 @@ const CompanyPanel = (props) => {
                 className="basic-multi-select"
                 classNamePrefix="select"
                 placeholder="Choose Role"
-                onChange={input => handleRoleInputChange(input, item.UserRequestUserKey)}
+                onChange={input => handleRoleInputChange(input, item.UserRequestUserKey, 'request')}
               />
             ),
-            status: renderStatus(
+            status: renderRequestStatus(
               item.UserRequestStatus,
               {
                 uKey: item.UserRequestUserKey,
