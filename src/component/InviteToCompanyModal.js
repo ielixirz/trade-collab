@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable filenames/match-regex */
 /* as it is component */
 import React, {
@@ -17,28 +19,6 @@ import { inviteToCompanyColumns } from '../constants/network';
 import { GetUserInfoFromEmail } from '../service/user/user';
 import { GetProlfileList } from '../service/user/profile';
 import { CreateCompanyMultipleInvitation } from '../service/join/invite';
-
-const mockCompanyList = [
-  {
-    value: {
-      companyName: 'Fresh Produce',
-    },
-    label: 'Fresh Produce',
-  },
-  {
-    value: {
-      companyName: 'ABC Produce',
-    },
-    label: 'ABC Produce',
-  },
-  {
-    value: {
-      companyName: 'Test Company Y',
-      key: 'oFT40OYTReLd6GQR1kIv',
-    },
-    label: 'Test Company Y',
-  },
-];
 
 const mockRoleList = [
   {
@@ -70,8 +50,9 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
   const [updateRole, setUpdateRole] = useState({});
   const [updatePosition, setUpdatePosition] = useState({});
   const [company, setCompany] = useState('');
+  const [availableCompany, setAvailableCompany] = useState([]);
 
-  useEffect(() => {});
+  useEffect(() => {}, []);
 
   const handleInputPositionChange = (event, email) => {
     const temp = updatePosition;
@@ -258,10 +239,26 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
     toggle();
   };
 
+  const mapCompanyForDropdown = (companyData) => {
+    const availableCompanies = companyData[0];
+    const companyList = [];
+    availableCompanies.forEach((item) => {
+      companyList.push({
+        value: {
+          companyName: item.company,
+          key: item.key,
+        },
+        label: item.company,
+      });
+    });
+    return companyList;
+  };
+
   useImperativeHandle(ref, () => ({
     triggerInviteToCompany(propinvitedEmails, propCompany) {
       if (propinvitedEmails.length === 0) {
         setCurrentStep(1);
+        setAvailableCompany(mapCompanyForDropdown(propCompany));
       } else {
         setinvitedEmails(propinvitedEmails);
         fetchInvitedUserDetail(propinvitedEmails);
@@ -281,7 +278,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
         onChange={handleCompanyInputChange}
         name="company"
         id="company-invite"
-        options={mockCompanyList}
+        options={availableCompany}
         className="basic-multi-select"
         classNamePrefix="select"
       />

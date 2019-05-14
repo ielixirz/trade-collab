@@ -476,11 +476,14 @@ const CompanyPanel = (props) => {
                 <Button
                   className="company-invite-btn"
                   // eslint-disable-next-line max-len
-                  onClick={() => inviteToCompanyModalRef.current.triggerInviteToCompany(invitedEmails, {
-                    companyName: company.CompanyName,
-                    key: props.match.params.key,
-                  })
-                  }
+                  onClick={() => {
+                    if (invitedEmails.length > 0) {
+                      inviteToCompanyModalRef.current.triggerInviteToCompany(invitedEmails, {
+                        companyName: company.CompanyName,
+                        key: props.match.params.key,
+                      });
+                    }
+                  }}
                 >
                   Invite
                 </Button>
