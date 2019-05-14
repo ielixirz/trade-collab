@@ -137,12 +137,10 @@
 
 +UserPersonalize
     >ProfileKey
+        ShipmentPin (Array<string (ShipmentKey)>)
         +ShipmentOrdering
             >ShipmentKey
                 ChatRoomOrdering (Array<string (ChatRoomKey)>)
-        +ShipmentPin
-            >ShipmentKey
-                ShipmentPin (Array<string (ShipmentKey)>)
         +ShipmentReferenceDisplay
             >ShipmentKey
                 ShipmentReferenceSelect (string) [RefOwner]
