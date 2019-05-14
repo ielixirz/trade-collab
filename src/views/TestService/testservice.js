@@ -143,8 +143,7 @@ const TestService = () => {
     // CombineShipmentAndShipmentReference('', '', 'asc', 100).subscribe(console.log);
     // AddShipmentPin('2sYaYykLYOd5a2D4FPbV', '555555').subscribe(console.log);
     // DeleteShipmentPin('2sYaYykLYOd5a2D4FPbV', '555555').subscribe(console.log);
-
-    GetShipmentPin('2sYaYykLYOd5a2D4FPbV').subscribe(console.log);
+    // GetShipmentPin('2sYaYykLYOd5a2D4FPbV').subscribe(console.log);
   }, []);
 
   return (
