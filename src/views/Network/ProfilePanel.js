@@ -431,7 +431,7 @@ const ProfilePanel = ({ currentProfile, auth }) => {
             <Row>
               <Button
                 className="profile-btn"
-                onClick={() => inviteToCompanyModalRef.current.triggerInviteToCompany([])}
+                onClick={() => inviteToCompanyModalRef.current.triggerInviteToCompany([], companyList)}
               >
                 <i className="cui-user-follow icons network-btn-icon" />
                 Invite colleagues to join

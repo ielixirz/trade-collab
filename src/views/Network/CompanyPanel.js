@@ -2,6 +2,7 @@
 /* eslint-disable filenames/match-regex */
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
+import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import _ from 'lodash';
 
@@ -14,10 +15,18 @@ import Select from 'react-select';
 import MainDataTable from '../../component/MainDataTable';
 import MultiSelectTextInput from '../../component/MultiSelectTextInput';
 import InviteToCompanyModal from '../../component/InviteToCompanyModal';
+import TurnAbleTextLabel from '../../component/TurnAbleTextLabel';
 
 import { incomingRequestColumns, memberDataColumns } from '../../constants/network';
+import {
+  UpdateCompany,
+  GetCompanyDetail,
+  GetCompanyMember,
+  IsCompanyMember,
+  UpdateCompanyMember,
+} from '../../service/company/company';
+import { GetProlfileList } from '../../service/user/profile';
 
-import { UpdateCompany, GetCompanyDetail } from '../../service/company/company';
 import {
   GetCompanyRequest,
   UpdateUserRequestStatus,
@@ -37,37 +46,6 @@ const mockCompany = {
   desc: '123 ABC Rd., Bangkok 10000 Thailand',
   website: 'www.website.com',
 };
-
-const mockMember = [
-  {
-    name: 'John Jerald',
-    email: 'john@gmail.com',
-    position: 'AAAAA',
-    role: 'Admin',
-    status: 'Active',
-  },
-  {
-    name: 'ABC BCS',
-    email: 'john@gmail.com',
-    position: 'AAAAA',
-    role: 'Admin',
-    status: 'Active',
-  },
-  {
-    name: 'OOPP OOPPP',
-    email: 'john@gmail.com',
-    position: 'AAAAA',
-    role: 'Admin',
-    status: 'Active',
-  },
-  {
-    name: 'Jim buttcaller',
-    email: 'john@gmail.com',
-    position: 'AAAAA',
-    role: 'Admin',
-    status: 'Active',
-  },
-];
 
 const mockRoleList = [
   {
@@ -92,7 +70,32 @@ const mockRoleList = [
 
 const { SearchBar } = Search;
 
-const renderStatus = (status, keys, listener) => {
+const renderMemberStatus = (status) => {
+  if (status === 'Deactivated') {
+    return (
+      <span style={{ color: '#AFAFAF' }}>
+        <b>Deactivated</b>
+      </span>
+    );
+  }
+  if (status === 'Active') {
+    return (
+      <span style={{ color: '#16A085' }}>
+        <b>Active</b>
+      </span>
+    );
+  }
+  if (status === 'Pending') {
+    return (
+      <span style={{ color: '#F4BC4D' }}>
+        <b>Pending</b>
+      </span>
+    );
+  }
+  return '';
+};
+
+const renderRequestStatus = (status, keys, listener) => {
   if (status === 'Pending') {
     return (
       <div>
@@ -122,9 +125,11 @@ const CompanyPanel = (props) => {
   const [invitedEmails, setinvitedEmails] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [incomingRequest, setIncomingRequest] = useState([]);
+  const [memberList, setMemberList] = useState([]);
   const [updateRole, setUpdateRole] = useState({});
   const [updatePosition, setUpdatePosition] = useState({});
   const [acceptedRequest, setAcceptedRequest] = useState(undefined);
+  const [isMember, setIsMember] = useState(false);
 
   const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
@@ -139,6 +144,69 @@ const CompanyPanel = (props) => {
     const temp = updateRole;
     temp[key] = input.value.role;
     setUpdateRole(temp);
+  };
+
+  const updateMember = (companyKey, userKey, data) => {
+    UpdateCompanyMember(companyKey, userKey, data);
+  };
+
+  const validateMembership = (companyKey, userKey) => {
+    IsCompanyMember(companyKey, userKey).subscribe((member) => {
+      setIsMember(member);
+    });
+  };
+
+  const fetchMember = (companyKey) => {
+    GetCompanyMember(companyKey)
+      .pipe(
+        map(docs => docs.map((d) => {
+          const data = d.data();
+          data.key = d.id;
+          return data;
+        })),
+      )
+      .subscribe((data) => {
+        const members = [];
+        const profileObs = [];
+        _.forEach(data, (member) => {
+          members.push({
+            name: '-',
+            email: member.UserMemberEmail,
+            position: (
+              <TurnAbleTextLabel
+                text={member.UserMemberPosition}
+                turnType="input"
+                data={{
+                  onChangeFn: null,
+                  onKeyPressFn: event => updateMember(companyKey, member.key, {
+                    UserMemberPosition: event.target.value,
+                  }),
+                }}
+              />
+            ),
+            role: (
+              <TurnAbleTextLabel
+                text={member.UserMemberRoleName}
+                turnType="dropdown"
+                data={{
+                  options: mockRoleList,
+                  onChangeFn: input => updateMember(companyKey, member.key, { UserMemberRoleName: input.value.role }),
+                }}
+              />
+            ),
+            status: renderMemberStatus(member.UserMemberCompanyStandingStatus),
+          });
+          profileObs.push(
+            GetProlfileList(member.key).pipe(map(docs2 => docs2.map(d2 => d2.data()))),
+          );
+        });
+        combineLatest(profileObs).subscribe((users) => {
+          _.forEach(users, (profile, index) => {
+            members[index].name = `${profile[0].ProfileFirstname} ${profile[0].ProfileSurname}`;
+          });
+          setMemberList(members);
+        });
+      });
   };
 
   const responseToRequest = (keys, status) => {
@@ -185,7 +253,7 @@ const CompanyPanel = (props) => {
                 onChange={input => handleRoleInputChange(input, item.UserRequestUserKey)}
               />
             ),
-            status: renderStatus(
+            status: renderRequestStatus(
               item.UserRequestStatus,
               {
                 uKey: item.UserRequestUserKey,
@@ -202,6 +270,7 @@ const CompanyPanel = (props) => {
   };
 
   useEffect(() => {
+    validateMembership(props.match.params.key, props.auth.uid);
     GetCompanyDetail(props.match.params.key).subscribe({
       next: (snapshot) => {
         const data = snapshot.data();
@@ -215,6 +284,7 @@ const CompanyPanel = (props) => {
       },
     });
     fetchIncomingRequest(props.match.params.key);
+    fetchMember(props.match.params.key);
   }, [acceptedRequest]);
 
   const toggleEdit = () => {
@@ -295,17 +365,25 @@ const CompanyPanel = (props) => {
                 <div role="button" onClick={browseFile} onKeyDown={null} tabIndex="-1">
                   <img
                     style={{ width: '70%' }}
-                    src={company.CompanyImageLink}
+                    src={
+                      company.CompanyImageLink === undefined
+                        ? '../assets/img/default-grey.jpg'
+                        : company.CompanyImageLink
+                    }
                     className="img-avatar"
                     alt="admin@bootstrapmaster.com"
                   />
                 </div>
               </DropdownToggle>
             </Dropdown>
-            <Button className="company-access-btn">
-              <i className="cui-wrench icons" style={{ marginRight: '0.5rem' }} />
-              Accessibility Settings
-            </Button>
+            {isMember ? (
+              <Button className="company-access-btn">
+                <i className="cui-wrench icons" style={{ marginRight: '0.5rem' }} />
+                Accessibility Settings
+              </Button>
+            ) : (
+              ' '
+            )}
           </Col>
           <Col xs={6} style={{ marginTop: '1.5rem' }}>
             <Row>
@@ -376,95 +454,110 @@ const CompanyPanel = (props) => {
               <a href="/#/network">{company.CompanyWebsiteUrl}</a>
             </Row>
           </Col>
-          <Col xs={4} style={{ marginTop: '1.5rem' }}>
-            <Label htmlFor="email-invitation" style={{ color: 'grey' }}>
-              <b>Email invitations</b>
-            </Label>
-            <Row>
-              <MultiSelectTextInput
-                id="invite-email"
-                getValue={handleInviteInputChange}
-                placeholder="Enter email..."
-                className="company-invitation-select"
-              />
-              <Button
-                className="company-invite-btn"
-                // eslint-disable-next-line max-len
-                onClick={() => inviteToCompanyModalRef.current.triggerInviteToCompany(invitedEmails, {
-                  companyName: company.CompanyName,
-                  key: props.match.params.key,
-                })
-                }
-              >
-                Invite
-              </Button>
-            </Row>
-          </Col>
+          {isMember ? (
+            <Col xs={4} style={{ marginTop: '1.5rem' }}>
+              <Label htmlFor="email-invitation" style={{ color: 'grey' }}>
+                <b>Email invitations</b>
+              </Label>
+              <Row>
+                <MultiSelectTextInput
+                  id="invite-email"
+                  getValue={handleInviteInputChange}
+                  placeholder="Enter email..."
+                  className="company-invitation-select"
+                />
+                <Button
+                  className="company-invite-btn"
+                  // eslint-disable-next-line max-len
+                  onClick={() => {
+                    if (invitedEmails.length > 0) {
+                      inviteToCompanyModalRef.current.triggerInviteToCompany(invitedEmails, {
+                        companyName: company.CompanyName,
+                        key: props.match.params.key,
+                      });
+                    }
+                  }}
+                >
+                  Invite
+                </Button>
+              </Row>
+            </Col>
+          ) : (
+            ''
+          )}
         </Row>
       </div>
-      <div className="incoming-request-container">
-        <div className="company-table-label">
-          <Row>
-            <h4>
+      {isMember ? (
+        <div className="incoming-request-container">
+          <div className="company-table-label">
+            <Row>
+              <h4>
 Incoming Request (
-              {incomingRequest.length}
+                {incomingRequest.length}
 )
-            </h4>
-          </Row>
+              </h4>
+            </Row>
+          </div>
+          <MainDataTable
+            data={incomingRequest}
+            column={incomingRequestColumns}
+            cssClass="company-table"
+            wraperClass="company-table-wraper"
+            isBorder={false}
+          />
         </div>
-        <MainDataTable
-          data={incomingRequest}
-          column={incomingRequestColumns}
-          cssClass="company-table"
-          wraperClass="company-table-wraper"
-          isBorder={false}
-        />
-      </div>
-      <div className="company-member-container">
-        <ToolkitProvider keyField="name" data={mockMember} columns={memberDataColumns} search>
-          {toolKitProps => (
-            <div>
-              <div className="company-table-label">
-                <Row>
-                  <Col xs={7} style={{ paddingLeft: 0 }}>
-                    <h4>
+      ) : (
+        ''
+      )}
+      {isMember ? (
+        <div className="company-member-container">
+          <ToolkitProvider keyField="name" data={memberList} columns={memberDataColumns} search>
+            {toolKitProps => (
+              <div>
+                <div className="company-table-label">
+                  <Row>
+                    <Col xs={7} style={{ paddingLeft: 0 }}>
+                      <h4>
 Members (
-                      {mockMember.length}
+                        {memberList.length}
 )
-                    </h4>
-                  </Col>
-                  <Col xs={3} style={{ paddingRight: 0 }}>
-                    <SearchBar
-                      placeholder="&#xF002; Typing"
-                      style={{ width: '210%' }}
-                      {...toolKitProps.searchProps}
-                    />
-                  </Col>
-                  <Col xs={2} style={{ paddingLeft: 0 }}>
-                    <Select
-                      isMulti
-                      name="colors"
-                      id="role-filter"
-                      className="basic-multi-select role-filter-select"
-                      classNamePrefix="select"
-                      placeholder="Admin (4)"
-                    />
-                  </Col>
-                </Row>
+                      </h4>
+                    </Col>
+                    <Col xs={3} style={{ paddingRight: 0 }}>
+                      <SearchBar
+                        placeholder="&#xF002; Typing"
+                        style={{ width: '210%' }}
+                        {...toolKitProps.searchProps}
+                      />
+                    </Col>
+                    <Col xs={2} style={{ paddingLeft: 0 }}>
+                      <Select
+                        isMulti
+                        name="colors"
+                        id="role-filter"
+                        className="basic-multi-select role-filter-select"
+                        classNamePrefix="select"
+                        placeholder="Admin (4)"
+                      />
+                    </Col>
+                  </Row>
+                </div>
+                <MainDataTable
+                  toolkitbaseProps={{ ...toolKitProps.baseProps }}
+                  data={memberList}
+                  column={memberDataColumns}
+                  cssClass="company-table member"
+                  wraperClass="company-table-wraper"
+                  isBorder={false}
+                  toolkit="search"
+                />
               </div>
-              <MainDataTable
-                toolkitbaseProps={{ ...toolKitProps.baseProps }}
-                data={mockMember}
-                column={memberDataColumns}
-                cssClass="company-table member"
-                wraperClass="company-table-wraper"
-                isBorder={false}
-                toolkit="search"
-              />
-            </div>
-          )}
-        </ToolkitProvider>
-      </div>
+            )}
+          </ToolkitProvider>
+        </div>
+      ) : (
+        ''
+      )}
     </div>
   );
 };
