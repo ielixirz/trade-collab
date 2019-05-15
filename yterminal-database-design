@@ -67,6 +67,8 @@
                         ChatRoomMessageFileUrl (string) *Optional
                         ChatRoomMessageType (string) ['Text','Emoji','Image']
                         ChatRoomMessageTimestamp (timestamp)
+                        ChatRoomMessageReader (Array<Object>)
+                            [{ ChatRoomMessageReaderProfileKey, ChatRoomMessageReaderFirstName, ChatRoomMessageReaderSurName }]
                 +ChatRoomMember
                     >ChatRoomMemberKey
                         ChatRoomMemberUserKey (string)
