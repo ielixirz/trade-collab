@@ -30,7 +30,7 @@ class MemberInvite extends React.Component {
     const { profile, isSelected = false, existRoles } = this.props;
     const { Image, Email } = profile;
     return (
-      <div key={profile.id} className="profile-container">
+      <div key={profile.id} className="profile-member-container">
         <div className="profile-image">
           {Image ? <img src={Image} /> : <img className="profile-image-placeholder" />}
         </div>
