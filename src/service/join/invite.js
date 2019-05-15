@@ -168,6 +168,16 @@ export const GetCompanyInvitation = CompanyKey => collection(CompanyInvitationRe
 
 export const GetUserInvitation = UserKey => collection(UserInvitationRefPath(UserKey));
 
+// const ChatMemberDataList = [
+//   {
+//     Email: 'holy-wisdom@hotmail.com',
+//     Role: 'Importer',
+//   },
+//   {
+//     Email: 'importerMock@mi.com',
+//     Role: 'Exporter',
+//   },
+// ];
 export const CreateChatMultipleInvitation = (ChatInviteDataList, ShipmentKey, ChatRoomKey) => {
   const EmailList = ChatInviteDataList.map(ChatInviteItem => ChatInviteItem.Email);
 
