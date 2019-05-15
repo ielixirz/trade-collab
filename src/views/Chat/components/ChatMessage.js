@@ -10,7 +10,7 @@ const ChatMessage = ({ message, i }) => {
     type = 'sender',
     text = 'Test message',
     name = 'Anonymous',
-    status = new Date(),
+    status = new Date()
   } = message;
   const prev = _.get(message, 'prev', false);
   let isFirstMessageOfTheDay = false;
@@ -34,17 +34,12 @@ const ChatMessage = ({ message, i }) => {
               <Row>
                 <Col xs="8">
                   <p>
-                    <span className="user-name">{name}</span>
-                    {' '}
-                    <br />
+                    <span className="user-name">{name}</span> <br />
                     {text}
                   </p>
                 </Col>
                 <Col xs={4}>
-                  <span className="time_date">
-                    {' '}
-                    {status.toLocaleTimeString()}
-                  </span>
+                  <span className="time_date"> {status.toLocaleTimeString()}</span>
                 </Col>
               </Row>
             </div>
@@ -70,18 +65,10 @@ const ChatMessage = ({ message, i }) => {
         <div className="sent_msg">
           <Row>
             <Col xs={4}>
-              <span className="time_date">
-                {' '}
-                {status.toLocaleTimeString()}
-              </span>
+              <span className="time_date"> {status.toLocaleTimeString()}</span>
             </Col>
             <Col>
-              <p>
-                <span className="user-name">{name}</span>
-                {' '}
-                <br />
-                {text}
-              </p>
+              <p>{text}</p>
             </Col>
           </Row>
         </div>

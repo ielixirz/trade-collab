@@ -4,9 +4,7 @@
 /* eslint-disable filenames/match-regex */
 import _ from 'lodash';
 import React, { Component } from 'react';
-import {
-  Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input,
-} from 'reactstrap';
+import { Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
 import MemberModal from '../../../component/MemberModal';
 import MemberInviteModal from '../../../component/MemberInviteModal';
 import UploadModal from '../../../component/UploadModal';
@@ -23,7 +21,7 @@ class ChatWithHeader extends Component {
       typing,
       uploadModalRef,
       fileInputRef,
-
+      sender,
       ShipmentKey,
       ChatRoomKey,
       ChatRoomFileLink,
@@ -37,14 +35,15 @@ class ChatWithHeader extends Component {
       onDropChatStyle,
       onDragOver,
       onDragLeave,
-      onFileDrop,
+      onFileDrop
     } = this.props;
+    console.log(sender);
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
         <Row
           style={{
             backgroundColor: 'white',
-            borderBottom: '1px solid #707070',
+            borderBottom: '1px solid #707070'
           }}
         >
           <Breadcrumb className="chat-toolbar">
@@ -76,15 +75,15 @@ class ChatWithHeader extends Component {
                     fetchMoreMessage(ChatRoomKey, ShipmentKey);
                   }
                 }}
-                ref={(el) => {
+                ref={el => {
                   this.msgChatRef = el;
                 }}
               >
                 {chatMsg.map((msg, i) => {
                   const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = 'sender';
-
-                  if (_.get(user, 'email', '0') === msg.ChatRoomMessageSender) {
+                  console.log(msg);
+                  if (_.get(sender, 'id', '0') === msg.ChatRoomMessageSenderKey) {
                     type = 'reciever';
                   }
                   const message = {
@@ -92,7 +91,7 @@ class ChatWithHeader extends Component {
                     text: msg.ChatRoomMessageContext,
                     name: msg.ChatRoomMessageSender,
                     status: t,
-                    prev: chatMsg[i - 1],
+                    prev: chatMsg[i - 1]
                   };
 
                   return <ChatMessage message={message} i={i} />;
@@ -115,11 +114,12 @@ class ChatWithHeader extends Component {
                       id="file"
                       ref={fileInputRef}
                       style={{ display: 'none' }}
-                      onChange={event => uploadModalRef.current.triggerUploading(
-                        event.target.files[0],
-                        ShipmentKey,
-                        ChatRoomKey,
-                      )
+                      onChange={event =>
+                        uploadModalRef.current.triggerUploading(
+                          event.target.files[0],
+                          ShipmentKey,
+                          ChatRoomKey
+                        )
                       }
                     />
                   </InputGroupAddon>
@@ -127,7 +127,7 @@ class ChatWithHeader extends Component {
                     placeholder="type...."
                     value={text}
                     onChange={typing}
-                    onKeyPress={(event) => {
+                    onKeyPress={event => {
                       if (event.key === 'Enter') {
                         sendMessage(ChatRoomKey, ShipmentKey, text);
                         scrollChatToBottom();
