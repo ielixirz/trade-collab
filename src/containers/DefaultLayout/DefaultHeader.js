@@ -11,7 +11,7 @@ import {
   NavItem,
   UncontrolledDropdown,
   Row,
-  Col
+  Col,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 
@@ -22,15 +22,16 @@ import logo from '../../assets/img/brand/logo.svg';
 import sygnet from '../../assets/img/brand/sygnet.svg';
 import { logout } from '../../actions/loginActions';
 import './style.css';
+
 const propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 
 const defaultProps = {};
 
 class DefaultHeader extends Component {
   render() {
-    let notification = [
+    const notification = [
       {
         id: 1,
         text: 'Holy.Wisdom has request to join Liam Produce',
@@ -40,7 +41,7 @@ class DefaultHeader extends Component {
         type: 'Shipment',
         avatar:
           'https://firebasestorage.googleapis.com/v0/b/yterminal-b0906.appspot.com/o/Profile%2F2sYaYykLYOd5a2D4FPbV%2F1556806598505Screen%20Shot%202562-04-29%20at%2023.54.33.png?alt=media&token=eda3cf62-d247-45dd-97c5-e7c9022a00bb',
-        ShipmentKey: 'i5SXjeRcWWLMGd9m4bcg'
+        ShipmentKey: 'i5SXjeRcWWLMGd9m4bcg',
       },
       {
         id: 2,
@@ -52,7 +53,7 @@ class DefaultHeader extends Component {
         avatar:
           'https://scontent.fbkk22-2.fna.fbcdn.net/v/t1.0-9/46491975_2461706807202990_8323584076334235648_n.jpg?_nc_cat=103&_nc_eui2=AeGn67viBaYidmrn_yWeMaX6AMBuov3nYmk0a3llhOLDSXB7ZkYqVOfdhs4ccrLKPCWRey-jjR1i4_oRS7MShnX_GA8CHblXrqXXsouL8Cb7yA&_nc_ht=scontent.fbkk22-2.fna&oh=c2ace08edac9ee9b9fda8bb7632da8c1&oe=5D6A9D95',
 
-        ShipmentKey: 'i5SXjeRcWWLMGd9m4bcg'
+        ShipmentKey: 'i5SXjeRcWWLMGd9m4bcg',
       },
       {
         id: 3,
@@ -63,8 +64,8 @@ class DefaultHeader extends Component {
         sender: 'Pooh',
         avatar:
           'https://scontent.fbkk22-2.fna.fbcdn.net/v/t1.0-9/46491975_2461706807202990_8323584076334235648_n.jpg?_nc_cat=103&_nc_eui2=AeGn67viBaYidmrn_yWeMaX6AMBuov3nYmk0a3llhOLDSXB7ZkYqVOfdhs4ccrLKPCWRey-jjR1i4_oRS7MShnX_GA8CHblXrqXXsouL8Cb7yA&_nc_ht=scontent.fbkk22-2.fna&oh=c2ace08edac9ee9b9fda8bb7632da8c1&oe=5D6A9D95',
-        ShipmentKey: 'i5SXjeRcWWLMGd9m4bcg'
-      }
+        ShipmentKey: 'i5SXjeRcWWLMGd9m4bcg',
+      },
     ];
     // eslint-disable-next-line
     const { children, ...attributes } = this.props;
@@ -77,13 +78,13 @@ class DefaultHeader extends Component {
             src: logo,
             width: 89,
             height: 25,
-            alt: 'CoreUI Logo'
+            alt: 'CoreUI Logo',
           }}
           minimized={{
             src: sygnet,
             width: 30,
             height: 30,
-            alt: 'Y terminal'
+            alt: 'Y terminal',
           }}
         />
         <Nav className="d-md-down-none">
@@ -115,7 +116,7 @@ class DefaultHeader extends Component {
                 <span
                   style={{
                     fontWeight: 'bold',
-                    float: 'left'
+                    float: 'left',
                   }}
                 >
                   Notification
@@ -123,13 +124,13 @@ class DefaultHeader extends Component {
                 <span
                   style={{
                     fontWeight: 'bold',
-                    float: 'right'
+                    float: 'right',
                   }}
                 >
                   <div>
                     <span
                       style={{
-                        cursor: 'pointer'
+                        cursor: 'pointer',
                       }}
                     >
                       Mark Read All
@@ -139,33 +140,31 @@ class DefaultHeader extends Component {
                   </div>
                 </span>
               </DropdownItem>
-              {notification.map((item, index) => {
-                return (
-                  <DropdownItem
-                    key={'notification' + index}
-                    className={item.isRead ? '' : 'highlight'}
-                  >
-                    <div>
-                      <div className="message">
-                        <div className="pt-3 mr-3 float-left">
-                          <div className="avatar">
-                            <img src={item.avatar} className="img-avatar" />
-                            <span className="avatar-status badge-success" />
-                          </div>
+              {notification.map((item, index) => (
+                <DropdownItem
+                  key={`notification${index}`}
+                  className={item.isRead ? '' : 'highlight'}
+                >
+                  <div>
+                    <div className="message">
+                      <div className="pt-3 mr-3 float-left">
+                        <div className="avatar">
+                          <img src={item.avatar} className="img-avatar" />
+                          <span className="avatar-status badge-success" />
                         </div>
-                        <div>
-                          <small className="text-muted">{item.sender}</small>
-                          <small className="text-muted float-right mt-1">
-                            {item.time.toLocaleString()}
-                          </small>
-                        </div>
-
-                        <div className="small text-muted text-truncate">{item.text}</div>
                       </div>
+                      <div>
+                        <small className="text-muted">{item.sender}</small>
+                        <small className="text-muted float-right mt-1">
+                          {item.time.toLocaleString()}
+                        </small>
+                      </div>
+
+                      <div className="small text-muted text-truncate">{item.text}</div>
                     </div>
-                  </DropdownItem>
-                );
-              })}
+                  </div>
+                </DropdownItem>
+              ))}
               <DropdownItem className="text-center">
                 <Link to="/notification">See All</Link>
               </DropdownItem>
@@ -179,9 +178,6 @@ class DefaultHeader extends Component {
               </span>
             </DropdownToggle>
             <DropdownMenu right>
-              <DropdownItem>Option 1</DropdownItem>
-              <DropdownItem>Option 2</DropdownItem>
-              <DropdownItem divider />
               <DropdownItem>
                 <a onClick={() => this.props.logout()}>logout</a>
               </DropdownItem>
@@ -201,10 +197,10 @@ class DefaultHeader extends Component {
 
 DefaultHeader.propTypes = propTypes;
 DefaultHeader.defaultProps = defaultProps;
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { authReducer } = state;
   return {
-    user: authReducer.user
+    user: authReducer.user,
   };
 };
 
@@ -212,11 +208,11 @@ const styles = {
   fontNav: {
     color: '#3B3B3B',
     textDecoration: 'none',
-    fontSize: 16
+    fontSize: 16,
   },
-  marginNav: { marginRight: 18 }
+  marginNav: { marginRight: 18 },
 };
 export default connect(
   mapStateToProps,
-  { logout }
+  { logout },
 )(DefaultHeader);
