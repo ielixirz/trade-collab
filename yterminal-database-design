@@ -49,10 +49,6 @@
                     ['Shipper','ShipmentDetail']
                 ChatRoomPrivateShareDataList (array<string>)
                     ['Trucking']
-                ChatRoomMessageReadLastest (Object) 
-                    {
-                        ProfileKey : MessageReadLastestKey
-                    }
                 +ChatRoomPrivateShareData
                     >Trucking
                         .
@@ -75,10 +71,19 @@
                         ChatRoomMemberName (string)
                         ChatRoomMemberEmail (string)
                         ChatRoomMemberName (string)
-                        ChatRoomMemberImageURL (string)
+                        ChatRoomMemberImageUrl (string)
                         ChatRoomMemberRole (string)
                         ChatRoomMemberCompanyName (string)
                         ChatRoomMemberCompanyKey (string)
+                +ChatRoomMessageReader
+                    >ChatRoomMessageKeyList *(Static document name) (Create for util)
+                        ChatRoomMessageKeyList (Array<string>)
+                    >ProfileKey
+                        ChatRoomMessageReaderFirstName (string)
+                        ChatRoomMessageReaderSurName (string)
+                        ChatRoomMessageReaderProfileImageUrl (string)
+                        ChatRoomMessageReaderLastestMessageKey (string)
+
 
         +ShipmentFile
             >FileKey
