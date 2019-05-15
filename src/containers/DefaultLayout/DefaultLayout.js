@@ -51,17 +51,15 @@ class DefaultLayout extends Component {
             <Container fluid>
               <Suspense fallback={this.loading()}>
                 <Switch>
-                  {routes.map((route, idx) =>
-                    route.component ? (
-                      <Route
-                        key={idx}
-                        path={route.path}
-                        exact={route.exact}
-                        name={route.name}
-                        render={props => <route.component {...props} />}
-                      />
-                    ) : null
-                  )}
+                  {routes.map((route, idx) => (route.component ? (
+                    <Route
+                      key={idx}
+                      path={route.path}
+                      exact={route.exact}
+                      name={route.name}
+                      render={props => <route.component {...props} />}
+                    />
+                  ) : null))}
                 </Switch>
               </Suspense>
             </Container>
@@ -77,14 +75,14 @@ class DefaultLayout extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { authReducer } = state;
   return {
-    auth: authReducer.user
+    auth: authReducer.user,
   };
 };
 
 export default connect(
   mapStateToProps,
-  { getUserInfoDetail, getProlfileList }
+  { getUserInfoDetail, getProlfileList },
 )(DefaultLayout);
