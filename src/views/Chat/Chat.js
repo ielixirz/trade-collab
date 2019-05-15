@@ -728,19 +728,25 @@ class Chat extends Component {
           className={'noti'}
           onDoubleClick={() => {
             console.log('double Click');
-            this.setState({
-              roomeditor: {
-                roomName: item.roomName,
-                ChatRoomKey: item.ChatRoomKey,
-                ShipmentKey: item.ShipmentKey
-              }
-            });
+            if (item.roomName !== '+') {
+              this.setState({
+                roomeditor: {
+                  roomName: item.roomName,
+                  ChatRoomKey: item.ChatRoomKey,
+                  ShipmentKey: item.ShipmentKey
+                }
+              });
+            }
           }}
         >
           {item.roomName}
-          <Badge pill className="notibadge" color="danger">
-            5
-          </Badge>
+          {item.roomName !== '+' ? (
+            <Badge pill className="notibadge" color="danger">
+              5
+            </Badge>
+          ) : (
+            ''
+          )}
         </div>
       );
       if (
