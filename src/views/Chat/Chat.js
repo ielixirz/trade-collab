@@ -4,7 +4,21 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable filenames/match-regex */
 import React, { Component } from 'react';
-import { TabContent, Input, TabPane } from 'reactstrap';
+import {
+  Button,
+  CardBody,
+  Card,
+  Col,
+  InputGroup,
+  InputGroupAddon,
+  Row,
+  TabContent,
+  Input,
+  TabPane,
+  Breadcrumb,
+  UncontrolledCollapse,
+  Badge,
+} from 'reactstrap';
 import EdiText from 'react-editext';
 import _ from 'lodash';
 import { connect } from 'react-redux';
@@ -239,17 +253,28 @@ class Chat extends Component {
     _.forEach(chats, (item, index) => {
       let content = (
         <div
+          className="noti"
           onDoubleClick={() => {
-            this.setState({
-              roomeditor: {
-                roomName: item.roomName,
-                ChatRoomKey: item.ChatRoomKey,
-                ShipmentKey: item.ShipmentKey,
-              },
-            });
+            console.log('double Click');
+            if (item.roomName !== '+') {
+              this.setState({
+                roomeditor: {
+                  roomName: item.roomName,
+                  ChatRoomKey: item.ChatRoomKey,
+                  ShipmentKey: item.ShipmentKey,
+                },
+              });
+            }
           }}
         >
           {item.roomName}
+          {item.roomName !== '+' ? (
+            <Badge pill className="notibadge" color="danger">
+              5
+            </Badge>
+          ) : (
+            ''
+          )}
         </div>
       );
       if (
@@ -257,7 +282,7 @@ class Chat extends Component {
         && this.state.roomeditor.ChatRoomKey === item.ChatRoomKey
       ) {
         content = (
-          <div>
+          <div className="noti">
             <Input
               value={this.state.roomeditor.roomName}
               type="text"
@@ -278,6 +303,9 @@ class Chat extends Component {
                 }
               }}
             />
+            <Badge pill className="notibadge" color="danger">
+              5
+            </Badge>
           </div>
         );
       }

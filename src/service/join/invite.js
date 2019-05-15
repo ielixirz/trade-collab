@@ -80,7 +80,7 @@ export const UpdateUserInvitationStatus = (UserKey, InvitationKey, Status) => fr
   collection(
     UserInvitationRefPath(UserKey)
       .doc(InvitationKey)
-      .update({ UserInvitationStatus: Status }),
+      .update({ CompanyInvitationStatus: Status }),
   ),
 );
 
@@ -139,6 +139,7 @@ export const CreateCompanyMultipleInvitation = (ColleaguesDataList, CompanyKey) 
         CompanyInvitationName: CompanyDocData.CompanyName,
         // CompanyInvitationEmail: CompanyDocData.CompanyEmail,
         CompanyInvitationEmail: '',
+        CompanyInvitationUserEmail: Email,
         CompanyInvitationPosition: PreloadData.Position,
         CompanyInvitationRole: PreloadData.Role,
         CompanyInvitationTimestamp: new Date(),

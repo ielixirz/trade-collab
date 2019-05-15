@@ -26,7 +26,6 @@ img {
   margin: 20px 0 0;
 }
 
-
 .recent_heading {
   float: left;
   width: 40%;
@@ -84,7 +83,7 @@ img {
 .chat_ib p {
   font-size: 14px;
   color: #989898;
-  margin: auto
+  margin: auto;
 }
 
 .chat_img {
@@ -147,12 +146,11 @@ img {
   /* align vertical */
   display: flex;
   padding-right: 10px;
-
 }
 
 .received_withd_msg {
   width: 57%;
-  margin-bottom: 30px
+  margin-bottom: 30px;
 }
 
 .mesgs {
@@ -160,11 +158,21 @@ img {
   padding: 30px 15px 0 25px;
   width: 100%;
   height: 83vh;
-
+}
+.notibadge {
+  position: absolute;
+  right: -10px;
+  bottom: 20px;
+  background: red;
+  text-align: center;
+  border-radius: 30px 30px 30px 30px;
+  color: white;
+  padding: 5px 10px;
+  z-index: 1;
 }
 
 .sent_msg p {
-  background: #80D2DE none repeat scroll 0 0;
+  background: #80d2de none repeat scroll 0 0;
   border-radius: 3px;
   font-size: 14px;
   margin: 0;
@@ -208,7 +216,7 @@ img {
 .type_msg {
   position: relative;
   margin-bottom: 10px;
-  height: 10vh
+  height: 10vh;
 }
 
 .msg_send_btn {
@@ -239,10 +247,9 @@ img {
 }
 
 .btn-yterminal {
-
   color: #23282c;
   background-color: #ffffff;
-  border-color: #16A085;
+  border-color: #16a085;
   opacity: 1;
 }
 
@@ -251,7 +258,6 @@ img {
   background-color: #ffffff;
   border-color: #e4e7ea;
   width: 50px;
-
 }
 
 .btn-default1 {
@@ -260,13 +266,15 @@ img {
   border-color: #e4e7ea;
   border-left: 0;
   width: 50px;
-
 }
 
 .react-tabs-container {
   background-color: #ffffff !important;
   margin-top: 0.5rem !important;
+  padding-top: 0.5rem;
   border: 0px !important;
+  overflow-x: auto;
+  height: 60px;
 }
 
 .react-tabs-tab.react-tabs-active {
@@ -282,13 +290,15 @@ img {
   border-left: 1px solid #c8ced3 !important;
   border-top-left-radius: 10px !important;
   border-top-right-radius: 10px !important;
-  max-width: 150px !important;
-  min-width: 40px !important;
+  max-width: 350px !important;
+  min-width: 200px !important;
+  position: relative;
 }
 
 .react-tabs-tab-content {
   font-size: medium !important;
   width: 100% !important;
+  z-index: 1;
 }
 
 .react-tabs-tab-close {
@@ -332,7 +342,7 @@ h2.time-background {
 
 h2.time-background:before {
   border-top: 1px solid #dfdfdf;
-  content: "";
+  content: '';
   margin: 0 auto;
   /* this centers the line to the full width specified */
   position: absolute;

@@ -4,7 +4,7 @@ import { GetChatMessage, CreateChatMessage, GetChatRoomList } from '../../servic
 import { LoginWithEmail } from '../../service/auth/login';
 import { VerificationEmail, AuthStage } from '../../service/auth/manageuser';
 import { Register, RegisterWithEmail } from '../../service/auth/register';
-import { UpdateUserInfo } from '../../service/user/user';
+import { UpdateUserInfo, GetUserCompany } from '../../service/user/user';
 import { GetShipmentList } from '../../service/shipment/shipment';
 import { GetMasterDataChatRoom } from '../../service/masterdata/masterdata';
 import {
@@ -14,7 +14,17 @@ import {
 } from '../../service/join/invite';
 import { GetProfileListFromEmail } from '../../service/user/profile';
 
-import { IsCompanyMember } from '../../service/company/company';
+import { IsCompanyMember, GetCompanyMember } from '../../service/company/company';
+
+import { GetUserRequest } from '../../service/join/request';
+
+import { CombineShipmentAndShipmentReference } from '../../service/shipment/shipment';
+
+import {
+  AddShipmentPin,
+  DeleteShipmentPin,
+  GetShipmentPin,
+} from '../../service/personalize/personalize';
 
 const TestService = () => {
   const [count, setCount] = useState(0);
@@ -127,6 +137,13 @@ const TestService = () => {
     // ).subscribe(console.log);
     // IsExistInvitation('A0qO6SZakZ1jqZor6ara', '92f7ICOn95jQyMp4oJTv').subscribe(console.log);
     // IsCompanyMember('92f7ICOn95jQyMp4oJTv', 'A0qO6SZakZ1jqZor6ara').subscribe(console.log);
+    // GetUserCompany('nen3b2GCqSQIUyTHuFret0Yx9f02').subscribe(console.log);
+    // GetCompanyMember('oFT40OYTReLd6GQR1kIv').subscribe(console.log);
+    // GetUserRequest('nen3b2GCqSQIUyTHuFret0Yx9f02').subscribe(console.log);
+    // CombineShipmentAndShipmentReference('', '', 'asc', 100).subscribe(console.log);
+    // AddShipmentPin('2sYaYykLYOd5a2D4FPbV', '555555').subscribe(console.log);
+    // DeleteShipmentPin('2sYaYykLYOd5a2D4FPbV', '555555').subscribe(console.log);
+    // GetShipmentPin('2sYaYykLYOd5a2D4FPbV').subscribe(console.log);
   }, []);
 
   return (

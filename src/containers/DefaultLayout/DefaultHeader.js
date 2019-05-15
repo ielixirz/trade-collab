@@ -22,6 +22,7 @@ import logo from '../../assets/img/brand/logo.svg';
 import sygnet from '../../assets/img/brand/sygnet.svg';
 import { logout } from '../../actions/loginActions';
 import './style.css';
+
 const propTypes = {
   children: PropTypes.node
 };
@@ -30,7 +31,7 @@ const defaultProps = {};
 
 class DefaultHeader extends Component {
   render() {
-    let notification = [
+    const notification = [
       {
         id: 1,
         text: 'Holy.Wisdom has request to join Liam Produce',
@@ -139,33 +140,31 @@ class DefaultHeader extends Component {
                   </div>
                 </span>
               </DropdownItem>
-              {notification.map((item, index) => {
-                return (
-                  <DropdownItem
-                    key={'notification' + index}
-                    className={item.isRead ? '' : 'highlight'}
-                  >
-                    <div>
-                      <div className="message">
-                        <div className="pt-3 mr-3 float-left">
-                          <div className="avatar">
-                            <img src={item.avatar} className="img-avatar" />
-                            <span className="avatar-status badge-success" />
-                          </div>
+              {notification.map((item, index) => (
+                <DropdownItem
+                  key={`notification${index}`}
+                  className={item.isRead ? '' : 'highlight'}
+                >
+                  <div>
+                    <div className="message">
+                      <div className="pt-3 mr-3 float-left">
+                        <div className="avatar">
+                          <img src={item.avatar} className="img-avatar" />
+                          <span className="avatar-status badge-success" />
                         </div>
-                        <div>
-                          <small className="text-muted">{item.sender}</small>
-                          <small className="text-muted float-right mt-1">
-                            {item.time.toLocaleString()}
-                          </small>
-                        </div>
-
-                        <div className="small text-muted text-truncate">{item.text}</div>
                       </div>
+                      <div>
+                        <small className="text-muted">{item.sender}</small>
+                        <small className="text-muted float-right mt-1">
+                          {item.time.toLocaleString()}
+                        </small>
+                      </div>
+
+                      <div className="small text-muted text-truncate">{item.text}</div>
                     </div>
-                  </DropdownItem>
-                );
-              })}
+                  </div>
+                </DropdownItem>
+              ))}
               <DropdownItem className="text-center">
                 <Link to="/notification">See All</Link>
               </DropdownItem>
@@ -179,9 +178,6 @@ class DefaultHeader extends Component {
               </span>
             </DropdownToggle>
             <DropdownMenu right>
-              <DropdownItem>Option 1</DropdownItem>
-              <DropdownItem>Option 2</DropdownItem>
-              <DropdownItem divider />
               <DropdownItem>
                 <a onClick={() => this.props.logout()}>logout</a>
               </DropdownItem>

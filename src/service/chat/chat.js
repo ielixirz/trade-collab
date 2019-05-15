@@ -121,3 +121,5 @@ export const DeleteChatRoomMember = (ShipmentKey, ChatRoomKey, ChatRoomMemberKey
     .doc(ChatRoomMemberKey)
     .delete(),
 );
+
+export const GetChatRoomMemberList = (ShipmentKey, ChatRoomKey) => collection(ChatRoomMemberRefPath(ShipmentKey, ChatRoomKey));

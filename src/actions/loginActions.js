@@ -47,6 +47,6 @@ export const logout = () => (dispatch) => {
         type: SAVE_CREDENCIAL,
         payload: {},
       });
-      window.location.replace('#/login');
+      window.location.assign('/login');
     });
 };

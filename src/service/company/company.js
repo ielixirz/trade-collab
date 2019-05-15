@@ -53,3 +53,11 @@ export const IsCompanyMember = (CompanyKey, UserKey) => doc(CompanyMemberRefPath
   take(1),
   map(Result => !!Result.data()),
 );
+
+export const GetCompanyMember = CompanyKey => collection(CompanyMemberRefPath(CompanyKey));
+
+export const UpdateCompanyMember = (CompanyKey, UserInfoKey, Data) => from(
+  CompanyMemberRefPath(CompanyKey)
+    .doc(UserInfoKey)
+    .update(Data),
+);
