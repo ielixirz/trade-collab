@@ -95,7 +95,7 @@ class Chat extends Component {
         browseFile={this.browseFile}
         scrollChatToBottom={this.scrollChatToBottom}
         //   Event
-        onDropChatStyle={this.onDropChatStyle}
+        onDropChatStyle={this.state.onDropChatStyle}
         onDragOver={this.onDragOver}
         onDragLeave={this.onDragLeave}
         onFileDrop={this.onFileDrop}
