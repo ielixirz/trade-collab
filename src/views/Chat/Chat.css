@@ -98,7 +98,7 @@ img{ max-width:100%;}
 }
 .notibadge {
   position: absolute;
-  right:0px;
+  right:-10px;
   bottom:20px;
   background:red;
   text-align: center;
@@ -185,8 +185,11 @@ z-index: 1;
 .react-tabs-container{
   background-color: #ffffff !important;
   margin-top: 0.5rem !important;
+  padding-top: 0.5rem;
   border: 0px !important;
-
+overflow-x:auto;
+  height:50px;
+;
 
 }
 
@@ -207,15 +210,13 @@ z-index: 1;
   max-width: 350px !important;
   min-width: 200px !important;
   position:relative;
+
 }
 
 .react-tabs-tab-content{
   font-size: medium !important;
   width: 100% !important;
-
   z-index: 1;
-
-
 }
 
 .react-tabs-tab-close {
