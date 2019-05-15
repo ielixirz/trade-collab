@@ -96,6 +96,18 @@ img{ max-width:100%;}
   height: 83vh;
 
 }
+.notibadge {
+  position: absolute;
+  right:0px;
+  bottom:20px;
+  background:red;
+  text-align: center;
+  border-radius: 30px 30px 30px 30px;
+  color:white;
+  padding:5px 10px;
+z-index: 1;
+}
+
 
 .sent_msg p {
   background: #80D2DE none repeat scroll 0 0;
@@ -121,10 +133,7 @@ img{ max-width:100%;}
   min-height: 48px;
   width: 100%;
 }
-.react-tabs-tab {
-  max-width: 550px !important;
-  min-width: 40px !important;
-}
+
 .user-name {
  font-weight: bolder;
 }
@@ -171,16 +180,20 @@ img{ max-width:100%;}
   border-left: 0;
   width: 50px;
 
+
 }
 .react-tabs-container{
   background-color: #ffffff !important;
   margin-top: 0.5rem !important;
   border: 0px !important;
+
+
 }
 
 .react-tabs-tab.react-tabs-active{
   background-color: #ffffff !important;
   font-weight: bold !important;
+
 }
 
 .react-tabs-tab{
@@ -191,13 +204,18 @@ img{ max-width:100%;}
   border-left: 1px solid #c8ced3 !important;
   border-top-left-radius: 10px !important;
   border-top-right-radius: 10px !important;
-  max-width: 150px !important;
-  min-width: 40px !important;
+  max-width: 350px !important;
+  min-width: 200px !important;
+  position:relative;
 }
 
 .react-tabs-tab-content{
   font-size: medium !important;
   width: 100% !important;
+
+  z-index: 1;
+
+
 }
 
 .react-tabs-tab-close {

@@ -16,7 +16,8 @@ import {
   Input,
   TabPane,
   Breadcrumb,
-  UncontrolledCollapse
+  UncontrolledCollapse,
+  Badge
 } from 'reactstrap';
 import EdiText from 'react-editext';
 import _ from 'lodash';
@@ -724,6 +725,7 @@ class Chat extends Component {
     _.forEach(chats, (item, index) => {
       let content = (
         <div
+          className={'noti'}
           onDoubleClick={() => {
             console.log('double Click');
             this.setState({
@@ -736,6 +738,9 @@ class Chat extends Component {
           }}
         >
           {item.roomName}
+          <Badge pill className="notibadge" color="danger">
+            5
+          </Badge>
         </div>
       );
       if (
@@ -743,7 +748,7 @@ class Chat extends Component {
         this.state.roomeditor.ChatRoomKey === item.ChatRoomKey
       ) {
         content = (
-          <div>
+          <div className={'noti'}>
             <Input
               value={this.state.roomeditor.roomName}
               type="text"
@@ -764,6 +769,9 @@ class Chat extends Component {
                 }
               }}
             />
+            <Badge pill className="notibadge" color="danger">
+              5
+            </Badge>
           </div>
         );
       }
