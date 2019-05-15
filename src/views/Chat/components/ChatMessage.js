@@ -31,13 +31,13 @@ const ChatMessage = ({ message, i }) => {
         <div className="incoming_msg">
           <div className="received_msg">
             <div className="received_withd_msg">
-              <Row>
-                <Col xs="8">
+              <Row className={'flex-nowrap'}>
+                <div className="sender">
                   <p>
                     <span className="user-name">{name}</span> <br />
                     {text}
                   </p>
-                </Col>
+                </div>
                 <Col xs={4}>
                   <span className="time_date"> {status.toLocaleTimeString()}</span>
                 </Col>
@@ -63,13 +63,13 @@ const ChatMessage = ({ message, i }) => {
     <div key={i}>
       <div className="outgoing_msg">
         <div className="sent_msg">
-          <Row>
-            <Col xs={4}>
+          <Row className="receiver">
+            <div>
               <span className="time_date"> {status.toLocaleTimeString()}</span>
-            </Col>
-            <Col>
+            </div>
+            <div>
               <p>{text}</p>
-            </Col>
+            </div>
           </Row>
         </div>
       </div>
