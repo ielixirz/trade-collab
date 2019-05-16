@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { zip } from 'rxjs';
 import { map } from 'rxjs/operators';
+import _ from 'lodash';
 
 import {
   Row, Col, DropdownToggle, Dropdown, Button, Input, ButtonGroup,
@@ -431,7 +432,8 @@ const ProfilePanel = ({ currentProfile, auth }) => {
             <Row>
               <Button
                 className="profile-btn"
-                onClick={() => inviteToCompanyModalRef.current.triggerInviteToCompany([], companyList)}
+                onClick={() => inviteToCompanyModalRef.current.triggerInviteToCompany([], companyList)
+                }
               >
                 <i className="cui-user-follow icons network-btn-icon" />
                 Invite colleagues to join
@@ -481,10 +483,14 @@ const ProfilePanel = ({ currentProfile, auth }) => {
 
 const mapStateToProps = (state) => {
   const { authReducer, userReducer, profileReducer } = state;
+  const profile = _.find(
+    profileReducer.ProfileList,
+    item => item.id === profileReducer.ProfileDetail.id,
+  );
   return {
     auth: authReducer.user,
     user: userReducer.UserInfo,
-    currentProfile: profileReducer.ProfileList[0],
+    currentProfile: profile,
   };
 };
 
