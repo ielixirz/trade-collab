@@ -38,6 +38,14 @@ const ChatRoomMemberRefPath = (ShipmentKey, ChatRoomKey) => FirebaseApp.firestor
   .doc(ChatRoomKey)
   .collection('ChatRoomMember');
 
+const ChatRoomMessageReaderRefPath = (ShipmentKey, ChatRoomKey, ProfileKey) => FirebaseApp.firestore()
+  .collection('Shipment')
+  .doc(ShipmentKey)
+  .collection('ChatRoom')
+  .doc(ChatRoomKey)
+  .collection('ChatRoomMessageReader')
+  .doc(ProfileKey);
+
 // Example Data CreateChatMessage
 
 /*
@@ -123,3 +131,5 @@ export const DeleteChatRoomMember = (ShipmentKey, ChatRoomKey, ChatRoomMemberKey
 );
 
 export const GetChatRoomMemberList = (ShipmentKey, ChatRoomKey) => collection(ChatRoomMemberRefPath(ShipmentKey, ChatRoomKey));
+
+export const UpdateChatRoomMessageReader = (ShipmentKey, ChatRoomKey, ProfileKey, Data) => from(ChatRoomMessageReaderRefPath(ShipmentKey, ChatRoomKey, ProfileKey).set(Data, { merge: true }));
