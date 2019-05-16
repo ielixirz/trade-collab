@@ -175,9 +175,6 @@ exports.CreateChatRoomMessageKeyList = functions.firestore
   .onCreate((snapshot, context) => {
     try {
       const ChatRoomMessageKey = context.params.ChatRoomMessageKey;
-      // console.log(context.params.ShipmentKey);
-      // console.log(context.params.ChatRoomKey);
-      // //console.log(snapshot.ref.parent.parent.path);
       return admin
         .firestore()
         .collection('Shipment')
