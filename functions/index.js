@@ -1,4 +1,4 @@
-import _ from 'lodash';
+const _ = require('lodash');
 
 const from = require('rxjs');
 
@@ -101,7 +101,7 @@ exports.ApproveUserRequest = functions.firestore
   });
 
 exports.ReaderLastestMessage = functions.firestore
-  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMessageReader/{ProfileKey}}')
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMessageReader/{ProfileKey}')
   .onUpdate(async (change, context) => {
     try {
       const oldValue = change.before.data();
@@ -171,7 +171,7 @@ exports.ReaderLastestMessage = functions.firestore
   });
 
 exports.CreateChatRoomMessageKeyList = functions.firestore
-  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMessage/{ChatRoomMessageKey}}')
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMessage/{ChatRoomMessageKey}')
   .onCreate(async (snapshot, context) => {
     try {
       const ChatRoomMessageKey = context.params.ChatRoomMessageKey;
