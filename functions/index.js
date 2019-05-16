@@ -169,3 +169,26 @@ exports.ReaderLastestMessage = functions.firestore
       return error;
     }
   });
+
+exports.CreateChatRoomMessageKeyList = functions.firestore
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMessage/{ChatRoomMessageKey}}')
+  .onCreate(async (snapshot, context) => {
+    try {
+      const ChatRoomMessageKey = context.params.ChatRoomMessageKey;
+      const AddChatRoomMessageKeyList = await snapshot.ref.parent.parent
+        .collection('ChatRoomMessageReader')
+        .doc('ChatRoomMessageKeyList')
+        .set(
+          {
+            ChatRoomMessageKeyList: firebase.firestore.FieldValue.arrayUnion(ChatRoomMessageKey)
+          },
+          {
+            merge: true
+          }
+        );
+
+      return Promise.resolve(AddChatRoomMessageKeyList);
+    } catch (error) {
+      return error;
+    }
+  });
