@@ -39,7 +39,7 @@ export const login = data => (dispatch) => {
   });
 };
 
-export const logout = () => (dispatch) => {
+export const logout = callback => (dispatch) => {
   FirebaseApp.auth()
     .signOut()
     .then(() => {
@@ -47,6 +47,6 @@ export const logout = () => (dispatch) => {
         type: SAVE_CREDENCIAL,
         payload: {},
       });
-      window.location.assign('/login');
+      if (callback) callback();
     });
 };
