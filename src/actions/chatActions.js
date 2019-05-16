@@ -141,13 +141,19 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getSta
   //   ChatRoomMessageType : "Text",
   //   ChatRoomMessageTimestamp : new Date()
   // }
-  console.log(getState().authReducer);
+  const { authReducer, profileReducer } = getState();
   // eslint-disable-next-line prefer-destructuring
-  const user = getState().authReducer.user;
-  console.log(user);
+  const user = authReducer.user;
+
+  let sender = _.find(
+    profileReducer.ProfileList,
+    item => item.id === profileReducer.ProfileDetail.id
+  );
+
   if (_.get(user, 'uid', false)) {
     const msg = {
-      ChatRoomMessageSender: _.get(user, 'email', 0),
+      ChatRoomMessageSender: sender.ProfileFirstname,
+      ChatRoomMessageSenderKey: sender.id,
       ChatRoomMessageContext: text,
       ChatRoomMessageType: 'Text',
       ChatRoomMessageTimestamp: new Date()

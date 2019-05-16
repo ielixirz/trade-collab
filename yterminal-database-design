@@ -129,15 +129,18 @@
                 UserChatRoomReference (reference)
                 UserChatRoomTimestamp (timestamp)
                 UserChatRoomLastestTimestamp (timestamp)
+        +UserCompany
+            >UserCompanyKey
+                UserCompanyReference (reference)
+                UserCompanyTimestamp (timestamp)
+
 
 +UserPersonalize
     >ProfileKey
+        ShipmentPin (Array<string (ShipmentKey)>)
         +ShipmentOrdering
             >ShipmentKey
                 ChatRoomOrdering (Array<string (ChatRoomKey)>)
-        +ShipmentPin
-            >ShipmentKey
-                ShipmentPin (Array<string (ShipmentKey)>)
         +ShipmentReferenceDisplay
             >ShipmentKey
                 ShipmentReferenceSelect (string) [RefOwner]
@@ -183,6 +186,9 @@
                 UserRequestEmail (string)
                 UserRequestNote (string)
                 UserRequestTimestamp (timestamp)
+                UserRequestRoleName (string)
+                UserRequestRolePermissionCode (string)
+                UserRequestPosition (string)
                 UserInvitationStatus (string) ('Reject','Approve','Pending')
         +CompanyUserMatrix
             >CompanyUserMatrixKey

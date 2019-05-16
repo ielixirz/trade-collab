@@ -80,7 +80,7 @@ export const UpdateUserInvitationStatus = (UserKey, InvitationKey, Status) => fr
   collection(
     UserInvitationRefPath(UserKey)
       .doc(InvitationKey)
-      .update({ UserInvitationStatus: Status }),
+      .update({ CompanyInvitationStatus: Status }),
   ),
 );
 
@@ -139,6 +139,7 @@ export const CreateCompanyMultipleInvitation = (ColleaguesDataList, CompanyKey) 
         CompanyInvitationName: CompanyDocData.CompanyName,
         // CompanyInvitationEmail: CompanyDocData.CompanyEmail,
         CompanyInvitationEmail: '',
+        CompanyInvitationUserEmail: Email,
         CompanyInvitationPosition: PreloadData.Position,
         CompanyInvitationRole: PreloadData.Role,
         CompanyInvitationTimestamp: new Date(),
@@ -167,6 +168,16 @@ export const GetCompanyInvitation = CompanyKey => collection(CompanyInvitationRe
 
 export const GetUserInvitation = UserKey => collection(UserInvitationRefPath(UserKey));
 
+// const ChatMemberDataList = [
+//   {
+//     Email: 'holy-wisdom@hotmail.com',
+//     Role: 'Importer',
+//   },
+//   {
+//     Email: 'importerMock@mi.com',
+//     Role: 'Exporter',
+//   },
+// ];
 export const CreateChatMultipleInvitation = (ChatInviteDataList, ShipmentKey, ChatRoomKey) => {
   const EmailList = ChatInviteDataList.map(ChatInviteItem => ChatInviteItem.Email);
 

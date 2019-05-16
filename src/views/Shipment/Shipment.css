@@ -5,6 +5,10 @@
 img {
   max-width: 100%;
 }
+
+.text-yterminal{
+  color:#16A085;
+}
 .inbox_people {
   background: #f8f8f8 none repeat scroll 0 0;
   float: left;
@@ -152,6 +156,10 @@ input {
   vertical-align: top;
   width: 92%;
 }
+.arrow::before{
+  border-bottom-color:rgba(6, 207, 168, 1) !important;
+}
+
 .received_withd_msg p {
   background: #ebebeb none repeat scroll 0 0;
   border-radius: 3px;
@@ -169,6 +177,10 @@ input {
 }
 .received_withd_msg {
   width: 57%;
+}
+
+.yterminalRef{
+  width: 400px;
 }
 .mesgs {
   float: left;
