@@ -294,7 +294,7 @@ class TableShipment extends React.Component {
           value={item.ShipmentStatus}
           onChange={e => {
             const value = e.target.value;
-            EditShipment(item.uid, {
+            EditShipment(item.ShipmentID, {
               ShipmentStatus: value
             });
           }}
