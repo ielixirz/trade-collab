@@ -100,75 +100,75 @@ exports.ApproveUserRequest = functions.firestore
     }
   });
 
-// exports.ReaderLastestMessage = functions.firestore
-//   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMessageReader/{ProfileKey}')
-//   .onUpdate(async (change, context) => {
-//     try {
-//       const oldValue = change.before.data();
-//       const newValue = change.after.data();
+exports.ReaderLastestMessage = functions.firestore
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMessageReader/{ProfileKey}')
+  .onUpdate(async (change, context) => {
+    try {
+      const oldValue = change.before.data();
+      const newValue = change.after.data();
 
-//       if (!oldValue) {
-//         return "Don't have before data";
-//       }
+      if (!oldValue) {
+        return "Don't have before data";
+      }
 
-//       if (context.params.ProfileKey !== 'ChatRoomMessageKeyList') {
-//         if (
-//           oldValue.ChatRoomMessageReaderLastestMessageKey !==
-//           newValue.ChatRoomMessageReaderLastestMessageKey
-//         ) {
-//           const GetChatRoomMessageKeyList = await change.after.ref.parent
-//             .doc('ChatRoomMessageKeyList')
-//             .get();
+      if (context.params.ProfileKey !== 'ChatRoomMessageKeyList') {
+        if (
+          oldValue.ChatRoomMessageReaderLastestMessageKey !==
+          newValue.ChatRoomMessageReaderLastestMessageKey
+        ) {
+          const GetChatRoomMessageKeyList = await change.after.ref.parent
+            .doc('ChatRoomMessageKeyList')
+            .get();
 
-//           const ChatRoomMessageKeyList = GetChatRoomMessageKeyList.data().ChatRoomMessageKeyList;
+          const ChatRoomMessageKeyList = GetChatRoomMessageKeyList.data().ChatRoomMessageKeyList;
 
-//           const StartIndex = _.indexOf(
-//             ChatRoomMessageKeyList,
-//             oldValue.ChatRoomMessageReaderLastestMessageKey
-//           );
-//           const EndIndex = _.indexOf(
-//             ChatRoomMessageKeyList,
-//             newValue.ChatRoomMessageReaderLastestMessageKey
-//           );
+          const StartIndex = _.indexOf(
+            ChatRoomMessageKeyList,
+            oldValue.ChatRoomMessageReaderLastestMessageKey
+          );
+          const EndIndex = _.indexOf(
+            ChatRoomMessageKeyList,
+            newValue.ChatRoomMessageReaderLastestMessageKey
+          );
 
-//           const ChatRoomMessageKeyListSlice = _.slice(
-//             ChatRoomMessageKeyList,
-//             StartIndex,
-//             EndIndex + 1
-//           );
+          const ChatRoomMessageKeyListSlice = _.slice(
+            ChatRoomMessageKeyList,
+            StartIndex,
+            EndIndex + 1
+          );
 
-//           const AddChatRoomMessageReaderServiceList = [];
+          const AddChatRoomMessageReaderServiceList = [];
 
-//           ChatRoomMessageKeyListSlice.forEach(ChatRoomMessageKeyItem => {
-//             const AddItem = admin
-//               .firestore()
-//               .doc(
-//                 `Shipment/${context.params.ShipmentKey}/ChatRoom/${
-//                   context.params.ChatRoomKey
-//                 }/ChatRoomMessage/${ChatRoomMessageKeyItem}`
-//               )
-//               .set(
-//                 {
-//                   ChatRoomMessageReader: firebase.firestore.FieldValue.arrayUnion({
-//                     ChatRoomMessageReaderProfileKey: change.after.id,
-//                     ChatRoomMessageReaderFirstName: newValue.ChatRoomMessageReaderFirstName,
-//                     ChatRoomMessageReaderSurName: newValue.ChatRoomMessageReaderSurName
-//                   })
-//                 },
-//                 {
-//                   merge: true
-//                 }
-//               );
-//             AddChatRoomMessageReaderServiceList.push(AddItem);
-//           });
+          ChatRoomMessageKeyListSlice.forEach(ChatRoomMessageKeyItem => {
+            const AddItem = admin
+              .firestore()
+              .doc(
+                `Shipment/${context.params.ShipmentKey}/ChatRoom/${
+                  context.params.ChatRoomKey
+                }/ChatRoomMessage/${ChatRoomMessageKeyItem}`
+              )
+              .set(
+                {
+                  ChatRoomMessageReader: admin.firestore.FieldValue.arrayUnion({
+                    ChatRoomMessageReaderProfileKey: change.after.id,
+                    ChatRoomMessageReaderFirstName: newValue.ChatRoomMessageReaderFirstName,
+                    ChatRoomMessageReaderSurName: newValue.ChatRoomMessageReaderSurName
+                  })
+                },
+                {
+                  merge: true
+                }
+              );
+            AddChatRoomMessageReaderServiceList.push(AddItem);
+          });
 
-//           return Promise.all(AddChatRoomMessageReaderServiceList);
-//         }
-//       }
-//     } catch (error) {
-//       return error;
-//     }
-//   });
+          return Promise.all(AddChatRoomMessageReaderServiceList);
+        }
+      }
+    } catch (error) {
+      return error;
+    }
+  });
 
 exports.CreateChatRoomMessageKeyList = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMessage/{ChatRoomMessageKey}')
