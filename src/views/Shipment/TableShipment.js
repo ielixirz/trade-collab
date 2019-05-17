@@ -147,12 +147,7 @@ class TableShipment extends React.Component {
     ]
   };
 
-  componentDidMount() {
-    const table = document.getElementById('tableshipment');
-    table.setAttribute('onScroll', e => {
-      console.log(e);
-    });
-  }
+  componentDidMount() {}
 
   renderRefComponent(index, ref, shipmentKey) {
     const {
@@ -342,9 +337,7 @@ class TableShipment extends React.Component {
 
     let input = [];
     if (this.props.input.length === 0) {
-      input = this.data;
-      data = input.products;
-      columns = input.columns;
+      return '';
     } else {
       input = _.map(this.props.input, (item, index) => {
         const etd = _.get(item, 'ShipmentETD', 0);
