@@ -42,7 +42,21 @@ class ChatWithHeader extends Component {
     } = this.props;
 
     return (
-      <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
+      <div
+        className="inbox_msg"
+        style={{ backgroundColor: 'rgb(247, 247, 247)' }}
+        onMouseEnter={() => {
+          console.log('Updating');
+          if (chatMsg[chatMsg.length - 1].ChatRoomMessageSenderKey !== sender.id) {
+            UpdateChatRoomMessageReader(ShipmentKey, ChatRoomKey, sender.id, {
+              ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
+              ChatRoomMessageReaderSurName: sender.ProfileSurname,
+              ChatRoomMessageReaderProfileImageUrl: _.get(sender, 'UserInfoProfileImageLink', ''),
+              ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+            });
+          }
+        }}
+      >
         <Row
           style={{
             backgroundColor: 'white',
@@ -131,21 +145,6 @@ class ChatWithHeader extends Component {
                   <Input
                     placeholder="type...."
                     value={text}
-                    onMouseEnter={() => {
-                      console.log('Updating');
-                      if (chatMsg[chatMsg.length - 1].ChatRoomMessageSenderKey !== sender.id) {
-                        UpdateChatRoomMessageReader(ShipmentKey, ChatRoomKey, sender.id, {
-                          ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
-                          ChatRoomMessageReaderSurName: sender.ProfileSurname,
-                          ChatRoomMessageReaderProfileImageUrl: _.get(
-                            sender,
-                            'UserInfoProfileImageLink',
-                            ''
-                          ),
-                          ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
-                        });
-                      }
-                    }}
                     onChange={e => {
                       // (ShipmentKey, ChatRoomKey, ProfileKey, Data)
                       // ChatRoomMessageKeyList *(Static document name) (Create for util)
