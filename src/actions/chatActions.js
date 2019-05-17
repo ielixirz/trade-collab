@@ -21,6 +21,12 @@ let chatroom = {};
 let chatMessage = null;
 
 export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getState) => {
+  const { profileReducer } = getState();
+
+  let sender = _.find(
+    profileReducer.ProfileList,
+    item => item.id === profileReducer.ProfileDetail.id
+  );
   let room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}`, false);
   if (room) {
     room.unsubscribe();
@@ -30,9 +36,12 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
     `${ShipmentKey}.${ChatRoomKey}`,
     GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
       next: res => {
-        _.each(res, item => {
-          console.log(item.id);
-        });
+        console.log(res);
+        if (res.length > 0 && res[res.length - 1].ChatRoomMessageSenderKey === sender.id) {
+          const audio = new Audio('/unconvinced.ogg');
+          audio.play();
+        }
+
         dispatch({
           type: FETCH_CHAT,
           id: ChatRoomKey,
@@ -192,22 +201,20 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getSta
           payload: {}
         });
 
-        _.delay(() => {
-          chatMessage = CreateChatMessage(ShipmentKey, ChatRoomKey, msg).subscribe({
-            next: res => {
-              console.log(res);
-            },
-            error: err => {
-              dispatch({
-                type: SEND_MESSAGE,
-                payload: { ...msg, isSending: false, isSuccess: false }
-              });
-              console.log(err);
-              alert(err.message);
-            },
-            complete: () => {}
-          });
-        }, 1000);
+        chatMessage = CreateChatMessage(ShipmentKey, ChatRoomKey, msg).subscribe({
+          next: res => {
+            console.log(res);
+          },
+          error: err => {
+            dispatch({
+              type: SEND_MESSAGE,
+              payload: { ...msg, isSending: false, isSuccess: false }
+            });
+            console.log(err);
+            alert(err.message);
+          },
+          complete: () => {}
+        });
       }, 1000);
     }
 
