@@ -37,7 +37,7 @@ import {
 import ChatWithHeader from './components/ChatWithHeader';
 import ChatCreateRoom from './components/ChatCreateRoom';
 
-import { CreateChatRoom, EditChatRoom } from '../../service/chat/chat';
+import { CreateChatRoom, EditChatRoom, UpdateChatRoomMessageReader } from '../../service/chat/chat';
 import './Chat.css';
 
 class Chat extends Component {

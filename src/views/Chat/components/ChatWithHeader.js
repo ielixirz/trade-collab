@@ -12,12 +12,13 @@ import FileSide from '../FileSide';
 import ShipmentSide from '../ShipmentSide';
 import ChatMessage from './ChatMessage';
 import PreMessage from './PreMessage';
+import { UpdateChatRoomMessageReader } from '../../../service/chat/chat';
 
 class ChatWithHeader extends Component {
   render() {
     const {
       user,
-      msg,
+      msg: sending,
       chatMsg,
       text,
       typing,
@@ -39,7 +40,7 @@ class ChatWithHeader extends Component {
       onDragLeave,
       onFileDrop
     } = this.props;
-    console.log(sender);
+    console.log(chatMsg[0].id);
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
         <Row
@@ -84,7 +85,6 @@ class ChatWithHeader extends Component {
                 {chatMsg.map((msg, i) => {
                   const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = 'sender';
-                  console.log(msg);
                   if (_.get(sender, 'id', '0') === msg.ChatRoomMessageSenderKey) {
                     type = 'reciever';
                   }
@@ -93,12 +93,14 @@ class ChatWithHeader extends Component {
                     text: msg.ChatRoomMessageContext,
                     name: msg.ChatRoomMessageSender,
                     status: t,
-                    prev: chatMsg[i - 1]
+                    readers: msg.ChatRoomMessageReader,
+                    prev: chatMsg[i - 1],
+                    isLast: chatMsg.length - 1 === i
                   };
 
                   return <ChatMessage message={message} i={i} />;
                 })}
-                {_.isEmpty(msg) ? '' : <PreMessage message={msg} callback={sendMessage} />}
+                {_.isEmpty(sending) ? '' : <PreMessage message={sending} callback={sendMessage} />}
               </div>
               <div className="type_msg">
                 <UploadModal
@@ -129,7 +131,30 @@ class ChatWithHeader extends Component {
                   <Input
                     placeholder="type...."
                     value={text}
-                    onChange={typing}
+                    onChange={e => {
+                      // (ShipmentKey, ChatRoomKey, ProfileKey, Data)
+                      // ChatRoomMessageKeyList *(Static document name) (Create for util)
+                      // ChatRoomMessageKeyList (Array<string>)
+                      // >ProfileKey
+                      // ChatRoomMessageReaderFirstName (string)
+                      // ChatRoomMessageReaderSurName (string)
+                      // ChatRoomMessageReaderProfileImageUrl (string)
+                      // ChatRoomMessageReaderLastestMessageKey (string)
+                      //
+                      // id(pin): "2ZUpe18haaMfMHKPn0ku"
+                      // Description(pin): "punnie"
+                      // ProfileEmail(pin): "sdasd@asdasd.com"
+                      // ProfileFirstname(pin): "Punjasin"
+                      // ProfileSurname(pin): "Punya"
+                      // UserInfoProfileImageLink
+                      UpdateChatRoomMessageReader(ShipmentKey, ChatRoomKey, sender.id, {
+                        ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
+                        ChatRoomMessageReaderSurName: sender.ProfileSurname,
+                        ChatRoomMessageReaderProfileImageUrl: sender.UserInfoProfileImageLink,
+                        ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+                      });
+                      typing(e);
+                    }}
                     onKeyPress={event => {
                       if (event.key === 'Enter') {
                         sendMessage(ChatRoomKey, ShipmentKey, text);

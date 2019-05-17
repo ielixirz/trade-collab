@@ -30,6 +30,9 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
     `${ShipmentKey}.${ChatRoomKey}`,
     GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
       next: res => {
+        _.each(res, item => {
+          console.log(item.id);
+        });
         dispatch({
           type: FETCH_CHAT,
           id: ChatRoomKey,
@@ -183,25 +186,28 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getSta
         });
       }, 5000);
     } else {
-      chatMessage = CreateChatMessage(ShipmentKey, ChatRoomKey, msg).subscribe({
-        next: res => {
-          console.log(res);
-
-          dispatch({
-            type: SEND_MESSAGE,
-            payload: {}
-          });
-        },
-        error: err => {
-          dispatch({
-            type: SEND_MESSAGE,
-            payload: { ...msg, isSending: false, isSuccess: false }
-          });
-          console.log(err);
-          alert(err.message);
-        },
-        complete: () => {}
-      });
+      _.delay(() => {
+        dispatch({
+          type: SEND_MESSAGE,
+          payload: {}
+        });
+      }, 1000);
+      _.delay(() => {
+        chatMessage = CreateChatMessage(ShipmentKey, ChatRoomKey, msg).subscribe({
+          next: res => {
+            console.log(res);
+          },
+          error: err => {
+            dispatch({
+              type: SEND_MESSAGE,
+              payload: { ...msg, isSending: false, isSuccess: false }
+            });
+            console.log(err);
+            alert(err.message);
+          },
+          complete: () => {}
+        });
+      }, 1000);
     }
 
     dispatch({

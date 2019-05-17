@@ -10,7 +10,9 @@ const ChatMessage = ({ message, i }) => {
     type = 'sender',
     text = 'Test message',
     name = 'Anonymous',
-    status = new Date()
+    status = new Date(),
+    readers = [],
+    isLast
   } = message;
   const prev = _.get(message, 'prev', false);
   let isFirstMessageOfTheDay = false;
@@ -74,7 +76,11 @@ const ChatMessage = ({ message, i }) => {
         <div className="sent_msg">
           <Row className="receiver">
             <div>
-              <span className="time_date"> {status.toLocaleTimeString()}</span>
+              <span className="time_date">
+                {isLast ? (readers.length > 1 ? `Read ${readers.length - 1}` : 'Sent') : ''}
+                <br />
+                {status.toLocaleTimeString()}
+              </span>
             </div>
             <div>
               <p>{text}</p>
