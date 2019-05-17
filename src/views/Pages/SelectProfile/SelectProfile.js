@@ -43,7 +43,7 @@ class SelectProfile extends Component {
         }}
       >
         <img
-          src="https://scontent.fbkk22-2.fna.fbcdn.net/v/t1.0-9/46491975_2461706807202990_8323584076334235648_n.jpg?_nc_cat=103&_nc_eui2=AeGn67viBaYidmrn_yWeMaX6AMBuov3nYmk0a3llhOLDSXB7ZkYqVOfdhs4ccrLKPCWRey-jjR1i4_oRS7MShnX_GA8CHblXrqXXsouL8Cb7yA&_nc_ht=scontent.fbkk22-2.fna&oh=c2ace08edac9ee9b9fda8bb7632da8c1&oe=5D6A9D95"
+          src="//placehold.it/50"
           alt="Avatar"
           style={{
             display: 'flex',
