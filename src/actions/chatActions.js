@@ -3,7 +3,8 @@ import {
   FETCH_CHAT,
   moveTab as MOVE_TAB,
   TYPING_TEXT,
-  FETCH_CHAT_ROOMS
+  FETCH_CHAT_ROOMS,
+  SEND_MESSAGE
 } from '../constants/constants';
 import { GetChatMessage, CreateChatMessage, GetChatRoomList } from '../service/chat/chat';
 
@@ -15,7 +16,9 @@ export const typing = data => dispatch => {
     text
   });
 };
+
 let chatroom = {};
+let chatMessage = null;
 
 export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getState) => {
   let room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}`, false);
@@ -158,7 +161,41 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getSta
       ChatRoomMessageType: 'Text',
       ChatRoomMessageTimestamp: new Date()
     };
-    CreateChatMessage(ShipmentKey, ChatRoomKey, msg);
+    dispatch({
+      type: SEND_MESSAGE,
+      payload: { ...msg, isSending: true, isSuccess: false }
+    });
+    if (text === 'test error') {
+      dispatch({
+        type: SEND_MESSAGE,
+        payload: { ...msg, isSending: true, isSuccess: false }
+      });
+      _.delay(() => {
+        dispatch({
+          type: SEND_MESSAGE,
+          payload: { ...msg, isSending: false, isSuccess: false }
+        });
+      }, 5000);
+    }
+    chatMessage = CreateChatMessage(ShipmentKey, ChatRoomKey, msg).subscribe({
+      next: res => {
+        console.log(res);
+
+        dispatch({
+          type: SEND_MESSAGE,
+          payload: {}
+        });
+      },
+      error: err => {
+        dispatch({
+          type: SEND_MESSAGE,
+          payload: { ...msg, isSending: false, isSuccess: false }
+        });
+        console.log(err);
+        alert(err.message);
+      },
+      complete: () => {}
+    });
     dispatch({
       type: TYPING_TEXT,
       text: ''

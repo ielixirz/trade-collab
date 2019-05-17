@@ -28,6 +28,17 @@ const ChatMessage = ({ message, i }) => {
   if (type === 'sender') {
     return (
       <div key={i}>
+        {isFirstMessageOfTheDay ? (
+          <h2 className="time-background">
+            <span className="time-seperation" align="center">
+              {status.toDateString() === new Date().toDateString()
+                ? 'Today'
+                : status.toDateString()}
+            </span>
+          </h2>
+        ) : (
+          ''
+        )}
         <div className="incoming_msg">
           <div className="received_msg">
             <div className="received_withd_msg">
@@ -45,22 +56,20 @@ const ChatMessage = ({ message, i }) => {
             </div>
           </div>
         </div>
-        {isFirstMessageOfTheDay ? (
-          <h2 className="time-background">
-            <span className="time-seperation" align="center">
-              {status.toDateString() === new Date().toDateString()
-                ? 'Today'
-                : status.toDateString()}
-            </span>
-          </h2>
-        ) : (
-          ''
-        )}
       </div>
     );
   }
   return (
     <div key={i}>
+      {isFirstMessageOfTheDay ? (
+        <h2 className="time-background">
+          <span className="time-seperation" align="center">
+            {status.toDateString() === new Date().toDateString() ? 'Today' : status.toDateString()}
+          </span>
+        </h2>
+      ) : (
+        ''
+      )}
       <div className="outgoing_msg">
         <div className="sent_msg">
           <Row className="receiver">
@@ -73,15 +82,6 @@ const ChatMessage = ({ message, i }) => {
           </Row>
         </div>
       </div>
-      {isFirstMessageOfTheDay ? (
-        <h2 className="time-background">
-          <span className="time-seperation" align="center">
-            {status.toDateString() === new Date().toDateString() ? 'Today' : status.toDateString()}
-          </span>
-        </h2>
-      ) : (
-        ''
-      )}
     </div>
   );
 };
