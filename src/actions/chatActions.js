@@ -184,29 +184,30 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getSta
             ChatRoomKey: ChatRoomKey
           }
         });
-      }, 5000);
+      }, 1000);
     } else {
       _.delay(() => {
         dispatch({
           type: SEND_MESSAGE,
           payload: {}
         });
-      }, 1000);
-      _.delay(() => {
-        chatMessage = CreateChatMessage(ShipmentKey, ChatRoomKey, msg).subscribe({
-          next: res => {
-            console.log(res);
-          },
-          error: err => {
-            dispatch({
-              type: SEND_MESSAGE,
-              payload: { ...msg, isSending: false, isSuccess: false }
-            });
-            console.log(err);
-            alert(err.message);
-          },
-          complete: () => {}
-        });
+
+        _.delay(() => {
+          chatMessage = CreateChatMessage(ShipmentKey, ChatRoomKey, msg).subscribe({
+            next: res => {
+              console.log(res);
+            },
+            error: err => {
+              dispatch({
+                type: SEND_MESSAGE,
+                payload: { ...msg, isSending: false, isSuccess: false }
+              });
+              console.log(err);
+              alert(err.message);
+            },
+            complete: () => {}
+          });
+        }, 1000);
       }, 1000);
     }
 

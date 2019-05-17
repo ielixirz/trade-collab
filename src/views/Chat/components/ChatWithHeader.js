@@ -40,7 +40,7 @@ class ChatWithHeader extends Component {
       onDragLeave,
       onFileDrop
     } = this.props;
-    console.log(chatMsg[0].id);
+
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
         <Row
@@ -150,7 +150,11 @@ class ChatWithHeader extends Component {
                       UpdateChatRoomMessageReader(ShipmentKey, ChatRoomKey, sender.id, {
                         ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
                         ChatRoomMessageReaderSurName: sender.ProfileSurname,
-                        ChatRoomMessageReaderProfileImageUrl: sender.UserInfoProfileImageLink,
+                        ChatRoomMessageReaderProfileImageUrl: _.get(
+                          sender,
+                          'UserInfoProfileImageLink',
+                          ''
+                        ),
                         ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
                       });
                       typing(e);
