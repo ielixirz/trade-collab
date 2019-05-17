@@ -20,6 +20,11 @@
   color: #16a085;
   border: 2px solid #16a085;
 }
+.button2 {
+  background-color: #ededed;
+  color: black;
+  border: 2px solid #ededed;
+}
 
 .button1:hover {
   background-color: rgb(57, 212, 181);

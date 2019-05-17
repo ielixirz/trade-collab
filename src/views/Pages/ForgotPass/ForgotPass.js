@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable filenames/match-regex */
@@ -6,6 +7,8 @@ import React from 'react';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import '../../../component/MemberModal.css';
 import './forgotpass.css';
+import { Link } from 'react-router-dom';
+import { ForgetPassword } from '../../../service/auth/manageuser';
 
 class ForgotPass extends React.Component {
   static propTypes = {
@@ -20,15 +23,49 @@ class ForgotPass extends React.Component {
     super(props);
     this.state = {
       modal: false,
+      email: '',
+      emailSend: true,
+      mailNotfound: true,
     };
 
     this.toggle = this.toggle.bind(this);
   }
 
-  setInput = (field, value) => this.setState({ [field]: value });
-
   complete = () => {
     this.toggle();
+  };
+
+  onChange = (e) => {
+    const { name, value } = e.target;
+    console.log('change on', e.target.name);
+    this.setState({
+      [name]: value,
+    });
+  };
+
+  onSubmit = (e) => {
+    e.preventDefault();
+    const { email, emailSend, mailNotfound } = this.state;
+    console.log('check email', email);
+    ForgetPassword(email).subscribe({
+      next: () => {
+        console.log('done');
+        this.setState({
+          emailSend: !emailSend,
+        });
+      },
+      complete: (result) => {
+        console.log('complete');
+        console.log(result);
+      },
+      error: (err) => {
+        console.log('err', err);
+        this.setState({
+          emailSend: !emailSend,
+          mailNotfound: !mailNotfound,
+        });
+      },
+    });
   };
 
   toggle() {
@@ -45,36 +82,96 @@ class ForgotPass extends React.Component {
         &times;
       </button>
     );
+
+    const checkUserMail = this.state.mailNotfound ? (
+      <div style={{ paddingLeft: 70, paddingRight: 70, paddingBottom: 40 }}>
+        <h2 style={{ textAlign: 'left', margin: 0 }}>
+          An email with reset password link has been sent to:
+        </h2>
+        <h2
+          style={{
+            textAlign: 'center',
+            margin: 0,
+            color: '#008489',
+            paddingTop: 20,
+          }}
+        >
+          {this.state.email}
+        </h2>
+        <p
+          style={{
+            textAlign: 'center',
+            margin: 0,
+            color: '#707070',
+            paddingTop: 10,
+            paddingBottom: 10,
+          }}
+        >
+          *Note: Link will expired within 12 hours
+        </p>
+        <div className="col-sm-12 text-center">
+          <Link to="/" style={{ color: '#fff' }}>
+            <button className="button button2" type="submit">
+              Back
+            </button>
+          </Link>
+        </div>
+      </div>
+    ) : (
+      <div style={{ paddingLeft: 70, paddingRight: 70, paddingBottom: 40 }}>
+        <h2 style={{ textAlign: 'left', margin: 0 }}>Account not found for:</h2>
+        <h2
+          style={{
+            textAlign: 'center',
+            margin: 0,
+            color: '#FF5A5F',
+            paddingTop: 20,
+            paddingBottom: 20,
+          }}
+        >
+          {this.state.email}
+        </h2>
+        <div className="col-sm-12 text-center">
+          <Link to="/" style={{ color: '#262626' }}>
+            <button className="button button2" type="submit">
+              Back
+            </button>
+          </Link>
+        </div>
+      </div>
+    );
     return (
       <div>
         <div role="button" tabIndex={0} onClick={this.toggle}>
           {children}
         </div>
-        <Modal isOpen={modal} toggle={this.toggle}>
+        <Modal isOpen={modal} toggle={this.toggle} style={{ paddingLeft: 20 }}>
           <ModalHeader toggle={this.toggle} close={closeBtn} />
           <ModalBody>
-            <div style={{ paddingLeft: 70, paddingRight: 70, paddingBottom: 40 }}>
-              <h2 style={{ textAlign: 'center', margin: 0 }}>Forgot Password</h2>
-
-              <form>
-                <div>
-                  <h4>Firstname</h4>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="please eneter your account&email"
-                    style={{ marginTop: 0 }}
-                    onChange={() => {}}
-                  />
-                </div>
-              </form>
-              <div className="col-sm-12 text-center">
-                <button className="button button1" type="submit" onClick={this.submit}>
-                  <span style={{ color: '#fff' }}>Reset Password</span>
-                </button>
+            {this.state.emailSend ? (
+              <div style={{ paddingLeft: 70, paddingRight: 70, paddingBottom: 40 }}>
+                <h2 style={{ textAlign: 'left', margin: 0 }}>Forgot Password</h2>
+                <form onSubmit={this.onSubmit}>
+                  <div>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      placeholder="please eneter your account&email"
+                      style={{ marginTop: 0 }}
+                      onChange={this.onChange}
+                    />
+                  </div>
+                  <div className="col-sm-12 text-center">
+                    <button className="button button1" type="submit">
+                      <span style={{ color: '#fff' }}>Reset Password</span>
+                    </button>
+                  </div>
+                </form>
               </div>
-            </div>
+            ) : (
+              checkUserMail
+            )}
           </ModalBody>
         </Modal>
       </div>
