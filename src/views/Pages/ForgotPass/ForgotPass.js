@@ -37,7 +37,6 @@ class ForgotPass extends React.Component {
 
   onChange = (e) => {
     const { name, value } = e.target;
-    console.log('change on', e.target.name);
     this.setState({
       [name]: value,
     });
@@ -46,16 +45,13 @@ class ForgotPass extends React.Component {
   onSubmit = (e) => {
     e.preventDefault();
     const { email, emailSend, mailNotfound } = this.state;
-    console.log('check email', email);
     ForgetPassword(email).subscribe({
       next: () => {
-        console.log('done');
         this.setState({
           emailSend: !emailSend,
         });
       },
       complete: (result) => {
-        console.log('complete');
         console.log(result);
       },
       error: (err) => {
@@ -85,7 +81,7 @@ class ForgotPass extends React.Component {
 
     const checkUserMail = this.state.mailNotfound ? (
       <div style={{ paddingLeft: 70, paddingRight: 70, paddingBottom: 40 }}>
-        <h2 style={{ textAlign: 'left', margin: 0 }}>
+        <h2 style={{ textAlign: 'left', margin: 0, paddingBottom: 20 }}>
           An email with reset password link has been sent to:
         </h2>
         <h2
@@ -119,7 +115,7 @@ class ForgotPass extends React.Component {
       </div>
     ) : (
       <div style={{ paddingLeft: 70, paddingRight: 70, paddingBottom: 40 }}>
-        <h2 style={{ textAlign: 'left', margin: 0 }}>Account not found for:</h2>
+        <h2 style={{ textAlign: 'left', margin: 0, paddingBottom: 20 }}>Account not found for:</h2>
         <h2
           style={{
             textAlign: 'center',
@@ -150,7 +146,7 @@ class ForgotPass extends React.Component {
           <ModalBody>
             {this.state.emailSend ? (
               <div style={{ paddingLeft: 70, paddingRight: 70, paddingBottom: 40 }}>
-                <h2 style={{ textAlign: 'left', margin: 0 }}>Forgot Password</h2>
+                <h2 style={{ textAlign: 'left', margin: 0, paddingBottom: 20 }}>Forgot Password</h2>
                 <form onSubmit={this.onSubmit}>
                   <div>
                     <input
