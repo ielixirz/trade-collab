@@ -37,10 +37,10 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
     GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
       next: res => {
         console.log(res);
-        if (res.length > 0 && res[0].ChatRoomMessageSenderKey !== sender.id) {
-          const audio = new Audio('/unconvinced.ogg');
-          audio.play();
-        }
+        // if (res.length > 0 && res[0].ChatRoomMessageSenderKey !== sender.id) {
+        //   const audio = new Audio('/unconvinced.ogg');
+        //   audio.play();
+        // }
 
         dispatch({
           type: FETCH_CHAT,
