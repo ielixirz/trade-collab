@@ -77,8 +77,8 @@ const ChatMessage = ({ message, i }) => {
           <Row className="receiver">
             <div>
               <span className="time_date">
-                {isLast ? (readers.length > 1 ? `Read ${readers.length - 1}` : 'Sent') : ''}
-                {isLast ? <br /> : ''}
+                {readers.length > 1 ? `Read ${readers.length - 1}` : 'Sent'}
+                <br />
                 {status.toLocaleTimeString()}
               </span>
             </div>
