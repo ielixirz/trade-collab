@@ -83,13 +83,14 @@ class Chat extends Component {
       return <ChatCreateRoom createChatRoom={this.createChatRoom} />;
     }
     const { user, ChatReducer, onTyping, onSendMessage, onFetchMoreMessage, sender } = this.props;
-    const { text, chatrooms } = ChatReducer;
+    const { text, chatrooms, msg } = ChatReducer;
     const chat = _.get(this.props, `ChatReducer.chatroomsMsg.${ChatRoomKey}`, []);
     const chatMsg = chat.length === 0 ? [] : chat.chatMsg;
     const ChatRoomFileLink = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomData.ChatRoomFileLink`);
     const ChatRoomMember = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomMember`, []);
     return (
       <ChatWithHeader
+        msg={msg}
         user={user}
         sender={sender}
         chatMsg={chatMsg}
@@ -124,6 +125,7 @@ class Chat extends Component {
   onFileDrop = (event, ShipmentKey, ChatRoomKey) => {
     event.preventDefault();
     const file = event.dataTransfer.items[0].getAsFile();
+
     event.target.value = null;
     this.uploadModalRef.current.triggerUploading(file, ShipmentKey, ChatRoomKey);
     this.setState({

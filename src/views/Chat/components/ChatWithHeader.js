@@ -11,11 +11,13 @@ import UploadModal from '../../../component/UploadModal';
 import FileSide from '../FileSide';
 import ShipmentSide from '../ShipmentSide';
 import ChatMessage from './ChatMessage';
+import PreMessage from './PreMessage';
 
 class ChatWithHeader extends Component {
   render() {
     const {
       user,
+      msg,
       chatMsg,
       text,
       typing,
@@ -96,6 +98,7 @@ class ChatWithHeader extends Component {
 
                   return <ChatMessage message={message} i={i} />;
                 })}
+                {_.isEmpty(msg) ? '' : <PreMessage message={msg} callback={sendMessage} />}
               </div>
               <div className="type_msg">
                 <UploadModal

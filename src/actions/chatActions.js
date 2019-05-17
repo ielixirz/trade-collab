@@ -173,29 +173,37 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getSta
       _.delay(() => {
         dispatch({
           type: SEND_MESSAGE,
-          payload: { ...msg, isSending: false, isSuccess: false }
+          payload: {
+            ...msg,
+            isSending: false,
+            isSuccess: false,
+            ShipmentKey: ShipmentKey,
+            ChatRoomKey: ChatRoomKey
+          }
         });
       }, 5000);
-    }
-    chatMessage = CreateChatMessage(ShipmentKey, ChatRoomKey, msg).subscribe({
-      next: res => {
-        console.log(res);
+    } else {
+      chatMessage = CreateChatMessage(ShipmentKey, ChatRoomKey, msg).subscribe({
+        next: res => {
+          console.log(res);
 
-        dispatch({
-          type: SEND_MESSAGE,
-          payload: {}
-        });
-      },
-      error: err => {
-        dispatch({
-          type: SEND_MESSAGE,
-          payload: { ...msg, isSending: false, isSuccess: false }
-        });
-        console.log(err);
-        alert(err.message);
-      },
-      complete: () => {}
-    });
+          dispatch({
+            type: SEND_MESSAGE,
+            payload: {}
+          });
+        },
+        error: err => {
+          dispatch({
+            type: SEND_MESSAGE,
+            payload: { ...msg, isSending: false, isSuccess: false }
+          });
+          console.log(err);
+          alert(err.message);
+        },
+        complete: () => {}
+      });
+    }
+
     dispatch({
       type: TYPING_TEXT,
       text: ''
