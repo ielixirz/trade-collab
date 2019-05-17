@@ -15,6 +15,11 @@ import PreMessage from './PreMessage';
 import { UpdateChatRoomMessageReader } from '../../../service/chat/chat';
 
 class ChatWithHeader extends Component {
+  componentDidMount() {
+    let objDiv = document.getElementById('chathistory');
+    objDiv.scrollTop = objDiv.scrollHeight;
+  }
+
   render() {
     const {
       user,
