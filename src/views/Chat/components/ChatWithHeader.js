@@ -151,16 +151,22 @@ class ChatWithHeader extends Component {
                     value={text}
                     onMouseEnter={() => {
                       console.log('Updating');
-                      UpdateChatRoomMessageReader(ShipmentKey, ChatRoomKey, sender.id, {
-                        ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
-                        ChatRoomMessageReaderSurName: sender.ProfileSurname,
-                        ChatRoomMessageReaderProfileImageUrl: _.get(
-                          sender,
-                          'UserInfoProfileImageLink',
-                          ''
-                        ),
-                        ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
-                      });
+                      UpdateChatRoomMessageReader(
+                        ShipmentKey,
+                        ChatRoomKey,
+
+                        d,
+                        {
+                          ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
+                          ChatRoomMessageReaderSurName: sender.ProfileSurname,
+                          ChatRoomMessageReaderProfileImageUrl: _.get(
+                            sender,
+                            'UserInfoProfileImageLink',
+                            ''
+                          ),
+                          ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+                        }
+                      );
                     }}
                     onChange={e => {
                       // (ShipmentKey, ChatRoomKey, ProfileKey, Data)
@@ -178,18 +184,16 @@ class ChatWithHeader extends Component {
                       // ProfileFirstname(pin): "Punjasin"
                       // ProfileSurname(pin): "Punya"
                       // UserInfoProfileImageLink
-                      if (chatMsg[chatMsg.length - 1].ChatRoomMessageSenderKey !== sender.id) {
-                        UpdateChatRoomMessageReader(ShipmentKey, ChatRoomKey, sender.id, {
-                          ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
-                          ChatRoomMessageReaderSurName: sender.ProfileSurname,
-                          ChatRoomMessageReaderProfileImageUrl: _.get(
-                            sender,
-                            'UserInfoProfileImageLink',
-                            ''
-                          ),
-                          ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
-                        });
-                      }
+                      UpdateChatRoomMessageReader(ShipmentKey, ChatRoomKey, sender.id, {
+                        ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
+                        ChatRoomMessageReaderSurName: sender.ProfileSurname,
+                        ChatRoomMessageReaderProfileImageUrl: _.get(
+                          sender,
+                          'UserInfoProfileImageLink',
+                          ''
+                        ),
+                        ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+                      });
                       typing(e);
                     }}
                     onKeyPress={event => {
