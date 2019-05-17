@@ -5,7 +5,7 @@
 /* eslint react/no-multi-comp: 0, react/prop-types: 0 */
 import React from 'react';
 import { Popover, PopoverBody } from 'reactstrap';
-import { EditShipment } from '../../service/shipment/shipment';
+import { AddShipmentPin, DeleteShipmentPin } from '../../service/personalize/personalize';
 
 export class AlertShipment extends React.Component {
   constructor(props) {
@@ -24,35 +24,53 @@ export class AlertShipment extends React.Component {
   }
 
   renderUnpin = () => (
-    <span
+    <div
       onClick={() => {
-        EditShipment(this.props.item.uid, {
-          Pin: false,
+        DeleteShipmentPin(this.props.profileKey, this.props.item.ShipmentID).subscribe({
+          next: (result) => {
+            console.log('unpin success', result);
+          },
+          complete: (result) => {
+            this.props.fetchPinned();
+          },
+          error: (err) => {
+            console.log('err', err);
+          },
         });
       }}
+      style={{ cursor: 'pointer' }}
     >
-      <p>unPin</p>
-    </span>
+      unPin
+    </div>
   );
 
   renderPin = () => (
-    <span
+    <div
       onClick={() => {
-        EditShipment(this.props.item.uid, {
-          Pin: true,
+        AddShipmentPin(this.props.profileKey, this.props.item.ShipmentID).subscribe({
+          next: (result) => {
+            console.log('success', result);
+          },
+          complete: (result) => {
+            this.props.fetchPinned();
+          },
+          error: (err) => {
+            console.log('err', err);
+          },
         });
       }}
+      style={{ cursor: 'pointer' }}
     >
-      <p>Pin</p>
-    </span>
+      Pin
+    </div>
   );
 
   render() {
     return (
       <div>
-        <span id={`alertover-${this.props.id}`} style={{ width: '10px' }}>
+        <div id={`alertover-${this.props.id}`}>
           <i className="fa fa-ellipsis-v" />
-        </span>
+        </div>
         <Popover
           placement="bottom"
           isOpen={this.state.popoverOpen}
@@ -60,7 +78,7 @@ export class AlertShipment extends React.Component {
           toggle={this.toggle}
         >
           <PopoverBody>
-            {this.props.item.pin ? this.renderUnpin() : this.renderPin()}
+            {this.props.item.PIN ? this.renderUnpin() : this.renderPin()}
             <br />
             <p>Replicate Shipment</p>
           </PopoverBody>
