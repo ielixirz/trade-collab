@@ -208,7 +208,13 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getSta
           error: err => {
             dispatch({
               type: SEND_MESSAGE,
-              payload: { ...msg, isSending: false, isSuccess: false }
+              payload: {
+                ...msg,
+                isSending: false,
+                isSuccess: false,
+                ShipmentKey: ShipmentKey,
+                ChatRoomKey: ChatRoomKey
+              }
             });
             console.log(err);
             alert(err.message);

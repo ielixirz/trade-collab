@@ -3,11 +3,9 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable filenames/match-regex */
 import React from 'react';
-import {
-  Card, CardBody, Row, Col, Button, UncontrolledCollapse,
-} from 'reactstrap';
+import { Card, CardBody, Row, Col, Button, UncontrolledCollapse } from 'reactstrap';
 
-const ChatCreateRoom = ({ createChatRoom }) => (
+const ChatCreateRoom = ({ createChatRoom, param }) => (
   <Card>
     <CardBody>
       <Row>
@@ -20,20 +18,20 @@ const ChatCreateRoom = ({ createChatRoom }) => (
       <Row
         style={{
           marginTop: '100px',
-          marginBottom: '100px',
+          marginBottom: '100px'
         }}
       >
         <Col />
         <Col className="text-lg-center">
           <Button
             style={{
-              width: '250px',
+              width: '250px'
             }}
             color="yterminal"
             size="lg"
             active
             onClick={() => {
-              createChatRoom('Inbound Custom Broker');
+              createChatRoom(param, 'Inbound Custom Broker');
             }}
           >
             Inbound Custom Broker
@@ -42,13 +40,13 @@ const ChatCreateRoom = ({ createChatRoom }) => (
         <Col className="text-lg-center">
           <Button
             style={{
-              width: '250px',
+              width: '250px'
             }}
             color="yterminal"
             size="lg"
             active
             onClick={() => {
-              createChatRoom('Inbound Forwarder');
+              createChatRoom(param, 'Inbound Forwarder');
             }}
           >
             Inbound Forwarder
@@ -59,7 +57,7 @@ const ChatCreateRoom = ({ createChatRoom }) => (
       <Row
         style={{
           marginTop: '100px',
-          marginBottom: '100px',
+          marginBottom: '100px'
         }}
       >
         <Col />
@@ -68,11 +66,11 @@ const ChatCreateRoom = ({ createChatRoom }) => (
             color="yterminal"
             size="lg"
             style={{
-              width: '250px',
+              width: '250px'
             }}
             active
             onClick={() => {
-              createChatRoom('Importer');
+              createChatRoom(param, 'Importer');
             }}
           >
             Importer
@@ -83,11 +81,11 @@ const ChatCreateRoom = ({ createChatRoom }) => (
             color="yterminal"
             size="lg"
             style={{
-              width: '250px',
+              width: '250px'
             }}
             active
             onClick={() => {
-              createChatRoom('Outbound Forwarder');
+              createChatRoom(param, 'Outbound Forwarder');
             }}
           >
             Outbound Forwarder
@@ -115,11 +113,11 @@ const ChatCreateRoom = ({ createChatRoom }) => (
                   color="yterminal"
                   size="lg"
                   style={{
-                    width: '600px',
+                    width: '600px'
                   }}
                   active
                   onClick={() => {
-                    createChatRoom('Blank Chat');
+                    createChatRoom(param, 'Blank Chat');
                   }}
                 >
                   Blank Chat
@@ -133,11 +131,11 @@ const ChatCreateRoom = ({ createChatRoom }) => (
                 size="lg"
                 style={{
                   width: '200px',
-                  marginRight: '200px',
+                  marginRight: '200px'
                 }}
                 active
                 onClick={() => {
-                  createChatRoom('Exporter');
+                  createChatRoom(param, 'Exporter');
                 }}
               >
                 Exporter
@@ -146,29 +144,28 @@ const ChatCreateRoom = ({ createChatRoom }) => (
                 color="yterminal"
                 size="lg"
                 style={{
-                  width: '200px',
+                  width: '200px'
                 }}
                 active
                 onClick={() => {
-                  createChatRoom('Importer');
+                  createChatRoom(param, 'Importer');
                 }}
               >
                 Importer
               </Button>
             </Row>
-            <br />
-            {' '}
+            <br />{' '}
             <Row>
               <Button
                 color="yterminal"
                 size="lg"
                 style={{
                   width: '200px',
-                  marginRight: '200px',
+                  marginRight: '200px'
                 }}
                 active
                 onClick={() => {
-                  createChatRoom('Outbound Forwarder');
+                  createChatRoom(param, 'Outbound Forwarder');
                 }}
               >
                 Outbound Forwarder
@@ -177,29 +174,28 @@ const ChatCreateRoom = ({ createChatRoom }) => (
                 color="yterminal"
                 size="lg"
                 style={{
-                  width: '200px',
+                  width: '200px'
                 }}
                 active
                 onClick={() => {
-                  createChatRoom('Inbound Forwarder');
+                  createChatRoom(param, 'Inbound Forwarder');
                 }}
               >
                 Inbound Forwarder
               </Button>
             </Row>
-            <br />
-            {' '}
+            <br />{' '}
             <Row>
               <Button
                 color="yterminal"
                 size="lg"
                 style={{
                   width: '200px',
-                  marginRight: '200px',
+                  marginRight: '200px'
                 }}
                 active
                 onClick={() => {
-                  createChatRoom('Outbound Custom Broker');
+                  createChatRoom(param, 'Outbound Custom Broker');
                 }}
               >
                 Outbound Custom Broker
@@ -208,28 +204,27 @@ const ChatCreateRoom = ({ createChatRoom }) => (
                 color="yterminal"
                 size="lg"
                 style={{
-                  width: '200px',
+                  width: '200px'
                 }}
                 active
                 onClick={() => {
-                  createChatRoom('Inbound Custom Broker');
+                  createChatRoom(param, 'Inbound Custom Broker');
                 }}
               >
                 Inbound Custom Broker
               </Button>
             </Row>
-            <br />
-            {' '}
+            <br />{' '}
             <Row>
               <Button
                 color="yterminal"
                 size="lg"
                 style={{
                   width: '200px',
-                  marginRight: '200px',
+                  marginRight: '200px'
                 }}
                 onClick={() => {
-                  createChatRoom('Outbound Trucking');
+                  createChatRoom(param, 'Outbound Trucking');
                 }}
                 active
               >
@@ -239,29 +234,28 @@ const ChatCreateRoom = ({ createChatRoom }) => (
                 color="yterminal"
                 size="lg"
                 style={{
-                  width: '200px',
+                  width: '200px'
                 }}
                 active
                 onClick={() => {
-                  createChatRoom('Inbound Trucking');
+                  createChatRoom(param, 'Inbound Trucking');
                 }}
               >
                 Inbound Trucking
               </Button>
             </Row>
-            <br />
-            {' '}
+            <br />{' '}
             <Row>
               <Button
                 color="yterminal"
                 size="lg"
                 style={{
                   width: '200px',
-                  marginRight: '200px',
+                  marginRight: '200px'
                 }}
                 active
                 onClick={() => {
-                  createChatRoom('Exporter Warehouse');
+                  createChatRoom(param, 'Exporter Warehouse');
                 }}
               >
                 Exporter Warehouse
@@ -270,11 +264,11 @@ const ChatCreateRoom = ({ createChatRoom }) => (
                 color="yterminal"
                 size="lg"
                 style={{
-                  width: '200px',
+                  width: '200px'
                 }}
                 active
                 onClick={() => {
-                  createChatRoom('Importer Warehouse');
+                  createChatRoom(param, 'Importer Warehouse');
                 }}
               >
                 Importer Warehouse

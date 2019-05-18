@@ -60,17 +60,14 @@ class Chat extends Component {
     this.fileInput = React.createRef();
   }
 
-  createChatRoom(room) {
-    const {
-      match: { params }
-    } = this.props;
-    const shipmentkey = _.get(params, 'shipmentkey', 'HDTPONlnceJeG5yAA1Zy');
+  createChatRoom(param, room) {
+    const shipmentkey = _.get(param, 'shipmentkey', 'HDTPONlnceJeG5yAA1Zy');
     CreateChatRoom(shipmentkey, {
       ChatRoomName: room
     }).subscribe({
       next: result => {
         const data = result.path.split('/');
-        this.props.fetchChatMessage(data[data.length - 1], shipmentkey);
+        this.fetchChatMessage(data, shipmentkey);
       },
       complete: result => {
         console.log(result);
@@ -78,9 +75,16 @@ class Chat extends Component {
     });
   }
 
+  fetchChatMessage(data, shipmentkey) {
+    this.props.fetchChatMessage(data[data.length - 1], shipmentkey);
+  }
   renderChat(ChatRoomKey = '', ShipmentKey = '') {
     if (ShipmentKey === 'custom') {
-      return <ChatCreateRoom createChatRoom={this.createChatRoom} />;
+      const {
+        match: { params }
+      } = this.props;
+      console.log(params);
+      return <ChatCreateRoom createChatRoom={this.createChatRoom} param={params} />;
     }
     const { user, ChatReducer, onTyping, onSendMessage, onFetchMoreMessage, sender } = this.props;
     const { text, chatrooms, msg } = ChatReducer;
