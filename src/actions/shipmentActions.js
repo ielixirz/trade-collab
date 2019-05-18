@@ -2,7 +2,8 @@ import _ from 'lodash';
 import {
   EDIT_SHIPMENT_REF,
   FETCH_SHIPMENT_LIST,
-  FETCH_SHIPMENT_REF_LIST
+  FETCH_SHIPMENT_REF_LIST,
+  UPDATE_SHIPMENT_REF
 } from '../constants/constants';
 import {
   CombineShipmentAndShipmentReference,
@@ -56,6 +57,14 @@ export const editShipmentRef = (ShipmentKey, refKey, Data) => dispatch => {
     id: ShipmentKey,
     refKey: refKey,
     payload: Data
+  });
+};
+
+export const updateShipmentRef = (ShipmentKey, data) => dispatch => {
+  dispatch({
+    type: UPDATE_SHIPMENT_REF,
+    id: ShipmentKey,
+    payload: data
   });
 };
 
