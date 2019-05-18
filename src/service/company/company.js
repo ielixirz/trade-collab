@@ -1,6 +1,6 @@
 import { collection, doc } from 'rxfire/firestore';
 import { from } from 'rxjs';
-import { take, map } from 'rxjs/operators';
+import { take, map, switchMap } from 'rxjs/operators';
 
 import { FirebaseApp } from '../firebase';
 
@@ -66,4 +66,13 @@ export const CreateCompanyMember = (CompanyKey, UserInfoKey, CompanyMemberData) 
   CompanyMemberRefPath(CompanyKey)
     .doc(UserInfoKey)
     .set(CompanyMemberData),
+);
+
+export const CombineCreateCompanyWithCreateCompanyMember = (
+  CompanyData,
+  UserInfoKey,
+  CompanyMemberData,
+) => CreateCompany(CompanyData).pipe(
+  map(CompanyDocData => CompanyDocData.id),
+  switchMap(CompanyID => CreateCompanyMember(CompanyID, UserInfoKey, CompanyMemberData)),
 );
