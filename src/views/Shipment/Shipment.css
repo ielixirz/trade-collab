@@ -304,3 +304,43 @@ tbody > tr:hover {
 .table.shipment-table > tbody > tr > td {
   border: none;
 }
+
+.alert-container {
+  position: relative;
+}
+
+.alert-popover {
+  position: absolute;
+  top: 55px;
+  max-width: 1000px;
+  width: 300px;
+  border: 1px solid rgba(6, 207, 168, 1);
+  border-radius: 10px;
+  background-color: white;
+  padding: 15px;
+  z-index: 999999;
+}
+
+.alert-popover::before {
+  content: '';
+  position: absolute;
+  top: -11px;
+  left: 14px;
+  width: 0;
+  height: 0;
+  border-left: 11px solid transparent;
+  border-right: 11px solid transparent;
+  border-bottom: 11px solid rgba(6, 207, 168, 1);
+}
+
+.alert-popover::after {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: -10px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid white;
+}

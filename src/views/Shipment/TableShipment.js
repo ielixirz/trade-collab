@@ -141,7 +141,7 @@ class TableShipment extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      pinned: [],
+      pinned: {},
       input: {
         refs: [],
         newRef: {
@@ -155,7 +155,6 @@ class TableShipment extends React.Component {
 
   componentDidMount() {
     this.fetchPinned();
-
     const table = document.getElementById('tableshipment');
     table.setAttribute('onScroll', (e) => {
       console.log(e);
@@ -164,16 +163,31 @@ class TableShipment extends React.Component {
 
   addToPinCollection = (result) => {
     const { pinned } = this.state;
-    const data = { ...result.data(), PIN: true };
-    this.setState({ pinned: [...pinned, data] });
-    this.forceUpdate();
-  }
+    const fetched = result.data();
+    const data = { ...fetched, ShipmentID: result.id, PIN: true };
+    const collection = { ...pinned, [result.id]: data };
+    this.setState({ pinned: collection });
+  };
 
   handleShipmentPinned = (pins) => {
-    pins.forEach((pinned) => {
-      GetShipmentDetail(pinned).subscribe(this.addToPinCollection);
-    });
-  }
+    if (pins.length <= 0) {
+      this.setState({ pinned: {} });
+    } else {
+      this.setState({ pinned: {} }, () => {
+        pins.forEach((pinned) => {
+          GetShipmentDetail(pinned).subscribe({
+            next: this.addToPinCollection,
+            error: (err) => {
+              console.log(err);
+            },
+            complete: () => {
+              this.forceUpdate();
+            },
+          });
+        });
+      });
+    }
+  };
 
   fetchPinned = () => {
     const { uid } = this.props.user;
@@ -184,9 +198,12 @@ class TableShipment extends React.Component {
       error: (err) => {
         console.log(err);
       },
-      complete: () => { },
+      complete: () => {
+        console.log('Updated');
+        this.forceUpdate();
+      },
     });
-  }
+  };
 
   renderRefComponent(index, ref, shipmentKey) {
     const {
@@ -233,12 +250,11 @@ class TableShipment extends React.Component {
                         value={refItem.ShipmentReferenceKey}
                       />
                       Ref #
-{refIndex + 1}
-{' '}
+                      {refIndex + 1}
 : (
-{refItem.ShipmentReferenceCompanyName}
+                      {refItem.ShipmentReferenceCompanyName}
 )
-</Label>
+                    </Label>
                   </Col>
                   <Col xs={5}>
                     <Input
@@ -248,7 +264,6 @@ class TableShipment extends React.Component {
                       value={refItem.ShipmentReferenceID}
                       onChange={(e) => {
                         const value = e.target.value;
-                        console.log('input data is ', value);
                         this.props.editShipmentRef(shipmentKey, item.ShipmentReferenceKey, {
                           ...item,
                           ShipmentReferenceID: value,
@@ -258,7 +273,6 @@ class TableShipment extends React.Component {
                       }}
                       onKeyPress={(event) => {
                         if (event.key === 'Enter') {
-                          console.log('Update Ref for ', shipmentKey, item);
                           UpdateShipmentReference(shipmentKey, item.ShipmentReferenceKey, item);
                         }
                       }}
@@ -283,10 +297,9 @@ class TableShipment extends React.Component {
                       value
                     />
                     Ref #
-{ref.length + 1}
-{' '}
+                    {ref.length + 1}
 : Exporter
-</Label>
+                  </Label>
                 </Col>
                 <Col xs={5}>
                   <Input
@@ -296,7 +309,6 @@ class TableShipment extends React.Component {
                     value={this.state.input.newRef.ShipmentReferenceID}
                     onChange={(e) => {
                       const value = e.target.value;
-                      console.log('input data is ', value);
                       this.setState({
                         input: {
                           newRef: {
@@ -365,15 +377,25 @@ class TableShipment extends React.Component {
     const { uid } = this.props.user;
     return (
       <div>
-        {item.seen ? (
-          <Badge color="danger" pill style={{ marginBottom: -15 }}>
-            2
-          </Badge>
-        ) : null}
-        {_.get(item, 'PIN') && item.PIN === true ? (<i className="fa fa-map-pin" />) : null}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {_.get(item, 'PIN') && item.PIN === true ? (
+            <i className="fa fa-map-pin" style={{ marginBottom: 5, opacity: 0.8 }} />
+          ) : null}
+          {item.seen ? (
+            <Badge color="danger" pill style={{ marginBottom: -15 }}>
+              2
+            </Badge>
+          ) : null}
+        </div>
         <div className="showdot">
           <div className="showthatdot">
-            <AlertShipment key={index} item={item} id={index} profileKey={uid} fetchPinned={this.fetchPinned} />
+            <AlertShipment
+              key={index}
+              item={item}
+              id={index}
+              profileKey={uid}
+              fetchPinned={this.fetchPinned}
+            />
           </div>
         </div>
       </div>
@@ -390,8 +412,12 @@ class TableShipment extends React.Component {
       data = input.products;
       columns = input.columns;
     } else {
-      const filtered = _.filter(this.props.input, shipment => (!this.state.pinned.includes(shipment.ShipmentID)));
-      const collection = [...this.state.pinned, ...filtered];
+      const filtered = _.filter(
+        this.props.input,
+        shipment => !_.find(this.state.pinned, pin => shipment.ShipmentID === pin.ShipmentID),
+      );
+      const mappedPin = _.map(this.state.pinned, pin => pin);
+      const collection = [...mappedPin, ...filtered];
       input = _.map(collection, (item, index) => {
         const etd = _.get(item, 'ShipmentETD', 0);
         const eta = _.get(item, 'ShipmentETAPort', 0);
@@ -527,7 +553,6 @@ class TableShipment extends React.Component {
                 </Button>
                 <Button style={{ backgroundColor: 'white', marginTop: 2, marginRight: 10 }}>
                   <i className="icons cui-pencil" style={{ color: 'black' }} />
-{' '}
                   <span style={{ fontWeight: 'bold', color: '#707070' }}>Edit</span>
                 </Button>
               </Col>
@@ -550,10 +575,10 @@ class TableShipment extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-    ...state.authReducer,
-    refs: state.shipmentReducer.ShipmentRefs
-  });
+const mapStateToProps = state => ({
+  ...state.authReducer,
+  refs: state.shipmentReducer.ShipmentRefs,
+});
 
 export default connect(
   mapStateToProps,
