@@ -61,3 +61,9 @@ export const UpdateCompanyMember = (CompanyKey, UserInfoKey, Data) => from(
     .doc(UserInfoKey)
     .update(Data),
 );
+
+export const CreateCompanyMember = (CompanyKey, UserInfoKey, CompanyMemberData) => from(
+  CompanyMemberRefPath(CompanyKey)
+    .doc(UserInfoKey)
+    .set(CompanyMemberData),
+);
