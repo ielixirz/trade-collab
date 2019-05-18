@@ -408,9 +408,7 @@ class TableShipment extends React.Component {
 
     let input = [];
     if (this.props.input.length === 0) {
-      input = this.data;
-      data = input.products;
-      columns = input.columns;
+      return '';
     } else {
       const filtered = _.filter(
         this.props.input,
