@@ -45,6 +45,7 @@ export const createDataTable = (input) => {
         headerStyle: {
           width: '5%',
         },
+        classes: 'alert-column',
       };
     }
     if (item === 'Ref') {
