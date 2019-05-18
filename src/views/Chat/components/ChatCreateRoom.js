@@ -5,7 +5,7 @@
 import React from 'react';
 import { Card, CardBody, Row, Col, Button, UncontrolledCollapse } from 'reactstrap';
 
-const ChatCreateRoom = ({ createChatRoom, param }) => (
+const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
   <Card>
     <CardBody>
       <Row>
@@ -31,7 +31,7 @@ const ChatCreateRoom = ({ createChatRoom, param }) => (
             size="lg"
             active
             onClick={() => {
-              createChatRoom(param, 'Inbound Custom Broker');
+              createChatRoom(fetchChatMessage, param, 'Inbound Custom Broker');
             }}
           >
             Inbound Custom Broker
@@ -46,7 +46,7 @@ const ChatCreateRoom = ({ createChatRoom, param }) => (
             size="lg"
             active
             onClick={() => {
-              createChatRoom(param, 'Inbound Forwarder');
+              createChatRoom(fetchChatMessage, param, 'Inbound Forwarder');
             }}
           >
             Inbound Forwarder
@@ -70,7 +70,7 @@ const ChatCreateRoom = ({ createChatRoom, param }) => (
             }}
             active
             onClick={() => {
-              createChatRoom(param, 'Importer');
+              createChatRoom(fetchChatMessage, param, 'Importer');
             }}
           >
             Importer
@@ -85,7 +85,7 @@ const ChatCreateRoom = ({ createChatRoom, param }) => (
             }}
             active
             onClick={() => {
-              createChatRoom(param, 'Outbound Forwarder');
+              createChatRoom(fetchChatMessage, param, 'Outbound Forwarder');
             }}
           >
             Outbound Forwarder
@@ -117,7 +117,7 @@ const ChatCreateRoom = ({ createChatRoom, param }) => (
                   }}
                   active
                   onClick={() => {
-                    createChatRoom(param, 'Blank Chat');
+                    createChatRoom(fetchChatMessage, param, 'Blank Chat');
                   }}
                 >
                   Blank Chat
@@ -135,7 +135,7 @@ const ChatCreateRoom = ({ createChatRoom, param }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(param, 'Exporter');
+                  createChatRoom(fetchChatMessage, param, 'Exporter');
                 }}
               >
                 Exporter
@@ -148,7 +148,7 @@ const ChatCreateRoom = ({ createChatRoom, param }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(param, 'Importer');
+                  createChatRoom(fetchChatMessage, param, 'Importer');
                 }}
               >
                 Importer
@@ -165,7 +165,7 @@ const ChatCreateRoom = ({ createChatRoom, param }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(param, 'Outbound Forwarder');
+                  createChatRoom(fetchChatMessage, param, 'Outbound Forwarder');
                 }}
               >
                 Outbound Forwarder
@@ -178,7 +178,7 @@ const ChatCreateRoom = ({ createChatRoom, param }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(param, 'Inbound Forwarder');
+                  createChatRoom(fetchChatMessage, param, 'Inbound Forwarder');
                 }}
               >
                 Inbound Forwarder
@@ -195,7 +195,7 @@ const ChatCreateRoom = ({ createChatRoom, param }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(param, 'Outbound Custom Broker');
+                  createChatRoom(fetchChatMessage, param, 'Outbound Custom Broker');
                 }}
               >
                 Outbound Custom Broker
@@ -208,7 +208,7 @@ const ChatCreateRoom = ({ createChatRoom, param }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(param, 'Inbound Custom Broker');
+                  createChatRoom(fetchChatMessage, param, 'Inbound Custom Broker');
                 }}
               >
                 Inbound Custom Broker
@@ -224,7 +224,7 @@ const ChatCreateRoom = ({ createChatRoom, param }) => (
                   marginRight: '200px'
                 }}
                 onClick={() => {
-                  createChatRoom(param, 'Outbound Trucking');
+                  createChatRoom(fetchChatMessage, param, 'Outbound Trucking');
                 }}
                 active
               >
@@ -238,7 +238,7 @@ const ChatCreateRoom = ({ createChatRoom, param }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(param, 'Inbound Trucking');
+                  createChatRoom(fetchChatMessage, param, 'Inbound Trucking');
                 }}
               >
                 Inbound Trucking
@@ -255,7 +255,7 @@ const ChatCreateRoom = ({ createChatRoom, param }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(param, 'Exporter Warehouse');
+                  createChatRoom(fetchChatMessage, param, 'Exporter Warehouse');
                 }}
               >
                 Exporter Warehouse
@@ -268,7 +268,7 @@ const ChatCreateRoom = ({ createChatRoom, param }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(param, 'Importer Warehouse');
+                  createChatRoom(fetchChatMessage, param, 'Importer Warehouse');
                 }}
               >
                 Importer Warehouse
