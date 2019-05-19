@@ -114,7 +114,11 @@ class Shipment extends Component {
       }
     }
     parameter.ShipmentCreateTimestamp = new Date().getTime();
-    CreateShipment(parameter);
+    CreateShipment(parameter).subscribe({
+      next: res => {
+        this.props.fetchShipments(this.state.typeShipment);
+      }
+    });
 
     this.setState(prevState => ({
       modal: !prevState.modal,

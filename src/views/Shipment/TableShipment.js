@@ -330,14 +330,12 @@ class TableShipment extends React.Component {
                               this.setState({
                                 submiting: res.id
                               });
-                              let shipment = GetShipmentReferenceList(shipmentKey).subscribe({
+                              const shipment = GetShipmentReferenceList(shipmentKey).subscribe({
                                 next: res => {
-                                  let data = _.map(res, ref => {
-                                    return {
-                                      ShipmentReferenceKey: ref.id,
-                                      ...ref.data()
-                                    };
-                                  });
+                                  const data = _.map(res, ref => ({
+                                    ShipmentReferenceKey: ref.id,
+                                    ...ref.data()
+                                  }));
                                   this.props.updateShipmentRef(shipmentKey, data);
                                   console.log(data);
                                 }
@@ -440,37 +438,37 @@ class TableShipment extends React.Component {
     let input = [];
     if (this.props.input.length === 0) {
       return '';
-    } else {
-      const filtered = _.filter(
-        this.props.input,
-        shipment => !_.find(this.state.pinned, pin => shipment.ShipmentID === pin.ShipmentID)
-      );
-      const mappedPin = _.map(this.state.pinned, pin => pin);
-      const collection = [...mappedPin, ...filtered];
-      input = _.map(collection, (item, index) => {
-        const etd = _.get(item, 'ShipmentETD', 0);
-        const eta = _.get(item, 'ShipmentETAPort', 0);
-        return {
-          alert: this.renderAlertComponent(index, item),
-          Ref: this.renderRefComponent(
-            index,
-            _.get(item, 'ShipmentReferenceList', []),
-            item.ShipmentID
-          ),
-          Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
-          Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
-          Product: _.get(item, 'ShipmentProductName', ''),
-          ETD: new Date(etd.seconds * 1000).toLocaleString(),
-          ETA: new Date(eta.seconds * 1000).toLocaleString(),
-          '': this.renderDescription(index, item),
-          Status: this.renderStatusComponent(item),
-          uid: _.get(item, 'ShipmentID', '')
-        };
-      });
-      input = createDataTable(input);
-      data = input.data;
-      columns = input.columns;
     }
+    const filtered = _.filter(
+      this.props.input,
+      shipment => !_.find(this.state.pinned, pin => shipment.ShipmentID === pin.ShipmentID)
+    );
+    const mappedPin = _.map(this.state.pinned, pin => pin);
+    const collection = [...mappedPin, ...filtered];
+    input = _.map(collection, (item, index) => {
+      const etd = _.get(item, 'ShipmentETD', 0);
+      const eta = _.get(item, 'ShipmentETAPort', 0);
+      return {
+        alert: this.renderAlertComponent(index, item),
+        Ref: this.renderRefComponent(
+          index,
+          _.get(item, 'ShipmentReferenceList', []),
+          item.ShipmentID
+        ),
+        Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
+        Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
+        Product: _.get(item, 'ShipmentProductName', ''),
+        ETD: new Date(etd.seconds * 1000).toLocaleString(),
+        ETA: new Date(eta.seconds * 1000).toLocaleString(),
+        '': this.renderDescription(index, item),
+        Status: this.renderStatusComponent(item),
+        uid: _.get(item, 'ShipmentID', '')
+      };
+    });
+    input = createDataTable(input);
+    data = input.data;
+    columns = input.columns;
+
     const selectRow = {
       mode: 'checkbox',
       clickToSelect: true,
@@ -555,7 +553,7 @@ class TableShipment extends React.Component {
           e.target.tagName !== 'INPUT' &&
           e.target.tagName !== 'P'
         ) {
-          window.location.replace(`#/chat/${row.uid}`);
+          window.location.href = `#/chat/${row.uid}`;
         }
         this.setState({
           submiting: ''
@@ -614,5 +612,10 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { fetchShipments, fetchMoreShipments, editShipmentRef, updateShipmentRef }
+  {
+    fetchShipments,
+    fetchMoreShipments,
+    editShipmentRef,
+    updateShipmentRef
+  }
 )(TableShipment);

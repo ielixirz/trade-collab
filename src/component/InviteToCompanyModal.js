@@ -52,7 +52,12 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
   const [company, setCompany] = useState('');
   const [availableCompany, setAvailableCompany] = useState([]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setExistingInvited([]);
+    setNonExistingInvited([]);
+    setUpdateRole({});
+    setUpdatePosition({});
+  }, [invitedEmails]);
 
   const handleInputPositionChange = (event, email) => {
     const temp = updatePosition;
@@ -236,6 +241,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
       inviteDataList.push(inviteData);
     });
     CreateCompanyMultipleInvitation(inviteDataList, company.key).subscribe(() => {});
+    props.clearInput();
     toggle();
   };
 
