@@ -18,6 +18,10 @@ import {
   IsCompanyMember,
   GetCompanyMember,
   CombineCreateCompanyWithCreateCompanyMember,
+  CreateCompanyUserAccessibility,
+  GetCompanyUserAccessibility,
+  UpdataCompanyUserAccessibility,
+  DeleteCompanyUserAccessibility,
 } from '../../service/company/company';
 
 import { GetUserRequest } from '../../service/join/request';
@@ -148,10 +152,18 @@ const TestService = () => {
     // AddShipmentPin('2sYaYykLYOd5a2D4FPbV', '555555').subscribe(console.log);
     // DeleteShipmentPin('2sYaYykLYOd5a2D4FPbV', '555555').subscribe(console.log);
     // GetShipmentPin('2sYaYykLYOd5a2D4FPbV').subscribe(console.log);
-
-    CombineCreateCompanyWithCreateCompanyMember({ com_name: '123' }, 'UserInfoKey', {
-      name: 'name',
-    }).subscribe(console.log);
+    // CombineCreateCompanyWithCreateCompanyMember({ com_name: '123' }, 'UserInfoKey', {
+    //   name: 'name',
+    // }).subscribe(console.log);
+    // CreateCompanyUserAccessibility('TestCompany', {
+    //   CompanyUserAccessibilityRoleName: 'Admin',
+    //   CompanyUserAccessibilityRolePermissionCode: '11111',
+    // }).subscribe(console.log);
+    // GetCompanyUserAccessibility('TestCompany').subscribe(console.log);
+    // UpdataCompanyUserAccessibility('TestCompany', '29Qnsob3H6rcqXtI9v8B', {
+    //   CompanyUserAccessibilityRolePermissionCode: '22222',
+    // }).subscribe(console.log);
+    // DeleteCompanyUserAccessibility('TestCompany', '29Qnsob3H6rcqXtI9v8B').subscribe(console.log);
   }, []);
 
   return (
