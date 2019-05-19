@@ -1,16 +1,37 @@
 /* eslint-disable filenames/match-regex */
 /* as it is component */
-import React, { useContext } from 'react';
-import { ListGroup, ListGroupItem, Row, Col } from 'reactstrap';
+import React, { useContext, useRef } from 'react';
+import {
+  ListGroup, ListGroupItem, Row, Col, Button,
+} from 'reactstrap';
 import shipmentListContext from '../context/shipmentContext';
+import MasterDetailModal from './MasterDetailModal';
 
 export default function ShipmentList() {
   const { state } = useContext(shipmentListContext);
+  const masterDetailModalRef = useRef(null);
+
+  const preventParentCollapse = (e) => {
+    e.stopPropagation();
+  };
+
   return (
     <div>
+      <MasterDetailModal ref={masterDetailModalRef} />
       {state.shipmentList.map(s => (
-        <ListGroup flush key={s.id}>
-          <ListGroupItem disabled tag="a">
+        <ListGroup onClick={preventParentCollapse} flush key={s.id}>
+          <ListGroupItem tag="a">
+            <Row style={{ float: 'right' }}>
+              <Col>
+                <Button
+                  className="master-detail-btn edit"
+                  onClick={() => masterDetailModalRef.current.triggerMasterDetail()}
+                >
+                  <i className="cui-pencil icons" style={{ marginRight: '0.5rem' }} />
+                  Edit
+                </Button>
+              </Col>
+            </Row>
             <Row>
               <Col xs="12">
                 <small>Shipper</small>
