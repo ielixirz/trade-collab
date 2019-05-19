@@ -63,16 +63,27 @@
                         ChatRoomMessageFileUrl (string) *Optional
                         ChatRoomMessageType (string) ['Text','Emoji','Image']
                         ChatRoomMessageTimestamp (timestamp)
+                        ChatRoomMessageReader (Array<Object>)
+                            [{ ChatRoomMessageReaderProfileKey, ChatRoomMessageReaderFirstName, ChatRoomMessageReaderSurName }]
                 +ChatRoomMember
                     >ChatRoomMemberKey
                         ChatRoomMemberUserKey (string)
                         ChatRoomMemberName (string)
                         ChatRoomMemberEmail (string)
                         ChatRoomMemberName (string)
-                        ChatRoomMemberImageURL (string)
+                        ChatRoomMemberImageUrl (string)
                         ChatRoomMemberRole (string)
                         ChatRoomMemberCompanyName (string)
                         ChatRoomMemberCompanyKey (string)
+                +ChatRoomMessageReader
+                    >ChatRoomMessageKeyList *(Static document name) (Create for util)
+                        ChatRoomMessageKeyList (Array<string>)
+                    >ProfileKey
+                        ChatRoomMessageReaderFirstName (string)
+                        ChatRoomMessageReaderSurName (string)
+                        ChatRoomMessageReaderProfileImageUrl (string)
+                        ChatRoomMessageReaderLastestMessageKey (string)
+
 
         +ShipmentFile
             >FileKey

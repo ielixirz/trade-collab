@@ -19,6 +19,7 @@ import {
 import './login.css';
 import { connect } from 'react-redux';
 import { typinglogin, login } from '../../../actions/loginActions';
+import ForgotPass from '../ForgotPass/ForgotPass';
 
 class Login extends Component {
   render() {
@@ -63,13 +64,9 @@ class Login extends Component {
                               required
                             />
                             <div className="text-center text-md-right">
-                              <Link
-                                className="cool-link"
-                                to="/#/mainregister"
-                                style={{ color: 'red' }}
-                              >
-                                Forgot Password
-                              </Link>
+                              <ForgotPass>
+                                <p style={{ color: 'red' }}>Forgot Password</p>
+                              </ForgotPass>
                             </div>
                           </FormGroup>
                         </Col>

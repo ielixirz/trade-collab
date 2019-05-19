@@ -1,3 +1,5 @@
+/* eslint-disable react/prefer-stateless-function */
+/* eslint-disable filenames/match-regex */
 import React, { Component } from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 // import { renderRoutes } from 'react-router-config';

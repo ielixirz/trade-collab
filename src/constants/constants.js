@@ -11,6 +11,7 @@ export const FETCH_SHIPMENT = 'FETCH_SHIPMENT';
 export const FETCH_SHIPMENT_LIST = 'FETCH_SHIPMENT_LIST';
 export const FETCH_SHIPMENT_REF_LIST = 'FETCH_SHIPMENT_REF_LIST';
 export const EDIT_SHIPMENT_REF = 'EDIT_SHIPMENT_REF';
+export const UPDATE_SHIPMENT_REF = 'UPDATE_SHIPMENT_REF';
 
 // File
 export const FETCH_FILES = 'FETCH_FILES';
@@ -18,6 +19,7 @@ export const FETCH_FILES = 'FETCH_FILES';
 // Chat
 export const FETCH_CHAT = 'FETCH_CHAT';
 export const FETCH_CHAT_ROOMS = 'FETCH_CHAT_ROOMS';
+export const SEND_MESSAGE = 'SEND_MESSAGE';
 
 // User
 export const FETCH_USER_DETAIL = 'FETCH_USER';

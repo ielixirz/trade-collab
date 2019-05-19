@@ -1,8 +1,12 @@
 import { collection, doc } from 'rxfire/firestore';
-import { from } from 'rxjs';
-import { take, map } from 'rxjs/operators';
+import { from, combineLatest } from 'rxjs';
+import {
+  take, map, switchMap, tap, concatMap,
+} from 'rxjs/operators';
 
 import { FirebaseApp } from '../firebase';
+
+import { CreateUserCompany } from '../user/user';
 
 const CompanyRefPath = () => FirebaseApp.firestore().collection('Company');
 
@@ -60,4 +64,27 @@ export const UpdateCompanyMember = (CompanyKey, UserInfoKey, Data) => from(
   CompanyMemberRefPath(CompanyKey)
     .doc(UserInfoKey)
     .update(Data),
+);
+
+export const CreateCompanyMember = (CompanyKey, UserInfoKey, CompanyMemberData) => from(
+  CompanyMemberRefPath(CompanyKey)
+    .doc(UserInfoKey)
+    .set(CompanyMemberData),
+);
+
+export const CombineCreateCompanyWithCreateCompanyMember = (
+  CompanyData,
+  UserInfoKey,
+  CompanyMemberData,
+) => CreateCompany(CompanyData).pipe(
+  map(CompanyDocData => CompanyDocData.id),
+  concatMap(CompanyID => combineLatest(
+    CreateCompanyMember(CompanyID, UserInfoKey, CompanyMemberData),
+    CreateUserCompany(UserInfoKey, {
+      UserCompanyReference: FirebaseApp.firestore()
+        .collection('Company')
+        .doc(CompanyID),
+      UserCompanyTimestamp: new Date(),
+    }),
+  )),
 );

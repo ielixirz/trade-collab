@@ -37,7 +37,7 @@ import {
 import ChatWithHeader from './components/ChatWithHeader';
 import ChatCreateRoom from './components/ChatCreateRoom';
 
-import { CreateChatRoom, EditChatRoom } from '../../service/chat/chat';
+import { CreateChatRoom, EditChatRoom, UpdateChatRoomMessageReader } from '../../service/chat/chat';
 import './Chat.css';
 
 class Chat extends Component {
@@ -60,17 +60,16 @@ class Chat extends Component {
     this.fileInput = React.createRef();
   }
 
-  createChatRoom(room) {
-    const {
-      match: { params }
-    } = this.props;
-    const shipmentkey = _.get(params, 'shipmentkey', 'HDTPONlnceJeG5yAA1Zy');
+  createChatRoom(fetchChatMessage, param, room) {
+    const shipmentkey = _.get(param, 'shipmentkey', 'HDTPONlnceJeG5yAA1Zy');
     CreateChatRoom(shipmentkey, {
       ChatRoomName: room
     }).subscribe({
       next: result => {
+        console.log(result.id);
+
         const data = result.path.split('/');
-        this.props.fetchChatMessage(data[data.length - 1], shipmentkey);
+        fetchChatMessage(data[data.length - 1], shipmentkey, result.id);
       },
       complete: result => {
         console.log(result);
@@ -80,16 +79,27 @@ class Chat extends Component {
 
   renderChat(ChatRoomKey = '', ShipmentKey = '') {
     if (ShipmentKey === 'custom') {
-      return <ChatCreateRoom createChatRoom={this.createChatRoom} />;
+      const {
+        match: { params }
+      } = this.props;
+      console.log(params);
+      return (
+        <ChatCreateRoom
+          createChatRoom={this.createChatRoom}
+          fetchChatMessage={this.props.fetchChatMessage}
+          param={params}
+        />
+      );
     }
     const { user, ChatReducer, onTyping, onSendMessage, onFetchMoreMessage, sender } = this.props;
-    const { text, chatrooms } = ChatReducer;
+    const { text, chatrooms, msg } = ChatReducer;
     const chat = _.get(this.props, `ChatReducer.chatroomsMsg.${ChatRoomKey}`, []);
     const chatMsg = chat.length === 0 ? [] : chat.chatMsg;
     const ChatRoomFileLink = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomData.ChatRoomFileLink`);
     const ChatRoomMember = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomMember`, []);
     return (
       <ChatWithHeader
+        msg={msg}
         user={user}
         sender={sender}
         chatMsg={chatMsg}
@@ -124,6 +134,7 @@ class Chat extends Component {
   onFileDrop = (event, ShipmentKey, ChatRoomKey) => {
     event.preventDefault();
     const file = event.dataTransfer.items[0].getAsFile();
+
     event.target.value = null;
     this.uploadModalRef.current.triggerUploading(file, ShipmentKey, ChatRoomKey);
     this.setState({
@@ -342,14 +353,14 @@ class Chat extends Component {
 const mapStateToProps = state => {
   const { ChatReducer, authReducer, profileReducer } = state;
   console.log(profileReducer);
-  let sender = _.find(
+  const sender = _.find(
     profileReducer.ProfileList,
     item => item.id === profileReducer.ProfileDetail.id
   );
   return {
     ChatReducer,
     user: authReducer.user,
-    sender: sender
+    sender
   };
 };
 

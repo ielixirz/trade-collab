@@ -16,7 +16,7 @@ const routes = [
   { path: '/network', name: 'network', component: Network },
   { path: '/mockdata', name: 'mockdata', component: MockData },
   { path: '/testservice', name: 'testservice', component: TestService },
-  { path: '/selectprofile', name: 'selectprofile', component: SelectProfile }
+  { path: '/selectprofile', name: 'selectprofile', component: SelectProfile },
 ];
 
 export default routes;

@@ -75,3 +75,6 @@ export const GetUserCompany = (UserInfoKey) => {
     toArray(),
   );
 };
+
+// eslint-disable-next-line max-len
+export const CreateUserCompany = (UserInfoKey, Data) => from(UserCompanyRefPath(UserInfoKey).add(Data));
