@@ -85,7 +85,9 @@ class SelectProfile extends Component {
                   {this.renderProfiles()}
                   <div style={{ textAlign: 'center' }}>
                     <NewProfileModal>
-                      <p style={{ color: '#16a085' }}>Add New User</p>
+                      <p style={{ color: '#16a085' }}>
+                        <b>Add New User</b>
+                      </p>
                     </NewProfileModal>
                     <p style={{ color: '#16a085' }}>
                       You can have multiple users using the same e-mail address
