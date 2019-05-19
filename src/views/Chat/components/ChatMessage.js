@@ -4,6 +4,7 @@
 import React from 'react';
 import { Row, Col } from 'reactstrap';
 import _ from 'lodash';
+import moment from 'moment';
 
 const ChatMessage = ({ message, i }) => {
   const {
@@ -52,7 +53,7 @@ const ChatMessage = ({ message, i }) => {
                   </p>
                 </div>
                 <Col xs={4}>
-                  <span className="time_date"> {status.toLocaleTimeString()}</span>
+                  <span className="time_date">{moment(status).format('hh:mm a')}</span>
                 </Col>
               </Row>
             </div>
@@ -80,7 +81,7 @@ const ChatMessage = ({ message, i }) => {
               <span className="time_date">
                 {readers.length > 1 ? `Read ${readers.length - 1}` : 'Sent'}
                 <br />
-                {status.toLocaleTimeString()}
+                {moment(status).format('hh:mm a')}
               </span>
             </div>
             <div>
