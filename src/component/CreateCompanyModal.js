@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
 /* as it is component */
 import React, {
@@ -6,7 +7,7 @@ import React, {
 import {
   Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader,
 } from 'reactstrap';
-import { CreateCompany } from '../service/company/company';
+import { CombineCreateCompanyWithCreateCompanyMember } from '../service/company/company';
 
 const CreateCompanyModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
@@ -48,7 +49,17 @@ const CreateCompanyModal = forwardRef((props, ref) => {
   };
 
   const create = () => {
-    CreateCompany(company);
+    const userData = {
+      UserMemberEmail: props.userEmail,
+      UserMemberPosition: '-',
+      UserMemberRoleName: '-',
+      UserMatrixRolePermissionCode: '-',
+      UserMemberCompanyStandingStatus: 'Active',
+      UserMemberJoinedTimestamp: new Date(),
+    };
+    CombineCreateCompanyWithCreateCompanyMember(company, props.userKey, userData).subscribe(() => {
+      props.updateCompany(company);
+    });
     toggle();
   };
 

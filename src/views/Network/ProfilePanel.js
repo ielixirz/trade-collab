@@ -100,11 +100,12 @@ const renderStatus = (status, data, listener) => {
   return '';
 };
 
-const ProfilePanel = ({ currentProfile, auth }) => {
+const ProfilePanel = ({ currentProfile, auth, user }) => {
   const [userProfile, setUserProfile] = useState(mockProfile);
   const [companyList, setCompanyList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [acceptedInvite, setAcceptedInvite] = useState(undefined);
+  const [newCompany, setNewCompany] = useState(undefined);
 
   const createCompanyModalRef = useRef(null);
   const inviteToCompanyModalRef = useRef(null);
@@ -216,6 +217,12 @@ const ProfilePanel = ({ currentProfile, auth }) => {
     });
   };
 
+  const responseToCreate = (company) => {
+    setNewCompany({
+      company,
+    });
+  };
+
   const updateCompanyList = (invite) => {
     const currentList = companyList;
     if (invite.status === 'Approve') {
@@ -250,7 +257,7 @@ const ProfilePanel = ({ currentProfile, auth }) => {
     } else {
       fetchCompany(auth.uid);
     }
-  }, [acceptedInvite]);
+  }, [acceptedInvite, newCompany]);
 
   const toggleEdit = () => {
     if (isEdit) {
@@ -326,7 +333,12 @@ const ProfilePanel = ({ currentProfile, auth }) => {
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <div className="profile-container">
-        <CreateCompanyModal ref={createCompanyModalRef} />
+        <CreateCompanyModal
+          ref={createCompanyModalRef}
+          userKey={auth.uid}
+          userEmail={user.UserInfoEmail}
+          updateCompany={responseToCreate}
+        />
         <InviteToCompanyModal ref={inviteToCompanyModalRef} />
         <RequestToJoinModal
           ref={requestToJoinModalRef}
