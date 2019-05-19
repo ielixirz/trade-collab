@@ -103,3 +103,6 @@ export const CombineCreateCompanyWithCreateCompanyMember = (
 
 // eslint-disable-next-line max-len
 export const CreateCompanyUserAccessibility = (CompanyKey, Data) => from(CompanyUserAccessibilityRefPath(CompanyKey).add(Data));
+
+// eslint-disable-next-line max-len
+export const GetCompanyUserAccessibility = CompanyKey => collection(CompanyUserAccessibilityRefPath(CompanyKey));
