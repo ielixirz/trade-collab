@@ -20,7 +20,10 @@ export const typing = data => dispatch => {
 let chatroom = {};
 let chatMessage = null;
 
-export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getState) => {
+export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
+  dispatch,
+  getState
+) => {
   const { profileReducer } = getState();
 
   let sender = _.find(
@@ -55,6 +58,39 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
       complete: () => {}
     })
   );
+
+  if (!_.isEmpty(ChatKey)) {
+    const chats = getState().ChatReducer.chatrooms;
+    const tabs = [];
+    _.forEach(chats, item => {
+      tabs.push({
+        id: tabs.length + 1,
+        roomName: item.roomName,
+        active: item.active,
+        ChatRoomKey: item.ChatRoomKey,
+        ShipmentKey: item.ShipmentKey,
+        ChatRoomData: item.ChatRoomData,
+        position: item.index
+      });
+    });
+
+    const newTabs = tabs.map(tab => ({
+      ...tab,
+      active: tab.ChatRoomKey === ChatKey
+    }));
+    const originalReducer = [];
+    _.forEach(newTabs, (item, index) => {
+      originalReducer[item.ChatRoomKey] = {
+        ChatRoomKey: item.ChatRoomKey,
+        ShipmentKey: item.ShipmentKey,
+        roomName: item.roomName,
+        active: item.active,
+        ChatRoomData: item.ChatRoomData,
+        position: index
+      };
+    });
+    dispatch({ type: MOVE_TAB, payload: originalReducer });
+  }
 };
 export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getState) => {
   let chats = _.get(getState().ChatReducer, `chatroomsMsg.${ChatRoomKey}.chatMsg`, []).length;
@@ -147,6 +183,8 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
   });
   dispatch({ type: MOVE_TAB, payload: originalReducer });
 };
+
+export const selectChat = chatkey => (dispatch, getState) => {};
 
 export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getState) => {
   // ShipmentKey,ChatRoomKey,Data

@@ -53,6 +53,13 @@ export default class MultiSelectTextInput extends Component {
     }
   };
 
+  handleClear = () => {
+    this.setState({
+      inputValue: '',
+      value: [],
+    });
+  };
+
   render() {
     const { inputValue, value, placeholder } = this.state;
     return (

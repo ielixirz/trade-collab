@@ -66,8 +66,10 @@ class Chat extends Component {
       ChatRoomName: room
     }).subscribe({
       next: result => {
+        console.log(result.id);
+
         const data = result.path.split('/');
-        fetchChatMessage(data[data.length - 1], shipmentkey);
+        fetchChatMessage(data[data.length - 1], shipmentkey, result.id);
       },
       complete: result => {
         console.log(result);
@@ -75,7 +77,6 @@ class Chat extends Component {
     });
   }
 
-  x;
   renderChat(ChatRoomKey = '', ShipmentKey = '') {
     if (ShipmentKey === 'custom') {
       const {
@@ -352,14 +353,14 @@ class Chat extends Component {
 const mapStateToProps = state => {
   const { ChatReducer, authReducer, profileReducer } = state;
   console.log(profileReducer);
-  let sender = _.find(
+  const sender = _.find(
     profileReducer.ProfileList,
     item => item.id === profileReducer.ProfileDetail.id
   );
   return {
     ChatReducer,
     user: authReducer.user,
-    sender: sender
+    sender
   };
 };
 
