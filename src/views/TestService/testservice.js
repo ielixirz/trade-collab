@@ -14,7 +14,11 @@ import {
 } from '../../service/join/invite';
 import { GetProfileListFromEmail } from '../../service/user/profile';
 
-import { IsCompanyMember, GetCompanyMember } from '../../service/company/company';
+import {
+  IsCompanyMember,
+  GetCompanyMember,
+  CombineCreateCompanyWithCreateCompanyMember,
+} from '../../service/company/company';
 
 import { GetUserRequest } from '../../service/join/request';
 
@@ -144,6 +148,10 @@ const TestService = () => {
     // AddShipmentPin('2sYaYykLYOd5a2D4FPbV', '555555').subscribe(console.log);
     // DeleteShipmentPin('2sYaYykLYOd5a2D4FPbV', '555555').subscribe(console.log);
     // GetShipmentPin('2sYaYykLYOd5a2D4FPbV').subscribe(console.log);
+
+    CombineCreateCompanyWithCreateCompanyMember({ com_name: '123' }, 'UserInfoKey', {
+      name: 'name',
+    }).subscribe(console.log);
   }, []);
 
   return (
