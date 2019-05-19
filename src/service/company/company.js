@@ -15,6 +15,11 @@ const CompanyMemberRefPath = CompanyKey => FirebaseApp.firestore()
   .doc(CompanyKey)
   .collection('CompanyMember');
 
+const CompanyUserAccessibilityRefPath = CompanyKey => FirebaseApp.firestore()
+  .collection('Company')
+  .doc(CompanyKey)
+  .collection('CompanyUserAccessibility');
+
 /* Example CreateCompany
     {
         CompanyName (string)
@@ -88,3 +93,13 @@ export const CombineCreateCompanyWithCreateCompanyMember = (
     }),
   )),
 );
+
+/* ex. CreateCompanyUserAccessibility
+    {
+      CompanyUserAccessibilityRoleName (string)
+      CompanyUserAccessibilityRolePermissionCode (string)
+    }
+*/
+
+// eslint-disable-next-line max-len
+export const CreateCompanyUserAccessibility = (CompanyKey, Data) => from(CompanyUserAccessibilityRefPath(CompanyKey).add(Data));
