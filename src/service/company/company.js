@@ -113,3 +113,9 @@ export const UpdataCompanyUserAccessibility = (CompanyKey, CompanyUserAccessibil
     .doc(CompanyUserAccessibilityKey)
     .set(Data, { merge: true }),
 );
+
+export const DeleteCompanyUserAccessibility = (CompanyKey, CompanyUserAccessibilityKey) => from(
+  CompanyUserAccessibilityRefPath(CompanyKey)
+    .doc(CompanyUserAccessibilityKey)
+    .delete(),
+);
