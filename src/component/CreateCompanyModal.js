@@ -86,10 +86,6 @@ const CreateCompanyModal = forwardRef((props, ref) => {
           id="company-name"
           placeholder="Name"
         />
-        <Label htmlFor="company-id" style={{ marginTop: '1rem' }}>
-          <b>Company ID</b>
-        </Label>
-        <Input onChange={handleCompanyInputChange} type="text" id="company-id" placeholder="ID" />
         <Label onClick={extend} style={{ marginTop: '1rem', color: 'grey' }} hidden={isExtend}>
           <b>+ Add Additional Detail</b>
         </Label>

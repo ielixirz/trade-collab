@@ -415,14 +415,6 @@ const CompanyPanel = (props) => {
               />
             </Row>
             <Row>
-              <p className="profile-email">
-                <em>
-                  ID:
-                  {company.CompanyID}
-                </em>
-              </p>
-            </Row>
-            <Row>
               {isEdit ? (
                 <div>
                   <Input
