@@ -106,3 +106,10 @@ export const CreateCompanyUserAccessibility = (CompanyKey, Data) => from(Company
 
 // eslint-disable-next-line max-len
 export const GetCompanyUserAccessibility = CompanyKey => collection(CompanyUserAccessibilityRefPath(CompanyKey));
+
+// eslint-disable-next-line max-len
+export const UpdataCompanyUserAccessibility = (CompanyKey, CompanyUserAccessibilityKey, Data) => from(
+  CompanyUserAccessibilityRefPath(CompanyKey)
+    .doc(CompanyUserAccessibilityKey)
+    .set(Data, { merge: true }),
+);
