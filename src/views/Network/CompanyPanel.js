@@ -289,7 +289,7 @@ const CompanyPanel = (props) => {
 
   const toggleEdit = () => {
     if (isEdit) {
-      UpdateCompany(props.match.params.id, company);
+      UpdateCompany(props.match.params.key, company);
     }
     setIsEdit(!isEdit);
   };
@@ -320,7 +320,7 @@ const CompanyPanel = (props) => {
   };
 
   const changeCompanyPic = (file) => {
-    const companyKey = props.match.params.id;
+    const companyKey = props.match.params.key;
     const editedCompany = company;
     const storageRefPath = `/Company/${companyKey}/${new Date().valueOf()}${file.name}`;
     PutFile(storageRefPath, file).subscribe({
