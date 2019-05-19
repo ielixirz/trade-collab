@@ -1,3 +1,6 @@
+/* eslint-disable react/button-has-type */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable filenames/match-regex */
 import React from 'react';
 import {
@@ -20,31 +23,31 @@ class MemberModal extends React.Component {
     this.state = {
       modal: false,
     };
-
-    this.toggle = this.toggle.bind(this);
   }
 
-  toggle() {
+  toggle = () => {
+    console.log('toggle');
     this.setState(prevState => ({
       modal: !prevState.modal,
     }));
-  }
+  };
+
+  renderCloseButton = () => (
+    <button className="close" onClick={this.toggle}>
+      &times;
+    </button>
+  );
 
   render() {
-    const closeBtn = (
-      <button type="submit" className="close" onClick={this.toggle}>
-        &times;
-      </button>
-    );
-
+    const { count } = this.props;
     return (
       <div>
-        <button type="submit" className="button buttonInvite" onClick={this.toggle}>
+        <Button color="link" onClick={this.toggle}>
           <i style={{ marginRight: '0.5rem' }} className="fa  fa-users fa-lg" />
-          {this.props.buttonLabel}
-        </button>
+          {count}
+        </Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
-          <ModalHeader toggle={this.toggle} close={closeBtn}>
+          <ModalHeader toggle={this.toggle} close={this.renderCloseButton()}>
             <InputGroup>
               <InputGroupAddon addonType="prepend">
                 <Button>

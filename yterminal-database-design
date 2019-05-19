@@ -56,21 +56,34 @@
                         .
                 +ChatRoomMessage
                     >ChatRoomMessageKey
-                        ChatRoomMessageSender (string)
+                        ChatRoomMessageSender (string) (ProlfileKey)
+                        ChatRoomMessageFirstName (string)
+                        ChatRoomMessageSurName (string)
                         ChatRoomMessageContext (string)
                         ChatRoomMessageFileUrl (string) *Optional
                         ChatRoomMessageType (string) ['Text','Emoji','Image']
                         ChatRoomMessageTimestamp (timestamp)
+                        ChatRoomMessageReader (Array<Object>)
+                            [{ ChatRoomMessageReaderProfileKey, ChatRoomMessageReaderFirstName, ChatRoomMessageReaderSurName }]
                 +ChatRoomMember
                     >ChatRoomMemberKey
                         ChatRoomMemberUserKey (string)
                         ChatRoomMemberName (string)
                         ChatRoomMemberEmail (string)
                         ChatRoomMemberName (string)
-                        ChatRoomMemberImageURL (string)
+                        ChatRoomMemberImageUrl (string)
                         ChatRoomMemberRole (string)
                         ChatRoomMemberCompanyName (string)
                         ChatRoomMemberCompanyKey (string)
+                +ChatRoomMessageReader
+                    >ChatRoomMessageKeyList *(Static document name) (Create for util)
+                        ChatRoomMessageKeyList (Array<string>)
+                    >ProfileKey
+                        ChatRoomMessageReaderFirstName (string)
+                        ChatRoomMessageReaderSurName (string)
+                        ChatRoomMessageReaderProfileImageUrl (string)
+                        ChatRoomMessageReaderLastestMessageKey (string)
+
 
         +ShipmentFile
             >FileKey
@@ -98,6 +111,7 @@
                 ProfileName (string) *(Note-Ask)
                 ProfileEmail (string)
                 ProfileProfileImageLink (string) *(Note-Ask)
+                ProfileCreateTimestamp (timestamp)
                 ProfileNotificationToken (Array<string>)
         +UserInvitation (User was recruited)
             >InvitationKey
@@ -126,15 +140,18 @@
                 UserChatRoomReference (reference)
                 UserChatRoomTimestamp (timestamp)
                 UserChatRoomLastestTimestamp (timestamp)
+        +UserCompany
+            >UserCompanyKey
+                UserCompanyReference (reference)
+                UserCompanyTimestamp (timestamp)
+
 
 +UserPersonalize
     >ProfileKey
+        ShipmentPin (Array<string (ShipmentKey)>)
         +ShipmentOrdering
             >ShipmentKey
                 ChatRoomOrdering (Array<string (ChatRoomKey)>)
-        +ShipmentPin
-            >ShipmentKey
-                ShipmentPin (Array<string (ShipmentKey)>)
         +ShipmentReferenceDisplay
             >ShipmentKey
                 ShipmentReferenceSelect (string) [RefOwner]
@@ -180,6 +197,9 @@
                 UserRequestEmail (string)
                 UserRequestNote (string)
                 UserRequestTimestamp (timestamp)
+                UserRequestRoleName (string)
+                UserRequestRolePermissionCode (string)
+                UserRequestPosition (string)
                 UserInvitationStatus (string) ('Reject','Approve','Pending')
         +CompanyUserMatrix
             >CompanyUserMatrixKey

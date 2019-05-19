@@ -176,6 +176,14 @@
   margin-top: 0.5rem;
 }
 
+tbody > tr {
+  cursor: pointer;
+}
+
+tbody > tr:hover {
+  background-color: #f1f1f1 !important;
+}
+
 /* Profile DataTable */
 
 .table.profile-table {
@@ -264,4 +272,47 @@ tbody tr {
 
 .table.company-table > tbody > tr > td {
   border: none;
+}
+
+/* Company Invite DataTable */
+.company-invite-table > thead > tr > th {
+  color: #9b9b9b;
+  border-color: #f4f4f4;
+  border-width: thin;
+  border-bottom: 1;
+  border-top: none;
+  font-size: small;
+}
+
+.company-invite-table > tbody > tr {
+  background-color: white;
+  font-size: medium;
+}
+
+.company-invite-table > tbody > tr > td {
+  border: none;
+}
+
+/* Modal Component */
+
+.search-company-selection {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  border: 0.5px solid transparent; /* <- here */
+  border-width: 3px;
+  transition: border 0.2s;
+  text-decoration: none; /* I added this for clarity of effect */
+  margin-left: 1px;
+  margin-right: 1px;
+}
+
+.search-company-selection:hover {
+  border: 0.5px solid #16a085;
+  border-width: 3px;
+}
+
+.search-company-selection.active {
+  border: 0.5px solid #16a085;
+  border-width: 3px;
 }

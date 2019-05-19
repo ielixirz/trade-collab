@@ -19,10 +19,7 @@ import {
 } from './Base';
 
 import {
-  ButtonDropdowns,
-  ButtonGroups,
-  Buttons,
-  BrandButtons,
+  ButtonDropdowns, ButtonGroups, Buttons, BrandButtons,
 } from './Buttons';
 import Charts from './Charts';
 import Dashboard from './Dashboard';
@@ -31,7 +28,7 @@ import {
 } from './Icons';
 import { Alerts, Badges, Modals } from './Notifications';
 import {
-  Login, Page404, Page500, Register,
+  Login, Page404, Page500, Register, ForgotPass,
 } from './Pages';
 import { Colors, Typography } from './Theme';
 import Widgets from './Widgets';
@@ -43,6 +40,7 @@ export {
   CoreUIIcons,
   Page404,
   Page500,
+  ForgotPass,
   Register,
   Login,
   Modals,

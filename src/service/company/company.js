@@ -1,10 +1,19 @@
 import { collection, doc } from 'rxfire/firestore';
-import { from } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { from, combineLatest } from 'rxjs';
+import {
+  take, map, switchMap, tap, concatMap,
+} from 'rxjs/operators';
 
 import { FirebaseApp } from '../firebase';
 
+import { CreateUserCompany } from '../user/user';
+
 const CompanyRefPath = () => FirebaseApp.firestore().collection('Company');
+
+const CompanyMemberRefPath = CompanyKey => FirebaseApp.firestore()
+  .collection('Company')
+  .doc(CompanyKey)
+  .collection('CompanyMember');
 
 /* Example CreateCompany
     {
@@ -29,7 +38,7 @@ export const UpdateCompany = (CompanyKey, Data) => from(
 
 export const GetCompanyDetail = CompanyKey => doc(CompanyRefPath().doc(CompanyKey));
 
-export const CheckAvaliableCompanyID = CompanyID => collection(CompanyRefPath().where('CompanyID', '==', CompanyID)).pipe(take(1));
+export const CheckAvaliableCompanyName = CompanyName => collection(CompanyRefPath().where('CompanyName', '==', CompanyName)).pipe(take(1));
 
 export const SetCompanyID = (CompanyKey, CompanyID) => from(
   CompanyRefPath()
@@ -41,4 +50,41 @@ export const SetCompanyImageLink = (CompanyKey, CompanyImageLink) => from(
   CompanyRefPath()
     .doc(CompanyKey)
     .set({ CompanyImageLink }, { merge: true }),
+);
+
+// eslint-disable-next-line max-len
+export const IsCompanyMember = (CompanyKey, UserKey) => doc(CompanyMemberRefPath(CompanyKey).doc(UserKey)).pipe(
+  take(1),
+  map(Result => !!Result.data()),
+);
+
+export const GetCompanyMember = CompanyKey => collection(CompanyMemberRefPath(CompanyKey));
+
+export const UpdateCompanyMember = (CompanyKey, UserInfoKey, Data) => from(
+  CompanyMemberRefPath(CompanyKey)
+    .doc(UserInfoKey)
+    .update(Data),
+);
+
+export const CreateCompanyMember = (CompanyKey, UserInfoKey, CompanyMemberData) => from(
+  CompanyMemberRefPath(CompanyKey)
+    .doc(UserInfoKey)
+    .set(CompanyMemberData),
+);
+
+export const CombineCreateCompanyWithCreateCompanyMember = (
+  CompanyData,
+  UserInfoKey,
+  CompanyMemberData,
+) => CreateCompany(CompanyData).pipe(
+  map(CompanyDocData => CompanyDocData.id),
+  concatMap(CompanyID => combineLatest(
+    CreateCompanyMember(CompanyID, UserInfoKey, CompanyMemberData),
+    CreateUserCompany(UserInfoKey, {
+      UserCompanyReference: FirebaseApp.firestore()
+        .collection('Company')
+        .doc(CompanyID),
+      UserCompanyTimestamp: new Date(),
+    }),
+  )),
 );

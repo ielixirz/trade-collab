@@ -1,12 +1,19 @@
-import { FETCH_CHAT, TYPING_TEXT, moveTab, FETCH_CHAT_ROOMS } from '../constants/constants';
-
+import {
+  FETCH_CHAT,
+  TYPING_TEXT,
+  moveTab,
+  FETCH_CHAT_ROOMS,
+  SEND_MESSAGE
+} from '../constants/constants';
+import _ from 'lodash';
 const ShipmentKey = 'HDTPONlnceJeG5yAA1Zy';
 const ChatRoomKey = 'lvCb608c7PusGqptBsq0';
 
 const INITIAL_STATE = {
   text: '',
   chatrooms: {},
-  chatroomsMsg: {}
+  chatroomsMsg: {},
+  msg: {}
 };
 export default (state = INITIAL_STATE, action) => {
   console.log(action);
@@ -22,7 +29,7 @@ export default (state = INITIAL_STATE, action) => {
         chatroomsMsg: {
           ...state.chatroomsMsg,
           [action.id]: {
-            chatMsg: action.payload
+            chatMsg: _.reverse(action.payload)
           }
         }
       };
@@ -37,6 +44,13 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         chatrooms: {
+          ...action.payload
+        }
+      };
+    case SEND_MESSAGE:
+      return {
+        ...state,
+        msg: {
           ...action.payload
         }
       };

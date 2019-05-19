@@ -3,7 +3,8 @@ import {
   FETCH_CHAT,
   moveTab as MOVE_TAB,
   TYPING_TEXT,
-  FETCH_CHAT_ROOMS
+  FETCH_CHAT_ROOMS,
+  SEND_MESSAGE
 } from '../constants/constants';
 import { GetChatMessage, CreateChatMessage, GetChatRoomList } from '../service/chat/chat';
 
@@ -15,9 +16,17 @@ export const typing = data => dispatch => {
     text
   });
 };
+
 let chatroom = {};
+let chatMessage = null;
 
 export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getState) => {
+  const { profileReducer } = getState();
+
+  let sender = _.find(
+    profileReducer.ProfileList,
+    item => item.id === profileReducer.ProfileDetail.id
+  );
   let room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}`, false);
   if (room) {
     room.unsubscribe();
@@ -27,6 +36,12 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
     `${ShipmentKey}.${ChatRoomKey}`,
     GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
       next: res => {
+        console.log(res);
+        // if (res.length > 0 && res[0].ChatRoomMessageSenderKey !== sender.id) {
+        //   const audio = new Audio('/unconvinced.ogg');
+        //   audio.play();
+        // }
+
         dispatch({
           type: FETCH_CHAT,
           id: ChatRoomKey,
@@ -141,18 +156,74 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getSta
   //   ChatRoomMessageType : "Text",
   //   ChatRoomMessageTimestamp : new Date()
   // }
-  console.log(getState().authReducer);
+  const { authReducer, profileReducer } = getState();
   // eslint-disable-next-line prefer-destructuring
-  const user = getState().authReducer.user;
-  console.log(user);
+  const user = authReducer.user;
+
+  let sender = _.find(
+    profileReducer.ProfileList,
+    item => item.id === profileReducer.ProfileDetail.id
+  );
+
   if (_.get(user, 'uid', false)) {
     const msg = {
-      ChatRoomMessageSender: _.get(user, 'email', 0),
+      ChatRoomMessageSender: sender.ProfileFirstname,
+      ChatRoomMessageSenderKey: sender.id,
       ChatRoomMessageContext: text,
       ChatRoomMessageType: 'Text',
       ChatRoomMessageTimestamp: new Date()
     };
-    CreateChatMessage(ShipmentKey, ChatRoomKey, msg);
+    dispatch({
+      type: SEND_MESSAGE,
+      payload: { ...msg, isSending: true, isSuccess: false }
+    });
+    if (text === 'test error') {
+      dispatch({
+        type: SEND_MESSAGE,
+        payload: { ...msg, isSending: true, isSuccess: false }
+      });
+      _.delay(() => {
+        dispatch({
+          type: SEND_MESSAGE,
+          payload: {
+            ...msg,
+            isSending: false,
+            isSuccess: false,
+            ShipmentKey: ShipmentKey,
+            ChatRoomKey: ChatRoomKey
+          }
+        });
+      }, 1000);
+    } else {
+      _.delay(() => {
+        dispatch({
+          type: SEND_MESSAGE,
+          payload: {}
+        });
+
+        chatMessage = CreateChatMessage(ShipmentKey, ChatRoomKey, msg).subscribe({
+          next: res => {
+            console.log(res);
+          },
+          error: err => {
+            dispatch({
+              type: SEND_MESSAGE,
+              payload: {
+                ...msg,
+                isSending: false,
+                isSuccess: false,
+                ShipmentKey: ShipmentKey,
+                ChatRoomKey: ChatRoomKey
+              }
+            });
+            console.log(err);
+            alert(err.message);
+          },
+          complete: () => {}
+        });
+      }, 1000);
+    }
+
     dispatch({
       type: TYPING_TEXT,
       text: ''

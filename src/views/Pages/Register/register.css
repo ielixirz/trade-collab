@@ -1,0 +1,72 @@
+.button {
+  background-color: #4caf50; /* Green */
+  border: none;
+  color: #16a085;
+  border-radius: 5px;
+  padding: 4px 60px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 2px 18px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+.button1 {
+  background-color: #16a085;
+  color: #16a085;
+  border: 2px solid #16a085;
+}
+
+.button1:hover {
+  background-color: rgb(57, 212, 181);
+  color: black;
+}
+
+input[type='text'],
+select {
+  width: 100%;
+  padding: 12px 20px;
+  padding-left: 8px;
+  margin: 15px 2px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: black;
+}
+
+input[type='text']:focus {
+  background-color: rgb(235, 247, 244);
+}
+
+input[type='password'],
+select {
+  width: 100%;
+  padding: 12px 20px;
+  padding-left: 8px;
+  margin: 15px 2px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: black;
+}
+
+input[type='password']:focus {
+  background-color: rgb(235, 247, 244);
+}
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  width: 100%;
+  border-radius: 5px;
+}
+
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}

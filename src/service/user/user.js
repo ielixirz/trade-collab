@@ -1,10 +1,17 @@
 import { collection, doc } from 'rxfire/firestore';
-import { from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { from, combineLatest } from 'rxjs';
+import {
+  map, concatMap, tap, mergeMap, toArray, take, concatAll,
+} from 'rxjs/operators';
 
 import { FirebaseApp } from '../firebase';
 
 const UserInfoRefPath = () => FirebaseApp.firestore().collection('UserInfo');
+
+const UserCompanyRefPath = UserInfoKey => FirebaseApp.firestore()
+  .collection('UserInfo')
+  .doc(UserInfoKey)
+  .collection('UserCompany');
 
 /*
     {
@@ -38,10 +45,36 @@ export const GetUserInfoFromEmail = Email => collection(UserInfoRefPath().where(
 
 export const GetUserInfoFromUsername = Username => collection(UserInfoRefPath().where('UserInfoUsername', '==', Username));
 
-export const GetUserInfoUsername = UserInfoKey => doc(
-  UserInfoRefPath().doc(UserInfoKey),
-).pipe(map(User => User.UserInfoUsername));
+// eslint-disable-next-line max-len
+export const GetUserInfoUsername = UserInfoKey => doc(UserInfoRefPath().doc(UserInfoKey)).pipe(map(User => User.UserInfoUsername));
 
-export const GetUserInfoUserInfoNotificationToken = UserInfoKey => doc(
-  UserInfoRefPath().doc(UserInfoKey),
-).pipe(map(User => User.UserInfoNotificationToken));
+// eslint-disable-next-line max-len
+export const GetUserInfoUserInfoNotificationToken = UserInfoKey => doc(UserInfoRefPath().doc(UserInfoKey)).pipe(map(User => User.UserInfoNotificationToken));
+
+export const GetUserCompany = (UserInfoKey) => {
+  const UserCompany = collection(
+    UserCompanyRefPath(UserInfoKey).orderBy('UserCompanyReference', 'desc'),
+  ).pipe(
+    map(UserCompanyList => UserCompanyList.map(UserCompanyItem => UserCompanyItem.data().UserCompanyReference)),
+    take(1),
+  );
+
+  return combineLatest(UserCompany).pipe(
+    concatMap(UserCompanyItem => combineLatest(UserCompanyItem)),
+    concatMap(Item => Item),
+    tap(a => console.log(a.collection('CompanyMember').doc(UserInfoKey).path)),
+    concatMap(UserCompanyItem => combineLatest(
+      doc(UserCompanyItem).pipe(take(1)),
+      doc(UserCompanyItem.collection('CompanyMember').doc(UserInfoKey)).pipe(take(1)),
+    )),
+    map((CompanyData) => {
+      const data = { ...CompanyData[0].data(), ...CompanyData[1].data() };
+      data.CompanyKey = CompanyData[0].id;
+      return data;
+    }),
+    toArray(),
+  );
+};
+
+// eslint-disable-next-line max-len
+export const CreateUserCompany = (UserInfoKey, Data) => from(UserCompanyRefPath(UserInfoKey).add(Data));

@@ -1,11 +1,13 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable filenames/match-regex */
 /* eslint react/no-multi-comp: 0, react/prop-types: 0 */
+/* global $ */
 import React from 'react';
 import { Popover, PopoverBody } from 'reactstrap';
-import { EditShipment } from '../../service/shipment/shipment';
+import { AddShipmentPin, DeleteShipmentPin } from '../../service/personalize/personalize';
 
 export class AlertShipment extends React.Component {
   constructor(props) {
@@ -23,48 +25,78 @@ export class AlertShipment extends React.Component {
     });
   }
 
+  onDeleteShipmentPin = () => {
+    this.setState({ popoverOpen: false }, () => {
+      DeleteShipmentPin(this.props.profileKey, this.props.item.ShipmentID).subscribe({
+        next: (result) => {
+          console.log('unpin success', result);
+        },
+        complete: () => {
+          this.props.fetchPinned();
+        },
+        error: (err) => {
+          console.log('err', err);
+        },
+      });
+    });
+  };
+
+  onAddShipmentPin = () => {
+    this.setState({ popoverOpen: false }, () => {
+      AddShipmentPin(this.props.profileKey, this.props.item.ShipmentID).subscribe({
+        next: (result) => {
+          console.log('success', result);
+        },
+        complete: () => {
+          this.props.fetchPinned();
+        },
+        error: (err) => {
+          console.log('err', err);
+        },
+      });
+    });
+  };
+
   renderUnpin = () => (
-    <span
-      onClick={() => {
-        EditShipment(this.props.item.uid, {
-          Pin: false,
-        });
-      }}
-    >
-      <p>unPin</p>
-    </span>
+    <div onClick={this.onDeleteShipmentPin} style={{ cursor: 'pointer' }}>
+      unPin
+    </div>
   );
 
   renderPin = () => (
-    <span
-      onClick={() => {
-        EditShipment(this.props.item.uid, {
-          Pin: true,
-        });
-      }}
-    >
-      <p>Pin</p>
-    </span>
+    <div onClick={this.onAddShipmentPin} style={{ cursor: 'pointer' }}>
+      Pin
+    </div>
   );
 
   render() {
     return (
-      <div>
-        <span id={`alertover-${this.props.id}`} style={{ width: '10px' }}>
+      <div className="alert-container">
+        <div id={`alertover-${this.props.item.ShipmentID}`} onClick={this.toggle}>
           <i className="fa fa-ellipsis-v" />
-        </span>
-        <Popover
+        </div>
+        {this.state.popoverOpen ? (
+          <div className="alert-popover">
+            {this.props.item.PIN ? this.renderUnpin() : this.renderPin()}
+            <br />
+            <p>Replicate Shipment</p>
+          </div>
+        ) : null}
+        {/* <Popover
           placement="bottom"
+          target={`alertover-${this.props.item.ShipmentID}`}
+          innerRef={(node) => {
+            this.popperNode = node;
+          }}
           isOpen={this.state.popoverOpen}
-          target={`alertover-${this.props.id}`}
           toggle={this.toggle}
         >
           <PopoverBody>
-            {this.props.item.pin ? this.renderUnpin() : this.renderPin()}
+            {this.props.item.PIN ? this.renderUnpin() : this.renderPin()}
             <br />
             <p>Replicate Shipment</p>
           </PopoverBody>
-        </Popover>
+        </Popover> */}
       </div>
     );
   }
