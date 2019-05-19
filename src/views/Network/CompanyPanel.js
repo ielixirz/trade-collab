@@ -133,6 +133,7 @@ const CompanyPanel = (props) => {
 
   const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
+  const inviteInput = useRef(null);
 
   const handleInputPositionChange = (event, key) => {
     const temp = updatePosition;
@@ -347,10 +348,14 @@ const CompanyPanel = (props) => {
     });
   };
 
+  const clearInviteInput = () => {
+    inviteInput.current.handleClear();
+  };
+
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <div className="company-container">
-        <InviteToCompanyModal ref={inviteToCompanyModalRef} />
+        <InviteToCompanyModal ref={inviteToCompanyModalRef} clearInput={clearInviteInput} />
         <input
           type="file"
           id="file"
@@ -457,6 +462,7 @@ const CompanyPanel = (props) => {
                   getValue={handleInviteInputChange}
                   placeholder="Enter email..."
                   className="company-invitation-select"
+                  ref={inviteInput}
                 />
                 <Button
                   className="company-invite-btn"
