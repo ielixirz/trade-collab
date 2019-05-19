@@ -201,10 +201,10 @@
                 UserRequestRolePermissionCode (string)
                 UserRequestPosition (string)
                 UserInvitationStatus (string) ('Reject','Approve','Pending')
-        +CompanyUserMatrix
-            >CompanyUserMatrixKey
-                CompanyUserMatrixRoleName (string)
-                CompanyUserMatrixRolePermissionCode (string)
+        +CompanyUserAccessibility
+            >CompanyUserAccessibilityKey
+                CompanyUserAccessibilityRoleName (string)
+                CompanyUserAccessibilityRolePermissionCode (string)
 
 +MasterShipmentData *(This collection is static value)
     >Shipper
