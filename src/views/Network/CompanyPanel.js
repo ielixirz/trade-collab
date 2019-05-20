@@ -2,7 +2,7 @@
 /* eslint-disable filenames/match-regex */
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
-import { combineLatest } from 'rxjs';
+import { combineLatest, zip } from 'rxjs';
 import { map } from 'rxjs/operators';
 import _ from 'lodash';
 
@@ -32,6 +32,8 @@ import {
   UpdateUserRequestStatus,
   UpdateCompanyRequestStatus,
 } from '../../service/join/request';
+
+import { GetCompanyInvitation } from '../../service/join/invite';
 
 import {
   PutFile,
@@ -158,56 +160,73 @@ const CompanyPanel = (props) => {
   };
 
   const fetchMember = (companyKey) => {
-    GetCompanyMember(companyKey)
-      .pipe(
+    combineLatest([
+      GetCompanyInvitation(companyKey).pipe(
         map(docs => docs.map((d) => {
           const data = d.data();
           data.key = d.id;
           return data;
         })),
-      )
-      .subscribe((data) => {
-        const members = [];
-        const profileObs = [];
-        _.forEach(data, (member) => {
-          members.push({
-            name: '-',
-            email: member.UserMemberEmail,
-            position: (
-              <TurnAbleTextLabel
-                text={member.UserMemberPosition}
-                turnType="input"
-                data={{
-                  onChangeFn: null,
-                  onKeyPressFn: event => updateMember(companyKey, member.key, {
-                    UserMemberPosition: event.target.value,
-                  }),
-                }}
-              />
-            ),
-            role: (
-              <TurnAbleTextLabel
-                text={member.UserMemberRoleName}
-                turnType="dropdown"
-                data={{
-                  options: mockRoleList,
-                  onChangeFn: input => updateMember(companyKey, member.key, { UserMemberRoleName: input.value.role }),
-                }}
-              />
-            ),
-            status: renderMemberStatus(member.UserMemberCompanyStandingStatus),
-          });
-          profileObs.push(
-            GetProlfileList(member.key).pipe(map(docs2 => docs2.map(d2 => d2.data()))),
-          );
+      ),
+      GetCompanyMember(companyKey).pipe(
+        map(docs => docs.map((d) => {
+          const data = d.data();
+          data.key = d.id;
+          return data;
+        })),
+      ),
+    ]).subscribe((data) => {
+      const members = [];
+      const invited = [];
+      const profileObs = [];
+      _.forEach(data[1], (member) => {
+        members.push({
+          name: '-',
+          email: member.UserMemberEmail,
+          position: (
+            <TurnAbleTextLabel
+              text={member.UserMemberPosition}
+              turnType="input"
+              data={{
+                onChangeFn: null,
+                onKeyPressFn: event => updateMember(companyKey, member.key, {
+                  UserMemberPosition: event.target.value,
+                }),
+              }}
+            />
+          ),
+          role: (
+            <TurnAbleTextLabel
+              text={member.UserMemberRoleName}
+              turnType="dropdown"
+              data={{
+                options: mockRoleList,
+                onChangeFn: input => updateMember(companyKey, member.key, { UserMemberRoleName: input.value.role }),
+              }}
+            />
+          ),
+          status: renderMemberStatus(member.UserMemberCompanyStandingStatus),
         });
-        combineLatest(profileObs).subscribe((users) => {
-          _.forEach(users, (profile, index) => {
-            members[index].name = `${profile[0].ProfileFirstname} ${profile[0].ProfileSurname}`;
-          });
-          setMemberList(members);
-        });
+        profileObs.push(GetProlfileList(member.key).pipe(map(docs2 => docs2.map(d2 => d2.data()))));
       });
+      _.forEach(data[0], (invite) => {
+        if (invite.UserInvitationStatus === 'Pending') {
+          invited.push({
+            name: `${invite.UserInvitationFirstname} ${invite.UserInvitationSurname}`,
+            email: invite.UserInvitationEmail,
+            position: invite.UserInvitationPosition,
+            role: invite.UserInvitationRole,
+            status: renderMemberStatus('Pending'),
+          });
+        }
+      });
+      combineLatest(profileObs).subscribe((users) => {
+        _.forEach(users, (profile, index) => {
+          members[index].name = `${profile[0].ProfileFirstname} ${profile[0].ProfileSurname}`;
+        });
+        setMemberList(members.concat(invited));
+      });
+    });
   };
 
   const responseToRequest = (keys, status) => {
@@ -215,9 +234,9 @@ const CompanyPanel = (props) => {
       keys.cKey,
       keys.rKey,
       status,
-      updateRole[keys.uKey],
+      updateRole[keys.uKey] === undefined ? '-' : updateRole[keys.uKey],
       'rolePermissionCode',
-      updatePosition[keys.uKey],
+      updatePosition[keys.uKey] === undefined ? '-' : updatePosition[keys.uKey],
     );
     UpdateUserRequestStatus(keys.uKey, keys.rKey, status);
     setAcceptedRequest({
@@ -349,6 +368,7 @@ const CompanyPanel = (props) => {
   };
 
   const clearInviteInput = () => {
+    setinvitedEmails([]);
     inviteInput.current.handleClear();
   };
 
