@@ -47,36 +47,8 @@ export const GetMasterDataChatRoom = (ShipmentKey, ChatRoomKey) => {
   const ArrayOfObserable = doc(ChatRoomRefPath(ShipmentKey, ChatRoomKey)).pipe(
     map(ChatRoomData => ChatRoomData.data().ChatRoomShareDataList),
     take(1),
-    // concatMap((collection) => {
-    //   console.log(collection);
-    //   const combined = combineLatest(...collection);
-    //   console.log('Concat', combined);
-    //   return combined;
-    // }),
-    // map((ChatRoomShareDataList) => {
-    //   const ObserableArray = [];
-    //   ChatRoomShareDataList.forEach((ShareDataItem) => {
-    //     ObserableArray.push(GetShipmentMasterDataDetail(ShipmentKey, ShareDataItem));
-    //   });
-    //   return combineLatest(ObserableArray);
-    // }),
-    // tap(a => console.log(a)),
-    // concatMap(ChatRoomShareDataList => ChatRoomShareDataList.map(ShareDataItem => GetShipmentMasterDataDetail(ShipmentKey, ShareDataItem))),
   );
-
-  // const eiei = ArrayOfObserable.pipe(
-  //   map(item => item.map(a => mergeMap(a => GetShipmentMasterDataDetail(ShipmentKey, a)))),
-  // );
-
-  // combineLatest(ArrayOfObserable).subscribe(console.log);
-  // .pipe(
-  //   mergeMap(ChatRoomShareDataItem => GetShipmentMasterDataDetail(ShipmentKey, ChatRoomShareDataItem).pipe(take(1))),
-  //   toArray(),
-  // );
-
-  // Good
-  // ArrayOfObserable.pipe(concatMap(ShareDataItem => ShareDataItem)).subscribe(console.log);
-
+  
   return combineLatest(ArrayOfObserable).pipe(
     concatMap(col => combineLatest(col)),
     concatMap(ShareDataItem => ShareDataItem),
