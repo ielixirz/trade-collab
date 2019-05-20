@@ -12,6 +12,11 @@ const MasterDataRefPath = () => FirebaseApp.firestore().collection('MasterShipme
 
 const ShipmentRefPath = () => FirebaseApp.firestore().collection('Shipment');
 
+const ShipmentShareData = (ShipmentKey, GroupType) => ShipmentRefPath()
+  .doc(ShipmentKey)
+  .collection('ShipmentShareData')
+  .doc(GroupType);
+
 const ChatRoomRefPath = (ShipmentKey, ChatRoomKey) => FirebaseApp.firestore()
   .collection('Shipment')
   .doc(ShipmentKey)
@@ -47,35 +52,7 @@ export const GetMasterDataChatRoom = (ShipmentKey, ChatRoomKey) => {
   const ArrayOfObserable = doc(ChatRoomRefPath(ShipmentKey, ChatRoomKey)).pipe(
     map(ChatRoomData => ChatRoomData.data().ChatRoomShareDataList),
     take(1),
-    // concatMap((collection) => {
-    //   console.log(collection);
-    //   const combined = combineLatest(...collection);
-    //   console.log('Concat', combined);
-    //   return combined;
-    // }),
-    // map((ChatRoomShareDataList) => {
-    //   const ObserableArray = [];
-    //   ChatRoomShareDataList.forEach((ShareDataItem) => {
-    //     ObserableArray.push(GetShipmentMasterDataDetail(ShipmentKey, ShareDataItem));
-    //   });
-    //   return combineLatest(ObserableArray);
-    // }),
-    // tap(a => console.log(a)),
-    // concatMap(ChatRoomShareDataList => ChatRoomShareDataList.map(ShareDataItem => GetShipmentMasterDataDetail(ShipmentKey, ShareDataItem))),
   );
-
-  // const eiei = ArrayOfObserable.pipe(
-  //   map(item => item.map(a => mergeMap(a => GetShipmentMasterDataDetail(ShipmentKey, a)))),
-  // );
-
-  // combineLatest(ArrayOfObserable).subscribe(console.log);
-  // .pipe(
-  //   mergeMap(ChatRoomShareDataItem => GetShipmentMasterDataDetail(ShipmentKey, ChatRoomShareDataItem).pipe(take(1))),
-  //   toArray(),
-  // );
-
-  // Good
-  // ArrayOfObserable.pipe(concatMap(ShareDataItem => ShareDataItem)).subscribe(console.log);
 
   return combineLatest(ArrayOfObserable).pipe(
     concatMap(col => combineLatest(col)),
@@ -101,3 +78,6 @@ export const GetPrivateMasterDataChatRoom = (ShipmentKey, ChatRoomKey) => {
     toArray(),
   );
 };
+
+// eslint-disable-next-line max-len
+export const UpdateMasterData = (ShipmentKey, GroupType, Data) => from(ShipmentShareData(ShipmentKey, GroupType).set(Data, { merge: true }));
