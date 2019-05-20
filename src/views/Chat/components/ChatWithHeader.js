@@ -19,7 +19,14 @@ class ChatWithHeader extends Component {
     let objDiv = document.getElementById('chathistory');
     objDiv.scrollTop = objDiv.scrollHeight;
   }
-
+  UpdateReader(ShipmentKey, ChatRoomKey, sender, data) {
+    let refresh = _.debounce(() => {
+      console.log('Updating');
+      console.log(ShipmentKey, ChatRoomKey, sender, data);
+      UpdateChatRoomMessageReader(ShipmentKey, ChatRoomKey, sender, data);
+    }, 5000);
+    refresh();
+  }
   render() {
     const {
       user,
@@ -45,7 +52,7 @@ class ChatWithHeader extends Component {
       onDragLeave,
       onFileDrop
     } = this.props;
-
+    let lastkey = '';
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
         <Row
@@ -75,17 +82,19 @@ class ChatWithHeader extends Component {
               onDrop={event => onFileDrop(event, ShipmentKey, ChatRoomKey)}
               onMouseEnter={() => {
                 if (chatMsg.length > 0) {
-                  console.log('Updating');
-                  UpdateChatRoomMessageReader(ShipmentKey, ChatRoomKey, sender.id, {
-                    ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
-                    ChatRoomMessageReaderSurName: sender.ProfileSurname,
-                    ChatRoomMessageReaderProfileImageUrl: _.get(
-                      sender,
-                      'UserInfoProfileImageLink',
-                      ''
-                    ),
-                    ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
-                  });
+                  if (chatMsg[chatMsg.length - 1].id !== lastkey) {
+                    this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
+                      ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
+                      ChatRoomMessageReaderSurName: sender.ProfileSurname,
+                      ChatRoomMessageReaderProfileImageUrl: _.get(
+                        sender,
+                        'UserInfoProfileImageLink',
+                        ''
+                      ),
+                      ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+                    });
+                  }
+                  lastkey = chatMsg[chatMsg.length - 1].id;
                 }
               }}
             >
@@ -152,19 +161,20 @@ class ChatWithHeader extends Component {
                     placeholder="type...."
                     value={text}
                     onMouseEnter={() => {
-                      console.log('Updating');
                       if (chatMsg.length > 0) {
-                        console.log('Updating');
-                        UpdateChatRoomMessageReader(ShipmentKey, ChatRoomKey, sender.id, {
-                          ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
-                          ChatRoomMessageReaderSurName: sender.ProfileSurname,
-                          ChatRoomMessageReaderProfileImageUrl: _.get(
-                            sender,
-                            'UserInfoProfileImageLink',
-                            ''
-                          ),
-                          ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
-                        });
+                        if (chatMsg[chatMsg.length - 1].id !== lastkey) {
+                          this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
+                            ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
+                            ChatRoomMessageReaderSurName: sender.ProfileSurname,
+                            ChatRoomMessageReaderProfileImageUrl: _.get(
+                              sender,
+                              'UserInfoProfileImageLink',
+                              ''
+                            ),
+                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+                          });
+                        }
+                        lastkey = chatMsg[chatMsg.length - 1].id;
                       }
                     }}
                     onChange={e => {
@@ -185,17 +195,19 @@ class ChatWithHeader extends Component {
                       // UserInfoProfileImageLink
 
                       if (chatMsg.length > 0) {
-                        console.log('Updating');
-                        UpdateChatRoomMessageReader(ShipmentKey, ChatRoomKey, sender.id, {
-                          ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
-                          ChatRoomMessageReaderSurName: sender.ProfileSurname,
-                          ChatRoomMessageReaderProfileImageUrl: _.get(
-                            sender,
-                            'UserInfoProfileImageLink',
-                            ''
-                          ),
-                          ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
-                        });
+                        if (chatMsg[chatMsg.length - 1].id !== lastkey) {
+                          this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
+                            ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
+                            ChatRoomMessageReaderSurName: sender.ProfileSurname,
+                            ChatRoomMessageReaderProfileImageUrl: _.get(
+                              sender,
+                              'UserInfoProfileImageLink',
+                              ''
+                            ),
+                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+                          });
+                        }
+                        lastkey = chatMsg[chatMsg.length - 1].id;
                       }
                       typing(e);
                     }}
