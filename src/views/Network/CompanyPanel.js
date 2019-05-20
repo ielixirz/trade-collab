@@ -349,6 +349,7 @@ const CompanyPanel = (props) => {
   };
 
   const clearInviteInput = () => {
+    setinvitedEmails([]);
     inviteInput.current.handleClear();
   };
 
