@@ -43,3 +43,28 @@
   font-size: medium;
   color: #16a085;
 }
+
+.master-detail-col-panel {
+  padding: 0;
+}
+
+.master-detail-col-panel.first {
+  padding-left: 13px;
+}
+
+.master-detail-col-panel.line {
+  padding-left: 0px;
+  padding-right: 20px;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.master-detail-panel-connect-line.inner {
+  color: green;
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 28px;
+  border-left: 2px dashed;
+}

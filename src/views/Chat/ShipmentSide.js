@@ -11,7 +11,7 @@ import ShipmentList from '../../component/ShipmentList';
 
 const styles = {
   button: {},
-  boxColor: { fontSize: 20, color: '#58CADB', marginRight: 7 },
+  boxColor: { fontSize: 20, color: '#367FEE', marginRight: 7 },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -23,7 +23,7 @@ const styles = {
     color: '#707070',
   },
   status: {
-    color: '#58CADB',
+    color: '#367FEE',
   },
   card: {
     marginBottom: '0.2rem',
@@ -66,7 +66,7 @@ class ShipmentSide extends Component {
             <Row>
               <Col xs="10" className="text-left">
                 <span style={styles.boxColor}>
-                  <i className="fa fa-archive" />
+                  <i className="fa fa-cube" />
                 </span>
                 <span style={styles.title}>
                   Shipment Update :
