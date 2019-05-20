@@ -16,6 +16,7 @@ import MainDataTable from '../../component/MainDataTable';
 import MultiSelectTextInput from '../../component/MultiSelectTextInput';
 import InviteToCompanyModal from '../../component/InviteToCompanyModal';
 import TurnAbleTextLabel from '../../component/TurnAbleTextLabel';
+import ThreeDotDropdown from '../../component/ThreeDotDropdown';
 
 import { incomingRequestColumns, memberDataColumns } from '../../constants/network';
 import {
@@ -196,6 +197,24 @@ const CompanyPanel = (props) => {
               />
             ),
             status: renderMemberStatus(member.UserMemberCompanyStandingStatus),
+            button: (
+              <ThreeDotDropdown
+                options={[
+                  {
+                    text: 'Deactivate',
+                    function: () => updateMember(companyKey, member.key, {
+                      UserMemberCompanyStandingStatus: 'Deactivated',
+                    }),
+                  },
+                  {
+                    text: 'Activate',
+                    function: () => updateMember(companyKey, member.key, {
+                      UserMemberCompanyStandingStatus: 'Active',
+                    }),
+                  },
+                ]}
+              />
+            ),
           });
           profileObs.push(
             GetProlfileList(member.key).pipe(map(docs2 => docs2.map(d2 => d2.data()))),
