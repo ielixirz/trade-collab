@@ -12,6 +12,11 @@ const MasterDataRefPath = () => FirebaseApp.firestore().collection('MasterShipme
 
 const ShipmentRefPath = () => FirebaseApp.firestore().collection('Shipment');
 
+const ShipmentShareData = (ShipmentKey, GroupType) => ShipmentRefPath()
+  .doc(ShipmentKey)
+  .collection('ShipmentShareData')
+  .doc(GroupType);
+
 const ChatRoomRefPath = (ShipmentKey, ChatRoomKey) => FirebaseApp.firestore()
   .collection('Shipment')
   .doc(ShipmentKey)
@@ -48,7 +53,7 @@ export const GetMasterDataChatRoom = (ShipmentKey, ChatRoomKey) => {
     map(ChatRoomData => ChatRoomData.data().ChatRoomShareDataList),
     take(1),
   );
-  
+
   return combineLatest(ArrayOfObserable).pipe(
     concatMap(col => combineLatest(col)),
     concatMap(ShareDataItem => ShareDataItem),
@@ -73,3 +78,6 @@ export const GetPrivateMasterDataChatRoom = (ShipmentKey, ChatRoomKey) => {
     toArray(),
   );
 };
+
+// eslint-disable-next-line max-len
+export const UpdateMasterData = (ShipmentKey, GroupType, Data) => from(ShipmentShareData(ShipmentKey, GroupType).set(Data, { merge: true }));
