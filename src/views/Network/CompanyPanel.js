@@ -215,9 +215,9 @@ const CompanyPanel = (props) => {
       keys.cKey,
       keys.rKey,
       status,
-      updateRole[keys.uKey],
+      updateRole[keys.uKey] === undefined ? '-' : updateRole[keys.uKey],
       'rolePermissionCode',
-      updatePosition[keys.uKey],
+      updatePosition[keys.uKey] === undefined ? '-' : updatePosition[keys.uKey],
     );
     UpdateUserRequestStatus(keys.uKey, keys.rKey, status);
     setAcceptedRequest({
