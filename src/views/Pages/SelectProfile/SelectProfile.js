@@ -89,7 +89,7 @@ class SelectProfile extends Component {
                         <b>Add New User</b>
                       </p>
                     </NewProfileModal>
-                    <p style={{ color: '#16a085' }}>
+                    <p style={{ color: '#262626' }}>
                       You can have multiple users using the same e-mail address
                     </p>
                   </div>
