@@ -160,7 +160,7 @@ const CompanyPanel = (props) => {
   };
 
   const fetchMember = (companyKey) => {
-    zip(
+    combineLatest([
       GetCompanyInvitation(companyKey).pipe(
         map(docs => docs.map((d) => {
           const data = d.data();
@@ -175,11 +175,11 @@ const CompanyPanel = (props) => {
           return data;
         })),
       ),
-    ).subscribe(([invites, data]) => {
+    ]).subscribe((data) => {
       const members = [];
       const invited = [];
       const profileObs = [];
-      _.forEach(data, (member) => {
+      _.forEach(data[1], (member) => {
         members.push({
           name: '-',
           email: member.UserMemberEmail,
@@ -209,7 +209,7 @@ const CompanyPanel = (props) => {
         });
         profileObs.push(GetProlfileList(member.key).pipe(map(docs2 => docs2.map(d2 => d2.data()))));
       });
-      _.forEach(invites, (invite) => {
+      _.forEach(data[0], (invite) => {
         if (invite.UserInvitationStatus === 'Pending') {
           invited.push({
             name: `${invite.UserInvitationFirstname} ${invite.UserInvitationSurname}`,
