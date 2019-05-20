@@ -587,7 +587,16 @@ class TableShipment extends React.Component {
                 </Button>
               </Col>
             </Row>
-            <div className="table">
+            <div
+              className="table"
+              onScroll={e => {
+                const obj = e.target;
+                const isTrigger = obj.scrollTop === obj.scrollHeight - obj.offsetHeight;
+                if (isTrigger) {
+                  this.props.fetchMoreShipments();
+                }
+              }}
+            >
               <BootstrapTable
                 id="tableshipment"
                 {...props.baseProps}
