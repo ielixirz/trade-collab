@@ -602,19 +602,7 @@ class Shipment extends Component {
             </Button>
           </Col>
         </Nav>
-        <TabContent
-          activeTab={this.state.activeTab}
-          id="content"
-          className="boo"
-          onScroll={e => {
-            console.log(e);
-            const obj = document.getElementById('content');
-            const isTrigger = obj.scrollTop === obj.scrollHeight - obj.offsetHeight;
-            if (isTrigger) {
-              this.props.fetchMoreShipments();
-            }
-          }}
-        >
+        <TabContent activeTab={this.state.activeTab} id="content" className="boo">
           <TabPane tabId="1">
             <Row>
               <Col sm="12">
