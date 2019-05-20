@@ -232,3 +232,20 @@ exports.AutoCreateMasterDataDefaultTemplate = functions.firestore
       return error;
     }
   });
+
+exports.AddChatRoomShareDataList = functions.firestore
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}')
+  .onCreate(async (snapshot, context) => {
+    return admin
+      .firestore()
+      .collection('Shipment')
+      .doc(context.params.ShipmentKey)
+      .collection('ChatRoom')
+      .doc(context.params.ChatRoomKey)
+      .set(
+        {
+          ChatRoomShareDataList: admin.firestore.FieldValue.arrayUnion('DefaultTemplate')
+        },
+        { merge: true }
+      );
+  });
