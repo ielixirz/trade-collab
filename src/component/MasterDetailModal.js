@@ -180,6 +180,10 @@ const MasterDetailModal = forwardRef((props, ref) => {
     setETD(date);
   };
 
+  const save = () => {
+    toggle();
+  };
+
   return (
     <Modal isOpen={modal} toggle={toggle} className="master-detail-modal modal-lg">
       <ModalHeader
@@ -249,6 +253,7 @@ const MasterDetailModal = forwardRef((props, ref) => {
           className="master-detail-btn save"
           style={{ margin: 'auto', width: '300px' }}
           color="primary"
+          onClick={save}
         >
           <b>Save</b>
         </Button>
