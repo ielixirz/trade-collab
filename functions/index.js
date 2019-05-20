@@ -195,3 +195,57 @@ exports.CreateChatRoomMessageKeyList = functions.firestore
       return error;
     }
   });
+
+exports.AutoCreateMasterDataDefaultTemplate = functions.firestore
+  .document('Shipment/{ShipmentKey}')
+  .onCreate(async (snapshot, context) => {
+    try {
+      const GetMasterDataDefaultTemplate = await admin
+        .firestore()
+        .collection('MasterData')
+        .doc('DefaultTemplate')
+        .get();
+
+      const MasterDataDefaultTemplateData = GetMasterDataDefaultTemplate.data();
+
+      const CreateShipmentShareData = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ShipmentShareData')
+        .doc('DefaultTemplate')
+        .set(MasterDataDefaultTemplateData);
+      const AddShipmentShareList = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .set(
+          {
+            ShipmentShareList: admin.firestore.FieldValue.arrayUnion('DefaultTemplate')
+          },
+          {
+            merge: true
+          }
+        );
+      return Promise.all([CreateShipmentShareData, AddShipmentShareList]);
+    } catch (error) {
+      return error;
+    }
+  });
+
+exports.AddChatRoomShareDataList = functions.firestore
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}')
+  .onCreate(async (snapshot, context) => {
+    return admin
+      .firestore()
+      .collection('Shipment')
+      .doc(context.params.ShipmentKey)
+      .collection('ChatRoom')
+      .doc(context.params.ChatRoomKey)
+      .set(
+        {
+          ChatRoomShareDataList: admin.firestore.FieldValue.arrayUnion('DefaultTemplate')
+        },
+        { merge: true }
+      );
+  });

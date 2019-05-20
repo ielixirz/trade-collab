@@ -429,13 +429,13 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
                     onChange={handleProfileInputChange}
                   />
                 ) : (
-                  <div style={{ height: '100px', wordBreak: 'break-all' }}>
+                  <div style={{ height: '50px', wordBreak: 'break-all' }}>
                     <p>{userProfile.Description === undefined ? '-' : userProfile.Description}</p>
                   </div>
                 )}
               </Col>
             </Row>
-            <Row>
+            <Row style={{ marginTop: '20px' }}>
               <Col xs={1} />
               <Col xs={4}>
                 <a href="/#/network">Reset Password</a>
