@@ -4,8 +4,19 @@ import React from 'react';
 import {
   Row, Col, Input, Label,
 } from 'reactstrap';
+import DatePicker from 'react-date-picker';
 
-const ImporterDetail = ({ importerData, inputHandle }) => (
+const ImporterDetail = ({
+  inputHandle,
+  etaWarehouseHandle,
+  etaPortHandle,
+  company,
+  etaDays,
+  port,
+  country,
+  etaWarehouse,
+  etaPort,
+}) => (
   <React.Fragment>
     <Row className="master-detail-data-row">
       <span className="master-detail-heading-label">
@@ -13,17 +24,23 @@ const ImporterDetail = ({ importerData, inputHandle }) => (
       </span>
     </Row>
     <Row className="master-detail-data-row">
-      <Label htmlFor="company-name">
+      <Label htmlFor="company-importer-name">
         <b>Company Name</b>
       </Label>
-      <Input type="text" id="company-name" placeholder="Example Co., Ltd." onChange={inputHandle} />
+      <Input
+        type="text"
+        id="company-importer-name"
+        placeholder="Example Co., Ltd."
+        onChange={inputHandle}
+        value={company}
+      />
     </Row>
     <Row className="master-detail-data-row">
       <Col xs="4" style={{ padding: 0 }}>
         <Label htmlFor="etd">
           <b>ETA at Port</b>
         </Label>
-        <Input type="text" id="eta-port" placeholder="DD/MM/YYYY" onChange={inputHandle} />
+        <DatePicker id="eta-port" onChange={etaPortHandle} value={etaPort} />
       </Col>
       <Col xs="7" style={{ marginLeft: '30px' }}>
         <Row>
@@ -33,7 +50,7 @@ const ImporterDetail = ({ importerData, inputHandle }) => (
             </Label>
           </Col>
           <Col>
-            <Input type="text" id="eta-warehouse" placeholder="DD/MM/YYYY" onChange={inputHandle} />
+            <DatePicker id="eta-warehouse" onChange={etaWarehouseHandle} value={etaWarehouse} />
           </Col>
         </Row>
         <Row>
@@ -43,6 +60,7 @@ const ImporterDetail = ({ importerData, inputHandle }) => (
               id="eta-warehouse-days"
               placeholder="+3 Days"
               onChange={inputHandle}
+              value={etaDays}
             />
           </Col>
           <Col>
@@ -58,13 +76,25 @@ const ImporterDetail = ({ importerData, inputHandle }) => (
         <Label htmlFor="port">
           <b>Port</b>
         </Label>
-        <Input type="text" id="port" placeholder="Port" onChange={inputHandle} />
+        <Input
+          type="text"
+          id="port-importer"
+          placeholder="Port"
+          onChange={inputHandle}
+          value={port}
+        />
       </Col>
       <Col style={{ marginLeft: '5px' }}>
         <Label htmlFor="country">
           <b>Country</b>
         </Label>
-        <Input type="text" id="country" placeholder="Country" onChange={inputHandle} />
+        <Input
+          type="text"
+          id="country-importer"
+          placeholder="Country"
+          onChange={inputHandle}
+          value={country}
+        />
       </Col>
     </Row>
   </React.Fragment>

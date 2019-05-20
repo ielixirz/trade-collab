@@ -5,7 +5,9 @@ import {
   Row, Col, Input, Label,
 } from 'reactstrap';
 
-const OtherDetail = ({ otherData, inputHandle }) => (
+const OtherDetail = ({
+  inputHandle, shipping, price, product, bill, container, originalDoc,
+}) => (
   <React.Fragment>
     <Row className="master-detail-data-row other">
       <Col>
@@ -18,31 +20,56 @@ const OtherDetail = ({ otherData, inputHandle }) => (
             id="shipping-line"
             placeholder="Name of Shipping Line"
             onChange={inputHandle}
+            value={shipping}
           />
         </Row>
         <Row className="master-detail-data-row">
           <Label htmlFor="price-desc">
             <b>Price, Description of Goods</b>
           </Label>
-          <Input type="textarea" id="price-desc" placeholder="Message...." onChange={inputHandle} />
+          <Input
+            type="textarea"
+            id="price-desc"
+            placeholder="Message...."
+            onChange={inputHandle}
+            value={price}
+          />
         </Row>
         <Row className="master-detail-data-row">
           <Label htmlFor="product">
             <b>Product</b>
           </Label>
-          <Input type="text" id="product" placeholder="Product" onChange={inputHandle} />
+          <Input
+            type="text"
+            id="product"
+            placeholder="Product"
+            onChange={inputHandle}
+            value={product}
+          />
         </Row>
         <Row className="master-detail-data-row">
           <Label htmlFor="bill-no">
             <b>Bill of Landing No.</b>
           </Label>
-          <Input type="text" id="bill-no" placeholder="Landing No." onChange={inputHandle} />
+          <Input
+            type="text"
+            id="bill-no"
+            placeholder="Landing No."
+            onChange={inputHandle}
+            value={bill}
+          />
         </Row>
         <Row className="master-detail-data-row">
           <Label htmlFor="container-no">
             <b>Container No.</b>
           </Label>
-          <Input type="text" id="container-no" placeholder="Container No." onChange={inputHandle} />
+          <Input
+            type="text"
+            id="container-no"
+            placeholder="Container No."
+            onChange={inputHandle}
+            value={container}
+          />
         </Row>
         <Row className="master-detail-data-row">
           <Label htmlFor="original-doc">
@@ -53,6 +80,7 @@ const OtherDetail = ({ otherData, inputHandle }) => (
             id="original-doc"
             placeholder="Original Docs. Tracking No."
             onChange={inputHandle}
+            value={originalDoc}
           />
         </Row>
       </Col>
