@@ -21,6 +21,7 @@ const shipmentListGroupStyle = {
 const ShipmentList = () => {
   const { chatroomKey, shipmentKey } = useContext(ShipmentContext);
   const [masterData, setMasterData] = useState(undefined);
+  const [lastUpdate, setLastUpdate] = useState(undefined);
   const masterDetailModalRef = useRef(null);
 
   useEffect(() => {
@@ -28,7 +29,11 @@ const ShipmentList = () => {
       const data = doc[0].data();
       setMasterData([data]);
     });
-  }, []);
+  }, [lastUpdate]);
+
+  const updateLastUpdate = (lastUpdateData) => {
+    setLastUpdate(lastUpdateData);
+  };
 
   const preventParentCollapse = (e) => {
     e.stopPropagation();
@@ -36,7 +41,7 @@ const ShipmentList = () => {
 
   return (
     <div>
-      <MasterDetailModal ref={masterDetailModalRef} shipmentKey={shipmentKey} />
+      <MasterDetailModal ref={masterDetailModalRef} lastUpdate={updateLastUpdate} />
       {masterData === undefined
         ? ''
         : masterData.map(data => (

@@ -3,12 +3,13 @@
 /* eslint-disable filenames/match-regex */
 /* as it is component */
 import React, {
-  useState, forwardRef, useImperativeHandle, useEffect,
+  useContext, useState, forwardRef, useImperativeHandle, useEffect,
 } from 'react';
 import {
   Row, Col, Button, Modal, ModalBody, ModalFooter, ModalHeader,
 } from 'reactstrap';
 import Select from 'react-select';
+import ShipmentContext from '../context/ShipmentContext';
 import ExporterDetail from './masterDetailModal/ExporterDetail';
 import ImporterDetail from './masterDetailModal/ImporterDetail';
 import OtherDetail from './masterDetailModal/OtherDetail';
@@ -71,6 +72,7 @@ const statusStyle = {
 };
 
 const MasterDetailModal = forwardRef((props, ref) => {
+  const { userKey, shipmentKey } = useContext(ShipmentContext);
   const [modal, setModal] = useState(false);
   const [masterData, setMasterData] = useState({});
   const [shipmentStatus, setShipmentStatus] = useState(null);
@@ -193,8 +195,13 @@ const MasterDetailModal = forwardRef((props, ref) => {
   };
 
   const save = () => {
-    UpdateMasterData(props.shipmentKey, 'DefaultTemplate', masterData);
-    toggle();
+    UpdateMasterData(shipmentKey, 'DefaultTemplate', masterData).subscribe(() => {
+      props.lastUpdate({
+        timestamp: new Date(),
+        updaterKey: userKey,
+      });
+      toggle();
+    });
   };
 
   return (
