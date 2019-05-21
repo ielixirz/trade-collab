@@ -25,6 +25,7 @@ const ExporterDetail = ({
         placeholder="Example Co., Ltd."
         onChange={inputHandle}
         value={company}
+        disabled
       />
     </Row>
     <Row className="master-detail-data-row">
@@ -35,18 +36,24 @@ const ExporterDetail = ({
     </Row>
     <Row className="master-detail-data-row last">
       <Col>
-        <Label htmlFor="port">
+        <Label htmlFor="port-expoter">
           <b>Port</b>
         </Label>
-        <Input type="text" id="port" placeholder="Port" onChange={inputHandle} value={port} />
+        <Input
+          type="text"
+          id="port-expoter"
+          placeholder="Port"
+          onChange={inputHandle}
+          value={port}
+        />
       </Col>
       <Col style={{ marginLeft: '5px' }}>
-        <Label htmlFor="country">
+        <Label htmlFor="country-exporter">
           <b>Country</b>
         </Label>
         <Input
           type="text"
-          id="country"
+          id="country-exporter"
           placeholder="Country"
           onChange={inputHandle}
           value={country}

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable filenames/match-regex */
 /* as it is component */
@@ -11,6 +12,9 @@ import Select from 'react-select';
 import ExporterDetail from './masterDetailModal/ExporterDetail';
 import ImporterDetail from './masterDetailModal/ImporterDetail';
 import OtherDetail from './masterDetailModal/OtherDetail';
+
+import { UpdateMasterData } from '../service/masterdata/masterdata';
+import { GetDiffDay } from '../utils/date';
 
 const statusOptions = [
   {
@@ -68,50 +72,22 @@ const statusStyle = {
 
 const MasterDetailModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
-  const [companyExporter, setCompanyExporter] = useState(null);
-  const [portExporter, setPortExporter] = useState(null);
-  const [countryExporter, setCountryExporter] = useState(null);
-  const [companyImporter, setCompanyImporter] = useState(null);
-  const [wareHouseETADays, setWareHouseETADays] = useState(null);
-  const [portImporter, setPortImporter] = useState(null);
-  const [countryImporter, setCountryImporter] = useState(null);
-  const [shippingLine, setShippingLine] = useState(null);
-  const [priceDesc, setPriceDesc] = useState(null);
-  const [product, setProduct] = useState(null);
-  const [billNo, setBillNo] = useState(null);
-  const [containerNo, setContainerNo] = useState(null);
-  const [originalDoc, setOriginalDoc] = useState(null);
-  const [ETAWarehouse, setETAWarehouse] = useState(new Date());
-  const [ETAPort, setETAPort] = useState(new Date());
-  const [ETD, setETD] = useState(new Date());
+  const [masterData, setMasterData] = useState({});
   const [shipmentStatus, setShipmentStatus] = useState(null);
+  const [etaDayDiff, setETADayDiff] = useState(undefined);
 
-  useEffect(() => {}, [
-    companyExporter,
-    portExporter,
-    countryExporter,
-    companyImporter,
-    wareHouseETADays,
-    portImporter,
-    countryImporter,
-    shippingLine,
-    priceDesc,
-    product,
-    billNo,
-    containerNo,
-    originalDoc,
-    shipmentStatus,
-    ETAWarehouse,
-    ETAPort,
-    ETD,
-  ]);
+  useEffect(() => {}, [masterData, shipmentStatus, etaDayDiff]);
 
   const toggle = () => {
     setModal(!modal);
   };
 
   useImperativeHandle(ref, () => ({
-    triggerMasterDetail() {
+    triggerMasterDetail(data) {
+      setMasterData({ ...data });
+      setETADayDiff(
+        GetDiffDay(data.ConsigneeETAWarehouse.seconds * 1000, data.ConsigneeETAPort.seconds * 1000),
+      );
       toggle();
     },
   }));
@@ -121,66 +97,103 @@ const MasterDetailModal = forwardRef((props, ref) => {
   };
 
   const handleDetailInputChange = (event) => {
+    const newMasterData = { ...masterData };
     const field = event.target.id;
     const value = event.target.value;
     switch (field) {
       case 'company-exporter-name':
-        setCompanyExporter(value);
+        newMasterData.ShipperCompanyName = value;
         break;
       case 'port-expoter':
-        setPortExporter(value);
+        newMasterData.ShipperPort = value;
         break;
       case 'country-exporter':
-        setCountryExporter(value);
+        newMasterData.ShipperCountry = value;
         break;
       case 'company-importer-name':
-        setCompanyImporter(value);
+        newMasterData.ConsigneeCompanyName = value;
         break;
       case 'eta-warehouse-days':
-        setWareHouseETADays(value);
+        // TO-DO Calculation
         break;
       case 'port-importer':
-        setPortImporter(value);
+        newMasterData.ConsigneePort = value;
         break;
       case 'country-importer':
-        setCountryImporter(value);
+        newMasterData.ConsigneeCountry = value;
         break;
       case 'shipping-line':
-        setShippingLine(value);
+        newMasterData.ShipmentDetailShippingLine = value;
         break;
       case 'price-desc':
-        setPriceDesc(value);
+        newMasterData.ShipmentDetailPriceDescriptionOfGoods = value;
         break;
       case 'product':
-        setProduct(value);
+        newMasterData.ShipmentDetailProduct = value;
         break;
       case 'bill-no':
-        setBillNo(value);
+        newMasterData.ShipmentDetailBillOfLandingNunber = value;
         break;
       case 'container-no':
-        setContainerNo(value);
+        newMasterData.ShipmentDetailContainerNumber = value;
         break;
       case 'original-doc':
-        setOriginalDoc(value);
+        newMasterData.ShipmentDetailOriginalDocumentTrackingNumber = value;
         break;
       default:
         break;
     }
+    setMasterData(newMasterData);
+  };
+
+  const setETADaysDiff = (etd1, etd2) => {
+    setETADayDiff(GetDiffDay(etd1, etd2));
   };
 
   const handleETAWarehouseInputChange = (date) => {
-    setETAWarehouse(date);
+    const newMasterData = { ...masterData };
+    try {
+      if (date !== null) {
+        newMasterData.ConsigneeETAWarehouse = { seconds: date.getTime() / 1000 };
+        setETADaysDiff(date.getTime(), newMasterData.ConsigneeETAPort.seconds * 1000);
+      } else {
+        newMasterData.ConsigneeETAWarehouse = null;
+        setETADaysDiff(undefined);
+      }
+    } catch (e) {
+      setETADaysDiff(undefined);
+    }
+    setMasterData(newMasterData);
   };
 
   const handleETAPortInputChange = (date) => {
-    setETAPort(date);
+    const newMasterData = { ...masterData };
+    try {
+      if (date !== null) {
+        newMasterData.ConsigneeETAPort = { seconds: date.getTime() / 1000 };
+        setETADaysDiff(newMasterData.ConsigneeETAWarehouse.seconds * 1000, date.getTime());
+      } else {
+        newMasterData.ConsigneeETAPort = null;
+        setETADaysDiff(undefined);
+      }
+    } catch (e) {
+      setETADaysDiff(undefined);
+    }
+    setMasterData(newMasterData);
   };
 
   const handleETDInputChange = (date) => {
-    setETD(date);
+    const newMasterData = { ...masterData };
+    if (date !== null) {
+      newMasterData.ShipperETD = { seconds: date.getTime() / 1000 };
+    } else {
+      newMasterData.ShipperETD = null;
+    }
+    setMasterData(newMasterData);
   };
 
   const save = () => {
+    UpdateMasterData(props.shipmentKey, 'DefaultTemplate', masterData);
     toggle();
   };
 
@@ -216,20 +229,58 @@ const MasterDetailModal = forwardRef((props, ref) => {
         <Row>
           <Col xs="6">
             <ExporterDetail
-              company={companyExporter}
-              port={portExporter}
-              country={countryExporter}
+              company={
+                masterData.ShipperCompanyName === undefined || masterData.ShipperCompanyName === ''
+                  ? 'Unassigned'
+                  : masterData.ShipperCompanyName
+              }
+              port={
+                masterData.ShipperPort === undefined || masterData.ShipperPort === ''
+                  ? null
+                  : masterData.ShipperPort
+              }
+              country={
+                masterData.ShipperCountry === undefined || masterData.ShipperCountry === ''
+                  ? null
+                  : masterData.ShipperCountry
+              }
               inputHandle={handleDetailInputChange}
-              etd={ETD}
+              etd={
+                masterData.ShipperETD === undefined || masterData.ShipperETD === null
+                  ? null
+                  : new Date(masterData.ShipperETD.seconds * 1000)
+              }
               etdHandle={handleETDInputChange}
             />
             <ImporterDetail
-              company={companyImporter}
-              etaDays={wareHouseETADays}
-              port={portImporter}
-              country={countryImporter}
-              etaWarehouse={ETAWarehouse}
-              etaPort={ETAPort}
+              company={
+                masterData.ConsigneeCompanyName === undefined
+                || masterData.ConsigneeCompanyName === ''
+                  ? 'Unassigned'
+                  : masterData.ConsigneeCompanyName
+              }
+              etaDays={etaDayDiff}
+              port={
+                masterData.ConsigneePort === undefined || masterData.ConsigneePort === ''
+                  ? null
+                  : masterData.ConsigneePort
+              }
+              country={
+                masterData.ConsigneeCountry === undefined || masterData.ConsigneeCountry === ''
+                  ? null
+                  : masterData.ConsigneeCountry
+              }
+              etaWarehouse={
+                masterData.ConsigneeETAWarehouse === undefined
+                || masterData.ConsigneeETAWarehouse === null
+                  ? null
+                  : new Date(masterData.ConsigneeETAWarehouse.seconds * 1000)
+              }
+              etaPort={
+                masterData.ConsigneeETAPort === undefined || masterData.ConsigneeETAPort === null
+                  ? null
+                  : new Date(masterData.ConsigneeETAPort.seconds * 1000)
+              }
               inputHandle={handleDetailInputChange}
               etaWarehouseHandle={handleETAWarehouseInputChange}
               etaPortHandle={handleETAPortInputChange}
@@ -237,12 +288,42 @@ const MasterDetailModal = forwardRef((props, ref) => {
           </Col>
           <Col xs="5">
             <OtherDetail
-              shipping={shippingLine}
-              price={priceDesc}
-              product={product}
-              bill={billNo}
-              container={containerNo}
-              originalDoc={originalDoc}
+              shipping={
+                masterData.ShipmentDetailShippingLine === undefined
+                || masterData.ShipmentDetailShippingLine === ''
+                  ? null
+                  : masterData.ShipmentDetailShippingLine
+              }
+              price={
+                masterData.ShipmentDetailPriceDescriptionOfGoods === undefined
+                || masterData.ShipmentDetailPriceDescriptionOfGoods === ''
+                  ? null
+                  : masterData.ShipmentDetailPriceDescriptionOfGoods
+              }
+              product={
+                masterData.ShipmentDetailProduct === undefined
+                || masterData.ShipmentDetailProduct === ''
+                  ? null
+                  : masterData.ShipmentDetailProduct
+              }
+              bill={
+                masterData.ShipmentDetailBillOfLandingNunber === undefined
+                || masterData.ShipmentDetailBillOfLandingNunber === ''
+                  ? null
+                  : masterData.ShipmentDetailBillOfLandingNunber
+              }
+              container={
+                masterData.ShipmentDetailContainerNumber === undefined
+                || masterData.ShipmentDetailContainerNumber === ''
+                  ? null
+                  : masterData.ShipmentDetailContainerNumber
+              }
+              originalDoc={
+                masterData.ShipmentDetailOriginalDocumentTrackingNumber === undefined
+                || masterData.ShipmentDetailOriginalDocumentTrackingNumber === ''
+                  ? null
+                  : masterData.ShipmentDetailOriginalDocumentTrackingNumber
+              }
               inputHandle={handleDetailInputChange}
             />
           </Col>
