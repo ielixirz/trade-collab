@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable filenames/match-regex */
 import React, { Component, useContext, useReducer } from 'react';
@@ -5,7 +6,7 @@ import React, { Component, useContext, useReducer } from 'react';
 import {
   Collapse, CardBody, Card, Row, Col,
 } from 'reactstrap';
-import shipmentListContext from '../../context/shipmentContext';
+import ShipmentListContext from '../../context/ShipmentContext';
 import shipmentReducer from '../../reducers/shipmentReducer';
 import ShipmentList from '../../component/ShipmentList';
 
@@ -32,13 +33,20 @@ const styles = {
   },
 };
 
-const ShipmentData = () => {
-  const initialState = useContext(shipmentListContext);
+const ShipmentData = ({ shipmentKey, chatroomKey }) => {
+  const initialState = useContext(ShipmentListContext);
   const [state, dispatch] = useReducer(shipmentReducer, initialState);
   return (
-    <shipmentListContext.Provider value={{ state, dispatch }}>
+    <ShipmentListContext.Provider
+      value={{
+        state,
+        dispatch,
+        shipmentKey,
+        chatroomKey,
+      }}
+    >
       <ShipmentList />
-    </shipmentListContext.Provider>
+    </ShipmentListContext.Provider>
   );
 };
 
@@ -87,7 +95,10 @@ class ShipmentSide extends Component {
               </Col>
             </Row>
             <Collapse isOpen={this.state.collapse}>
-              <ShipmentData />
+              <ShipmentData
+                shipmentKey={this.props.shipmentKey}
+                chatroomKey={this.props.chatroomKey}
+              />
             </Collapse>
           </CardBody>
         </Card>
