@@ -33,6 +33,7 @@ const ImporterDetail = ({
         placeholder="Example Co., Ltd."
         onChange={inputHandle}
         value={company}
+        disabled
       />
     </Row>
     <Row className="master-detail-data-row">
@@ -58,9 +59,10 @@ const ImporterDetail = ({
             <Input
               type="text"
               id="eta-warehouse-days"
-              placeholder="+3 Days"
+              placeholder="-"
               onChange={inputHandle}
-              value={etaDays}
+              value={`+${etaDays} Days `}
+              disabled
             />
           </Col>
           <Col>
@@ -73,7 +75,7 @@ const ImporterDetail = ({
     </Row>
     <Row className="master-detail-data-row">
       <Col>
-        <Label htmlFor="port">
+        <Label htmlFor="port-importer">
           <b>Port</b>
         </Label>
         <Input
@@ -85,7 +87,7 @@ const ImporterDetail = ({
         />
       </Col>
       <Col style={{ marginLeft: '5px' }}>
-        <Label htmlFor="country">
+        <Label htmlFor="country-importer">
           <b>Country</b>
         </Label>
         <Input

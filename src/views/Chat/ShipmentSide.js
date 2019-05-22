@@ -1,11 +1,14 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable filenames/match-regex */
 import React, { Component, useContext, useReducer } from 'react';
+import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import {
   Collapse, CardBody, Card, Row, Col,
 } from 'reactstrap';
-import shipmentListContext from '../../context/shipmentContext';
+import ShipmentListContext from '../../context/ShipmentContext';
 import shipmentReducer from '../../reducers/shipmentReducer';
 import ShipmentList from '../../component/ShipmentList';
 
@@ -32,13 +35,21 @@ const styles = {
   },
 };
 
-const ShipmentData = () => {
-  const initialState = useContext(shipmentListContext);
+const ShipmentData = ({ shipmentKey, chatroomKey, userKey }) => {
+  const initialState = useContext(ShipmentListContext);
   const [state, dispatch] = useReducer(shipmentReducer, initialState);
   return (
-    <shipmentListContext.Provider value={{ state, dispatch }}>
+    <ShipmentListContext.Provider
+      value={{
+        state,
+        dispatch,
+        shipmentKey,
+        chatroomKey,
+        userKey,
+      }}
+    >
       <ShipmentList />
-    </shipmentListContext.Provider>
+    </ShipmentListContext.Provider>
   );
 };
 
@@ -87,7 +98,11 @@ class ShipmentSide extends Component {
               </Col>
             </Row>
             <Collapse isOpen={this.state.collapse}>
-              <ShipmentData />
+              <ShipmentData
+                shipmentKey={this.props.shipmentKey}
+                chatroomKey={this.props.chatroomKey}
+                userKey={this.props.auth.uid}
+              />
             </Collapse>
           </CardBody>
         </Card>
@@ -96,4 +111,17 @@ class ShipmentSide extends Component {
   }
 }
 
-export default ShipmentSide;
+const mapStateToProps = (state) => {
+  const { authReducer, userReducer, profileReducer } = state;
+  const profile = _.find(
+    profileReducer.ProfileList,
+    item => item.id === profileReducer.ProfileDetail.id,
+  );
+  return {
+    auth: authReducer.user,
+    user: userReducer.UserInfo,
+    currentProfile: profile,
+  };
+};
+
+export default connect(mapStateToProps)(ShipmentSide);
