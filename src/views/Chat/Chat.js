@@ -111,7 +111,7 @@ class Chat extends Component {
         uploadModalRef={this.uploadModalRef}
         fileInputRef={this.fileInput}
         // Major Key
-        ShipmentKey={ShipmentKey}
+        ShipmentKey={this.props.match.params.shipmentkey}
         ChatRoomKey={ChatRoomKey}
         ChatRoomFileLink={ChatRoomFileLink}
         ChatRoomMember={ChatRoomMember}
