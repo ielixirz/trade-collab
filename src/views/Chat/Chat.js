@@ -260,6 +260,9 @@ class Chat extends Component {
   }
 
   render() {
+    const {
+      match: { params }
+    } = this.props;
     const chats = _.filter(
       this.props.ChatReducer.chatrooms,
       item => item.ShipmentKey === params.shipmentkey
