@@ -7,7 +7,7 @@ import {
   ListGroup, ListGroupItem, Row, Col, Button,
 } from 'reactstrap';
 import moment from 'moment';
-import ShipmentContext from '../context/ShipmentContext';
+import ShipmentContext from '../context/shipmentContext';
 import MasterDetailModal from './MasterDetailModal';
 
 import { GetMasterDataChatRoom } from '../service/masterdata/masterdata';
