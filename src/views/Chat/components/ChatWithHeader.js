@@ -4,9 +4,7 @@
 /* eslint-disable filenames/match-regex */
 import _ from 'lodash';
 import React, { Component } from 'react';
-import {
-  Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input,
-} from 'reactstrap';
+import { Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
 import MemberModal from '../../../component/MemberModal';
 import MemberInviteModal from '../../../component/MemberInviteModal';
 import UploadModal from '../../../component/UploadModal';
@@ -54,7 +52,7 @@ class ChatWithHeader extends Component {
       onDropChatStyle,
       onDragOver,
       onDragLeave,
-      onFileDrop,
+      onFileDrop
     } = this.props;
     let lastkey = '';
     return (
@@ -62,7 +60,7 @@ class ChatWithHeader extends Component {
         <Row
           style={{
             backgroundColor: 'white',
-            borderBottom: '1px solid #707070',
+            borderBottom: '1px solid #707070'
           }}
         >
           <Breadcrumb className="chat-toolbar">
@@ -93,9 +91,9 @@ class ChatWithHeader extends Component {
                       ChatRoomMessageReaderProfileImageUrl: _.get(
                         sender,
                         'UserInfoProfileImageLink',
-                        '',
+                        ''
                       ),
-                      ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
+                      ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
                     });
                   }
                   lastkey = chatMsg[chatMsg.length - 1].id;
@@ -111,7 +109,7 @@ class ChatWithHeader extends Component {
                     fetchMoreMessage(ChatRoomKey, ShipmentKey);
                   }
                 }}
-                ref={(el) => {
+                ref={el => {
                   this.msgChatRef = el;
                 }}
               >
@@ -128,7 +126,7 @@ class ChatWithHeader extends Component {
                     status: t,
                     readers: msg.ChatRoomMessageReader,
                     prev: chatMsg[i - 1],
-                    isLast: chatMsg.length - 1 === i,
+                    isLast: chatMsg.length - 1 === i
                   };
 
                   return <ChatMessage message={message} i={i} />;
@@ -152,11 +150,12 @@ class ChatWithHeader extends Component {
                       id="file"
                       ref={fileInputRef}
                       style={{ display: 'none' }}
-                      onChange={event => uploadModalRef.current.triggerUploading(
-                        event.target.files[0],
-                        ShipmentKey,
-                        ChatRoomKey,
-                      )
+                      onChange={event =>
+                        uploadModalRef.current.triggerUploading(
+                          event.target.files[0],
+                          ShipmentKey,
+                          ChatRoomKey
+                        )
                       }
                     />
                   </InputGroupAddon>
@@ -172,15 +171,15 @@ class ChatWithHeader extends Component {
                             ChatRoomMessageReaderProfileImageUrl: _.get(
                               sender,
                               'UserInfoProfileImageLink',
-                              '',
+                              ''
                             ),
-                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
+                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
                           });
                         }
                         lastkey = chatMsg[chatMsg.length - 1].id;
                       }
                     }}
-                    onChange={(e) => {
+                    onChange={e => {
                       // (ShipmentKey, ChatRoomKey, ProfileKey, Data)
                       // ChatRoomMessageKeyList *(Static document name) (Create for util)
                       // ChatRoomMessageKeyList (Array<string>)
@@ -205,16 +204,16 @@ class ChatWithHeader extends Component {
                             ChatRoomMessageReaderProfileImageUrl: _.get(
                               sender,
                               'UserInfoProfileImageLink',
-                              '',
+                              ''
                             ),
-                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
+                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
                           });
                         }
                         lastkey = chatMsg[chatMsg.length - 1].id;
                       }
                       typing(e);
                     }}
-                    onKeyPress={(event) => {
+                    onKeyPress={event => {
                       if (event.key === 'Enter') {
                         sendMessage(ChatRoomKey, ShipmentKey, text);
                         scrollChatToBottom();
