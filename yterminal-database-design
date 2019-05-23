@@ -156,6 +156,8 @@
                 UserNotificationCompanyName (string)
                 UserNotificationCompanyKey (string)
                 UserNotificationRedirectPage (string)
+                UserNotificationShipmentKey (string)
+                UserNotificationChatroonKey (string)
 
 +UserPersonalize
     >ProfileKey
@@ -166,7 +168,16 @@
         +ShipmentReferenceDisplay
             >ShipmentKey
                 ShipmentReferenceSelect (string) [RefOwner]
-                        
+        +ShipmentNotificationCount
+            >ShipmentKey
+                ShipmentFristJoin (bool)
+                ShipmentAllCount (number)
+                ShipmentMasterDataCount (number)
+                ShipmentFileCount (number)
+                ChatRoomCount (object)
+                    {
+                        ChatRoomKey: ChatRoomCount
+                    }                        
 +Company
     >CompanyKey
         CompanyName (string)
