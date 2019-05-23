@@ -2,11 +2,21 @@
 /* eslint-disable filenames/match-regex */
 /* as it is component */
 import React, {
-  useState, forwardRef, useRef, useImperativeHandle,
+  useState, forwardRef, useRef, useImperativeHandle, useEffect,
 } from 'react';
 import {
-  Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader,
+  Input,
+  Label,
+  Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Progress,
+  Col,
 } from 'reactstrap';
+import { combineLatest } from 'rxjs';
+import _ from 'lodash';
 
 import {
   PutFile,
@@ -19,8 +29,9 @@ import { CreateShipmentFile } from '../service/shipment/shipment';
 
 const UploadModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
-  const [fileName, setFileName] = useState('-');
-  const [file, setFile] = useState(null);
+  // const [fileName, setFileName] = useState('-');
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
   const [shipmentKey, setShipmentKey] = useState(null);
   const [chatRoomKey, setChatRoomKey] = useState(null);
   const [message, setMessage] = useState('');
@@ -31,13 +42,66 @@ const UploadModal = forwardRef((props, ref) => {
     setModal(!modal);
   };
 
+  const calProgress = (byteTransfer, byteTotal) => (byteTransfer / byteTotal) * 100;
+
+  const upload = (files, sKey) => {
+    setIsUploading(true);
+    const uploadObs = [];
+    const refPaths = [];
+    _.forEach(files, (file) => {
+      const storageRefPath = `/Shipment/${sKey}/${file.file.name}_${new Date().valueOf()}`;
+      uploadObs.push(PutFile(storageRefPath, file.file));
+      refPaths.push(storageRefPath);
+    });
+
+    combineLatest(uploadObs).subscribe({
+      next: (snapshots) => {
+        _.forEach(snapshots, (shot, index) => {
+          const cloneUploaded = [...uploadedFiles];
+          if (cloneUploaded.length > 0) {
+            cloneUploaded[index].progress = calProgress(shot.bytesTransferred, shot.totalBytes);
+            cloneUploaded[index].status = cloneUploaded[index].progress === 100 ? 'done' : 'uploading';
+            cloneUploaded[index].refPath = refPaths[index];
+            setUploadedFiles(cloneUploaded);
+          }
+        });
+        console.log(uploadedFiles);
+      },
+      error: (err) => {
+        console.log(err);
+        alert(err.message);
+      },
+      complete: () => {
+        setIsUploading(false);
+      },
+    });
+  };
+
+  const initFileUpload = (files) => {
+    const uploadingFiles = [];
+    _.forEach(files, (file) => {
+      uploadingFiles.push({
+        status: 'uploading',
+        progress: 0,
+        fileName: file.name,
+        file,
+        refPath: '',
+      });
+    });
+    return uploadingFiles;
+  };
+
+  useEffect(() => {
+    if (!isUploading && modal) {
+      upload(uploadedFiles, shipmentKey);
+    }
+  }, [uploadedFiles]);
+
   useImperativeHandle(ref, () => ({
     // eslint-disable-next-line no-shadow
     triggerUploading(file, shipmentKey, chatRoomKey) {
-      console.log(file);
       if (file !== undefined) {
-        setFileName(file.name);
-        setFile(file);
+        setUploadedFiles(initFileUpload(file));
       }
       setChatRoomKey(chatRoomKey);
       setShipmentKey(shipmentKey);
@@ -45,47 +109,27 @@ const UploadModal = forwardRef((props, ref) => {
     },
   }));
 
-  const upload = () => {
-    if (file !== null) {
-      const storageRefPath = `/Shipment/${shipmentKey}/${new Date().valueOf()}${fileName}`;
-      PutFile(storageRefPath, file).subscribe({
-        next: () => {
-          console.log('TODO: UPLOAD PROGRESS');
-        },
-        error: (err) => {
-          console.log(err);
-          alert(err.message);
-        },
-        complete: () => {
-          GetMetaDataFromStorageRefPath(storageRefPath).subscribe({
-            next: (metaData) => {
-              CreateShipmentFile(shipmentKey, {
-                FileName: metaData.name,
-                FileUrl: metaData.fullPath,
+  const confirmUpload = () => {
+    _.forEach(uploadedFiles, (file) => {
+      GetMetaDataFromStorageRefPath(file.refPath).subscribe({
+        next: (metaData) => {
+          CreateShipmentFile(shipmentKey, {
+            FileName: metaData.name,
+            FileUrl: metaData.fullPath,
+            FileCreateTimestamp: metaData.timeCreated,
+            FileOwnerKey: 'mockKey',
+            FileStorgeReference: metaData.fullPath,
+          });
+          GetURLFromStorageRefPath(metaData.ref).subscribe({
+            next: (url) => {
+              const editedChatFile = props.chatFile === undefined ? [] : props.chatFile;
+              editedChatFile.push({
+                FileName: file.fileName,
+                FileUrl: url,
                 FileCreateTimestamp: metaData.timeCreated,
-                FileOwnerKey: 'mockKey',
-                FileStorgeReference: metaData.fullPath,
+                FilePath: metaData.fullPath,
               });
-
-              GetURLFromStorageRefPath(metaData.ref).subscribe({
-                next: (url) => {
-                  const editedChatFile = props.chatFile === undefined ? [] : props.chatFile;
-                  editedChatFile.push({
-                    FileName: fileName,
-                    FileUrl: url,
-                    FileCreateTimestamp: metaData.timeCreated,
-                    FilePath: metaData.fullPath,
-                  });
-                  EditChatRoomFileLink(shipmentKey, chatRoomKey, editedChatFile);
-                },
-                error: (err) => {
-                  console.log(err);
-                  alert(err.message);
-                },
-                complete: () => {
-                  'TO DO LOG';
-                },
-              });
+              EditChatRoomFileLink(shipmentKey, chatRoomKey, editedChatFile);
             },
             error: (err) => {
               console.log(err);
@@ -96,10 +140,17 @@ const UploadModal = forwardRef((props, ref) => {
             },
           });
         },
+        error: (err) => {
+          console.log(err);
+          alert(err.message);
+        },
+        complete: () => {
+          'TO DO LOG';
+        },
       });
-    }
+    });
     toggle();
-    props.sendMessage(chatRoomKey, shipmentKey, `${message} [ ${fileName} ]`);
+    // props.sendMessage(chatRoomKey, shipmentKey, `${message} [ ${fileName} ]`);
   };
 
   const handleMessageChange = (event) => {
@@ -109,7 +160,11 @@ const UploadModal = forwardRef((props, ref) => {
   return (
     <Modal isOpen={modal} toggle={toggle} className="upload-modal">
       <ModalHeader toggle={toggle}>
-        <b>Upload a file</b>
+        <b>
+Upload Files (
+          {uploadedFiles.length}
+)
+        </b>
       </ModalHeader>
       <ModalBody>
         <Input
@@ -123,13 +178,26 @@ const UploadModal = forwardRef((props, ref) => {
           onChange={handleMessageChange}
         />
         <Label htmlFor="filename" style={{ marginTop: '0.5rem' }}>
-          <b>File name</b>
+          <b>Files</b>
         </Label>
-        <Input type="text" id="filename" placeholder="" disabled value={fileName} />
+        {_.map(uploadedFiles, file => (
+          <Col>
+            <span>{file.fileName}</span>
+            {file.status === 'uploading' ? (
+              <Progress value={file.progress} className="mb-3">
+                {'Uploading...'}
+              </Progress>
+            ) : (
+              <Progress value={file.progress} className="mb-3" color="success">
+                {'Complete'}
+              </Progress>
+            )}
+          </Col>
+        ))}
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={upload}>
-          Upload
+        <Button color="primary" onClick={confirmUpload}>
+          Send
         </Button>
         {' '}
       </ModalFooter>

@@ -153,7 +153,7 @@ class ChatWithHeader extends Component {
                       ref={fileInputRef}
                       style={{ display: 'none' }}
                       onChange={event => uploadModalRef.current.triggerUploading(
-                        event.target.files[0],
+                        event.target.files,
                         ShipmentKey,
                         ChatRoomKey,
                       )

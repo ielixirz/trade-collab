@@ -136,10 +136,15 @@ class Chat extends Component {
 
   onFileDrop = (event, ShipmentKey, ChatRoomKey) => {
     event.preventDefault();
-    const file = event.dataTransfer.items[0].getAsFile();
+    const fileItems = event.dataTransfer.items;
+    const files = [];
+    _.forEach(fileItems, (i) => {
+      files.push(i.getAsFile());
+    });
 
+    // eslint-disable-next-line no-param-reassign
     event.target.value = null;
-    this.uploadModalRef.current.triggerUploading(file, ShipmentKey, ChatRoomKey);
+    this.uploadModalRef.current.triggerUploading(files, ShipmentKey, ChatRoomKey);
     this.setState({
       onDropChatStyle: false,
     });
