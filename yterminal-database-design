@@ -155,6 +155,7 @@
                 UserNotificationUserInfoKey (string)
                 UserNotificationCompanyName (string)
                 UserNotificationCompanyKey (string)
+                UserNotificationRedirectPage (string)
 
 +UserPersonalize
     >ProfileKey
