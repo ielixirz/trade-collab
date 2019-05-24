@@ -13,6 +13,12 @@ import ShipmentSide from '../ShipmentSide';
 import ChatMessage from './ChatMessage';
 import PreMessage from './PreMessage';
 import { UpdateChatRoomMessageReader } from '../../../service/chat/chat';
+import { GetUserCompany } from '../../../service/user/user';
+
+const AVAILABLE_ROLES = {
+  Importer: 'Exporter',
+  Exporter: 'Importer'
+};
 
 class ChatWithHeader extends Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -28,7 +34,28 @@ class ChatWithHeader extends Component {
     }, 5000);
     refresh();
   }
-
+  renderAasignCompany(ChatRoomType) {
+    return (
+      <div
+        style={{
+          backgroundColor: 'rgba(242, 175, 41, 0.3)',
+          height: '100px',
+          padding: '10px',
+          borderRadius: '5px'
+        }}
+      >
+        <p
+          style={{
+            fontWeight: 700,
+            color: '#000000'
+          }}
+        >
+          You have assigned your self as an Exporter for this shipment
+        </p>
+        <p>Select a company, to inform your team about this shipment</p>
+      </div>
+    );
+  }
   render() {
     const {
       user,
@@ -43,6 +70,7 @@ class ChatWithHeader extends Component {
       ChatRoomKey,
       ChatRoomFileLink,
       ChatRoomMember,
+      ChatRoomData: { ChatRoomType },
       // Action
       sendMessage,
       fetchMoreMessage,
@@ -55,6 +83,8 @@ class ChatWithHeader extends Component {
       onFileDrop
     } = this.props;
     let lastkey = '';
+    let membersList = [];
+
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
         <Row
@@ -113,6 +143,7 @@ class ChatWithHeader extends Component {
                   this.msgChatRef = el;
                 }}
               >
+                {membersList.length === 0 ? this.renderAasignCompany(ChatRoomType) : ''}
                 {chatMsg.map((msg, i) => {
                   const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = 'sender';

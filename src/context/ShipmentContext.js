@@ -12,9 +12,9 @@ const ShipmentContext = React.createContext({
       container: 'cxru09329',
       bill: 'slkm23824890',
       track: 'DHL:8925486',
-      note: 'IP-MAN THE GRAND MASTER',
-    },
-  ],
+      note: 'IP-MAN THE GRAND MASTER'
+    }
+  ]
 });
 
 export default ShipmentContext;

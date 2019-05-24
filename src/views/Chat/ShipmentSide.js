@@ -35,6 +35,7 @@ const styles = {
 
 const ShipmentData = ({ shipmentKey, chatroomKey, userKey }) => {
   const initialState = useContext(ShipmentListContext);
+
   const [state, dispatch] = useReducer(shipmentReducer, initialState);
   return (
     <ShipmentListContext.Provider
