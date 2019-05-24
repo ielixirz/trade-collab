@@ -34,27 +34,54 @@ class ChatWithHeader extends Component {
     }, 5000);
     refresh();
   }
-  renderAasignCompany(ChatRoomType) {
-    return (
-      <div
-        style={{
-          backgroundColor: 'rgba(242, 175, 41, 0.3)',
-          height: '100px',
-          padding: '10px',
-          borderRadius: '5px'
-        }}
-      >
-        <p
-          style={{
-            fontWeight: 700,
-            color: '#000000'
-          }}
-        >
-          You have assigned your self as an Exporter for this shipment
-        </p>
-        <p>Select a company, to inform your team about this shipment</p>
-      </div>
-    );
+  renderAssignCompany(ChatRoomType, shipment) {
+    switch (shipment.ShipmentCreatorType) {
+      case 'Importer':
+        return (
+          <div
+            style={{
+              backgroundColor: 'rgba(242, 175, 41, 0.3)',
+              height: '100px',
+              padding: '10px',
+              borderRadius: '5px'
+            }}
+          >
+            <p
+              style={{
+                fontWeight: 700,
+                color: '#000000'
+              }}
+            >
+              You have assigned your self as an Importer for this shipment
+            </p>
+            <p>Select a company, to inform your team about this shipment</p>
+          </div>
+        );
+      case 'Custom Broker':
+
+      case 'Exporter':
+        return (
+          <div
+            style={{
+              backgroundColor: 'rgba(242, 175, 41, 0.3)',
+              height: '100px',
+              padding: '10px',
+              borderRadius: '5px'
+            }}
+          >
+            <p
+              style={{
+                fontWeight: 700,
+                color: '#000000'
+              }}
+            >
+              You have assigned your self as an Exporter for this shipment
+            </p>
+            <p>Select a company, to inform your team about this shipment</p>
+          </div>
+        );
+      case 'Freight Forwarder':
+    }
   }
   render() {
     const {
@@ -67,6 +94,8 @@ class ChatWithHeader extends Component {
       fileInputRef,
       sender,
       ShipmentKey,
+      ShipmentData = {},
+
       ChatRoomKey,
       ChatRoomFileLink,
       ChatRoomMember,
@@ -84,7 +113,7 @@ class ChatWithHeader extends Component {
     } = this.props;
     let lastkey = '';
     let membersList = [];
-
+    console.log('Props', this.props);
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
         <Row
@@ -143,7 +172,9 @@ class ChatWithHeader extends Component {
                   this.msgChatRef = el;
                 }}
               >
-                {membersList.length === 0 ? this.renderAasignCompany(ChatRoomType) : ''}
+                {_.get(this.props.ShipmentData, 'ShipmentCreatorUserKey', false) === user.uid
+                  ? this.renderAssignCompany(ChatRoomType, this.props.ShipmentData)
+                  : ''}
                 {chatMsg.map((msg, i) => {
                   const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = 'sender';

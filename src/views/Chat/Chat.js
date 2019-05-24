@@ -40,6 +40,7 @@ import ChatCreateRoom from './components/ChatCreateRoom';
 import { CreateChatRoom, EditChatRoom, UpdateChatRoomMessageReader } from '../../service/chat/chat';
 import './Chat.css';
 import './MasterDetail.css';
+import { GetShipmentDetail } from '../../service/shipment/shipment';
 
 class Chat extends Component {
   constructor(props) {
@@ -54,7 +55,8 @@ class Chat extends Component {
       text: '',
       tabs: [],
       roomeditor: {},
-      onDropChatStyle: false
+      onDropChatStyle: false,
+      shipments: {}
     };
 
     this.uploadModalRef = React.createRef();
@@ -72,9 +74,6 @@ class Chat extends Component {
 
         const data = result.path.split('/');
         fetchChatMessage(data[data.length - 1], shipmentkey, result.id);
-      },
-      complete: result => {
-        console.log(result);
       }
     });
   }
@@ -84,7 +83,6 @@ class Chat extends Component {
       const {
         match: { params }
       } = this.props;
-      console.log(params);
       return (
         <ChatCreateRoom
           createChatRoom={this.createChatRoom}
@@ -100,7 +98,6 @@ class Chat extends Component {
     const ChatRoomFileLink = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomData.ChatRoomFileLink`);
     const ChatRoomMember = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomMember`, []);
     const ChatRoomData = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomData`, []);
-    console.log(ChatRoomData, 'chatrooms');
 
     return (
       <ChatWithHeader
@@ -113,6 +110,7 @@ class Chat extends Component {
         typing={onTyping}
         uploadModalRef={this.uploadModalRef}
         fileInputRef={this.fileInput}
+        ShipmentData={this.state.shipments}
         // Major Key
         ShipmentKey={this.props.match.params.shipmentkey}
         ChatRoomKey={ChatRoomKey}
@@ -237,6 +235,16 @@ class Chat extends Component {
       if (item.ShipmentKey === 'custom') return true;
       return item.ShipmentKey === params.shipmentkey;
     });
+    GetShipmentDetail(params.shipmentkey).subscribe({
+      next: res => {
+        this.setState({
+          shipments: {
+            ...res.data()
+          }
+        });
+      }
+    });
+
     const tabs = [];
     _.forEach(chats, (item, index) => {
       tabs.push({
@@ -265,14 +273,18 @@ class Chat extends Component {
   }
 
   render() {
+    console.log('this.state', this.state);
     const {
       match: { params }
     } = this.props;
-    console.log(this.props, 'Chat Props');
+
     const chats = _.filter(this.props.ChatReducer.chatrooms, item => {
-      if (item.ShipmentKey === 'custom') return true;
+      if (item.ShipmentKey === 'custom') {
+        return true;
+      }
       return item.ShipmentKey === params.shipmentkey;
     });
+
     let tabs = [];
 
     _.forEach(chats, (item, index) => {
@@ -280,7 +292,6 @@ class Chat extends Component {
         <div
           className="noti"
           onDoubleClick={() => {
-            console.log('double Click');
             if (item.roomName !== '+') {
               this.setState({
                 roomeditor: {
@@ -366,7 +377,7 @@ class Chat extends Component {
 }
 
 const mapStateToProps = state => {
-  const { ChatReducer, authReducer, profileReducer, shipmentReducer } = state;
+  const { ChatReducer, authReducer, profileReducer } = state;
 
   const sender = _.find(
     profileReducer.ProfileList,
@@ -375,8 +386,7 @@ const mapStateToProps = state => {
   return {
     ChatReducer,
     user: authReducer.user,
-    sender,
-    shipmentReducer
+    sender
   };
 };
 
