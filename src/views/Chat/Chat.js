@@ -64,6 +64,7 @@ class Chat extends Component {
   createChatRoom(fetchChatMessage, param, room) {
     const shipmentkey = _.get(param, 'shipmentkey', 'HDTPONlnceJeG5yAA1Zy');
     CreateChatRoom(shipmentkey, {
+      ChatRoomType: room,
       ChatRoomName: room
     }).subscribe({
       next: result => {
@@ -98,12 +99,16 @@ class Chat extends Component {
     const chatMsg = chat.length === 0 ? [] : chat.chatMsg;
     const ChatRoomFileLink = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomData.ChatRoomFileLink`);
     const ChatRoomMember = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomMember`, []);
+    const ChatRoomData = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomData`, []);
+    console.log(ChatRoomData, 'chatrooms');
+
     return (
       <ChatWithHeader
         msg={msg}
         user={user}
         sender={sender}
         chatMsg={chatMsg}
+        ChatRoomData={ChatRoomData}
         text={text}
         typing={onTyping}
         uploadModalRef={this.uploadModalRef}
@@ -228,10 +233,10 @@ class Chat extends Component {
       match: { params }
     } = this.props;
     this.props.getChatRoomList(params.shipmentkey); // MOCK SHIPMENT KEY
-    const chats = _.filter(
-      this.props.ChatReducer.chatrooms,
-      item => item.ShipmentKey === params.shipmentkey
-    );
+    const chats = _.filter(this.props.ChatReducer.chatrooms, item => {
+      if (item.ShipmentKey === 'custom') return true;
+      return item.ShipmentKey === params.shipmentkey;
+    });
     const tabs = [];
     _.forEach(chats, (item, index) => {
       tabs.push({
@@ -263,10 +268,10 @@ class Chat extends Component {
     const {
       match: { params }
     } = this.props;
-    const chats = _.filter(
-      this.props.ChatReducer.chatrooms,
-      item => item.ShipmentKey === params.shipmentkey
-    );
+    const chats = _.filter(this.props.ChatReducer.chatrooms, item => {
+      if (item.ShipmentKey === 'custom') return true;
+      return item.ShipmentKey === params.shipmentkey;
+    });
     let tabs = [];
 
     _.forEach(chats, (item, index) => {
