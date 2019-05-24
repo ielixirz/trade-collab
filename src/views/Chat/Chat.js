@@ -91,7 +91,15 @@ class Chat extends Component {
         />
       );
     }
-    const { user, ChatReducer, onTyping, onSendMessage, onFetchMoreMessage, sender } = this.props;
+    const {
+      user,
+      ChatReducer,
+      onTyping,
+      onSendMessage,
+      onFetchMoreMessage,
+      sender,
+      companies
+    } = this.props;
     const { text, chatrooms, msg } = ChatReducer;
     const chat = _.get(this.props, `ChatReducer.chatroomsMsg.${ChatRoomKey}`, []);
     const chatMsg = chat.length === 0 ? [] : chat.chatMsg;
@@ -107,6 +115,7 @@ class Chat extends Component {
         chatMsg={chatMsg}
         ChatRoomData={ChatRoomData}
         text={text}
+        companies={companies}
         typing={onTyping}
         uploadModalRef={this.uploadModalRef}
         fileInputRef={this.fileInput}
@@ -273,7 +282,7 @@ class Chat extends Component {
   }
 
   render() {
-    console.log('this.state', this.state);
+    console.log('this.state', this.props);
     const {
       match: { params }
     } = this.props;
@@ -377,7 +386,7 @@ class Chat extends Component {
 }
 
 const mapStateToProps = state => {
-  const { ChatReducer, authReducer, profileReducer } = state;
+  const { ChatReducer, authReducer, profileReducer, companyReducer } = state;
 
   const sender = _.find(
     profileReducer.ProfileList,
@@ -386,7 +395,8 @@ const mapStateToProps = state => {
   return {
     ChatReducer,
     user: authReducer.user,
-    sender
+    sender,
+    companies: companyReducer.UserCompany
   };
 };
 

@@ -13,7 +13,7 @@ import ShipmentSide from '../ShipmentSide';
 import ChatMessage from './ChatMessage';
 import PreMessage from './PreMessage';
 import { UpdateChatRoomMessageReader } from '../../../service/chat/chat';
-import { GetUserCompany } from '../../../service/user/user';
+import Select from 'react-select';
 
 const AVAILABLE_ROLES = {
   Importer: 'Exporter',
@@ -28,20 +28,33 @@ class ChatWithHeader extends Component {
 
   UpdateReader(ShipmentKey, ChatRoomKey, sender, data) {
     const refresh = _.debounce(() => {
-      console.log('Updating');
-      console.log(ShipmentKey, ChatRoomKey, sender, data);
       UpdateChatRoomMessageReader(ShipmentKey, ChatRoomKey, sender, data);
     }, 5000);
     refresh();
   }
+  handleAssignCompany(e) {}
   renderAssignCompany(ChatRoomType, shipment) {
+    const { companies } = this.props;
+
+    let options = [
+      { value: 'chocolate', label: 'Chocolate' },
+      { value: 'strawberry', label: 'Strawberry' },
+      { value: 'vanilla', label: 'Vanilla' }
+    ];
+    options = _.map(companies, item => {
+      return {
+        value: item.CompanyKey,
+        label: item.CompanyName
+      };
+    });
+
     switch (shipment.ShipmentCreatorType) {
       case 'Importer':
         return (
           <div
             style={{
               backgroundColor: 'rgba(242, 175, 41, 0.3)',
-              height: '100px',
+              height: 'auto',
               padding: '10px',
               borderRadius: '5px'
             }}
@@ -55,6 +68,10 @@ class ChatWithHeader extends Component {
               You have assigned your self as an Importer for this shipment
             </p>
             <p>Select a company, to inform your team about this shipment</p>
+
+            <div>
+              <Select onChange={this.handleAssignCompany} name="company" options={options} />
+            </div>
           </div>
         );
       case 'Custom Broker':
@@ -78,6 +95,9 @@ class ChatWithHeader extends Component {
               You have assigned your self as an Exporter for this shipment
             </p>
             <p>Select a company, to inform your team about this shipment</p>
+            <div>
+              <Select onChange={this.handleAssignCompany} name="company" options={options} />
+            </div>
           </div>
         );
       case 'Freight Forwarder':
