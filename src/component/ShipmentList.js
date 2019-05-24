@@ -3,7 +3,7 @@
 import React, { useContext, useRef, useEffect, useState } from 'react';
 import { ListGroup, ListGroupItem, Row, Col, Button } from 'reactstrap';
 import moment from 'moment';
-import ShipmentContext from '../context/shipmentContext';
+import ShipmentContext from '../context/ShipmentContext';
 import MasterDetailModal from './MasterDetailModal';
 
 import { GetMasterDataChatRoom } from '../service/masterdata/masterdata';

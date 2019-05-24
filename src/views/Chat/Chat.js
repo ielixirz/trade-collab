@@ -268,6 +268,7 @@ class Chat extends Component {
     const {
       match: { params }
     } = this.props;
+    console.log(this.props, 'Chat Props');
     const chats = _.filter(this.props.ChatReducer.chatrooms, item => {
       if (item.ShipmentKey === 'custom') return true;
       return item.ShipmentKey === params.shipmentkey;
@@ -365,8 +366,8 @@ class Chat extends Component {
 }
 
 const mapStateToProps = state => {
-  const { ChatReducer, authReducer, profileReducer } = state;
-  console.log(profileReducer);
+  const { ChatReducer, authReducer, profileReducer, shipmentReducer } = state;
+
   const sender = _.find(
     profileReducer.ProfileList,
     item => item.id === profileReducer.ProfileDetail.id
@@ -374,7 +375,8 @@ const mapStateToProps = state => {
   return {
     ChatReducer,
     user: authReducer.user,
-    sender
+    sender,
+    shipmentReducer
   };
 };
 
