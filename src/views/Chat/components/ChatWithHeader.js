@@ -66,7 +66,7 @@ class ChatWithHeader extends Component {
               const result = UpdateChatRoomMember(
                 ShipmentKey,
                 ChatRoomKey,
-                chatMember.ChatRoomMemberUserKey,
+                chatMember.ChatRoomMemberKey,
                 {
                   ...chatMember,
                   ChatRoomMemberCompanyName: pickedCompany.CompanyName,

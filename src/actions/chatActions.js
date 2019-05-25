@@ -60,6 +60,7 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
         GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
           next: res => {
             let members = _.map(res, item => {
+              console.log(item);
               return {
                 ChatRoomMemberKey: item.id,
                 ...item.data()

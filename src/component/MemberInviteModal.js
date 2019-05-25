@@ -10,6 +10,7 @@ import './MemberModal.css';
 import MemberSearchField from './memberInviteModal/MemberSearchField';
 import MemberInviteList from './memberInviteModal/MemberInviteList';
 import { CreateChatMultipleInvitation } from '../service/join/invite';
+import { UpdateChatRoomMember } from '../service/chat/chat';
 
 class MemberInviteModal extends React.Component {
   constructor(props) {
@@ -92,6 +93,14 @@ class MemberInviteModal extends React.Component {
     _.forEach(invitationCollection, item => {
       _.forEach(member, memberItem => {
         if (memberItem.ChatRoomMemberEmail === item.Email) {
+          UpdateChatRoomMember(ShipmentKey, ChatRoomKey, memberItem.ChatRoomMemberKey, {
+            ...memberItem,
+            ChatRoomMemberRole: item.Role
+          }).subscribe({
+            next: res => {
+              console.log(res);
+            }
+          });
           input = _.filter(input, email => email.Email !== memberItem.ChatRoomMemberEmail);
         }
       });
