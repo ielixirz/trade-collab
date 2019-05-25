@@ -4,9 +4,15 @@ import {
   moveTab as MOVE_TAB,
   TYPING_TEXT,
   FETCH_CHAT_ROOMS,
-  SEND_MESSAGE
+  SEND_MESSAGE,
+  FETCH_CHAT_MEMBER
 } from '../constants/constants';
-import { GetChatMessage, CreateChatMessage, GetChatRoomList } from '../service/chat/chat';
+import {
+  GetChatMessage,
+  CreateChatMessage,
+  GetChatRoomList,
+  GetChatRoomMemberList
+} from '../service/chat/chat';
 
 export const typing = data => dispatch => {
   const text = data.target.value;
@@ -49,6 +55,22 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
           type: FETCH_CHAT,
           id: ChatRoomKey,
           payload: res
+        });
+
+        GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
+          next: res => {
+            let members = _.map(res, item => {
+              return {
+                ChatRoomMemberKey: item.id,
+                ...item.data()
+              };
+            });
+            dispatch({
+              type: FETCH_CHAT_MEMBER,
+              id: ChatRoomKey,
+              payload: members
+            });
+          }
         });
       },
       error: err => {
