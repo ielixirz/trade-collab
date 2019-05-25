@@ -98,7 +98,7 @@ class ChatWithHeader extends Component {
       });
     }
   }
-  renderAssignCompany(ChatRoomType, shipment) {
+  renderAssignCompany(ChatRoomType, hasInvite = false) {
     const { companies } = this.props;
 
     let options = [];
@@ -109,71 +109,68 @@ class ChatWithHeader extends Component {
       };
     });
 
-    switch (shipment.ShipmentCreatorType) {
-      case 'Importer':
-        return (
-          <div
+    if (hasInvite) {
+      return (
+        <div
+          style={{
+            backgroundColor: 'rgba(242, 175, 41, 0.3)',
+            height: 'auto',
+            padding: '10px',
+            borderRadius: '5px'
+          }}
+        >
+          <p
             style={{
-              backgroundColor: 'rgba(242, 175, 41, 0.3)',
-              height: 'auto',
-              padding: '10px',
-              borderRadius: '5px'
+              fontWeight: 700,
+              color: '#000000'
             }}
           >
-            <p
-              style={{
-                fontWeight: 700,
-                color: '#000000'
+            You have been invited you as {ChatRoomType} for this shipment.
+          </p>
+          <p>Choose the company you want to use to handle this shipment</p>
+
+          <div>
+            <Select
+              onChange={e => {
+                this.handleAssignCompany(e, ChatRoomType);
               }}
-            >
-              You have assigned your self as an Importer for this shipment
-            </p>
-            <p>Select a company, to inform your team about this shipment</p>
-
-            <div>
-              <Select
-                onChange={e => {
-                  this.handleAssignCompany(e, 'Importer');
-                }}
-                name="company"
-                options={options}
-              />
-            </div>
+              name="company"
+              options={options}
+            />
           </div>
-        );
-      case 'Custom Broker':
-
-      case 'Exporter':
-        return (
-          <div
+        </div>
+      );
+    } else {
+      return (
+        <div
+          style={{
+            backgroundColor: 'rgba(242, 175, 41, 0.3)',
+            height: 'auto',
+            padding: '10px',
+            borderRadius: '5px'
+          }}
+        >
+          <p
             style={{
-              backgroundColor: 'rgba(242, 175, 41, 0.3)',
-              height: '100px',
-              padding: '10px',
-              borderRadius: '5px'
+              fontWeight: 700,
+              color: '#000000'
             }}
           >
-            <p
-              style={{
-                fontWeight: 700,
-                color: '#000000'
+            You have assigned your self as an {ChatRoomType} for this shipment
+          </p>
+          <p>Select a company, to inform your team about this shipment</p>
+
+          <div>
+            <Select
+              onChange={e => {
+                this.handleAssignCompany(e, ChatRoomType);
               }}
-            >
-              You have assigned your self as an Exporter for this shipment
-            </p>
-            <p>Select a company, to inform your team about this shipment</p>
-            <div>
-              <Select
-                onChange={e => {
-                  this.handleAssignCompany(e);
-                }}
-                name="company"
-                options={options}
-              />
-            </div>
+              name="company"
+              options={options}
+            />
           </div>
-        );
-      case 'Freight Forwarder':
+        </div>
+      );
     }
   }
   render() {
@@ -205,8 +202,8 @@ class ChatWithHeader extends Component {
       onFileDrop
     } = this.props;
     let lastkey = '';
-    let membersList = [];
-    console.log('Props', this.props);
+    let isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
+    console.log('isInvited', isInvited);
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
         <Row
@@ -270,7 +267,9 @@ class ChatWithHeader extends Component {
                 }}
               >
                 {_.get(this.props.ShipmentData, 'ShipmentCreatorUserKey', false) === user.uid
-                  ? this.renderAssignCompany(ChatRoomType, this.props.ShipmentData)
+                  ? this.renderAssignCompany(this.props.ShipmentData.ShipmentCreatorType)
+                  : isInvited
+                  ? this.renderAssignCompany(isInvited.ChatRoomMemberRole[0], true)
                   : ''}
                 {chatMsg.map((msg, i) => {
                   const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
