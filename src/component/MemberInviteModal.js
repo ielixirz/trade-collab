@@ -60,6 +60,7 @@ class MemberInviteModal extends React.Component {
   onSubmit = () => {
     const { ChatRoomKey, ShipmentKey } = this.props;
     const { invitationCollection } = this.state;
+    console.log('invitationCollection', this.state);
     const result = CreateChatMultipleInvitation(invitationCollection, ShipmentKey, ChatRoomKey);
     console.log(result);
     this.toggle();

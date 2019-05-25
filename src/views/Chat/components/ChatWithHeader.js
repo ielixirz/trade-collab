@@ -36,11 +36,7 @@ class ChatWithHeader extends Component {
   renderAssignCompany(ChatRoomType, shipment) {
     const { companies } = this.props;
 
-    let options = [
-      { value: 'chocolate', label: 'Chocolate' },
-      { value: 'strawberry', label: 'Strawberry' },
-      { value: 'vanilla', label: 'Vanilla' }
-    ];
+    let options = [];
     options = _.map(companies, item => {
       return {
         value: item.CompanyKey,
