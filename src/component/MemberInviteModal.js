@@ -35,9 +35,26 @@ class MemberInviteModal extends React.Component {
   shouldInvite = invite => {
     const { invitationCollection } = this.state;
     const exist = this.isInvited(invite.Email);
+    console.log(invitationCollection);
     if (exist) {
       if (invite.Role.length <= 0) {
         const updated = _.filter(invitationCollection, profile => profile.email !== invite.email);
+        this.setState({ invitationCollection: updated });
+      } else {
+        let updated = [];
+        _.forEach(invitationCollection, item => {
+          if (item.Email === invite.Email) {
+            updated.push({
+              ...item,
+              ...invite
+            });
+          } else {
+            updated.push({
+              ...item
+            });
+          }
+        });
+        console.log(updated);
         this.setState({ invitationCollection: updated });
       }
     } else {
@@ -70,7 +87,11 @@ class MemberInviteModal extends React.Component {
     const { invitationCollection } = this.state;
     console.log('invitationCollection', this.state);
     const result = CreateChatMultipleInvitation(invitationCollection, ShipmentKey, ChatRoomKey);
-    console.log(result);
+    result.subscribe({
+      next: res => {
+        console.log(res);
+      }
+    });
     this.toggle();
   };
 
