@@ -12,8 +12,9 @@ import FileSide from '../FileSide';
 import ShipmentSide from '../ShipmentSide';
 import ChatMessage from './ChatMessage';
 import PreMessage from './PreMessage';
-import { UpdateChatRoomMessageReader } from '../../../service/chat/chat';
+import { UpdateChatRoomMember, UpdateChatRoomMessageReader } from '../../../service/chat/chat';
 import Select from 'react-select';
+import { GetCompanyMember } from '../../../service/company/company';
 
 const AVAILABLE_ROLES = {
   Importer: 'Exporter',
@@ -32,7 +33,46 @@ class ChatWithHeader extends Component {
     }, 5000);
     refresh();
   }
-  handleAssignCompany(e) {}
+  handleAssignCompany(e, role) {
+    console.log(this.props);
+    const { companies, member, ShipmentKey, ChatRoomKey } = this.props;
+    console.log('member', member);
+    const pickedCompany = _.find(companies, item => item.CompanyKey === e.value);
+
+    if (pickedCompany) {
+      GetCompanyMember(e.value).subscribe({
+        next: res => {
+          let CompanyMember = _.map(res, item => {
+            return {
+              ...item.data()
+            };
+          });
+          console.log('CompanyMember', CompanyMember);
+          _.forEach(CompanyMember, memberItem => {
+            let chatMember = _.find(
+              member,
+              item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail
+            );
+            // ChatRoomMemberEmail: "punjasin@gmail.com"
+            // ChatRoomMemberKey: "DtUSy9J4aYzu7tGWjHUK"
+            // ChatRoomMemberRole: (2) ["Custom Broker Outbound", "Forwarder Outbound"]
+            // ChatRoomMemberUserKey: "v4q6ksx4AhaMbekVLvWl0dKuaWf2"
+            if (chatMember) {
+              UpdateChatRoomMember(ShipmentKey, ChatRoomKey, chatMember.ChatRoomMemberUserKey, {
+                ...chatMember,
+                ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+              }).subscribe({
+                next: res => {
+                  console.log(res.data());
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+  }
   renderAssignCompany(ChatRoomType, shipment) {
     const { companies } = this.props;
 
@@ -66,7 +106,13 @@ class ChatWithHeader extends Component {
             <p>Select a company, to inform your team about this shipment</p>
 
             <div>
-              <Select onChange={this.handleAssignCompany} name="company" options={options} />
+              <Select
+                onChange={e => {
+                  this.handleAssignCompany(e, 'Importer');
+                }}
+                name="company"
+                options={options}
+              />
             </div>
           </div>
         );
@@ -92,7 +138,13 @@ class ChatWithHeader extends Component {
             </p>
             <p>Select a company, to inform your team about this shipment</p>
             <div>
-              <Select onChange={this.handleAssignCompany} name="company" options={options} />
+              <Select
+                onChange={e => {
+                  this.handleAssignCompany(e);
+                }}
+                name="company"
+                options={options}
+              />
             </div>
           </div>
         );

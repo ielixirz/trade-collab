@@ -70,8 +70,6 @@ class Chat extends Component {
       ChatRoomName: room
     }).subscribe({
       next: result => {
-        console.log(result.id);
-
         const data = result.path.split('/');
         fetchChatMessage(data[data.length - 1], shipmentkey, result.id);
       }
@@ -106,6 +104,7 @@ class Chat extends Component {
     const ChatRoomFileLink = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomData.ChatRoomFileLink`);
     const ChatRoomMember = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomMember`, []);
     const ChatRoomData = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomData`, []);
+    const member = _.get(chatrooms, `[${ChatRoomKey}].member`, []);
 
     return (
       <ChatWithHeader
@@ -117,6 +116,7 @@ class Chat extends Component {
         text={text}
         companies={companies}
         typing={onTyping}
+        member={member}
         uploadModalRef={this.uploadModalRef}
         fileInputRef={this.fileInput}
         ShipmentData={this.state.shipments}
@@ -257,17 +257,6 @@ class Chat extends Component {
     const tabs = [];
     _.forEach(chats, (item, index) => {
       tabs.push({
-        id: tabs.length + 1,
-        content: (
-          <EdiText
-            type="text"
-            value={item.roomName}
-            onSave={val => {
-              console.log(val);
-            }}
-          />
-        ),
-        active: item.active,
         ChatRoomKey: item.ChatRoomKey,
         ShipmentKey: item.ShipmentKey
       });
@@ -282,7 +271,6 @@ class Chat extends Component {
   }
 
   render() {
-    console.log('this.state', this.props);
     const {
       match: { params }
     } = this.props;
@@ -360,9 +348,11 @@ class Chat extends Component {
         active: item.active,
         ChatRoomKey: item.ChatRoomKey,
         ShipmentKey: item.ShipmentKey,
-        position: item.position
+        position: item.position,
+        member: item.member
       });
     });
+    console.log(tabs);
     tabs = _.sortBy(tabs, 'position');
     const activeTab = tabs.filter(tab => tab.active === true);
     return (
