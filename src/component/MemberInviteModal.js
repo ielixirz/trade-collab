@@ -46,15 +46,23 @@ class MemberInviteModal extends React.Component {
   };
 
   onResultList = collection => {
-    const mapped = collection.map(member => {
+    let oldlist = this.state.collection;
+
+    _.forEach(collection, member => {
       const data = member.data();
       const { UserInfoProfileImageLink, UserInfoEmail } = data;
-      return {
-        Image: UserInfoProfileImageLink,
-        Email: UserInfoEmail
-      };
+      if (
+        !_.find(oldlist, item => {
+          return item.Email === UserInfoEmail;
+        })
+      ) {
+        oldlist.push({
+          Image: UserInfoProfileImageLink,
+          Email: UserInfoEmail
+        });
+      }
     });
-    this.setState({ collection: mapped });
+    this.setState({ collection: oldlist });
   };
 
   onSubmit = () => {
