@@ -83,15 +83,30 @@ class MemberInviteModal extends React.Component {
   };
 
   onSubmit = () => {
-    const { ChatRoomKey, ShipmentKey } = this.props;
+    const { ChatRoomKey, ShipmentKey, member } = this.props;
     const { invitationCollection } = this.state;
     console.log('invitationCollection', this.state);
-    const result = CreateChatMultipleInvitation(invitationCollection, ShipmentKey, ChatRoomKey);
-    result.subscribe({
-      next: res => {
-        console.log(res);
-      }
+    console.log('member', this.props);
+    let input = invitationCollection;
+
+    _.forEach(invitationCollection, item => {
+      _.forEach(member, memberItem => {
+        if (memberItem.ChatRoomMemberEmail === item.Email) {
+          input = _.filter(input, email => email.Email !== memberItem.ChatRoomMemberEmail);
+        }
+      });
     });
+
+    console.log('Updated', input);
+    if (input.length > 0) {
+      const result = CreateChatMultipleInvitation(input, ShipmentKey, ChatRoomKey);
+      result.subscribe({
+        next: res => {
+          console.log(res);
+        }
+      });
+    }
+
     this.toggle();
   };
 

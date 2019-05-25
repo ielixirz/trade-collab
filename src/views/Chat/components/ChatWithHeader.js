@@ -58,15 +58,18 @@ class ChatWithHeader extends Component {
             // ChatRoomMemberRole: (2) ["Custom Broker Outbound", "Forwarder Outbound"]
             // ChatRoomMemberUserKey: "v4q6ksx4AhaMbekVLvWl0dKuaWf2"
             if (chatMember) {
-              UpdateChatRoomMember(ShipmentKey, ChatRoomKey, chatMember.ChatRoomMemberUserKey, {
-                ...chatMember,
-                ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
-              }).subscribe({
-                next: res => {
-                  console.log(res.data());
+              const result = UpdateChatRoomMember(
+                ShipmentKey,
+                ChatRoomKey,
+                chatMember.ChatRoomMemberUserKey,
+                {
+                  ...chatMember,
+                  ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
                 }
-              });
+              );
+              console.log(result);
+            } else {
             }
           });
         }
@@ -163,7 +166,7 @@ class ChatWithHeader extends Component {
       sender,
       ShipmentKey,
       ShipmentData = {},
-
+      member,
       ChatRoomKey,
       ChatRoomFileLink,
       ChatRoomMember,
@@ -191,7 +194,11 @@ class ChatWithHeader extends Component {
           }}
         >
           <Breadcrumb className="chat-toolbar">
-            <MemberInviteModal ShipmentKey={ShipmentKey} ChatRoomKey={ChatRoomKey} />
+            <MemberInviteModal
+              ShipmentKey={ShipmentKey}
+              ChatRoomKey={ChatRoomKey}
+              member={member}
+            />
             <Button className="btn-chat-label">|</Button>
             <MemberModal count={ChatRoomMember.length} />
             <Button className="btn-chat-label">|</Button>
