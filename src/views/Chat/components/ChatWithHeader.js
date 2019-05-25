@@ -15,6 +15,7 @@ import PreMessage from './PreMessage';
 import { UpdateChatRoomMember, UpdateChatRoomMessageReader } from '../../../service/chat/chat';
 import Select from 'react-select';
 import { GetCompanyMember } from '../../../service/company/company';
+import { CreateChatMultipleInvitation } from '../../../service/join/invite';
 
 const AVAILABLE_ROLES = {
   Importer: 'Exporter',
@@ -47,12 +48,16 @@ class ChatWithHeader extends Component {
               ...item.data()
             };
           });
+          let inviteRole = [];
+          inviteRole.push(role);
           console.log('CompanyMember', CompanyMember);
+          let inviteMember = [];
           _.forEach(CompanyMember, memberItem => {
             let chatMember = _.find(
               member,
               item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail
             );
+
             // ChatRoomMemberEmail: "punjasin@gmail.com"
             // ChatRoomMemberKey: "DtUSy9J4aYzu7tGWjHUK"
             // ChatRoomMemberRole: (2) ["Custom Broker Outbound", "Forwarder Outbound"]
@@ -70,6 +75,23 @@ class ChatWithHeader extends Component {
               );
               console.log(result);
             } else {
+              // Email: "punjasin@gmail.com"
+              // Image: undefined
+              // Role: (2) ["Custom Broker Outbound", "Forwarder Outbound"]
+
+              inviteMember.push({
+                Email: memberItem.UserMemberEmail,
+                Image: '',
+                Role: inviteRole,
+                ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+              });
+            }
+          });
+          console.log(inviteMember);
+          CreateChatMultipleInvitation(inviteMember, ShipmentKey, ChatRoomKey).subscribe({
+            next: res => {
+              console.log(res);
             }
           });
         }
