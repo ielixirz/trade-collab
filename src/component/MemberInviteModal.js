@@ -4,9 +4,7 @@
 /* eslint-disable filenames/match-regex */
 import _ from 'lodash';
 import React from 'react';
-import {
-  Button, Modal, ModalHeader, ModalBody,
-} from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import './MemberModal.css';
 
 import MemberSearchField from './memberInviteModal/MemberSearchField';
@@ -19,22 +17,22 @@ class MemberInviteModal extends React.Component {
     this.state = {
       modal: false,
       collection: [],
-      invitationCollection: [],
+      invitationCollection: []
     };
   }
 
   toggle = () => {
     this.setState(prevState => ({
-      modal: !prevState.modal,
+      modal: !prevState.modal
     }));
   };
 
-  isInvited = (email) => {
+  isInvited = email => {
     const { invitationCollection } = this.state;
     return invitationCollection.find(profile => profile.Email === email);
   };
 
-  shouldInvite = (invite) => {
+  shouldInvite = invite => {
     const { invitationCollection } = this.state;
     const exist = this.isInvited(invite.Email);
     if (exist) {
@@ -47,13 +45,13 @@ class MemberInviteModal extends React.Component {
     }
   };
 
-  onResultList = (collection) => {
-    const mapped = collection.map((member) => {
+  onResultList = collection => {
+    const mapped = collection.map(member => {
       const data = member.data();
       const { UserInfoProfileImageLink, UserInfoEmail } = data;
       return {
         Image: UserInfoProfileImageLink,
-        Email: UserInfoEmail,
+        Email: UserInfoEmail
       };
     });
     this.setState({ collection: mapped });
@@ -83,7 +81,7 @@ class MemberInviteModal extends React.Component {
             marginLeft: '2rem',
             marginRight: '1rem',
             color: 'white',
-            backgroundColor: '#16A085',
+            backgroundColor: '#16A085'
           }}
           onClick={this.toggle}
         >
@@ -109,13 +107,11 @@ class MemberInviteModal extends React.Component {
                   marginLeft: '2rem',
                   marginRight: '1rem',
                   color: 'white',
-                  backgroundColor: '#16A085',
+                  backgroundColor: '#16A085'
                 }}
                 onClick={this.onSubmit}
               >
-                Send Invitation (
-                {invitationCollection.length}
-)
+                Send Invitation ({invitationCollection.length})
               </Button>
             ) : null}
           </ModalBody>

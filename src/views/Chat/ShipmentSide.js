@@ -8,7 +8,7 @@ import _ from 'lodash';
 import {
   Collapse, CardBody, Card, Row, Col,
 } from 'reactstrap';
-import ShipmentListContext from '../../context/ShipmentContext';
+import ShipmentListContext from '../../context/shipmentContext';
 import shipmentReducer from '../../reducers/shipmentReducer';
 import ShipmentList from '../../component/ShipmentList';
 
