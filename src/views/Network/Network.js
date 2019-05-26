@@ -26,7 +26,7 @@ class Network extends Component {
           <Route exact path="/network" name="Profile Page" component={ProfilePanel} />
           <Route
             exact
-            path="/network/company/settings"
+            path="/network/company/settings/:key"
             name="Company Setting Page"
             component={SettingPanel}
           />

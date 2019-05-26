@@ -421,7 +421,12 @@ const CompanyPanel = (props) => {
               </DropdownToggle>
             </Dropdown>
             {isMember ? (
-              <Button className="company-access-btn">
+              <Button
+                className="company-access-btn"
+                onClick={() => {
+                  window.location.replace(`#/network/company/settings/${props.match.params.key}`);
+                }}
+              >
                 <i className="cui-wrench icons" style={{ marginRight: '0.5rem' }} />
                 Accessibility Settings
               </Button>
@@ -510,7 +515,7 @@ const CompanyPanel = (props) => {
                     if (invitedEmails.length > 0) {
                       inviteToCompanyModalRef.current.triggerInviteToCompany(invitedEmails, {
                         companyName: company.CompanyName,
-                        key: props.match.params.key,
+                        key: `props.match.params.key`,
                       });
                     }
                   }}
