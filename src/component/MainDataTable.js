@@ -4,7 +4,13 @@ import React from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
 
 const MainDataTable = ({
-  data, column, cssClass, isBorder, wraperClass, toolkitbaseProps,
+  data,
+  column,
+  cssClass,
+  isBorder,
+  wraperClass,
+  toolkitbaseProps,
+  rowEvents,
 }) => (
   <BootstrapTable
     {...toolkitbaseProps}
@@ -14,6 +20,7 @@ const MainDataTable = ({
     data={data}
     columns={column}
     bordered={isBorder}
+    rowEvents={rowEvents}
   />
 );
 export default MainDataTable;

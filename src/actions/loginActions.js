@@ -1,6 +1,8 @@
 import { FILL_CREDENCIAL, SAVE_CREDENCIAL } from '../constants/constants';
 import { LoginWithEmail } from '../service/auth/login';
 import { getUserInfoDetail } from './userActions';
+import 'firebase/auth';
+import { FirebaseApp } from '../service/firebase';
 
 export const typinglogin = data => (dispatch) => {
   // eslint-disable-next-line prefer-destructuring
@@ -13,6 +15,12 @@ export const typinglogin = data => (dispatch) => {
   });
 };
 
+export const setDefault = () => (dispatch) => {
+  dispatch({
+    type: SAVE_CREDENCIAL,
+    payload: {},
+  });
+};
 export const login = data => (dispatch) => {
   const { email, password } = data;
   LoginWithEmail(email, password).subscribe({
@@ -21,7 +29,7 @@ export const login = data => (dispatch) => {
         type: SAVE_CREDENCIAL,
         payload: res.user,
       });
-      window.location.replace('#/shipment');
+      window.location.replace('#/selectprofile');
     },
     error: (err) => {
       console.log(err);
@@ -29,4 +37,16 @@ export const login = data => (dispatch) => {
     },
     complete: () => {},
   });
+};
+
+export const logout = callback => (dispatch) => {
+  FirebaseApp.auth()
+    .signOut()
+    .then(() => {
+      dispatch({
+        type: SAVE_CREDENCIAL,
+        payload: {},
+      });
+      if (callback) callback();
+    });
 };

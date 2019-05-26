@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
 /* as it is component */
 import React, {
@@ -6,7 +7,7 @@ import React, {
 import {
   Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader,
 } from 'reactstrap';
-import { CreateCompany } from '../service/company/company';
+import { CombineCreateCompanyWithCreateCompanyMember } from '../service/company/company';
 
 const CreateCompanyModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
@@ -48,7 +49,17 @@ const CreateCompanyModal = forwardRef((props, ref) => {
   };
 
   const create = () => {
-    CreateCompany(company);
+    const userData = {
+      UserMemberEmail: props.userEmail,
+      UserMemberPosition: '-',
+      UserMemberRoleName: '-',
+      UserMatrixRolePermissionCode: '-',
+      UserMemberCompanyStandingStatus: 'Active',
+      UserMemberJoinedTimestamp: new Date(),
+    };
+    CombineCreateCompanyWithCreateCompanyMember(company, props.userKey, userData).subscribe(() => {
+      props.updateCompany(company);
+    });
     toggle();
   };
 
@@ -75,10 +86,6 @@ const CreateCompanyModal = forwardRef((props, ref) => {
           id="company-name"
           placeholder="Name"
         />
-        <Label htmlFor="company-id" style={{ marginTop: '1rem' }}>
-          <b>Company ID</b>
-        </Label>
-        <Input onChange={handleCompanyInputChange} type="text" id="company-id" placeholder="ID" />
         <Label onClick={extend} style={{ marginTop: '1rem', color: 'grey' }} hidden={isExtend}>
           <b>+ Add Additional Detail</b>
         </Label>

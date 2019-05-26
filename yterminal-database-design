@@ -56,21 +56,34 @@
                         .
                 +ChatRoomMessage
                     >ChatRoomMessageKey
-                        ChatRoomMessageSender (string)
+                        ChatRoomMessageSender (string) (ProlfileKey)
+                        ChatRoomMessageFirstName (string)
+                        ChatRoomMessageSurName (string)
                         ChatRoomMessageContext (string)
                         ChatRoomMessageFileUrl (string) *Optional
                         ChatRoomMessageType (string) ['Text','Emoji','Image']
                         ChatRoomMessageTimestamp (timestamp)
+                        ChatRoomMessageReader (Array<Object>)
+                            [{ ChatRoomMessageReaderProfileKey, ChatRoomMessageReaderFirstName, ChatRoomMessageReaderSurName }]
                 +ChatRoomMember
                     >ChatRoomMemberKey
                         ChatRoomMemberUserKey (string)
                         ChatRoomMemberName (string)
                         ChatRoomMemberEmail (string)
                         ChatRoomMemberName (string)
-                        ChatRoomMemberImageURL (string)
+                        ChatRoomMemberImageUrl (string)
                         ChatRoomMemberRole (string)
                         ChatRoomMemberCompanyName (string)
                         ChatRoomMemberCompanyKey (string)
+                +ChatRoomMessageReader
+                    >ChatRoomMessageKeyList *(Static document name) (Create for util)
+                        ChatRoomMessageKeyList (Array<string>)
+                    >ProfileKey
+                        ChatRoomMessageReaderFirstName (string)
+                        ChatRoomMessageReaderSurName (string)
+                        ChatRoomMessageReaderProfileImageUrl (string)
+                        ChatRoomMessageReaderLastestMessageKey (string)
+
 
         +ShipmentFile
             >FileKey
@@ -98,6 +111,7 @@
                 ProfileName (string) *(Note-Ask)
                 ProfileEmail (string)
                 ProfileProfileImageLink (string) *(Note-Ask)
+                ProfileCreateTimestamp (timestamp)
                 ProfileNotificationToken (Array<string>)
         +UserInvitation (User was recruited)
             >InvitationKey
@@ -126,15 +140,18 @@
                 UserChatRoomReference (reference)
                 UserChatRoomTimestamp (timestamp)
                 UserChatRoomLastestTimestamp (timestamp)
+        +UserCompany
+            >UserCompanyKey
+                UserCompanyReference (reference)
+                UserCompanyTimestamp (timestamp)
+
 
 +UserPersonalize
     >ProfileKey
+        ShipmentPin (Array<string (ShipmentKey)>)
         +ShipmentOrdering
             >ShipmentKey
                 ChatRoomOrdering (Array<string (ChatRoomKey)>)
-        +ShipmentPin
-            >ShipmentKey
-                ShipmentPin (Array<string (ShipmentKey)>)
         +ShipmentReferenceDisplay
             >ShipmentKey
                 ShipmentReferenceSelect (string) [RefOwner]
@@ -180,27 +197,51 @@
                 UserRequestEmail (string)
                 UserRequestNote (string)
                 UserRequestTimestamp (timestamp)
+                UserRequestRoleName (string)
+                UserRequestRolePermissionCode (string)
+                UserRequestPosition (string)
                 UserInvitationStatus (string) ('Reject','Approve','Pending')
-        +CompanyUserMatrix
-            >CompanyUserMatrixKey
-                CompanyUserMatrixRoleName (string)
-                CompanyUserMatrixRolePermissionCode (string)
+        +CompanyUserAccessibility
+            >CompanyUserAccessibilityKey
+                CompanyUserAccessibilityRoleName (string)
+                CompanyUserAccessibilityRolePermissionCode (string)
 
-+MasterShipmentData *(This collection is static value)
++MasterData *(This collection is static value)
     >Shipper
         ShipperCompanyName (string)
-        ShipperPier (string)
-        ShipperDate (timestamp)
+        ShipperPort (string)
+        ShipperCountry (string)
+        ShipperETDDate (timestamp)
     >ShipmentDetail
-        ShipmentDetailProduct (string)
+        ShipmentDetailShippingLine (string)
+        ShipmentDetailPriceDescriptionOfGoods (string)
         ShipmentDetailContainerNumber (string)
         ShipmentDetailBillofLandingNumber (string)
         ShipmentDetailOriginalDocumentTrackingNumber (string)
-        ShipmentDetailNote (string)
+        ShipmentDetailProduct (string)
     >Consignee
         ConsigneeCompanyName (string)
-        ConsigneePier (string)
-        ConsigneeDate (timestamp)
+        ConsigneePort (string)
+        ConsigneeETAPortDate (timestamp)
+        ConsigneeETAWarehouseDate (timestamp)
+        ConsigneeCountry (string)
+    >DefaultTemplate
+        ShipperCompanyName (string)
+        ShipperPort (string)
+        ShipperCountry (string)
+        ShipperETDDate (timestamp)
+        ShipmentDetailShippingLine (string)
+        ShipmentDetailPriceDescriptionOfGoods (string)
+        ShipmentDetailContainerNumber (string)
+        ShipmentDetailBillofLandingNumber (string)
+        ShipmentDetailOriginalDocumentTrackingNumber (string)
+        ShipmentDetailProduct (string)
+        ConsigneeCompanyName (string)
+        ConsigneePort (string)
+        ConsigneeETAPortDate (timestamp)
+        ConsigneeETAWarehouseDate (timestamp)
+        ConsigneeCountry (string)
+
 
 __________________________________________________________________________________
 

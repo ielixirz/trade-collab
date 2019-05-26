@@ -24,13 +24,13 @@ class Network extends Component {
       <div className="network-container">
         <Switch>
           <Route exact path="/network" name="Profile Page" component={ProfilePanel} />
-          <Route exact path="/network/company" name="Company Page" component={CompanyPanel} />
           <Route
             exact
             path="/network/company/settings"
             name="Company Setting Page"
             component={SettingPanel}
           />
+          <Route exact path="/network/company/:key" name="Company Page" component={CompanyPanel} />
         </Switch>
       </div>
     );

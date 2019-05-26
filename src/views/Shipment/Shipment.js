@@ -114,7 +114,11 @@ class Shipment extends Component {
       }
     }
     parameter.ShipmentCreateTimestamp = new Date().getTime();
-    CreateShipment(parameter);
+    CreateShipment(parameter).subscribe({
+      next: res => {
+        this.props.fetchShipments(this.state.typeShipment);
+      }
+    });
 
     this.setState(prevState => ({
       modal: !prevState.modal,
@@ -598,23 +602,14 @@ class Shipment extends Component {
             </Button>
           </Col>
         </Nav>
-        <TabContent
-          activeTab={this.state.activeTab}
-          id="content"
-          className="boo"
-          onScroll={e => {
-            console.log(e);
-            const obj = document.getElementById('content');
-            const isTrigger = obj.scrollTop === obj.scrollHeight - obj.offsetHeight;
-            if (isTrigger) {
-              this.props.fetchMoreShipments();
-            }
-          }}
-        >
+        <TabContent activeTab={this.state.activeTab} id="content" className="boo">
           <TabPane tabId="1">
             <Row>
               <Col sm="12">
-                <TableShipment input={this.props.shipments} />
+                <TableShipment
+                  input={this.props.shipments}
+                  typeShipment={this.state.typeShipment}
+                />
               </Col>
             </Row>
           </TabPane>
@@ -622,28 +617,40 @@ class Shipment extends Component {
             <Row>
               <Col sm="12">
                 {' '}
-                <TableShipment input={this.props.shipments} />
+                <TableShipment
+                  input={this.props.shipments}
+                  typeShipment={this.state.typeShipment}
+                />
               </Col>
             </Row>
           </TabPane>
           <TabPane tabId="3">
             <Row>
               <Col sm="12">
-                <TableShipment input={this.props.shipments} />
+                <TableShipment
+                  input={this.props.shipments}
+                  typeShipment={this.state.typeShipment}
+                />
               </Col>
             </Row>
           </TabPane>
           <TabPane tabId="4">
             <Row>
               <Col sm="12">
-                <TableShipment input={this.props.shipments} />
+                <TableShipment
+                  input={this.props.shipments}
+                  typeShipment={this.state.typeShipment}
+                />
               </Col>
             </Row>
           </TabPane>
           <TabPane tabId="5">
             <Row>
               <Col sm="12">
-                <TableShipment input={this.props.shipments} />
+                <TableShipment
+                  input={this.props.shipments}
+                  typeShipment={this.state.typeShipment}
+                />
               </Col>
             </Row>
           </TabPane>
@@ -657,7 +664,7 @@ const styles = {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#707070',
-    cursor: 'pointer',
+    cursor: 'pointer'
   },
   lineTab: {
     color: '#EAEAEA',

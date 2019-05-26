@@ -1,41 +1,44 @@
+/* eslint-disable react/prefer-stateless-function */
+/* eslint-disable filenames/match-regex */
 import React, { Component } from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 // import { renderRoutes } from 'react-router-config';
-import { configureStore } from './utils/configureStore';
 import { Provider } from 'react-redux';
 
 import { PersistGate } from 'redux-persist/integration/react';
 import Loadable from 'react-loadable';
 import { StoreContext } from 'redux-react-hook';
+import { configureStore } from './utils/configureStore';
 
 import './App.scss';
+
 const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
 export const { store, persistor } = configureStore();
 // Containers
 const DefaultLayout = Loadable({
   loader: () => import('./containers/DefaultLayout'),
-  loading
+  loading,
 });
 
 // Pages
 const Login = Loadable({
   loader: () => import('./views/Pages/Login'),
-  loading
+  loading,
 });
 
 const Register = Loadable({
-  loader: () => import('./views/Pages/Register'),
-  loading
+  loader: () => import('./views/Pages/Main/MainRegister'),
+  loading,
 });
 
 const Page404 = Loadable({
   loader: () => import('./views/Pages/Page404'),
-  loading
+  loading,
 });
 
 const Page500 = Loadable({
   loader: () => import('./views/Pages/Page500'),
-  loading
+  loading,
 });
 
 class App extends Component {

@@ -2,25 +2,31 @@
 /* eslint-disable filenames/match-regex */
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
+import { zip } from 'rxjs';
+import { map } from 'rxjs/operators';
+import _ from 'lodash';
 
 import {
-  Row,
-  Col,
-  DropdownToggle,
-  Dropdown,
-  Button,
-  Input,
-  ButtonGroup,
-  ButtonToolbar,
+  Row, Col, DropdownToggle, Dropdown, Button, Input, ButtonGroup,
 } from 'reactstrap';
 
 import MainDataTable from '../../component/MainDataTable';
 import ThreeDotDropdown from '../../component/ThreeDotDropdown';
 import CreateCompanyModal from '../../component/CreateCompanyModal';
+import InviteToCompanyModal from '../../component/InviteToCompanyModal';
+import RequestToJoinModal from '../../component/RequestToJoinModal';
 
 import { profileColumns } from '../../constants/network';
 
 import { UpdateProfile } from '../../service/user/profile';
+import { GetUserCompany } from '../../service/user/user';
+import { GetUserRequest } from '../../service/join/request';
+import {
+  GetUserInvitation,
+  UpdateCompanyInvitationStatus,
+  UpdateUserInvitationStatus,
+} from '../../service/join/invite';
+
 import {
   PutFile,
   GetMetaDataFromStorageRefPath,
@@ -34,15 +40,31 @@ const mockProfile = {
 };
 
 // This function will be move after actual company fetching is complete
-const renderStatus = (status) => {
+const renderStatus = (status, data, listener) => {
   if (status === 'Invited') {
     return (
       <div>
         <ButtonGroup>
-          <Button className="profile-company-status-btn reject">Reject</Button>
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              listener(data, 'Reject');
+            }}
+            className="profile-company-status-btn reject"
+          >
+            Reject
+          </Button>
         </ButtonGroup>
         <ButtonGroup>
-          <Button className="profile-company-status-btn join">Join</Button>
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              listener(data, 'Approve');
+            }}
+            className="profile-company-status-btn join"
+          >
+            Join
+          </Button>
         </ButtonGroup>
       </div>
     );
@@ -78,226 +100,164 @@ const renderStatus = (status) => {
   return '';
 };
 
-const mockDataTable = [
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Reject'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Pending'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Deactivated'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Invited'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-  {
-    company: 'Fresh Produce',
-    position: 'CEO',
-    role: 'Owner(Admin)',
-    status: renderStatus('Active'),
-    button: (
-      <ThreeDotDropdown
-        options={[
-          {
-            text: 'Leave',
-            function: null,
-          },
-        ]}
-      />
-    ),
-  },
-];
-
-const ProfilePanel = ({ currentProfile, auth }) => {
+const ProfilePanel = ({ currentProfile, auth, user }) => {
   const [userProfile, setUserProfile] = useState(mockProfile);
+  const [companyList, setCompanyList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
+  const [acceptedInvite, setAcceptedInvite] = useState(undefined);
+  const [newCompany, setNewCompany] = useState(undefined);
+
   const createCompanyModalRef = useRef(null);
+  const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
+  const requestToJoinModalRef = useRef(null);
+
+  const fetchCompany = (userKey) => {
+    const requestList = [];
+    const inviteList = [];
+    const joinedList = [];
+
+    zip(
+      GetUserRequest(userKey),
+      GetUserInvitation(userKey).pipe(
+        map(docs => docs.map((d) => {
+          const data = d.data();
+          data.key = d.id;
+          return data;
+        })),
+      ),
+      GetUserCompany(userKey),
+    ).subscribe(([requests, invitations, joins]) => {
+      requests.forEach((item) => {
+        requestList.push({
+          key: item.CompanyRequestCompanyKey,
+          company: item.CompanyRequestCompanyName,
+          position: '-',
+          role: '-',
+          status: renderStatus(item.CompanyRequestStatus),
+          button: (
+            <ThreeDotDropdown
+              options={[
+                {
+                  text: 'Leave',
+                  function: null,
+                },
+              ]}
+            />
+          ),
+        });
+      });
+
+      let invitedIndex = 0;
+      invitations.forEach((item) => {
+        const status = item.CompanyInvitationStatus === 'Pending' ? 'Invited' : 'Reject';
+        if (status === 'Invited') {
+          const inviteData = {
+            uKey: userKey,
+            cKey: item.CompanyInvitationCompanyKey,
+            iKey: item.key,
+            cName: item.CompanyInvitationName,
+            position: item.CompanyInvitationPosition,
+            role: item.CompanyInvitationRole,
+            invitedIndex,
+          };
+          inviteList.push({
+            key: item.CompanyInvitationCompanyKey,
+            company: item.CompanyInvitationName,
+            position: item.CompanyInvitationPosition,
+            role: item.CompanyInvitationRole,
+            // eslint-disable-next-line no-use-before-define
+            status: renderStatus(status, inviteData, responseToInvite),
+            button: (
+              <ThreeDotDropdown
+                options={[
+                  {
+                    text: 'Leave',
+                    function: null,
+                  },
+                ]}
+              />
+            ),
+          });
+          invitedIndex += 1;
+        }
+      });
+
+      joins.forEach((item) => {
+        joinedList.push({
+          key: item.CompanyKey,
+          company: item.CompanyName,
+          position: item.UserMemberPosition,
+          role: item.UserMemberRoleName,
+          roleKey: item.UserMatrixRolePermissionCode,
+          status: renderStatus(item.UserMemberCompanyStandingStatus),
+          button: (
+            <ThreeDotDropdown
+              options={[
+                {
+                  text: 'Leave',
+                  function: null,
+                },
+              ]}
+            />
+          ),
+        });
+      });
+
+      setCompanyList([joinedList, inviteList, requestList]);
+    });
+  };
+
+  const responseToInvite = (data, status) => {
+    UpdateCompanyInvitationStatus(data.cKey, data.iKey, status);
+    UpdateUserInvitationStatus(data.uKey, data.iKey, status);
+    setAcceptedInvite({
+      data,
+      status,
+    });
+  };
+
+  const responseToCreate = (company) => {
+    setNewCompany({
+      company,
+    });
+  };
+
+  const updateCompanyList = (invite) => {
+    const currentList = companyList;
+    if (invite.status === 'Approve') {
+      currentList[1].splice(invite.data.index, 1);
+      currentList[0].push({
+        key: invite.data.cKey,
+        company: invite.data.cName,
+        position: invite.data.position,
+        role: invite.data.role,
+        status: renderStatus('Active', undefined, undefined),
+        button: (
+          <ThreeDotDropdown
+            options={[
+              {
+                text: 'Leave',
+                function: null,
+              },
+            ]}
+          />
+        ),
+      });
+    } else {
+      currentList[1].splice(invite.data.index, 1);
+    }
+    setCompanyList(currentList);
+  };
 
   useEffect(() => {
     setUserProfile(currentProfile);
-  }, []);
+    if (acceptedInvite) {
+      updateCompanyList(acceptedInvite);
+    } else {
+      fetchCompany(auth.uid);
+    }
+  }, [acceptedInvite, newCompany]);
 
   const toggleEdit = () => {
     if (isEdit) {
@@ -360,10 +320,31 @@ const ProfilePanel = ({ currentProfile, auth }) => {
     });
   };
 
+  const routeToCompany = (key) => {
+    window.location.replace(`#/network/company/${key}`);
+  };
+
+  const tableRowEvents = {
+    onClick: (e, row) => {
+      routeToCompany(row.key);
+    },
+  };
+
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <div className="profile-container">
-        <CreateCompanyModal ref={createCompanyModalRef} />
+        <CreateCompanyModal
+          ref={createCompanyModalRef}
+          userKey={auth.uid}
+          userEmail={user.UserInfoEmail}
+          updateCompany={responseToCreate}
+        />
+        <InviteToCompanyModal ref={inviteToCompanyModalRef} />
+        <RequestToJoinModal
+          ref={requestToJoinModalRef}
+          userId={auth.uid}
+          profile={currentProfile}
+        />
         <input
           type="file"
           id="file"
@@ -448,26 +429,35 @@ const ProfilePanel = ({ currentProfile, auth }) => {
                     onChange={handleProfileInputChange}
                   />
                 ) : (
-                  <p>{userProfile.Description === undefined ? '-' : userProfile.Description}</p>
+                  <div style={{ height: '50px', wordBreak: 'break-all' }}>
+                    <p>{userProfile.Description === undefined ? '-' : userProfile.Description}</p>
+                  </div>
                 )}
               </Col>
             </Row>
-            <Row>
+            <Row style={{ marginTop: '20px' }}>
               <Col xs={1} />
-              <Col xs={4} style={{ paddingTop: '3rem' }}>
+              <Col xs={4}>
                 <a href="/#/network">Reset Password</a>
               </Col>
             </Row>
           </Col>
           <Col xs={3} className="col-profile-button">
             <Row>
-              <Button className="profile-btn">
+              <Button
+                className="profile-btn"
+                onClick={() => inviteToCompanyModalRef.current.triggerInviteToCompany([], companyList)
+                }
+              >
                 <i className="cui-user-follow icons network-btn-icon" />
                 Invite colleagues to join
               </Button>
             </Row>
             <Row>
-              <Button className="profile-btn">
+              <Button
+                onClick={() => requestToJoinModalRef.current.triggerRequestToJoin()}
+                className="profile-btn"
+              >
                 <i className="cui-graph icons network-btn-icon" />
                 Request to join Company
               </Button>
@@ -493,11 +483,12 @@ const ProfilePanel = ({ currentProfile, auth }) => {
         }}
       >
         <MainDataTable
-          data={mockDataTable}
+          data={[].concat(...companyList)}
           column={profileColumns}
           cssClass="profile-table"
           wraperClass="profile-table-wraper"
           isBorder={false}
+          rowEvents={tableRowEvents}
         />
       </div>
     </div>
@@ -506,10 +497,14 @@ const ProfilePanel = ({ currentProfile, auth }) => {
 
 const mapStateToProps = (state) => {
   const { authReducer, userReducer, profileReducer } = state;
+  const profile = _.find(
+    profileReducer.ProfileList,
+    item => item.id === profileReducer.ProfileDetail.id,
+  );
   return {
     auth: authReducer.user,
     user: userReducer.UserInfo,
-    currentProfile: profileReducer.ProfileList[0],
+    currentProfile: profile,
   };
 };
 
