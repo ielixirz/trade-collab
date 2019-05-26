@@ -14,6 +14,7 @@ import {
   ModalHeader,
   Progress,
   Col,
+  Row,
 } from 'reactstrap';
 import { combineLatest } from 'rxjs';
 import _ from 'lodash';
@@ -22,6 +23,7 @@ import {
   PutFile,
   GetMetaDataFromStorageRefPath,
   GetURLFromStorageRefPath,
+  DeleteFileFromStorageRefPath,
 } from '../service/storage/managestorage';
 import { EditChatRoomFileLink } from '../service/chat/chat';
 
@@ -29,9 +31,9 @@ import { CreateShipmentFile } from '../service/shipment/shipment';
 
 const UploadModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
-  // const [fileName, setFileName] = useState('-');
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [isInitial, setIsInitial] = useState(true);
   const [shipmentKey, setShipmentKey] = useState(null);
   const [chatRoomKey, setChatRoomKey] = useState(null);
   const [message, setMessage] = useState('');
@@ -39,6 +41,11 @@ const UploadModal = forwardRef((props, ref) => {
   const messageRef = useRef();
 
   const toggle = () => {
+    if (toggle) {
+      // eslint-disable-next-line no-use-before-define
+      cancelUpload('ALL');
+      setIsInitial(true);
+    }
     setModal(!modal);
   };
 
@@ -46,6 +53,7 @@ const UploadModal = forwardRef((props, ref) => {
 
   const upload = (files, sKey) => {
     setIsUploading(true);
+    setIsInitial(false);
     const uploadObs = [];
     const refPaths = [];
     _.forEach(files, (file) => {
@@ -62,10 +70,10 @@ const UploadModal = forwardRef((props, ref) => {
             cloneUploaded[index].progress = calProgress(shot.bytesTransferred, shot.totalBytes);
             cloneUploaded[index].status = cloneUploaded[index].progress === 100 ? 'done' : 'uploading';
             cloneUploaded[index].refPath = refPaths[index];
+            cloneUploaded[index].refObject = shot.ref;
             setUploadedFiles(cloneUploaded);
           }
         });
-        console.log(uploadedFiles);
       },
       error: (err) => {
         console.log(err);
@@ -92,7 +100,7 @@ const UploadModal = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    if (!isUploading && modal) {
+    if (!isUploading && modal && isInitial) {
       upload(uploadedFiles, shipmentKey);
     }
   }, [uploadedFiles]);
@@ -149,8 +157,29 @@ const UploadModal = forwardRef((props, ref) => {
         },
       });
     });
+    setIsInitial(true);
     toggle();
     // props.sendMessage(chatRoomKey, shipmentKey, `${message} [ ${fileName} ]`);
+  };
+
+  const cancelUpload = (index) => {
+    if (!isUploading) {
+      if (index === 'ALL') {
+        const files = uploadedFiles;
+        _.forEach(files, (file) => {
+          DeleteFileFromStorageRefPath(file.refObject);
+        });
+      } else {
+        const uploadFiles = [...uploadedFiles];
+        const cancelfile = uploadFiles[index];
+        DeleteFileFromStorageRefPath(cancelfile.refObject);
+        uploadFiles.splice(index, 1);
+        setUploadedFiles(uploadFiles);
+        if (uploadFiles.length === 0) {
+          toggle();
+        }
+      }
+    }
   };
 
   const handleMessageChange = (event) => {
@@ -177,27 +206,45 @@ Upload Files (
           value={message}
           onChange={handleMessageChange}
         />
-        <Label htmlFor="filename" style={{ marginTop: '0.5rem' }}>
+        <Label style={{ marginTop: '10px', marginLeft: '10px' }}>
           <b>Files</b>
         </Label>
-        {_.map(uploadedFiles, file => (
-          <Col>
-            <span>{file.fileName}</span>
-            {file.status === 'uploading' ? (
-              <Progress value={file.progress} className="mb-3">
-                {'Uploading...'}
-              </Progress>
-            ) : (
-              <Progress value={file.progress} className="mb-3" color="success">
-                {'Complete'}
-              </Progress>
-            )}
-          </Col>
+        {_.map(uploadedFiles, (file, index) => (
+          <Row className="uploading-file-row" style={{ marginLeft: '5px', marginRight: '5px' }}>
+            <Col xs="6" style={{ top: '4px' }}>
+              <span>{file.fileName}</span>
+            </Col>
+            <Col xs="4" style={{ top: '8px', margin: 'auto' }}>
+              {file.status === 'uploading' ? (
+                <Progress value={file.progress} className="mb-3 upload">
+                  {'Uploading...'}
+                </Progress>
+              ) : (
+                <Progress value={file.progress} className="mb-3 upload" color="success">
+                  {'Complete'}
+                </Progress>
+              )}
+            </Col>
+            <Col xs="1">
+              <i
+                className="fa fa-times"
+                role="button"
+                style={{ cursor: 'pointer', marginLeft: '15px' }}
+                onClick={() => cancelUpload(index)}
+                onKeyDown={null}
+                tabIndex="-1"
+              />
+            </Col>
+          </Row>
         ))}
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={confirmUpload}>
-          Send
+        <Button
+          color="primary"
+          onClick={confirmUpload}
+          style={{ backgroundColor: '#16a085', margin: 'auto', width: '300px' }}
+        >
+          <b>Send</b>
         </Button>
         {' '}
       </ModalFooter>
