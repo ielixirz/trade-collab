@@ -14,7 +14,7 @@ const ChatMessage = ({ message, i }) => {
     name = 'Anonymous',
     status = new Date(),
     readers = [],
-    hasFile = true,
+    hasFile = false,
     files = [1, 2, 3]
   } = message;
   const prev = _.get(message, 'prev', false);
