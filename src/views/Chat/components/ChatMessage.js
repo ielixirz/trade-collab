@@ -2,12 +2,13 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable filenames/match-regex */
 import React from 'react';
-import { Row, Col } from 'reactstrap';
+import { Row, Col, Button, UncontrolledCollapse, Card, CardBody } from 'reactstrap';
 import _ from 'lodash';
 import moment from 'moment';
 
 const ChatMessage = ({ message, i }) => {
   const {
+    title = 'exporter has been updated',
     type = 'sender',
     text = 'Test message',
     name = 'Anonymous',
@@ -50,7 +51,16 @@ const ChatMessage = ({ message, i }) => {
                 <div className="sender">
                   <p>
                     <span className="user-name">{name}</span> <br />
-                    {text}
+                    {type !== 'system' ? (
+                      text
+                    ) : (
+                      <div>
+                        <a color="primary" id={`toggler${i}`} style={{ marginBottom: '1rem' }}>
+                          {title}
+                        </a>
+                        <UncontrolledCollapse toggler={`#toggler${i}`}>{text}</UncontrolledCollapse>
+                      </div>
+                    )}
                     {hasFile ? (
                       <Row>
                         <Col xs={'8'}>
