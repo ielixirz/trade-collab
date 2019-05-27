@@ -4,9 +4,7 @@
 /* eslint-disable filenames/match-regex */
 import _ from 'lodash';
 import React, { Component } from 'react';
-import {
-  Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input,
-} from 'reactstrap';
+import { Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
 import MemberModal from '../../../component/MemberModal';
 import MemberInviteModal from '../../../component/MemberInviteModal';
 import UploadModal from '../../../component/UploadModal';
@@ -201,7 +199,7 @@ class ChatWithHeader extends Component {
       onDropChatStyle,
       onDragOver,
       onDragLeave,
-      onFileDrop,
+      onFileDrop
     } = this.props;
     let lastkey = '';
     let isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
@@ -211,7 +209,7 @@ class ChatWithHeader extends Component {
         <Row
           style={{
             backgroundColor: 'white',
-            borderBottom: '1px solid #707070',
+            borderBottom: '1px solid #707070'
           }}
         >
           <Breadcrumb className="chat-toolbar">
@@ -246,9 +244,9 @@ class ChatWithHeader extends Component {
                       ChatRoomMessageReaderProfileImageUrl: _.get(
                         sender,
                         'UserInfoProfileImageLink',
-                        '',
+                        ''
                       ),
-                      ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
+                      ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
                     });
                   }
                   lastkey = chatMsg[chatMsg.length - 1].id;
@@ -264,14 +262,17 @@ class ChatWithHeader extends Component {
                     fetchMoreMessage(ChatRoomKey, ShipmentKey);
                   }
                 }}
-                ref={(el) => {
+                ref={el => {
                   this.msgChatRef = el;
                 }}
               >
                 {_.get(this.props.ShipmentData, 'ShipmentCreatorUserKey', false) === user.uid
                   ? this.renderAssignCompany(this.props.ShipmentData.ShipmentCreatorType)
                   : isInvited
-                  ? this.renderAssignCompany(isInvited.ChatRoomMemberRole[0], true)
+                  ? this.renderAssignCompany(
+                      isInvited.ChatRoomMemberRole[0],
+                      _.get(isInvited, 'ChatRoomMemberCompanyKey', false)
+                    )
                   : ''}
                 {chatMsg.map((msg, i) => {
                   const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
@@ -286,7 +287,7 @@ class ChatWithHeader extends Component {
                     status: t,
                     readers: msg.ChatRoomMessageReader,
                     prev: chatMsg[i - 1],
-                    isLast: chatMsg.length - 1 === i,
+                    isLast: chatMsg.length - 1 === i
                   };
 
                   return <ChatMessage message={message} i={i} />;
@@ -310,11 +311,12 @@ class ChatWithHeader extends Component {
                       id="file"
                       ref={fileInputRef}
                       style={{ display: 'none' }}
-                      onChange={event => uploadModalRef.current.triggerUploading(
-                        event.target.files,
-                        ShipmentKey,
-                        ChatRoomKey,
-                      )
+                      onChange={event =>
+                        uploadModalRef.current.triggerUploading(
+                          event.target.files,
+                          ShipmentKey,
+                          ChatRoomKey
+                        )
                       }
                     />
                   </InputGroupAddon>
@@ -330,15 +332,15 @@ class ChatWithHeader extends Component {
                             ChatRoomMessageReaderProfileImageUrl: _.get(
                               sender,
                               'UserInfoProfileImageLink',
-                              '',
+                              ''
                             ),
-                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
+                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
                           });
                         }
                         lastkey = chatMsg[chatMsg.length - 1].id;
                       }
                     }}
-                    onChange={(e) => {
+                    onChange={e => {
                       // (ShipmentKey, ChatRoomKey, ProfileKey, Data)
                       // ChatRoomMessageKeyList *(Static document name) (Create for util)
                       // ChatRoomMessageKeyList (Array<string>)
@@ -363,16 +365,16 @@ class ChatWithHeader extends Component {
                             ChatRoomMessageReaderProfileImageUrl: _.get(
                               sender,
                               'UserInfoProfileImageLink',
-                              '',
+                              ''
                             ),
-                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
+                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
                           });
                         }
                         lastkey = chatMsg[chatMsg.length - 1].id;
                       }
                       typing(e);
                     }}
-                    onKeyPress={(event) => {
+                    onKeyPress={event => {
                       if (event.key === 'Enter') {
                         sendMessage(ChatRoomKey, ShipmentKey, text);
                         scrollChatToBottom();
