@@ -18,7 +18,7 @@ const CompanyMemberRefPath = CompanyKey => FirebaseApp.firestore()
 const CompanyUserAccessibilityRefPath = CompanyKey => FirebaseApp.firestore()
   .collection('Company')
   .doc(CompanyKey)
-  .collection('CompanyUserAccessibility');
+  .collection('CompanyUserMatrix');
 
 /* Example CreateCompany
     {
@@ -105,10 +105,12 @@ export const CombineCreateCompanyWithCreateCompanyMember = (
 export const CreateCompanyUserAccessibility = (CompanyKey, Data) => from(CompanyUserAccessibilityRefPath(CompanyKey).add(Data));
 
 // eslint-disable-next-line max-len
-export const GetCompanyUserAccessibility = CompanyKey => collection(CompanyUserAccessibilityRefPath(CompanyKey));
+export const GetCompanyUserAccessibility = CompanyKey => collection(
+  CompanyUserAccessibilityRefPath(CompanyKey).orderBy('CompanyUserMatrixRoleIndex', 'asc'),
+);
 
 // eslint-disable-next-line max-len
-export const UpdataCompanyUserAccessibility = (CompanyKey, CompanyUserAccessibilityKey, Data) => from(
+export const UpdateCompanyUserAccessibility = (CompanyKey, CompanyUserAccessibilityKey, Data) => from(
   CompanyUserAccessibilityRefPath(CompanyKey)
     .doc(CompanyUserAccessibilityKey)
     .set(Data, { merge: true }),

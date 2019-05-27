@@ -1,3 +1,6 @@
+/* eslint-disable react/react-in-jsx-scope */
+import React from 'react';
+
 export const profileColumns = [
   {
     dataField: 'company',
@@ -178,25 +181,60 @@ export const memberDataColumns = [
 
 export const PERMISSION_LIST = [
   {
-    permission: 'ACCOUNT_HEADER',
+    permission: (
+      <React.Fragment>
+        <b>Shipment:</b>
+      </React.Fragment>
+    ),
   },
   {
-    permission: 'account permission 1',
+    permission: 'See all shipment in shipment table.',
   },
   {
-    permission: 'account permission 2',
+    permission: 'Able to access internal tab.',
   },
   {
-    permission: 'account permission 3',
+    permission: 'See uninvited chatroom name on the tab.',
   },
   {
-    permission: 'VISBILITY_HEADER',
+    permission: 'See all chatroom within company and can access it.',
   },
   {
-    permission: 'visiblity permission 1',
+    permission: 'Invite other user into chat.',
   },
   {
-    permission: 'visiblity permission 2',
+    permission: 'Kick someone out of chatroom.',
+  },
+  {
+    permission: 'Can edit the shipment update.',
+  },
+  {
+    permission: 'Edit master detail.',
+  },
+  {
+    permission: 'Upload file.',
+  },
+  {
+    permission: (
+      <React.Fragment>
+        <b> Company:</b>
+      </React.Fragment>
+    ),
+  },
+  {
+    permission: 'Change the assign company.',
+  },
+  {
+    permission: 'Edit company profile.',
+  },
+  {
+    permission: 'Invite/accept user to join company and assign role.',
+  },
+  {
+    permission: 'Set accessibility setting.',
+  },
+  {
+    permission: 'Set accessibility - owner level.',
   },
 ];
 

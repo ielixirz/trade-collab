@@ -283,6 +283,7 @@ tbody tr {
 
 .table.setting-table {
   margin-top: 1rem;
+  border: none;
 }
 
 .table.setting-table > tbody {
@@ -306,12 +307,17 @@ tbody tr {
   padding: 0;
 }
 
+.table.setting-table.table-bordered td {
+  border: 1px solid #ededed;
+}
+
 .table.setting-table > tbody > tr {
   background-color: white;
   font-size: large;
 }
 
-.table.setting-table > tbody > tr > td {
+.matrix-check:hover {
+  color: black;
 }
 
 /* Company Invite DataTable */

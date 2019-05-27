@@ -2,6 +2,8 @@
 /* eslint-disable filenames/match-regex */
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
+import { map } from 'rxjs/operators';
+import _ from 'lodash';
 
 import {
   Row,
@@ -17,6 +19,10 @@ import {
 } from 'reactstrap';
 import MainDataTable from '../../component/MainDataTable';
 import { PERMISSION_LIST } from '../../constants/network';
+import {
+  GetCompanyUserAccessibility,
+  UpdateCompanyUserAccessibility,
+} from '../../service/company/company';
 
 const RoleButton = ({ roleName }) => {
   const [open, setOpen] = useState(false);
@@ -25,7 +31,7 @@ const RoleButton = ({ roleName }) => {
   };
   return (
     <Dropdown toggle={toggle} isOpen={open}>
-      <DropdownToggle caret style={{ width: '100%', background: 'white', border: '0' }}>
+      <DropdownToggle caret style={{ width: '100%', background: 'white', borderColor: '#ededed' }}>
         {roleName}
       </DropdownToggle>
       <DropdownMenu style={{ content: 'Float', clear: 'both' }}>
@@ -36,9 +42,32 @@ const RoleButton = ({ roleName }) => {
   );
 };
 
-const SettingPanel = ({ companyKey, auth }) => {
+const PermissionButton = ({ binary, updatePermission }) => (binary === '1' ? (
+  <i
+    className="cui-check icons font-2xl d-block matrix-check"
+    role="button"
+    style={{
+      margin: 'auto',
+      fontSize: 'medium',
+      cursor: 'pointer',
+    }}
+      // eslint-disable-next-line max-len
+    onClick={updatePermission}
+    onKeyDown={null}
+    tabIndex="-1"
+  />
+) : (
+  <div
+    style={{ width: '100%', height: '24px' }}
+    role="button"
+    onKeyDown={null}
+    tabIndex="-1"
+    onClick={updatePermission}
+  />
+));
+
+const SettingPanel = (props, { auth }) => {
   const [roles, setRoles] = useState([]);
-  const [isEditable, setIsEditable] = useState(false);
   const [roleColumn, setRoleColumn] = useState([
     {
       dataField: 'permission',
@@ -50,17 +79,118 @@ const SettingPanel = ({ companyKey, auth }) => {
         width: '700px',
       },
     },
-    {
+  ]);
+  const [lastUpdate, setLastUpdate] = useState({});
+
+  const addRole = (roleName) => {
+    // const emptyColumn = {
+    //   dataField: 'empty',
+    //   text: (
+    //     <Button
+    //       style={{ width: '40px', margin: 0 }}
+    //       block
+    //       color="success"
+    //       onClick={() => addRole('NEW')}
+    //     >
+    //       +
+    //     </Button>
+    //   ),
+    //   style: {
+    //     width: '40px',
+    //   },
+    //   headerStyle: {
+    //     width: '40px',
+    //   },
+    // };
+    // const addingRoleColumn = roleColumn;
+    // addingRoleColumn[addingRoleColumn.length - 1].dataField = 'role';
+    // addingRoleColumn[addingRoleColumn.length - 1].text = <RoleButton roleName={roleName} />;
+    // addingRoleColumn[addingRoleColumn.length - 1].style.width = '100px';
+    // addingRoleColumn[addingRoleColumn.length - 1].headerStyle.width = '100px';
+    // addingRoleColumn[addingRoleColumn.length - 1].align = 'center';
+    // addingRoleColumn[addingRoleColumn.length - 1].headerAlign = 'center';
+    // addingRoleColumn.push(emptyColumn);
+    // setRoleColumn([...addingRoleColumn]);
+  };
+
+  const updatePermission = (roleName, matrixArray, matrixIndex, index, key) => {
+    const updateArray = matrixArray;
+    updateArray[matrixIndex] = updateArray[matrixIndex] === '0' ? '1' : '0';
+    const matrix = updateArray.join('');
+    UpdateCompanyUserAccessibility(props.match.params.key, key, {
+      CompanyUserMatrixRoleIndex: index,
+      CompanyUserMatrixRoleName: roleName,
+      CompanyUserMatrixRolePermissionCode: matrix,
+    }).subscribe(() => {
+      setLastUpdate({
+        user: props.auth.uid,
+        timestamp: new Date(),
+      });
+    });
+  };
+
+  const populateRoleToTable = (fetchResult) => {
+    const initialRow = PERMISSION_LIST;
+    const initialCol = [];
+
+    initialCol.push({
+      dataField: 'permission',
+      text: '',
+      style: {
+        width: '700px',
+      },
+      headerStyle: {
+        width: '700px',
+      },
+    });
+
+    _.forEach(fetchResult, (result) => {
+      initialCol.push({
+        dataField: result.CompanyUserMatrixRoleName,
+        text: <RoleButton roleName={result.CompanyUserMatrixRoleName} />,
+        style: {
+          width: '100px',
+        },
+        headerStyle: {
+          width: '100px',
+        },
+        align: 'center',
+        headerAlign: 'center',
+      });
+      let increment = 0;
+      const matrixArray = result.CompanyUserMatrixRolePermissionCode.split('');
+      _.forEach(matrixArray, (binary, index) => {
+        if (index === 0 || index === 9) {
+          increment += 1;
+        }
+
+        initialRow[index + increment][result.CompanyUserMatrixRoleName] = (
+          <PermissionButton
+            binary={binary}
+            updatePermission={() => updatePermission(
+              result.CompanyUserMatrixRoleName,
+              matrixArray,
+              index,
+              result.CompanyUserMatrixRoleIndex,
+              result.id,
+            )
+            }
+          />
+        );
+      });
+    });
+
+    initialCol.push({
       dataField: 'empty',
       text: (
         // eslint-disable-next-line no-use-before-define
         <Button
-          style={{ width: '40px', margin: 0 }}
+          style={{ margin: 0, backgroundColor: '#16A085' }}
           block
           color="success"
           onClick={() => addRole('NEW')}
         >
-          +
+          <b>+</b>
         </Button>
       ),
       style: {
@@ -69,40 +199,36 @@ const SettingPanel = ({ companyKey, auth }) => {
       headerStyle: {
         width: '40px',
       },
-    },
-  ]);
+    });
 
-  const addRole = (roleName) => {
-    const emptyColumn = {
-      dataField: 'empty',
-      text: (
-        <Button
-          style={{ width: '40px', margin: 0 }}
-          block
-          color="success"
-          onClick={() => addRole('NEW')}
-        >
-          +
-        </Button>
-      ),
-      style: {
-        width: '40px',
-      },
-      headerStyle: {
-        width: '40px',
-      },
-    };
-    const addingRoleColumn = roleColumn;
-    addingRoleColumn[addingRoleColumn.length - 1].dataField = 'role';
-    addingRoleColumn[addingRoleColumn.length - 1].text = <RoleButton roleName={roleName} />;
-    addingRoleColumn[addingRoleColumn.length - 1].style.width = '100px';
-    addingRoleColumn[addingRoleColumn.length - 1].headerStyle.width = '100px';
-    addingRoleColumn[addingRoleColumn.length - 1].align = 'center';
-    addingRoleColumn[addingRoleColumn.length - 1].headerAlign = 'center';
+    setRoleColumn(initialCol);
+    setRoles(initialRow);
+  };
 
-    addingRoleColumn.push(emptyColumn);
+  const fetchRole = (key) => {
+    GetCompanyUserAccessibility(key)
+      .pipe(
+        map(docs => docs.map((d) => {
+          const data = d.data();
+          data.id = d.id;
+          return data;
+        })),
+      )
+      .subscribe((result) => {
+        populateRoleToTable(result);
+      });
+  };
 
-    setRoleColumn([...addingRoleColumn]);
+  useEffect(() => {
+    fetchRole(props.match.params.key);
+  }, [lastUpdate]);
+
+  const rowStyle = (row, rowIndex) => {
+    const style = {};
+    if (rowIndex === 0 || rowIndex === 10) {
+      style.backgroundColor = '#EDEDED';
+    }
+    return style;
   };
 
   return (
@@ -114,11 +240,12 @@ const SettingPanel = ({ companyKey, auth }) => {
       </Row>
       <Row>
         <MainDataTable
-          data={PERMISSION_LIST}
+          data={roles}
           column={roleColumn}
           cssClass="setting-table"
           wraperClass="setting-table-wraper"
-          isBorder={false}
+          isBorder
+          rowStyle={rowStyle}
         />
       </Row>
     </div>
