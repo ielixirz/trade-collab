@@ -235,6 +235,11 @@ tbody tr {
   padding-right: 1rem;
 }
 
+.setting-table-wraper {
+  margin: 5rem;
+  overflow: scroll;
+}
+
 .table.company-table > tbody {
   display: block;
   height: 55vh; /* Just for the demo          */
@@ -272,6 +277,47 @@ tbody tr {
 
 .table.company-table > tbody > tr > td {
   border: none;
+}
+
+/* Setting DataTable */
+
+.table.setting-table {
+  margin-top: 1rem;
+  border: none;
+}
+
+.table.setting-table > tbody {
+  display: block;
+  height: 55vh; /* Just for the demo          */
+  overflow-y: auto; /* Trigger vertical scroll    */
+  overflow-x: hidden; /* Hide the horizontal scroll */
+}
+
+thead,
+tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed; /* even columns width , fix width of table too*/
+}
+
+.table.setting-table > thead > tr > th {
+  color: #9b9b9b;
+  border: none;
+  font-size: medium;
+  padding: 0;
+}
+
+.table.setting-table.table-bordered td {
+  border: 1px solid #ededed;
+}
+
+.table.setting-table > tbody > tr {
+  background-color: white;
+  font-size: large;
+}
+
+.matrix-check:hover {
+  color: black;
 }
 
 /* Company Invite DataTable */
