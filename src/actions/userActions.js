@@ -3,9 +3,9 @@ import { FETCH_USER_DETAIL } from '../constants/constants';
 import { GetUserInfoDetail } from '../service/user/user';
 
 // eslint-disable-next-line import/prefer-default-export
-export const getUserInfoDetail = userInfoKey => (dispatch) => {
+export const getUserInfoDetail = userInfoKey => dispatch => {
   GetUserInfoDetail(userInfoKey).subscribe({
-    next: (snapshot) => {
+    next: snapshot => {
       const SnapshotData = snapshot.data();
       let originalReducer = {};
       if (SnapshotData) {
@@ -17,20 +17,20 @@ export const getUserInfoDetail = userInfoKey => (dispatch) => {
           UserInfoCreateTimestamp: SnapshotData.UserInfoCreateTimestamp,
           UserInfoAccountType: SnapshotData.UserInfoAccountType,
           UserInfoCompanyName: SnapshotData.UserInfoCompanyName,
-          UserInfoCompanyRelate: SnapshotData.UserInfoCompanyRelate,
+          UserInfoCompanyRelate: SnapshotData.UserInfoCompanyRelate
         };
         dispatch({
           type: FETCH_USER_DETAIL,
-          payload: originalReducer,
+          payload: originalReducer
         });
       } else {
         console.error('Error from system : User data not found');
       }
     },
-    error: (err) => {
+    error: err => {
       console.log(err);
       alert(err.message);
     },
-    complete: () => {},
+    complete: () => {}
   });
 };

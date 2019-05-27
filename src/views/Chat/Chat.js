@@ -148,7 +148,7 @@ class Chat extends Component {
     event.preventDefault();
     const fileItems = event.dataTransfer.items;
     const files = [];
-    _.forEach(fileItems, (i) => {
+    _.forEach(fileItems, i => {
       files.push(i.getAsFile());
     });
 
