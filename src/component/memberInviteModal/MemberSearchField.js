@@ -9,10 +9,10 @@ import './styles.scss';
 
 class MemberSearchField extends React.Component {
   state = {
-    search: '',
+    search: ''
   };
 
-  onKeyDown = (e) => {
+  onKeyDown = e => {
     if (e.keyCode === 13) {
       this.fetchUserEmail();
       return false;
@@ -25,7 +25,7 @@ class MemberSearchField extends React.Component {
     GetUserInfoFromEmail(search).subscribe(this.complete);
   };
 
-  complete = (response) => {
+  complete = response => {
     const { onResultList } = this.props;
     if (onResultList) onResultList(response);
     console.log(response);
