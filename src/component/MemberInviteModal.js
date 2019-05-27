@@ -10,6 +10,7 @@ import './MemberModal.css';
 import MemberSearchField from './memberInviteModal/MemberSearchField';
 import MemberInviteList from './memberInviteModal/MemberInviteList';
 import { CreateChatMultipleInvitation } from '../service/join/invite';
+import { UpdateChatRoomMember } from '../service/chat/chat';
 
 class MemberInviteModal extends React.Component {
   constructor(props) {
@@ -35,9 +36,26 @@ class MemberInviteModal extends React.Component {
   shouldInvite = invite => {
     const { invitationCollection } = this.state;
     const exist = this.isInvited(invite.Email);
+    console.log(invitationCollection);
     if (exist) {
       if (invite.Role.length <= 0) {
         const updated = _.filter(invitationCollection, profile => profile.email !== invite.email);
+        this.setState({ invitationCollection: updated });
+      } else {
+        let updated = [];
+        _.forEach(invitationCollection, item => {
+          if (item.Email === invite.Email) {
+            updated.push({
+              ...item,
+              ...invite
+            });
+          } else {
+            updated.push({
+              ...item
+            });
+          }
+        });
+        console.log(updated);
         this.setState({ invitationCollection: updated });
       }
     } else {
@@ -46,22 +64,58 @@ class MemberInviteModal extends React.Component {
   };
 
   onResultList = collection => {
-    const mapped = collection.map(member => {
+    let oldlist = this.state.collection;
+
+    _.forEach(collection, member => {
       const data = member.data();
       const { UserInfoProfileImageLink, UserInfoEmail } = data;
-      return {
-        Image: UserInfoProfileImageLink,
-        Email: UserInfoEmail
-      };
+      if (
+        !_.find(oldlist, item => {
+          return item.Email === UserInfoEmail;
+        })
+      ) {
+        oldlist.push({
+          Image: UserInfoProfileImageLink,
+          Email: UserInfoEmail
+        });
+      }
     });
-    this.setState({ collection: mapped });
+    this.setState({ collection: oldlist });
   };
 
   onSubmit = () => {
-    const { ChatRoomKey, ShipmentKey } = this.props;
+    const { ChatRoomKey, ShipmentKey, member } = this.props;
     const { invitationCollection } = this.state;
-    const result = CreateChatMultipleInvitation(invitationCollection, ShipmentKey, ChatRoomKey);
-    console.log(result);
+    console.log('invitationCollection', this.state);
+    console.log('member', this.props);
+    let input = invitationCollection;
+
+    _.forEach(invitationCollection, item => {
+      _.forEach(member, memberItem => {
+        if (memberItem.ChatRoomMemberEmail === item.Email) {
+          UpdateChatRoomMember(ShipmentKey, ChatRoomKey, memberItem.ChatRoomMemberKey, {
+            ...memberItem,
+            ChatRoomMemberRole: item.Role
+          }).subscribe({
+            next: res => {
+              console.log(res);
+            }
+          });
+          input = _.filter(input, email => email.Email !== memberItem.ChatRoomMemberEmail);
+        }
+      });
+    });
+
+    console.log('Updated', input);
+    if (input.length > 0) {
+      const result = CreateChatMultipleInvitation(input, ShipmentKey, ChatRoomKey);
+      result.subscribe({
+        next: res => {
+          console.log(res);
+        }
+      });
+    }
+
     this.toggle();
   };
 

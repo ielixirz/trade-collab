@@ -1,7 +1,7 @@
 import { FETCH_USER_DETAIL } from '../constants/constants';
 
 const INITIAL_STATE = {
-  UserInfo: {},
+  UserInfo: {}
 };
 
 export default function reducer(state = INITIAL_STATE, action) {
@@ -9,7 +9,7 @@ export default function reducer(state = INITIAL_STATE, action) {
     case FETCH_USER_DETAIL:
       return {
         ...state,
-        UserInfo: action.payload,
+        UserInfo: action.payload
       };
     default:
       return state;
