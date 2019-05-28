@@ -111,8 +111,8 @@ const SettingPanel = (props, { auth }) => {
   const [lastUpdate, setLastUpdate] = useState({});
   const [blocking, setBlocking] = useState(true);
 
-  const toggleBlocking = () => {
-    setBlocking(!blocking);
+  const toggleBlocking = (block) => {
+    setBlocking(block);
   };
 
   const addRole = (roleName, lastIndex) => {
@@ -134,6 +134,7 @@ const SettingPanel = (props, { auth }) => {
   };
 
   const updatePermission = (roleName, matrixArray, matrixIndex, index, key) => {
+    toggleBlocking(true);
     const updateArray = matrixArray;
     updateArray[matrixIndex] = updateArray[matrixIndex] === '0' ? '1' : '0';
     const matrix = updateArray.join('');
@@ -229,7 +230,7 @@ const SettingPanel = (props, { auth }) => {
       },
     });
 
-    toggleBlocking();
+    toggleBlocking(false);
     setRoleColumn(initialCol);
     setRoles(initialRow);
   };
