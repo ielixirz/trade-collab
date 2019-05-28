@@ -285,6 +285,46 @@ exports.AddShipmentMember = functions.firestore
       .collection('ChatRoom')
       .doc(context.params.ChatRoomKey)
       .collection('ChatRoomMember')
-      .doc(context.params.ChatRoomMemberKey)
-      .set(PayloadObject);
+      .add(PayloadObject);
+  });
+
+exports.EditShipmentMember = functions.firestore
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
+  .onCreate(async (snapshot, context) => {
+    let PayloadObject = {};
+
+    const SnapshotDataObject = snapshot.data();
+
+    SnapshotDataObject['ChatRoomMemberUserKey']
+      ? (PayloadObject['ShipmentMemberUserKey'] = SnapshotDataObject['ChatRoomMemberUserKey'])
+      : (PayloadObject['ShipmentMemberUserKey'] = null);
+
+    SnapshotDataObject['ChatRoomMemberEmail']
+      ? (PayloadObject['ShipmentMemberEmail'] = SnapshotDataObject['ChatRoomMemberEmail'])
+      : (PayloadObject['ShipmentMemberEmail'] = null);
+
+    SnapshotDataObject['ChatRoomMemberRole']
+      ? (PayloadObject['ShipmentMemberRole'] = SnapshotDataObject['ChatRoomMemberRole'])
+      : (PayloadObject['ShipmentMemberRole'] = null);
+
+    SnapshotDataObject['ChatRoomMemberCompanyName']
+      ? (PayloadObject['ShipmentMemberCompanyName'] =
+          SnapshotDataObject['ChatRoomMemberCompanyName'])
+      : (PayloadObject['ShipmentMemberCompanyName'] = null);
+
+    SnapshotDataObject['ChatRoomMemberCompanyKey']
+      ? (PayloadObject['ShipmentMemberCompanyKey'] = SnapshotDataObject['ChatRoomMemberCompanyKey'])
+      : (PayloadObject['ShipmentMemberCompanyKey'] = null);
+
+    const GetShipmentMember = await admin
+      .firestore()
+      .collection('Shipment')
+      .doc(context.params.ShipmentKey)
+      .collection('ChatRoom')
+      .doc(context.params.ChatRoomKey)
+      .collection('ChatRoomMember')
+      .where('ShipmentMemberUserKey', '==', SnapshotDataObject['ChatRoomMemberUserKey'])
+      .get();
+
+    return GetShipmentMember.docs[0].ref.set(SnapshotDataObject, { merge: true });
   });
