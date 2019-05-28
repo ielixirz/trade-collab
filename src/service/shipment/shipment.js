@@ -134,12 +134,14 @@ export const CombineShipmentAndShipmentReference = (
   QueryFieldName,
   QueryFieldDirection = 'asc',
   LimitNumber = 25,
+  ShipmentMemberUserKey,
 ) => {
   const ShipmentListSource = GetShipmentList(
     QueryStatus,
     QueryFieldName,
     QueryFieldDirection,
     LimitNumber,
+    ShipmentMemberUserKey,
   );
 
   const ShipmentKeyListSource = ShipmentListSource.pipe(
