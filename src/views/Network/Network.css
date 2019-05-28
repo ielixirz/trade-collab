@@ -237,6 +237,7 @@ tbody tr {
 
 .setting-table-wraper {
   margin: 5rem;
+  margin-top: 2rem;
   overflow: scroll;
 }
 
