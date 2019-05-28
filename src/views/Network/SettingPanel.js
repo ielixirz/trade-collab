@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { map } from 'rxjs/operators';
 import _ from 'lodash';
+import BlockUi from 'react-block-ui';
+import 'react-block-ui/style.css';
 
 import {
   Row,
@@ -107,6 +109,11 @@ const SettingPanel = (props, { auth }) => {
     },
   ]);
   const [lastUpdate, setLastUpdate] = useState({});
+  const [blocking, setBlocking] = useState(true);
+
+  const toggleBlocking = () => {
+    setBlocking(!blocking);
+  };
 
   const addRole = (roleName, lastIndex) => {
     CreateCompanyUserAccessibility(props.match.params.key, {
@@ -222,6 +229,7 @@ const SettingPanel = (props, { auth }) => {
       },
     });
 
+    toggleBlocking();
     setRoleColumn(initialCol);
     setRoles(initialRow);
   };
@@ -253,22 +261,24 @@ const SettingPanel = (props, { auth }) => {
   };
 
   return (
-    <div>
-      <Row>
-        <span style={{ padding: '4rem' }}>
-          <h2>Roles & Permissions Setting</h2>
-        </span>
-      </Row>
-      <Row>
-        <MainDataTable
-          data={roles}
-          column={roleColumn}
-          cssClass="setting-table"
-          wraperClass="setting-table-wraper"
-          isBorder
-          rowStyle={rowStyle}
-        />
-      </Row>
+    <div style={{ width: '100%', height: '100%' }}>
+      <BlockUi tag="div" blocking={blocking} style={{ height: '100%' }}>
+        <Row>
+          <span style={{ padding: '4rem' }}>
+            <h2>Roles & Permissions Setting</h2>
+          </span>
+        </Row>
+        <Row>
+          <MainDataTable
+            data={roles}
+            column={roleColumn}
+            cssClass="setting-table"
+            wraperClass="setting-table-wraper"
+            isBorder
+            rowStyle={rowStyle}
+          />
+        </Row>
+      </BlockUi>
     </div>
   );
 };
