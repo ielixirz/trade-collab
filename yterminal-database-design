@@ -24,20 +24,28 @@
                 ShipmentReferenceCompanyName (string)
                 ShipmentReferenceCompanyKey (string)
         +ShipmentShareData
-                >Shipper
-                    ShipperCompanyName (string)
-                    ShipperPier (string)
-                    ShipperDate (timestamp)
-                >ShipmentDetail
-                    ShipmentDetailProduct (string)
-                    ShipmentDetailContainerNumber (string)
-                    ShipmentDetailBillofLandingNumber (string)
-                    ShipmentDetailOriginalDocumentTrackingNumber (string)
-                    ShipmentDetailNote (string)
-                >Consignee
-                    ConsigneeCompanyName (string)
-                    ConsigneePier (string)
-                    ConsigneeDate (timestamp)
+            >Shipper
+                ShipperCompanyName (string)
+                ShipperPier (string)
+                ShipperDate (timestamp)
+            >ShipmentDetail
+                ShipmentDetailProduct (string)
+                ShipmentDetailContainerNumber (string)
+                ShipmentDetailBillofLandingNumber (string)
+                ShipmentDetailOriginalDocumentTrackingNumber (string)
+                ShipmentDetailNote (string)
+            >Consignee
+                ConsigneeCompanyName (string)
+                ConsigneePier (string)
+                ConsigneeDate (timestamp)
+        +ShipmentMember
+            >ShipmentMemberKey
+                ShipmentMemberName (string)
+                ShipmentMemberEmail (string)
+                ShipmentMemberImageUrl (string)
+                ShipmentMemberRole (string)
+                ShipmentMemberCompanyName (string)
+                ShipmentMemberCompanyKey (string)
         +ChatRoom
             >ChatRoomKey
                 ChatRoomName (string)
@@ -70,7 +78,6 @@
                         ChatRoomMemberUserKey (string)
                         ChatRoomMemberName (string)
                         ChatRoomMemberEmail (string)
-                        ChatRoomMemberName (string)
                         ChatRoomMemberImageUrl (string)
                         ChatRoomMemberRole (string)
                         ChatRoomMemberCompanyName (string)
