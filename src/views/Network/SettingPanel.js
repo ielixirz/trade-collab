@@ -26,21 +26,45 @@ import {
   DeleteCompanyUserAccessibility,
 } from '../../service/company/company';
 
-const RoleButton = ({ roleName, deleteHandler }) => {
+const RoleButton = ({ roleName, deleteHandler, editHandler }) => {
   const [open, setOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingRole, setEditingRole] = useState(roleName);
+
   const toggle = () => {
     setOpen(!open);
   };
-  return (
+
+  const toggleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleInputChange = (event) => {
+    setEditingRole(event.target.value);
+  };
+
+  return !isEditing ? (
     <Dropdown toggle={toggle} isOpen={open}>
       <DropdownToggle caret style={{ width: '100%', background: 'white', borderColor: '#ededed' }}>
         {roleName}
       </DropdownToggle>
       <DropdownMenu style={{ content: 'Float', clear: 'both' }}>
-        <DropdownItem>Edit</DropdownItem>
+        <DropdownItem onClick={toggleEdit}>Edit</DropdownItem>
         <DropdownItem onClick={deleteHandler}>Remove</DropdownItem>
       </DropdownMenu>
     </Dropdown>
+  ) : (
+    <Input
+      type="text"
+      id={`role-${roleName}`}
+      onChange={handleInputChange}
+      value={editingRole}
+      onKeyPress={(event) => {
+        if (event.key === 'Enter') {
+          editHandler(editingRole);
+        }
+      }}
+    />
   );
 };
 
@@ -96,6 +120,12 @@ const SettingPanel = (props, { auth }) => {
     DeleteCompanyUserAccessibility(props.match.params.key, key);
   };
 
+  const updateRole = (editedRoleName, key) => {
+    UpdateCompanyUserAccessibility(props.match.params.key, key, {
+      CompanyUserMatrixRoleName: editedRoleName,
+    });
+  };
+
   const updatePermission = (roleName, matrixArray, matrixIndex, index, key) => {
     const updateArray = matrixArray;
     updateArray[matrixIndex] = updateArray[matrixIndex] === '0' ? '1' : '0';
@@ -134,6 +164,7 @@ const SettingPanel = (props, { auth }) => {
           <RoleButton
             roleName={result.CompanyUserMatrixRoleName}
             deleteHandler={() => deleteRole(result.id)}
+            editHandler={editingRole => updateRole(editingRole, result.id)}
           />
         ),
         style: {
