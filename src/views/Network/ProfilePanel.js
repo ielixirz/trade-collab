@@ -339,8 +339,8 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
   };
 
   return (
-    <BlockUi tag="div" blocking={blocking}>
-      <div style={{ width: '100%', height: '100%' }}>
+    <div style={{ width: '100%', height: '100%' }}>
+      <BlockUi tag="div" blocking={blocking} style={{ height: '100%' }}>
         <div className="profile-container">
           <CreateCompanyModal
             ref={createCompanyModalRef}
@@ -502,8 +502,8 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
             rowEvents={tableRowEvents}
           />
         </div>
-      </div>
-    </BlockUi>
+      </BlockUi>
+    </div>
   );
 };
 
