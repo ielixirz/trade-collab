@@ -40,9 +40,8 @@
                 ConsigneeDate (timestamp)
         +ShipmentMember
             >ShipmentMemberKey
-                ShipmentMemberName (string)
+                ShipmentMemberUserKey (string)
                 ShipmentMemberEmail (string)
-                ShipmentMemberImageUrl (string)
                 ShipmentMemberRole (string)
                 ShipmentMemberCompanyName (string)
                 ShipmentMemberCompanyKey (string)
@@ -80,8 +79,6 @@
                         ChatRoomMemberEmail (string)
                         ChatRoomMemberImageUrl (string)
                         ChatRoomMemberRole (string)
-                        ChatRoomMemberCompanyName (string)
-                        ChatRoomMemberCompanyKey (string)
                 +ChatRoomMessageReader
                     >ChatRoomMessageKeyList *(Static document name) (Create for util)
                         ChatRoomMessageKeyList (Array<string>)
