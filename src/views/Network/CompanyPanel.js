@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { combineLatest, zip } from 'rxjs';
 import { map } from 'rxjs/operators';
 import _ from 'lodash';
+import BlockUi from 'react-block-ui';
+import 'react-block-ui/style.css';
 
 import {
   Row, Col, DropdownToggle, Dropdown, Button, Label, Input, ButtonGroup,
@@ -133,10 +135,15 @@ const CompanyPanel = (props) => {
   const [updatePosition, setUpdatePosition] = useState({});
   const [acceptedRequest, setAcceptedRequest] = useState(undefined);
   const [isMember, setIsMember] = useState(false);
+  const [blocking, setBlocking] = useState(true);
 
   const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
   const inviteInput = useRef(null);
+
+  const toggleBlocking = () => {
+    setBlocking(!blocking);
+  };
 
   const handleInputPositionChange = (event, key) => {
     const temp = updatePosition;
@@ -245,6 +252,7 @@ const CompanyPanel = (props) => {
         });
         setMemberList(members.concat(invited));
       });
+      toggleBlocking();
     });
   };
 
@@ -393,213 +401,215 @@ const CompanyPanel = (props) => {
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <div className="company-container">
-        <InviteToCompanyModal ref={inviteToCompanyModalRef} clearInput={clearInviteInput} />
-        <input
-          type="file"
-          id="file"
-          ref={fileInput}
-          style={{ display: 'none' }}
-          onChange={event => changeCompanyPic(event.target.files[0])}
-        />
-        <Row style={{ height: '100%' }}>
-          <Col xs={2} className="col-company-pic">
-            <Dropdown>
-              <DropdownToggle className="network-pic-btn">
-                <div role="button" onClick={browseFile} onKeyDown={null} tabIndex="-1">
-                  <img
-                    style={{ width: '70%' }}
-                    src={
-                      company.CompanyImageLink === undefined
-                        ? '../assets/img/default-grey.jpg'
-                        : company.CompanyImageLink
-                    }
-                    className="img-avatar"
-                    alt="admin@bootstrapmaster.com"
-                  />
-                </div>
-              </DropdownToggle>
-            </Dropdown>
-            {isMember ? (
-              <Button
-                className="company-access-btn"
-                onClick={() => {
-                  window.location.replace(`#/network/company/settings/${props.match.params.key}`);
-                }}
-              >
-                <i className="cui-wrench icons" style={{ marginRight: '0.5rem' }} />
-                Accessibility Settings
-              </Button>
-            ) : (
-              ' '
-            )}
-          </Col>
-          <Col xs={6} style={{ marginTop: '1.5rem' }}>
-            <Row>
-              {isEdit ? (
-                <div>
-                  <Input
-                    style={{ width: '100%', marginBottom: '0.5rem', paddingRight: '5rem' }}
-                    type="text"
-                    id="name"
-                    placeholder={company.CompanyName}
-                    onChange={handleCompanyInputChange}
-                  />
-                </div>
-              ) : (
-                <h4>{company.CompanyName}</h4>
-              )}
-              <i
-                className="cui-pencil icons"
-                role="button"
-                style={{
-                  marginLeft: '1rem',
-                  marginTop: '0.1rem',
-                  fontSize: 'medium',
-                  cursor: 'pointer',
-                }}
-                onClick={toggleEdit}
-                onKeyDown={null}
-                tabIndex="-1"
-              />
-            </Row>
-            <Row>
-              {isEdit ? (
-                <div>
-                  <Input
-                    style={{ width: '80%', marginBottom: '0.5rem', paddingRight: '5rem' }}
-                    type="text"
-                    id="tel"
-                    placeholder={company.CompanyTelNumber}
-                    onChange={handleCompanyInputChange}
-                  />
-                </div>
-              ) : (
-                <p style={{ marginBottom: '0.1rem' }}>{company.CompanyTelNumber}</p>
-              )}
-            </Row>
-            <Row>
-              {isEdit ? (
-                <Input
-                  style={{ width: '50%' }}
-                  type="textarea"
-                  id="desc"
-                  placeholder={company.CompanyAboutUs}
-                  onChange={handleCompanyInputChange}
-                />
-              ) : (
-                <p>{company.CompanyAboutUs}</p>
-              )}
-            </Row>
-            <Row style={{ paddingTop: '2rem' }}>
-              <a href="/#/network">{company.CompanyWebsiteUrl}</a>
-            </Row>
-          </Col>
-          {isMember ? (
-            <Col xs={4} style={{ marginTop: '1.5rem' }}>
-              <Label htmlFor="email-invitation" style={{ color: 'grey' }}>
-                <b>Email invitations</b>
-              </Label>
-              <Row>
-                <MultiSelectTextInput
-                  id="invite-email"
-                  getValue={handleInviteInputChange}
-                  placeholder="Enter email..."
-                  className="company-invitation-select"
-                  ref={inviteInput}
-                />
+      <BlockUi tag="div" blocking={blocking} style={{ height: '100%' }}>
+        <div className="company-container">
+          <InviteToCompanyModal ref={inviteToCompanyModalRef} clearInput={clearInviteInput} />
+          <input
+            type="file"
+            id="file"
+            ref={fileInput}
+            style={{ display: 'none' }}
+            onChange={event => changeCompanyPic(event.target.files[0])}
+          />
+          <Row style={{ height: '100%' }}>
+            <Col xs={2} className="col-company-pic">
+              <Dropdown>
+                <DropdownToggle className="network-pic-btn">
+                  <div role="button" onClick={browseFile} onKeyDown={null} tabIndex="-1">
+                    <img
+                      style={{ width: '70%' }}
+                      src={
+                        company.CompanyImageLink === undefined
+                          ? '../assets/img/default-grey.jpg'
+                          : company.CompanyImageLink
+                      }
+                      className="img-avatar"
+                      alt="admin@bootstrapmaster.com"
+                    />
+                  </div>
+                </DropdownToggle>
+              </Dropdown>
+              {isMember ? (
                 <Button
-                  className="company-invite-btn"
-                  // eslint-disable-next-line max-len
+                  className="company-access-btn"
                   onClick={() => {
-                    if (invitedEmails.length > 0) {
-                      inviteToCompanyModalRef.current.triggerInviteToCompany(invitedEmails, {
-                        companyName: company.CompanyName,
-                        key: `props.match.params.key`,
-                      });
-                    }
+                    window.location.replace(`#/network/company/settings/${props.match.params.key}`);
                   }}
                 >
-                  Invite
+                  <i className="cui-wrench icons" style={{ marginRight: '0.5rem' }} />
+                  Accessibility Settings
                 </Button>
+              ) : (
+                ' '
+              )}
+            </Col>
+            <Col xs={6} style={{ marginTop: '1.5rem' }}>
+              <Row>
+                {isEdit ? (
+                  <div>
+                    <Input
+                      style={{ width: '100%', marginBottom: '0.5rem', paddingRight: '5rem' }}
+                      type="text"
+                      id="name"
+                      placeholder={company.CompanyName}
+                      onChange={handleCompanyInputChange}
+                    />
+                  </div>
+                ) : (
+                  <h4>{company.CompanyName}</h4>
+                )}
+                <i
+                  className="cui-pencil icons"
+                  role="button"
+                  style={{
+                    marginLeft: '1rem',
+                    marginTop: '0.1rem',
+                    fontSize: 'medium',
+                    cursor: 'pointer',
+                  }}
+                  onClick={toggleEdit}
+                  onKeyDown={null}
+                  tabIndex="-1"
+                />
+              </Row>
+              <Row>
+                {isEdit ? (
+                  <div>
+                    <Input
+                      style={{ width: '80%', marginBottom: '0.5rem', paddingRight: '5rem' }}
+                      type="text"
+                      id="tel"
+                      placeholder={company.CompanyTelNumber}
+                      onChange={handleCompanyInputChange}
+                    />
+                  </div>
+                ) : (
+                  <p style={{ marginBottom: '0.1rem' }}>{company.CompanyTelNumber}</p>
+                )}
+              </Row>
+              <Row>
+                {isEdit ? (
+                  <Input
+                    style={{ width: '50%' }}
+                    type="textarea"
+                    id="desc"
+                    placeholder={company.CompanyAboutUs}
+                    onChange={handleCompanyInputChange}
+                  />
+                ) : (
+                  <p>{company.CompanyAboutUs}</p>
+                )}
+              </Row>
+              <Row style={{ paddingTop: '2rem' }}>
+                <a href="/#/network">{company.CompanyWebsiteUrl}</a>
               </Row>
             </Col>
-          ) : (
-            ''
-          )}
-        </Row>
-      </div>
-      {isMember ? (
-        <div className="incoming-request-container">
-          <div className="company-table-label">
-            <Row>
-              <h4>
-Incoming Request (
-                {incomingRequest.length}
-)
-              </h4>
-            </Row>
-          </div>
-          <MainDataTable
-            data={incomingRequest}
-            column={incomingRequestColumns}
-            cssClass="company-table"
-            wraperClass="company-table-wraper"
-            isBorder={false}
-          />
-        </div>
-      ) : (
-        ''
-      )}
-      {isMember ? (
-        <div className="company-member-container">
-          <ToolkitProvider keyField="name" data={memberList} columns={memberDataColumns} search>
-            {toolKitProps => (
-              <div>
-                <div className="company-table-label">
-                  <Row>
-                    <Col xs={7} style={{ paddingLeft: 0 }}>
-                      <h4>
-Members (
-                        {memberList.length}
-)
-                      </h4>
-                    </Col>
-                    <Col xs={3} style={{ paddingRight: 0 }}>
-                      <SearchBar
-                        placeholder="&#xF002; Typing"
-                        style={{ width: '210%' }}
-                        {...toolKitProps.searchProps}
-                      />
-                    </Col>
-                    <Col xs={2} style={{ paddingLeft: 0 }}>
-                      <Select
-                        isMulti
-                        name="colors"
-                        id="role-filter"
-                        className="basic-multi-select role-filter-select"
-                        classNamePrefix="select"
-                        placeholder="Admin (4)"
-                      />
-                    </Col>
-                  </Row>
-                </div>
-                <MainDataTable
-                  toolkitbaseProps={{ ...toolKitProps.baseProps }}
-                  data={memberList}
-                  column={memberDataColumns}
-                  cssClass="company-table member"
-                  wraperClass="company-table-wraper"
-                  isBorder={false}
-                  toolkit="search"
-                />
-              </div>
+            {isMember ? (
+              <Col xs={4} style={{ marginTop: '1.5rem' }}>
+                <Label htmlFor="email-invitation" style={{ color: 'grey' }}>
+                  <b>Email invitations</b>
+                </Label>
+                <Row>
+                  <MultiSelectTextInput
+                    id="invite-email"
+                    getValue={handleInviteInputChange}
+                    placeholder="Enter email..."
+                    className="company-invitation-select"
+                    ref={inviteInput}
+                  />
+                  <Button
+                    className="company-invite-btn"
+                    // eslint-disable-next-line max-len
+                    onClick={() => {
+                      if (invitedEmails.length > 0) {
+                        inviteToCompanyModalRef.current.triggerInviteToCompany(invitedEmails, {
+                          companyName: company.CompanyName,
+                          key: 'props.match.params.key',
+                        });
+                      }
+                    }}
+                  >
+                    Invite
+                  </Button>
+                </Row>
+              </Col>
+            ) : (
+              ''
             )}
-          </ToolkitProvider>
+          </Row>
         </div>
-      ) : (
-        ''
-      )}
+        {isMember ? (
+          <div className="incoming-request-container">
+            <div className="company-table-label">
+              <Row>
+                <h4>
+Incoming Request (
+                  {incomingRequest.length}
+)
+                </h4>
+              </Row>
+            </div>
+            <MainDataTable
+              data={incomingRequest}
+              column={incomingRequestColumns}
+              cssClass="company-table"
+              wraperClass="company-table-wraper"
+              isBorder={false}
+            />
+          </div>
+        ) : (
+          ''
+        )}
+        {isMember ? (
+          <div className="company-member-container">
+            <ToolkitProvider keyField="name" data={memberList} columns={memberDataColumns} search>
+              {toolKitProps => (
+                <div>
+                  <div className="company-table-label">
+                    <Row>
+                      <Col xs={7} style={{ paddingLeft: 0 }}>
+                        <h4>
+Members (
+                          {memberList.length}
+)
+                        </h4>
+                      </Col>
+                      <Col xs={3} style={{ paddingRight: 0 }}>
+                        <SearchBar
+                          placeholder="&#xF002; Typing"
+                          style={{ width: '210%' }}
+                          {...toolKitProps.searchProps}
+                        />
+                      </Col>
+                      <Col xs={2} style={{ paddingLeft: 0 }}>
+                        <Select
+                          isMulti
+                          name="colors"
+                          id="role-filter"
+                          className="basic-multi-select role-filter-select"
+                          classNamePrefix="select"
+                          placeholder="Admin (4)"
+                        />
+                      </Col>
+                    </Row>
+                  </div>
+                  <MainDataTable
+                    toolkitbaseProps={{ ...toolKitProps.baseProps }}
+                    data={memberList}
+                    column={memberDataColumns}
+                    cssClass="company-table member"
+                    wraperClass="company-table-wraper"
+                    isBorder={false}
+                    toolkit="search"
+                  />
+                </div>
+              )}
+            </ToolkitProvider>
+          </div>
+        ) : (
+          ''
+        )}
+      </BlockUi>
     </div>
   );
 };
