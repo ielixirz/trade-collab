@@ -22,9 +22,11 @@ import { PERMISSION_LIST } from '../../constants/network';
 import {
   GetCompanyUserAccessibility,
   UpdateCompanyUserAccessibility,
+  CreateCompanyUserAccessibility,
+  DeleteCompanyUserAccessibility,
 } from '../../service/company/company';
 
-const RoleButton = ({ roleName }) => {
+const RoleButton = ({ roleName, deleteHandler }) => {
   const [open, setOpen] = useState(false);
   const toggle = () => {
     setOpen(!open);
@@ -36,7 +38,7 @@ const RoleButton = ({ roleName }) => {
       </DropdownToggle>
       <DropdownMenu style={{ content: 'Float', clear: 'both' }}>
         <DropdownItem>Edit</DropdownItem>
-        <DropdownItem>Remove</DropdownItem>
+        <DropdownItem onClick={deleteHandler}>Remove</DropdownItem>
       </DropdownMenu>
     </Dropdown>
   );
@@ -82,35 +84,16 @@ const SettingPanel = (props, { auth }) => {
   ]);
   const [lastUpdate, setLastUpdate] = useState({});
 
-  const addRole = (roleName) => {
-    // const emptyColumn = {
-    //   dataField: 'empty',
-    //   text: (
-    //     <Button
-    //       style={{ width: '40px', margin: 0 }}
-    //       block
-    //       color="success"
-    //       onClick={() => addRole('NEW')}
-    //     >
-    //       +
-    //     </Button>
-    //   ),
-    //   style: {
-    //     width: '40px',
-    //   },
-    //   headerStyle: {
-    //     width: '40px',
-    //   },
-    // };
-    // const addingRoleColumn = roleColumn;
-    // addingRoleColumn[addingRoleColumn.length - 1].dataField = 'role';
-    // addingRoleColumn[addingRoleColumn.length - 1].text = <RoleButton roleName={roleName} />;
-    // addingRoleColumn[addingRoleColumn.length - 1].style.width = '100px';
-    // addingRoleColumn[addingRoleColumn.length - 1].headerStyle.width = '100px';
-    // addingRoleColumn[addingRoleColumn.length - 1].align = 'center';
-    // addingRoleColumn[addingRoleColumn.length - 1].headerAlign = 'center';
-    // addingRoleColumn.push(emptyColumn);
-    // setRoleColumn([...addingRoleColumn]);
+  const addRole = (roleName, lastIndex) => {
+    CreateCompanyUserAccessibility(props.match.params.key, {
+      CompanyUserMatrixRoleIndex: lastIndex + 1,
+      CompanyUserMatrixRoleName: roleName,
+      CompanyUserMatrixRolePermissionCode: '00000000000000',
+    });
+  };
+
+  const deleteRole = (key) => {
+    DeleteCompanyUserAccessibility(props.match.params.key, key);
   };
 
   const updatePermission = (roleName, matrixArray, matrixIndex, index, key) => {
@@ -130,24 +113,29 @@ const SettingPanel = (props, { auth }) => {
   };
 
   const populateRoleToTable = (fetchResult) => {
-    const initialRow = PERMISSION_LIST;
+    const initialRow = [...PERMISSION_LIST];
     const initialCol = [];
 
     initialCol.push({
       dataField: 'permission',
       text: '',
       style: {
-        width: '700px',
+        width: '500px',
       },
       headerStyle: {
-        width: '700px',
+        width: '500px',
       },
     });
 
     _.forEach(fetchResult, (result) => {
       initialCol.push({
         dataField: result.CompanyUserMatrixRoleName,
-        text: <RoleButton roleName={result.CompanyUserMatrixRoleName} />,
+        text: (
+          <RoleButton
+            roleName={result.CompanyUserMatrixRoleName}
+            deleteHandler={() => deleteRole(result.id)}
+          />
+        ),
         style: {
           width: '100px',
         },
@@ -163,20 +151,22 @@ const SettingPanel = (props, { auth }) => {
         if (index === 0 || index === 9) {
           increment += 1;
         }
-
-        initialRow[index + increment][result.CompanyUserMatrixRoleName] = (
-          <PermissionButton
-            binary={binary}
-            updatePermission={() => updatePermission(
-              result.CompanyUserMatrixRoleName,
-              matrixArray,
-              index,
-              result.CompanyUserMatrixRoleIndex,
-              result.id,
-            )
-            }
-          />
-        );
+        initialRow[index + increment] = {
+          ...initialRow[index + increment],
+          [result.CompanyUserMatrixRoleName]: (
+            <PermissionButton
+              binary={binary}
+              updatePermission={() => updatePermission(
+                result.CompanyUserMatrixRoleName,
+                matrixArray,
+                index,
+                result.CompanyUserMatrixRoleIndex,
+                result.id,
+              )
+              }
+            />
+          ),
+        };
       });
     });
 
@@ -188,7 +178,7 @@ const SettingPanel = (props, { auth }) => {
           style={{ margin: 0, backgroundColor: '#16A085' }}
           block
           color="success"
-          onClick={() => addRole('NEW')}
+          onClick={() => addRole('NEW', fetchResult.length)}
         >
           <b>+</b>
         </Button>
