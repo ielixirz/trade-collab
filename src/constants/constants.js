@@ -18,6 +18,7 @@ export const FETCH_FILES = 'FETCH_FILES';
 
 // Chat
 export const FETCH_CHAT = 'FETCH_CHAT';
+export const FETCH_CHAT_MEMBER = 'FETCH_CHAT_MEMBER';
 export const FETCH_CHAT_ROOMS = 'FETCH_CHAT_ROOMS';
 export const SEND_MESSAGE = 'SEND_MESSAGE';
 
@@ -30,3 +31,4 @@ export const FETCH_PROFILE_DETAIL = 'FETCH_PROFILE_DETAIL';
 
 // Company
 export const FETCH_COMPANY_DETAIL = 'FETCH_COMPANY_DETAIL';
+export const FETCH_COMPANY_USER = 'FETCH_COMPANY_USER';

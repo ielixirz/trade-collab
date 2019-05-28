@@ -2,12 +2,8 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable filenames/match-regex */
 /* as it is component */
-import React, {
-  useContext, useState, forwardRef, useImperativeHandle, useEffect,
-} from 'react';
-import {
-  Row, Col, Button, Modal, ModalBody, ModalFooter, ModalHeader,
-} from 'reactstrap';
+import React, { useContext, useState, forwardRef, useImperativeHandle, useEffect } from 'react';
+import { Row, Col, Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import Select from 'react-select';
 import ShipmentContext from '../context/ShipmentContext';
 import ExporterDetail from './masterDetailModal/ExporterDetail';
@@ -20,55 +16,55 @@ import { GetDiffDay } from '../utils/date';
 const statusOptions = [
   {
     value: {
-      status: 'In Transit',
+      status: 'In Transit'
     },
-    label: 'In Transit',
+    label: 'In Transit'
   },
   {
     value: {
-      status: 'Planning',
+      status: 'Planning'
     },
-    label: 'Planning',
+    label: 'Planning'
   },
   {
     value: {
-      status: 'Order Confirmed',
+      status: 'Order Confirmed'
     },
-    label: 'Order Confirmed',
+    label: 'Order Confirmed'
   },
   {
     value: {
-      status: 'Delayed',
+      status: 'Delayed'
     },
-    label: 'Delayed',
+    label: 'Delayed'
   },
   {
     value: {
-      status: 'Delivered',
+      status: 'Delivered'
     },
-    label: 'Delivered',
+    label: 'Delivered'
   },
   {
     value: {
-      status: 'Cancelled',
+      status: 'Cancelled'
     },
-    label: 'Cancelled',
+    label: 'Cancelled'
   },
   {
     value: {
-      status: 'Completed',
+      status: 'Completed'
     },
-    label: 'Completed',
-  },
+    label: 'Completed'
+  }
 ];
 
 const statusStyle = {
   option: styles => ({
     ...styles,
-    color: '#16A085',
+    color: '#16A085'
   }),
   input: styles => ({ ...styles, color: '#16A085' }),
-  singleValue: styles => ({ ...styles, color: '#16A085' }),
+  singleValue: styles => ({ ...styles, color: '#16A085' })
 };
 
 const MasterDetailModal = forwardRef((props, ref) => {
@@ -88,17 +84,17 @@ const MasterDetailModal = forwardRef((props, ref) => {
     triggerMasterDetail(data) {
       setMasterData({ ...data });
       setETADayDiff(
-        GetDiffDay(data.ConsigneeETAWarehouse.seconds * 1000, data.ConsigneeETAPort.seconds * 1000),
+        GetDiffDay(data.ConsigneeETAWarehouse.seconds * 1000, data.ConsigneeETAPort.seconds * 1000)
       );
       toggle();
-    },
+    }
   }));
 
-  const handleStatusSelectChange = (select) => {
+  const handleStatusSelectChange = select => {
     setShipmentStatus(select.value.status);
   };
 
-  const handleDetailInputChange = (event) => {
+  const handleDetailInputChange = event => {
     const newMasterData = { ...masterData };
     const field = event.target.id;
     const value = event.target.value;
@@ -152,7 +148,7 @@ const MasterDetailModal = forwardRef((props, ref) => {
     setETADayDiff(GetDiffDay(etd1, etd2));
   };
 
-  const handleETAWarehouseInputChange = (date) => {
+  const handleETAWarehouseInputChange = date => {
     const newMasterData = { ...masterData };
     try {
       if (date !== null) {
@@ -168,7 +164,7 @@ const MasterDetailModal = forwardRef((props, ref) => {
     setMasterData(newMasterData);
   };
 
-  const handleETAPortInputChange = (date) => {
+  const handleETAPortInputChange = date => {
     const newMasterData = { ...masterData };
     try {
       if (date !== null) {
@@ -184,7 +180,7 @@ const MasterDetailModal = forwardRef((props, ref) => {
     setMasterData(newMasterData);
   };
 
-  const handleETDInputChange = (date) => {
+  const handleETDInputChange = date => {
     const newMasterData = { ...masterData };
     if (date !== null) {
       newMasterData.ShipperETD = { seconds: date.getTime() / 1000 };
@@ -198,7 +194,7 @@ const MasterDetailModal = forwardRef((props, ref) => {
     UpdateMasterData(shipmentKey, 'DefaultTemplate', masterData).subscribe(() => {
       props.lastUpdate({
         timestamp: new Date(),
-        updaterKey: userKey,
+        updaterKey: userKey
       });
       toggle();
     });
@@ -261,8 +257,8 @@ const MasterDetailModal = forwardRef((props, ref) => {
             />
             <ImporterDetail
               company={
-                masterData.ConsigneeCompanyName === undefined
-                || masterData.ConsigneeCompanyName === ''
+                masterData.ConsigneeCompanyName === undefined ||
+                masterData.ConsigneeCompanyName === ''
                   ? 'Unassigned'
                   : masterData.ConsigneeCompanyName
               }
@@ -278,8 +274,8 @@ const MasterDetailModal = forwardRef((props, ref) => {
                   : masterData.ConsigneeCountry
               }
               etaWarehouse={
-                masterData.ConsigneeETAWarehouse === undefined
-                || masterData.ConsigneeETAWarehouse === null
+                masterData.ConsigneeETAWarehouse === undefined ||
+                masterData.ConsigneeETAWarehouse === null
                   ? null
                   : new Date(masterData.ConsigneeETAWarehouse.seconds * 1000)
               }
@@ -296,38 +292,38 @@ const MasterDetailModal = forwardRef((props, ref) => {
           <Col xs="5">
             <OtherDetail
               shipping={
-                masterData.ShipmentDetailShippingLine === undefined
-                || masterData.ShipmentDetailShippingLine === ''
+                masterData.ShipmentDetailShippingLine === undefined ||
+                masterData.ShipmentDetailShippingLine === ''
                   ? null
                   : masterData.ShipmentDetailShippingLine
               }
               price={
-                masterData.ShipmentDetailPriceDescriptionOfGoods === undefined
-                || masterData.ShipmentDetailPriceDescriptionOfGoods === ''
+                masterData.ShipmentDetailPriceDescriptionOfGoods === undefined ||
+                masterData.ShipmentDetailPriceDescriptionOfGoods === ''
                   ? null
                   : masterData.ShipmentDetailPriceDescriptionOfGoods
               }
               product={
-                masterData.ShipmentDetailProduct === undefined
-                || masterData.ShipmentDetailProduct === ''
+                masterData.ShipmentDetailProduct === undefined ||
+                masterData.ShipmentDetailProduct === ''
                   ? null
                   : masterData.ShipmentDetailProduct
               }
               bill={
-                masterData.ShipmentDetailBillOfLandingNunber === undefined
-                || masterData.ShipmentDetailBillOfLandingNunber === ''
+                masterData.ShipmentDetailBillOfLandingNunber === undefined ||
+                masterData.ShipmentDetailBillOfLandingNunber === ''
                   ? null
                   : masterData.ShipmentDetailBillOfLandingNunber
               }
               container={
-                masterData.ShipmentDetailContainerNumber === undefined
-                || masterData.ShipmentDetailContainerNumber === ''
+                masterData.ShipmentDetailContainerNumber === undefined ||
+                masterData.ShipmentDetailContainerNumber === ''
                   ? null
                   : masterData.ShipmentDetailContainerNumber
               }
               originalDoc={
-                masterData.ShipmentDetailOriginalDocumentTrackingNumber === undefined
-                || masterData.ShipmentDetailOriginalDocumentTrackingNumber === ''
+                masterData.ShipmentDetailOriginalDocumentTrackingNumber === undefined ||
+                masterData.ShipmentDetailOriginalDocumentTrackingNumber === ''
                   ? null
                   : masterData.ShipmentDetailOriginalDocumentTrackingNumber
               }

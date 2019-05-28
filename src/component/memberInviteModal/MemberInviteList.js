@@ -10,12 +10,12 @@ import MemberInvite from './MemberInvite';
 import './styles.scss';
 
 class MemberInviteList extends React.Component {
-  exist = (email) => {
+  exist = email => {
     const { invitationCollection } = this.props;
     return invitationCollection.find(profile => profile.Email === email);
   };
 
-  renderProfile = (profile) => {
+  renderProfile = profile => {
     const { isInvited, shouldInvite } = this.props;
     const exist = isInvited(profile.Email);
     const existRoles = _.get(exist, 'Role', []);

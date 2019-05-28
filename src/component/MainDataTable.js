@@ -11,6 +11,7 @@ const MainDataTable = ({
   wraperClass,
   toolkitbaseProps,
   rowEvents,
+  rowStyle,
 }) => (
   <BootstrapTable
     {...toolkitbaseProps}
@@ -21,6 +22,7 @@ const MainDataTable = ({
     columns={column}
     bordered={isBorder}
     rowEvents={rowEvents}
+    rowStyle={rowStyle}
   />
 );
 export default MainDataTable;
