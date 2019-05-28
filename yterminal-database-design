@@ -78,7 +78,9 @@
                         ChatRoomMemberName (string)
                         ChatRoomMemberEmail (string)
                         ChatRoomMemberImageUrl (string)
-                        ChatRoomMemberRole (string)
+                        ChatRoomMemberRole (array <string>)
+                        ChatRoomMemberCompanyName (string)
+                        ChatRoomMemberCompanyKey (string)
                 +ChatRoomMessageReader
                     >ChatRoomMessageKeyList *(Static document name) (Create for util)
                         ChatRoomMessageKeyList (Array<string>)
