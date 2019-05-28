@@ -57,8 +57,12 @@ export const GetShipmentList = (
   QueryFieldName,
   QueryFieldDirection = 'asc',
   LimitNumber = 25,
+  ShipmentMemberUserKey,
 ) => {
-  const DefaultQuery = OwnShipmentRefPath().orderBy('ShipmentCreateTimestamp', 'desc');
+  const DefaultQuery = OwnShipmentRefPath(ShipmentMemberUserKey).orderBy(
+    'ShipmentCreateTimestamp',
+    'desc',
+  );
 
   if (QueryStatus && QueryFieldName) {
     return collection(
