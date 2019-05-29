@@ -7,10 +7,6 @@ import { FirebaseApp } from '../firebase';
 
 const ShipmentRefPath = () => FirebaseApp.firestore().collection('Shipment');
 
-const OwnShipmentRefPath = ShipmentMemberUserKey => FirebaseApp.firestore()
-  .collectionGroup('ShipmentMember')
-  .where('ShipmentMemberUserKey', '==', ShipmentMemberUserKey);
-
 const ShipmentFileRefPath = ShipmentKey => FirebaseApp.firestore()
   .collection('Shipment')
   .doc(ShipmentKey)
