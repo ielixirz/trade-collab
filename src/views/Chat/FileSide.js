@@ -74,7 +74,11 @@ const FileSide = (props) => {
             </Col>
             <Col xs="1" style={{ padding: 0, top: '5px' }}>
               <i
-                className="cui-trash icons"
+                className={
+                  selectedFile.length > 0
+                    ? 'cui-trash icons delete-btn-enable'
+                    : 'cui-trash icons delete-btn-disable'
+                }
                 role="button"
                 style={{
                   fontSize: 'medium',
