@@ -252,14 +252,17 @@ exports.AddChatRoomShareDataList = functions.firestore
 
 exports.ManageShipmentMember = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
-  .onWrite(async (snapshot, context) => {
-    const SnapshotDataObject = snapshot.data();
-
-    const ShipmentMemberUserKey = SnapshotDataObject['ChatRoomMemberUserKey'];
+  .onWrite(async (change, context) => {
+    const oldValue = change.before.data();
+    const newValue = change.after.data();
 
     let PayloadObject = {};
 
-    if (!context.eventType === 'providers/cloud.firestore/eventTypes/document.delete') {
+    if ((oldValue && newValue) || (!oldValue && newValue)) {
+      const SnapshotDataObject = newValue.data();
+
+      const ShipmentMemberUserKey = SnapshotDataObject['ChatRoomMemberUserKey'];
+
       SnapshotDataObject['ChatRoomMemberEmail']
         ? (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberEmail'] =
             SnapshotDataObject['ChatRoomMemberEmail'])
@@ -285,8 +288,8 @@ exports.ManageShipmentMember = functions.firestore
         .collection('Shipment')
         .doc(context.params.ShipmentKey)
         .set({ ShipmentMember: PayloadObject }, { merge: true });
-    } else if (context.eventType === 'providers/cloud.firestore/eventTypes/document.delete') {
-      PayloadObject[ShipmentMemberUserKey] = null;
+    } else if (oldValue && !newValue) {
+      PayloadObject[oldValue.data()['ChatRoomMemberUserKey']] = null;
 
       return admin
         .firestore()
