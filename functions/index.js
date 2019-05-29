@@ -250,35 +250,48 @@ exports.AddChatRoomShareDataList = functions.firestore
       );
   });
 
-exports.AddShipmentMember = functions.firestore
-  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}').
-  .onCreate(async (snapshot, context) => {
-    let PayloadObject = {};
-
+exports.ManageShipmentMember = functions.firestore
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
+  .onWrite(async (snapshot, context) => {
     const SnapshotDataObject = snapshot.data();
 
-    const ShipmentMemberUserKey = SnapshotDataObject['ChatRoomMemberUserKey']
+    const ShipmentMemberUserKey = SnapshotDataObject['ChatRoomMemberUserKey'];
 
-    SnapshotDataObject['ChatRoomMemberEmail']
-      ? (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberEmail'] = SnapshotDataObject['ChatRoomMemberEmail'])
-      : (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberEmail'] = null);
+    let PayloadObject = {};
 
-    SnapshotDataObject['ChatRoomMemberRole']
-      ? (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberRole'] = SnapshotDataObject['ChatRoomMemberRole'])
-      : (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberRole'] = null);
+    if (!context.eventType === 'providers/cloud.firestore/eventTypes/document.delete') {
+      SnapshotDataObject['ChatRoomMemberEmail']
+        ? (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberEmail'] =
+            SnapshotDataObject['ChatRoomMemberEmail'])
+        : (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberEmail'] = null);
 
-    SnapshotDataObject['ChatRoomMemberCompanyName']
-      ? (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyName'] =
-          SnapshotDataObject['ChatRoomMemberCompanyName'])
-      : (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyName'] = null);
+      SnapshotDataObject['ChatRoomMemberRole']
+        ? (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberRole'] =
+            SnapshotDataObject['ChatRoomMemberRole'])
+        : (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberRole'] = null);
 
-    SnapshotDataObject['ChatRoomMemberCompanyKey']
-      ? (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyKey'] = SnapshotDataObject['ChatRoomMemberCompanyKey'])
-      : (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyKey'] = null);
+      SnapshotDataObject['ChatRoomMemberCompanyName']
+        ? (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyName'] =
+            SnapshotDataObject['ChatRoomMemberCompanyName'])
+        : (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyName'] = null);
 
-    return admin
-      .firestore()
-      .collection('Shipment')
-      .doc(context.params.ShipmentKey)
-      .set({ ShipmentMember: PayloadObject }, { merge: true });
+      SnapshotDataObject['ChatRoomMemberCompanyKey']
+        ? (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyKey'] =
+            SnapshotDataObject['ChatRoomMemberCompanyKey'])
+        : (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyKey'] = null);
+
+      return admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .set({ ShipmentMember: PayloadObject }, { merge: true });
+    } else if (context.eventType === 'providers/cloud.firestore/eventTypes/document.delete') {
+      PayloadObject[ShipmentMemberUserKey] = null;
+
+      return admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .set({ ShipmentMember: PayloadObject }, { merge: true });
+    }
   });
