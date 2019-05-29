@@ -14,8 +14,16 @@
         ShipmentCreatorUserKey (string)
         ShipmentCreateTimestamp (timestamp)
         ShipmentLastestUpdateTimestamp (timestamp)
-        ShipmentMember (Array<object>)
-            [{ UserKey : "123" , Premission : "ShipmentOwner"  }, { UserKey : "123" , Premission : "ShipmentOwner"  } , { UserKey : "123" , Premission : "See Only"  } ]
+        ShipmentMember (object<object>)
+            {
+                ShipmentMemberUserKey : 
+                    {
+                        ShipmentMemberEmail (string)
+                        ShipmentMemberRole (string)
+                        ShipmentMemberCompanyName (string)
+                        ShipmentMemberCompanyKey (string)
+                    }
+            }
         ShipmentShareList (array<string>)
             ['Shipper','ShipmentDetail','Consignee']
         +ShipmentReference (array<object>)
@@ -38,13 +46,6 @@
                 ConsigneeCompanyName (string)
                 ConsigneePier (string)
                 ConsigneeDate (timestamp)
-        +ShipmentMember
-            >ShipmentMemberKey
-                ShipmentMemberUserKey (string)
-                ShipmentMemberEmail (string)
-                ShipmentMemberRole (string)
-                ShipmentMemberCompanyName (string)
-                ShipmentMemberCompanyKey (string)
         +ChatRoom
             >ChatRoomKey
                 ChatRoomName (string)
