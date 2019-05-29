@@ -24,7 +24,6 @@ const EditFileModal = forwardRef((props, ref) => {
 
   const edit = () => {
     const editedChatRoomFileLink = chatFile;
-    console.log(editedChatRoomFileLink);
     editedChatRoomFileLink[editIndex].FileName = editedFileName;
     EditChatRoomFileLink(props.shipmentKey, props.chatroomKey, editedChatRoomFileLink);
     toggle();
@@ -33,7 +32,6 @@ const EditFileModal = forwardRef((props, ref) => {
   useImperativeHandle(ref, () => ({
     // eslint-disable-next-line no-shadow
     triggerEditing(editIndex, chatFile) {
-      console.log(editIndex);
       setFileName(chatFile[editIndex].FileName);
       setEditIndex(editIndex);
       setChatFile(chatFile);
@@ -44,7 +42,7 @@ const EditFileModal = forwardRef((props, ref) => {
   return (
     <Modal isOpen={modal} toggle={toggle} className="upload-modal">
       <ModalHeader toggle={toggle}>
-        <b>Edit a file</b>
+        <b>Rename a file</b>
       </ModalHeader>
       <ModalBody>
         <Label htmlFor="chatroom-editFile">
