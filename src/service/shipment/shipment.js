@@ -1,5 +1,5 @@
 import { collection, doc } from 'rxfire/firestore';
-import { from, combineLatest } from 'rxjs';
+import { from, combineLatest, merge } from 'rxjs';
 import {
   take, concatMap, map, tap, mergeMap, toArray,
 } from 'rxjs/operators';
@@ -59,10 +59,9 @@ export const GetShipmentList = (
   LimitNumber = 25,
   ShipmentMemberUserKey,
 ) => {
-  const DefaultQuery = OwnShipmentRefPath(ShipmentMemberUserKey).orderBy(
-    'ShipmentCreateTimestamp',
-    'desc',
-  );
+  const DefaultQuery = ShipmentRefPath()
+    .where(`ShipmentMember.${ShipmentMemberUserKey}`, '>=', {})
+    .orderBy('ShipmentCreateTimestamp', 'desc');
 
   if (QueryStatus && QueryFieldName) {
     return collection(
@@ -165,3 +164,18 @@ export const CombineShipmentAndShipmentReference = (
     })),
   );
 };
+
+export const CreateShipmentMember = (ShipmentKey, ShipmentMemberUserKey, Data) => {
+  const PayloadObject = {};
+
+  PayloadObject[ShipmentMemberUserKey] = Data;
+
+  return from(
+    ShipmentRefPath()
+      .doc(ShipmentKey)
+      .set({ ShipmentMember: PayloadObject }, { merge: true }),
+  );
+};
+
+// eslint-disable-next-line max-len
+export const TestCollectionGroup = ShipmentMemberUserKey => collection(ShipmentRefPath().where(`ShipmentMember.${ShipmentMemberUserKey}`, '>=', {}));
