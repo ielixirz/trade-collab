@@ -3,15 +3,18 @@
 /* as it is component */
 import React, { useEffect, useState, useRef } from 'react';
 import {
-  ListGroup, ListGroupItem, Row, Col,
+  ListGroup, ListGroupItem, Row, Col, Input,
 } from 'reactstrap';
 import _ from 'lodash';
 import ThreeDotDropdown from './ThreeDotDropdown';
 import CopyModal from './CopyModal';
 import EditFileModal from './EditFileModal';
 
-const FileList = ({ chatFiles, shipmentKey, chatroomKey }) => {
+const FileList = ({
+  chatFiles, shipmentKey, chatroomKey, selectFileHandler, selectedFile,
+}) => {
   const [chatFile, setChatFile] = useState(false);
+  const [hoveringFile, setHoveringFile] = useState(undefined);
   const copyModalRef = useRef(null);
   const editModalRef = useRef(null);
 
@@ -23,6 +26,14 @@ const FileList = ({ chatFiles, shipmentKey, chatroomKey }) => {
     e.stopPropagation();
   };
 
+  const onFileHover = (index) => {
+    setHoveringFile(index);
+  };
+
+  const onFileLeave = () => {
+    setHoveringFile(undefined);
+  };
+
   const openFile = (url) => {
     window.open(url, '_blank');
   };
@@ -30,7 +41,7 @@ const FileList = ({ chatFiles, shipmentKey, chatroomKey }) => {
   const fileListDateStyle = {
     position: 'absolute',
     top: 0,
-    right: 0,
+    right: '6px',
     bottom: 0,
     fontSize: 'xx-small',
     color: 'grey',
@@ -47,16 +58,33 @@ const FileList = ({ chatFiles, shipmentKey, chatroomKey }) => {
         <CopyModal ref={copyModalRef} />
         <EditFileModal ref={editModalRef} shipmentKey={shipmentKey} chatroomKey={chatroomKey} />
         {_.map(chatFile, (s, index) => (
-          <ListGroupItem tag="a">
+          <ListGroupItem className="file-row" tag="a">
             <span style={fileListDateStyle}>{new Date(s.FileCreateTimestamp).toDateString()}</span>
-            <Row>
-              <Col xs="1">
-                <i className="fa fa-file-picture-o" />
-              </Col>
-              <Col style={{ cursor: 'pointer' }} xs="10" className="text-left">
+            <Row
+              onMouseOver={() => onFileHover(index)}
+              onFocus={() => null}
+              onMouseLeave={() => onFileLeave()}
+            >
+              {hoveringFile === index || selectedFile.indexOf(index) !== -1 ? (
+                <Col xs="1" style={{ left: '20px' }}>
+                  <Input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="inline-checkbox1"
+                    name="inline-checkbox1"
+                    value={index}
+                    onClick={() => selectFileHandler(index)}
+                  />
+                </Col>
+              ) : (
+                <Col xs="1">
+                  <i className="fa fa-file-picture-o" />
+                </Col>
+              )}
+              <Col style={{ cursor: 'pointer' }} xs="9" className="text-left">
                 {s.FileName}
               </Col>
-              <Col>
+              <Col xs="2" style={{ left: '30px' }}>
                 <ThreeDotDropdown
                   options={[
                     {
@@ -68,7 +96,7 @@ const FileList = ({ chatFiles, shipmentKey, chatroomKey }) => {
                       function: () => copyModalRef.current.triggerCopying(s),
                     },
                     {
-                      text: 'Edit',
+                      text: 'Rename',
                       function: () => editModalRef.current.triggerEditing(index, chatFile),
                     },
                   ]}
