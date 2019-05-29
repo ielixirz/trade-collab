@@ -258,30 +258,28 @@ exports.ManageShipmentMember = functions.firestore
 
     let PayloadObject = {};
 
-    if ((oldValue && newValue) || (!oldValue && newValue)) {
-      const SnapshotDataObject = newValue.data();
+    if (newValue) {
+      const SnapshotDataObject = newValue;
 
       const ShipmentMemberUserKey = SnapshotDataObject['ChatRoomMemberUserKey'];
 
-      SnapshotDataObject['ChatRoomMemberEmail']
-        ? (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberEmail'] =
-            SnapshotDataObject['ChatRoomMemberEmail'])
-        : (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberEmail'] = null);
+      PayloadObject[ShipmentMemberUserKey] = {};
 
-      SnapshotDataObject['ChatRoomMemberRole']
-        ? (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberRole'] =
-            SnapshotDataObject['ChatRoomMemberRole'])
-        : (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberRole'] = null);
+      if (SnapshotDataObject['ChatRoomMemberEmail'])
+        PayloadObject[ShipmentMemberUserKey]['ShipmentMemberEmail'] =
+          SnapshotDataObject['ChatRoomMemberEmail'];
 
-      SnapshotDataObject['ChatRoomMemberCompanyName']
-        ? (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyName'] =
-            SnapshotDataObject['ChatRoomMemberCompanyName'])
-        : (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyName'] = null);
+      if (SnapshotDataObject['ChatRoomMemberRole'])
+        PayloadObject[ShipmentMemberUserKey]['ShipmentMemberRole'] =
+          SnapshotDataObject['ChatRoomMemberRole'];
 
-      SnapshotDataObject['ChatRoomMemberCompanyKey']
-        ? (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyKey'] =
-            SnapshotDataObject['ChatRoomMemberCompanyKey'])
-        : (PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyKey'] = null);
+      if (SnapshotDataObject['ChatRoomMemberCompanyName'])
+        PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyName'] =
+          SnapshotDataObject['ChatRoomMemberCompanyName'];
+
+      if (SnapshotDataObject['ChatRoomMemberCompanyKey'])
+        PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyKey'] =
+          SnapshotDataObject['ChatRoomMemberCompanyKey'];
 
       return admin
         .firestore()
@@ -289,7 +287,7 @@ exports.ManageShipmentMember = functions.firestore
         .doc(context.params.ShipmentKey)
         .set({ ShipmentMember: PayloadObject }, { merge: true });
     } else if (oldValue && !newValue) {
-      PayloadObject[oldValue.data()['ChatRoomMemberUserKey']] = null;
+      PayloadObject[oldValue['ChatRoomMemberUserKey']] = null;
 
       return admin
         .firestore()
