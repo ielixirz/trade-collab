@@ -7,6 +7,7 @@ import React, { Component, Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { Container } from 'reactstrap';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import { AppAside, AppHeader } from '@coreui/react';
 // sidebar nav config
@@ -57,7 +58,12 @@ class DefaultLayout extends Component {
                       path={route.path}
                       exact={route.exact}
                       name={route.name}
-                      render={props => <route.component {...props} />}
+                      render={() => route.validation(
+                        route.isProfileRequired,
+                        this.props,
+                        <route.component {...this.props} />,
+                      )
+                        }
                     />
                   ) : null))}
                 </Switch>
@@ -76,9 +82,14 @@ class DefaultLayout extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const { authReducer } = state;
+  const { authReducer, profileReducer } = state;
+  const profile = _.find(
+    profileReducer.ProfileList,
+    item => item.id === profileReducer.ProfileDetail.id,
+  );
   return {
     auth: authReducer.user,
+    currentProfile: profile,
   };
 };
 
