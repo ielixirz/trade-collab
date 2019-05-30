@@ -329,6 +329,37 @@ exports.ManageShipmentMember = functions.firestore
     const oldValue = change.before.data();
     const newValue = change.after.data();
 
+    // NotiCount First join shipment
+
+    if (!oldValue && newValue) {
+      const UserKey = newValue.ChatRoomMemberUserKey;
+
+      const GetUserProfileList = await admin
+        .firestore()
+        .collection('UserInfo')
+        .doc(UserKey)
+        .collection('Profile')
+        .get();
+
+      const ProfileKeyList = GetUserProfileList.docs.map(ProfileItem => ProfileItem.id);
+
+      const UserPersonalizeProfileBatch = admin.firestore().batch();
+
+      ProfileKeyList.forEach(Item => {
+        const TriggerFirstJoin = admin
+          .firestore()
+          .collection('UserPersonalize')
+          .doc(Item)
+          .collection('ShipmentNotificationCount')
+          .doc(context.params.ShipmentKey);
+        UserPersonalizeProfileBatch.set(TriggerFirstJoin, { ShipmentFristJoin: true });
+      });
+
+      UserPersonalizeProfileBatch.commit();
+    }
+
+    // End NotiCount First join shipment
+
     let PayloadObject = {};
 
     if (newValue) {
