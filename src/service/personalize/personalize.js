@@ -9,7 +9,7 @@ const UserPersonalizeRefPath = ProfileKey => FirebaseApp.firestore()
   .collection('UserPersonalize')
   .doc(ProfileKey);
 
-const UserPersonalizeChatRoomCountRefPath = (ProfileKey, ShipmentKey) => FirebaseApp.firestore()
+const UserPersonalizeCountRefPath = (ProfileKey, ShipmentKey) => FirebaseApp.firestore()
   .collection('UserPersonalize')
   .doc(ProfileKey)
   .collection('ShipmentNotificationCount')
@@ -43,8 +43,10 @@ export const ClearUnReadChatMessage = (ProfileKey, ShipmentKey, ChatRoomKey) => 
   PayloadObject.ChatRoomCount[ChatRoomKey] = 0;
 
   return from(
-    UserPersonalizeChatRoomCountRefPath(ProfileKey, ShipmentKey).set(PayloadObject, {
+    UserPersonalizeCountRefPath(ProfileKey, ShipmentKey).set(PayloadObject, {
       merge: true,
     }),
   );
 };
+
+// export const DecreaseShipmentCount =
