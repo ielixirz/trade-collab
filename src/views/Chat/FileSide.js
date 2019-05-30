@@ -1,12 +1,14 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable filenames/match-regex */
-import React, { Component } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import {
   Collapse, CardBody, Card, Row, Col,
 } from 'reactstrap';
+import _ from 'lodash';
 import FileList from '../../component/FileList';
+import { EditChatRoomFileLink } from '../../service/chat/chat';
 
 const styles = {
   button: {},
@@ -30,55 +32,90 @@ const styles = {
   },
 };
 
-class FileSide extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      collapse: false,
-    };
-    this.triggerCollapse = this.triggerCollapse.bind(this);
-  }
+const FileSide = (props) => {
+  const [collapse, setCollapse] = useState(false);
+  const [selectedFile, setSelectedFile] = useState([]);
 
-  triggerCollapse() {
-    this.setState(state => ({ collapse: !state.collapse }));
-  }
+  const triggerCollapse = () => {
+    setCollapse(!collapse);
+  };
 
-  render() {
-    return (
-      <div>
-        <Card onClick={this.triggerCollapse} style={styles.card}>
-          <CardBody>
-            <Row>
-              <Col xs="10" className="text-left">
-                <span style={styles.boxColor}>
-                  <i className="fa fa-file" />
-                </span>
-                <span style={styles.title}>Shared Files</span>
-              </Col>
-              <Col xs="2" className="text-right">
-                {this.state.collapse ? (
-                  <span style={styles.arrow}>
-                    <i className="fa fa-angle-down" />
-                  </span>
-                ) : (
-                  <span style={styles.arrow}>
-                    <i className="fa fa-angle-right" />
-                  </span>
-                )}
-              </Col>
-            </Row>
-            <Collapse isOpen={this.state.collapse}>
-              <FileList
-                chatFiles={this.props.chatFile}
-                shipmentKey={this.props.shipmentKey}
-                chatroomKey={this.props.chatroomKey}
+  const deleteSelectedFile = (e) => {
+    e.stopPropagation();
+    const updatingFile = [...props.chatFile];
+    _.forEach(selectedFile, (fileIndex) => {
+      updatingFile.splice(fileIndex, 1);
+    });
+    setSelectedFile([]);
+    EditChatRoomFileLink(props.shipmentKey, props.chatroomKey, updatingFile);
+  };
+
+  const selectFile = (selectIndex) => {
+    const selects = [...selectedFile];
+    const foundIndex = selects.indexOf(selectIndex);
+    if (foundIndex === -1) {
+      selects.push(selectIndex);
+    } else {
+      selects.splice(foundIndex, 1);
+    }
+    setSelectedFile(selects);
+  };
+
+  return (
+    <div>
+      <Card onClick={triggerCollapse} style={styles.card}>
+        <CardBody>
+          <Row style={{ marginBottom: '10px' }}>
+            <Col xs="10" className="text-left">
+              <span style={styles.boxColor}>
+                <i className="fa fa-file" />
+              </span>
+              <span style={styles.title}>Shared Files</span>
+            </Col>
+            <Col xs="1" style={{ padding: 0, top: '5px' }}>
+              <i
+                className={
+                  selectedFile.length > 0
+                    ? 'cui-trash icons delete-btn-enable'
+                    : 'cui-trash icons delete-btn-disable'
+                }
+                role="button"
+                style={{
+                  fontSize: 'medium',
+                  padding: '0',
+                  paddingLeft: '20px',
+                  cursor: 'pointer',
+                }}
+                onKeyDown={null}
+                tabIndex="-1"
+                onClick={deleteSelectedFile}
               />
-            </Collapse>
-          </CardBody>
-        </Card>
-      </div>
-    );
-  }
-}
+            </Col>
+            <Col xs="1" className="text-right">
+              {collapse ? (
+                <span style={styles.arrow}>
+                  <i className="fa fa-angle-down" />
+                </span>
+              ) : (
+                <span style={styles.arrow}>
+                  <i className="fa fa-angle-right" />
+                </span>
+              )}
+            </Col>
+          </Row>
+          <Collapse isOpen={collapse}>
+            <FileList
+              chatFiles={props.chatFile}
+              shipmentKey={props.shipmentKey}
+              chatroomKey={props.chatroomKey}
+              selectFileHandler={selectFile}
+              selectedFile={selectedFile}
+            />
+          </Collapse>
+        </CardBody>
+      </Card>
+    </div>
+  );
+};
 
 export default FileSide;

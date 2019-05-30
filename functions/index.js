@@ -249,3 +249,96 @@ exports.AddChatRoomShareDataList = functions.firestore
         { merge: true }
       );
   });
+
+exports.ManageShipmentMember = functions.firestore
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
+  .onWrite(async (change, context) => {
+    const oldValue = change.before.data();
+    const newValue = change.after.data();
+
+    let PayloadObject = {};
+
+    if (newValue) {
+      const SnapshotDataObject = newValue;
+
+      const ShipmentMemberUserKey = SnapshotDataObject['ChatRoomMemberUserKey'];
+
+      PayloadObject[ShipmentMemberUserKey] = {};
+
+      if (SnapshotDataObject['ChatRoomMemberEmail'])
+        PayloadObject[ShipmentMemberUserKey]['ShipmentMemberEmail'] =
+          SnapshotDataObject['ChatRoomMemberEmail'];
+
+      if (SnapshotDataObject['ChatRoomMemberRole'])
+        PayloadObject[ShipmentMemberUserKey]['ShipmentMemberRole'] =
+          SnapshotDataObject['ChatRoomMemberRole'];
+
+      if (SnapshotDataObject['ChatRoomMemberCompanyName'])
+        PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyName'] =
+          SnapshotDataObject['ChatRoomMemberCompanyName'];
+
+      if (SnapshotDataObject['ChatRoomMemberCompanyKey'])
+        PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyKey'] =
+          SnapshotDataObject['ChatRoomMemberCompanyKey'];
+
+      return admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .set({ ShipmentMember: PayloadObject }, { merge: true });
+    } else if (oldValue && !newValue) {
+      PayloadObject[oldValue['ChatRoomMemberUserKey']] = null;
+
+      return admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .set({ ShipmentMember: PayloadObject }, { merge: true });
+    }
+  });
+
+exports.CreateDefaultTemplateCompanyUserAccessibility = functions.firestore
+  .document('Company/{CompanyKey}')
+  .onCreate(async (snapshot, context) => {
+    const CompanyUserAccessibilityPayload = [
+      {
+        CompanyUserAccessibilityIndex: 1,
+        CompanyUserAccessibilityRoleName: 'Owner',
+        CompanyUserAccessibilityRolePermissionCode: '11111111111111'
+      },
+      {
+        CompanyUserAccessibilityIndex: 5,
+        CompanyUserAccessibilityRoleName: 'Basic',
+        CompanyUserAccessibilityRolePermissionCode: '11000110100000'
+      },
+      {
+        CompanyUserAccessibilityIndex: 2,
+        CompanyUserAccessibilityRoleName: 'Executive',
+        CompanyUserAccessibilityRolePermissionCode: '11111111111110'
+      },
+      {
+        CompanyUserAccessibilityIndex: 4,
+        CompanyUserAccessibilityRoleName: 'Staff',
+        CompanyUserAccessibilityRolePermissionCode: '11101110110000'
+      },
+      {
+        CompanyUserAccessibilityIndex: 3,
+        CompanyUserAccessibilityRoleName: 'Senior',
+        CompanyUserAccessibilityRolePermissionCode: '11111111111110'
+      }
+    ];
+
+    const CompanyUserAccessibilityActionList = [];
+
+    await CompanyUserAccessibilityPayload.forEach(Item => {
+      const Action = admin
+        .firestore()
+        .collection('Company')
+        .doc(context.params.CompanyKey)
+        .collection('CompanyUserAccessibility')
+        .add(Item);
+      CompanyUserAccessibilityActionList.push(Action);
+    });
+
+    return Promise.all(CompanyUserAccessibilityActionList);
+  });

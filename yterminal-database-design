@@ -14,8 +14,16 @@
         ShipmentCreatorUserKey (string)
         ShipmentCreateTimestamp (timestamp)
         ShipmentLastestUpdateTimestamp (timestamp)
-        ShipmentMember (Array<object>)
-            [{ UserKey : "123" , Premission : "ShipmentOwner"  }, { UserKey : "123" , Premission : "ShipmentOwner"  } , { UserKey : "123" , Premission : "See Only"  } ]
+        ShipmentMember (object<object>)
+            {
+                ShipmentMemberUserKey : 
+                    {
+                        ShipmentMemberEmail (string)
+                        ShipmentMemberRole (string)
+                        ShipmentMemberCompanyName (string)
+                        ShipmentMemberCompanyKey (string)
+                    }
+            }
         ShipmentShareList (array<string>)
             ['Shipper','ShipmentDetail','Consignee']
         +ShipmentReference (array<object>)
@@ -24,20 +32,20 @@
                 ShipmentReferenceCompanyName (string)
                 ShipmentReferenceCompanyKey (string)
         +ShipmentShareData
-                >Shipper
-                    ShipperCompanyName (string)
-                    ShipperPier (string)
-                    ShipperDate (timestamp)
-                >ShipmentDetail
-                    ShipmentDetailProduct (string)
-                    ShipmentDetailContainerNumber (string)
-                    ShipmentDetailBillofLandingNumber (string)
-                    ShipmentDetailOriginalDocumentTrackingNumber (string)
-                    ShipmentDetailNote (string)
-                >Consignee
-                    ConsigneeCompanyName (string)
-                    ConsigneePier (string)
-                    ConsigneeDate (timestamp)
+            >Shipper
+                ShipperCompanyName (string)
+                ShipperPier (string)
+                ShipperDate (timestamp)
+            >ShipmentDetail
+                ShipmentDetailProduct (string)
+                ShipmentDetailContainerNumber (string)
+                ShipmentDetailBillofLandingNumber (string)
+                ShipmentDetailOriginalDocumentTrackingNumber (string)
+                ShipmentDetailNote (string)
+            >Consignee
+                ConsigneeCompanyName (string)
+                ConsigneePier (string)
+                ConsigneeDate (timestamp)
         +ChatRoom
             >ChatRoomKey
                 ChatRoomName (string)
@@ -68,11 +76,11 @@
                 +ChatRoomMember
                     >ChatRoomMemberKey
                         ChatRoomMemberUserKey (string)
-                        ChatRoomMemberName (string)
+                        ChatRoomMemberFirstName (string)
+                        ChatRoomMemberSurName (string)
                         ChatRoomMemberEmail (string)
-                        ChatRoomMemberName (string)
                         ChatRoomMemberImageUrl (string)
-                        ChatRoomMemberRole (string)
+                        ChatRoomMemberRole (array <string>)
                         ChatRoomMemberCompanyName (string)
                         ChatRoomMemberCompanyKey (string)
                 +ChatRoomMessageReader

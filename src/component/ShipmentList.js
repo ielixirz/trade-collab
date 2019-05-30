@@ -1,13 +1,9 @@
 /* eslint-disable filenames/match-regex */
 /* as it is component */
-import React, {
-  useContext, useRef, useEffect, useState,
-} from 'react';
-import {
-  ListGroup, ListGroupItem, Row, Col, Button,
-} from 'reactstrap';
+import React, { useContext, useRef, useEffect, useState } from 'react';
+import { ListGroup, ListGroupItem, Row, Col, Button } from 'reactstrap';
 import moment from 'moment';
-import ShipmentContext from '../context/shipmentContext';
+import ShipmentContext from '../context/ShipmentContext';
 import MasterDetailModal from './MasterDetailModal';
 
 import { GetMasterDataChatRoom } from '../service/masterdata/masterdata';
@@ -15,7 +11,7 @@ import { GetDiffDay } from '../utils/date';
 
 const shipmentListGroupStyle = {
   height: '65vh',
-  overflow: 'scroll',
+  overflow: 'scroll'
 };
 
 const ShipmentList = () => {
@@ -25,17 +21,17 @@ const ShipmentList = () => {
   const masterDetailModalRef = useRef(null);
 
   useEffect(() => {
-    GetMasterDataChatRoom(shipmentKey, chatroomKey).subscribe((doc) => {
+    GetMasterDataChatRoom(shipmentKey, chatroomKey).subscribe(doc => {
       const data = doc[0].data();
       setMasterData([data]);
     });
   }, [lastUpdate]);
 
-  const updateLastUpdate = (lastUpdateData) => {
+  const updateLastUpdate = lastUpdateData => {
     setLastUpdate(lastUpdateData);
   };
 
-  const preventParentCollapse = (e) => {
+  const preventParentCollapse = e => {
     e.stopPropagation();
   };
 
@@ -45,217 +41,216 @@ const ShipmentList = () => {
       {masterData === undefined
         ? ''
         : masterData.map(data => (
-          <ListGroup onClick={preventParentCollapse} flush style={shipmentListGroupStyle}>
-            <ListGroupItem tag="a" style={{ borderBottom: 0 }}>
-              <Row style={{ float: 'right' }}>
-                <Col>
-                  <Button
-                    className="master-detail-btn edit"
-                    onClick={() => masterDetailModalRef.current.triggerMasterDetail(data)}
-                  >
-                    <i className="cui-pencil icons" style={{ marginRight: '0.5rem' }} />
+            <ListGroup onClick={preventParentCollapse} flush style={shipmentListGroupStyle}>
+              <ListGroupItem tag="a" style={{ borderBottom: 0 }}>
+                <Row style={{ float: 'right' }}>
+                  <Col>
+                    <Button
+                      className="master-detail-btn edit"
+                      onClick={() => masterDetailModalRef.current.triggerMasterDetail(data)}
+                    >
+                      <i className="cui-pencil icons" style={{ marginRight: '0.5rem' }} />
                       Edit
-                  </Button>
-                </Col>
-              </Row>
-              <Row>
-                <Col xs="2" />
-                <Col xs="10" className="master-detail-col-panel first">
-                  <small>Shipper</small>
-                  <br />
-                  <b>
-                    {data.ShipperCompanyName === '' || data.ShipperCompanyName === undefined ? (
-                      <span style={{ color: '#B3B3B3' }}>Unassigned</span>
+                    </Button>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs="2" />
+                  <Col xs="10" className="master-detail-col-panel first">
+                    <small>Shipper</small>
+                    <br />
+                    <b>
+                      {data.ShipperCompanyName === '' || data.ShipperCompanyName === undefined ? (
+                        <span style={{ color: '#B3B3B3' }}>Unassigned</span>
+                      ) : (
+                        data.ShipperCompanyName
+                      )}
+                    </b>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs="2">
+                    <i className="cui-location-pin" style={{ fontSize: '30px' }} />
+                  </Col>
+                  <Col xs="10" className="master-detail-col-panel">
+                    {data.ShipperPort === undefined || data.ShipperPort === '' ? (
+                      <span style={{ color: '#B3B3B3' }}>Port</span>
                     ) : (
-                      data.ShipperCompanyName
+                      data.ShipperPort
                     )}
-                  </b>
-                </Col>
-              </Row>
-              <Row>
-                <Col xs="2">
-                  <i className="cui-location-pin" style={{ fontSize: '30px' }} />
-                </Col>
-                <Col xs="10" className="master-detail-col-panel">
-                  {data.ShipperPort === undefined || data.ShipperPort === '' ? (
-                    <span style={{ color: '#B3B3B3' }}>Port</span>
-                  ) : (
-                    data.ShipperPort
-                  )}
-                  {' , '}
-                  {data.ShipperCountry === undefined || data.ShipperCountry === '' ? (
-                    <span style={{ color: '#B3B3B3' }}>Country</span>
-                  ) : (
-                    data.ShipperCountry
-                  )}
-                  <br />
-                  <b>
-                    {data.ShipperETD === null ? (
-                      <span style={{ color: '#B3B3B3' }}>Est. Time of Departure from Port</span>
+                    {' , '}
+                    {data.ShipperCountry === undefined || data.ShipperCountry === '' ? (
+                      <span style={{ color: '#B3B3B3' }}>Country</span>
                     ) : (
-                      `Port ETD: ${moment(data.ShipperETD.seconds * 1000).format('DD MMM YYYY')}`
+                      data.ShipperCountry
                     )}
-                  </b>
-                </Col>
-              </Row>
-              <Row>
-                <Col xs="2" className="master-detail-col-panel line">
-                  <div className="master-detail-panel-connect-line outer">
-                    <div className="master-detail-panel-connect-line inner" />
-                  </div>
-                </Col>
-                <Col xs="10" className="master-detail-col-panel line" />
-              </Row>
-              <Row>
-                <Col xs="2">
-                  <i className="fa fa-ship" style={{ fontSize: '25px' }} />
-                </Col>
-                <Col xs="10" className="master-detail-col-panel">
-                  <b>Shipping Line</b>
-                  <br />
-                  {data.ShipmentDetailShippingLine === undefined || ''
-                    ? ''
-                    : data.ShipmentDetailShippingLine}
-                </Col>
-              </Row>
-              <Row>
-                <Col xs="2" className="master-detail-col-panel line">
-                  <div className="master-detail-panel-connect-line outer">
-                    <div className="master-detail-panel-connect-line inner" />
-                  </div>
-                </Col>
-                <Col xs="10" className="master-detail-col-panel line" />
-              </Row>
-              <Row>
-                <Col xs="2">
-                  <i className="cui-location-pin" style={{ fontSize: '30px' }} />
-                </Col>
-                <Col xs="10" className="master-detail-col-panel">
-                  <small>Consignee</small>
-                  <br />
-                  <b>
-                    {data.ConsigneeCompanyName === '' ? (
-                      <span style={{ color: '#B3B3B3' }}>Unassigned</span>
+                    <br />
+                    <b>
+                      {data.ShipperETD === null ? (
+                        <span style={{ color: '#B3B3B3' }}>Est. Time of Departure from Port</span>
+                      ) : (
+                        `Port ETD: ${moment(data.ShipperETD.seconds * 1000).format('DD MMM YYYY')}`
+                      )}
+                    </b>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs="2" className="master-detail-col-panel line">
+                    <div className="master-detail-panel-connect-line outer">
+                      <div className="master-detail-panel-connect-line inner" />
+                    </div>
+                  </Col>
+                  <Col xs="10" className="master-detail-col-panel line" />
+                </Row>
+                <Row>
+                  <Col xs="2">
+                    <i className="fa fa-ship" style={{ fontSize: '25px' }} />
+                  </Col>
+                  <Col xs="10" className="master-detail-col-panel">
+                    <b>Shipping Line</b>
+                    <br />
+                    {data.ShipmentDetailShippingLine === undefined || ''
+                      ? ''
+                      : data.ShipmentDetailShippingLine}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs="2" className="master-detail-col-panel line">
+                    <div className="master-detail-panel-connect-line outer">
+                      <div className="master-detail-panel-connect-line inner" />
+                    </div>
+                  </Col>
+                  <Col xs="10" className="master-detail-col-panel line" />
+                </Row>
+                <Row>
+                  <Col xs="2">
+                    <i className="cui-location-pin" style={{ fontSize: '30px' }} />
+                  </Col>
+                  <Col xs="10" className="master-detail-col-panel">
+                    <small>Consignee</small>
+                    <br />
+                    <b>
+                      {data.ConsigneeCompanyName === '' ? (
+                        <span style={{ color: '#B3B3B3' }}>Unassigned</span>
+                      ) : (
+                        data.ConsigneeCompanyName
+                      )}
+                    </b>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs="2" />
+                  <Col xs="10" className="master-detail-col-panel">
+                    {data.ConsigneePort === undefined || data.ConsigneePort === '' ? (
+                      <span style={{ color: '#B3B3B3' }}>Port</span>
                     ) : (
-                      data.ConsigneeCompanyName
+                      data.ConsigneePort
                     )}
-                  </b>
-                </Col>
-              </Row>
-              <Row>
-                <Col xs="2" />
-                <Col xs="10" className="master-detail-col-panel">
-                  {data.ConsigneePort === undefined || data.ConsigneePort === '' ? (
-                    <span style={{ color: '#B3B3B3' }}>Port</span>
-                  ) : (
-                    data.ConsigneePort
-                  )}
-                  {' , '}
-                  {data.ConsigneeCountry === undefined || data.ConsigneeCountry === '' ? (
-                    <span style={{ color: '#B3B3B3' }}>Country</span>
-                  ) : (
-                    data.ConsigneeCountry
-                  )}
-                  <br />
-                  <b>
-                    {data.ConsigneeETAPort === null ? (
-                      <span style={{ color: '#B3B3B3' }}>Est. Time of Arrive to Port</span>
+                    {' , '}
+                    {data.ConsigneeCountry === undefined || data.ConsigneeCountry === '' ? (
+                      <span style={{ color: '#B3B3B3' }}>Country</span>
                     ) : (
-                      `Port ETA: ${moment(data.ConsigneeETAPort.seconds * 1000).format(
-                        'DD MMM YYYY',
-                      )}`
+                      data.ConsigneeCountry
                     )}
-                  </b>
-                  <br />
-                  <b>
-                    {data.ConsigneeETAWarehouse === null ? (
-                      <span style={{ color: '#B3B3B3' }}>Est. Time of Arrive to Warehouse</span>
-                    ) : (
-                      `Warehouse ETA: ${moment(data.ConsigneeETAWarehouse.seconds * 1000).format(
-                        'DD MMM YYYY',
-                      )}`
-                    )}
-                  </b>
-                  {' '}
-                  {data.ShipperETD === null
-                    || data.ConsigneeETAPort === null
-                    || data.ConsigneeETAWarehouse === null
-                    ? ''
-                    : `+${GetDiffDay(
-                      data.ConsigneeETAWarehouse.seconds * 1000,
-                      data.ConsigneeETAPort.seconds * 1000,
-                    )} Days from ETA at Port`}
-                </Col>
-              </Row>
-            </ListGroupItem>
-            <ListGroupItem disabled tag="a" style={{ borderTop: 0 }}>
-              <Row>
-                <Col xs="11">
-                  <b>Price, Description of Goods</b>
-                </Col>
-              </Row>
-              <Row>
-                <Col xs="11" className="text-left">
-                  {data.ShipmentDetailPriceDescriptionOfGoods === undefined
-                    || data.ShipmentDetailPriceDescriptionOfGoods === ''
-                    ? '-'
-                    : data.ShipmentDetailPriceDescriptionOfGoods}
-                </Col>
-              </Row>
-            </ListGroupItem>
-            <ListGroupItem disabled tag="a">
-              <Row>
-                <Col xs="6">
-                  <b>Product</b>
-                </Col>
-                <Col xs="6" className="text-right">
-                  {data.ShipmentDetailProduct === undefined || data.ShipmentDetailProduct === ''
-                    ? '-'
-                    : data.ShipmentDetailProduct}
-                </Col>
-              </Row>
-            </ListGroupItem>
-            <ListGroupItem disabled tag="a">
-              <Row>
-                <Col xs="6">
-                  <b>Container No.</b>
-                </Col>
-                <Col xs="6" className="text-right">
-                  {data.ShipmentDetailContainerNumber === undefined
-                    || data.ShipmentDetailContainerNumber === ''
-                    ? '-'
-                    : data.ShipmentDetailContainerNumber}
-                </Col>
-              </Row>
-            </ListGroupItem>
-            <ListGroupItem disabled tag="a">
-              <Row>
-                <Col xs="6">
-                  <b>Bill of Landing No.</b>
-                </Col>
-                <Col xs="6" className="text-right">
-                  {data.ShipmentDetailBillOfLandingNunber === undefined
-                    || data.ShipmentDetailBillOfLandingNunber === ''
-                    ? '-'
-                    : data.ShipmentDetailBillOfLandingNunber}
-                </Col>
-              </Row>
-            </ListGroupItem>
-            <ListGroupItem disabled tag="a">
-              <Row>
-                <Col xs="6">
-                  <b>Original Docs.Tracking No.</b>
-                </Col>
-                <Col xs="6" className="text-right">
-                  {data.ShipmentDetailOriginalDocumentTrackingNumber === undefined
-                    || data.ShipmentDetailOriginalDocumentTrackingNumber === ''
-                    ? '-'
-                    : data.ShipmentDetailOriginalDocumentTrackingNumber}
-                </Col>
-              </Row>
-            </ListGroupItem>
-          </ListGroup>
-        ))}
+                    <br />
+                    <b>
+                      {data.ConsigneeETAPort === null ? (
+                        <span style={{ color: '#B3B3B3' }}>Est. Time of Arrive to Port</span>
+                      ) : (
+                        `Port ETA: ${moment(data.ConsigneeETAPort.seconds * 1000).format(
+                          'DD MMM YYYY'
+                        )}`
+                      )}
+                    </b>
+                    <br />
+                    <b>
+                      {data.ConsigneeETAWarehouse === null ? (
+                        <span style={{ color: '#B3B3B3' }}>Est. Time of Arrive to Warehouse</span>
+                      ) : (
+                        `Warehouse ETA: ${moment(data.ConsigneeETAWarehouse.seconds * 1000).format(
+                          'DD MMM YYYY'
+                        )}`
+                      )}
+                    </b>{' '}
+                    {data.ShipperETD === null ||
+                    data.ConsigneeETAPort === null ||
+                    data.ConsigneeETAWarehouse === null
+                      ? ''
+                      : `+${GetDiffDay(
+                          data.ConsigneeETAWarehouse.seconds * 1000,
+                          data.ConsigneeETAPort.seconds * 1000
+                        )} Days from ETA at Port`}
+                  </Col>
+                </Row>
+              </ListGroupItem>
+              <ListGroupItem disabled tag="a" style={{ borderTop: 0 }}>
+                <Row>
+                  <Col xs="11">
+                    <b>Price, Description of Goods</b>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs="11" className="text-left">
+                    {data.ShipmentDetailPriceDescriptionOfGoods === undefined ||
+                    data.ShipmentDetailPriceDescriptionOfGoods === ''
+                      ? '-'
+                      : data.ShipmentDetailPriceDescriptionOfGoods}
+                  </Col>
+                </Row>
+              </ListGroupItem>
+              <ListGroupItem disabled tag="a">
+                <Row>
+                  <Col xs="6">
+                    <b>Product</b>
+                  </Col>
+                  <Col xs="6" className="text-right">
+                    {data.ShipmentDetailProduct === undefined || data.ShipmentDetailProduct === ''
+                      ? '-'
+                      : data.ShipmentDetailProduct}
+                  </Col>
+                </Row>
+              </ListGroupItem>
+              <ListGroupItem disabled tag="a">
+                <Row>
+                  <Col xs="6">
+                    <b>Container No.</b>
+                  </Col>
+                  <Col xs="6" className="text-right">
+                    {data.ShipmentDetailContainerNumber === undefined ||
+                    data.ShipmentDetailContainerNumber === ''
+                      ? '-'
+                      : data.ShipmentDetailContainerNumber}
+                  </Col>
+                </Row>
+              </ListGroupItem>
+              <ListGroupItem disabled tag="a">
+                <Row>
+                  <Col xs="6">
+                    <b>Bill of Landing No.</b>
+                  </Col>
+                  <Col xs="6" className="text-right">
+                    {data.ShipmentDetailBillOfLandingNunber === undefined ||
+                    data.ShipmentDetailBillOfLandingNunber === ''
+                      ? '-'
+                      : data.ShipmentDetailBillOfLandingNunber}
+                  </Col>
+                </Row>
+              </ListGroupItem>
+              <ListGroupItem disabled tag="a">
+                <Row>
+                  <Col xs="6">
+                    <b>Original Docs.Tracking No.</b>
+                  </Col>
+                  <Col xs="6" className="text-right">
+                    {data.ShipmentDetailOriginalDocumentTrackingNumber === undefined ||
+                    data.ShipmentDetailOriginalDocumentTrackingNumber === ''
+                      ? '-'
+                      : data.ShipmentDetailOriginalDocumentTrackingNumber}
+                  </Col>
+                </Row>
+              </ListGroupItem>
+            </ListGroup>
+          ))}
     </div>
   );
 };

@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { zip } from 'rxjs';
 import { map } from 'rxjs/operators';
 import _ from 'lodash';
+import BlockUi from 'react-block-ui';
+import 'react-block-ui/style.css';
 
 import {
   Row, Col, DropdownToggle, Dropdown, Button, Input, ButtonGroup,
@@ -106,11 +108,16 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [acceptedInvite, setAcceptedInvite] = useState(undefined);
   const [newCompany, setNewCompany] = useState(undefined);
+  const [blocking, setBlocking] = useState(true);
 
   const createCompanyModalRef = useRef(null);
   const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
   const requestToJoinModalRef = useRef(null);
+
+  const toggleBlocking = () => {
+    setBlocking(!blocking);
+  };
 
   const fetchCompany = (userKey) => {
     const requestList = [];
@@ -203,7 +210,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
           ),
         });
       });
-
+      toggleBlocking();
       setCompanyList([joinedList, inviteList, requestList]);
     });
   };
@@ -218,6 +225,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
   };
 
   const responseToCreate = (company) => {
+    toggleBlocking();
     setNewCompany({
       company,
     });
@@ -332,165 +340,169 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <div className="profile-container">
-        <CreateCompanyModal
-          ref={createCompanyModalRef}
-          userKey={auth.uid}
-          userEmail={user.UserInfoEmail}
-          updateCompany={responseToCreate}
-        />
-        <InviteToCompanyModal ref={inviteToCompanyModalRef} />
-        <RequestToJoinModal
-          ref={requestToJoinModalRef}
-          userId={auth.uid}
-          profile={currentProfile}
-        />
-        <input
-          type="file"
-          id="file"
-          ref={fileInput}
-          style={{ display: 'none' }}
-          onChange={event => changeProfilePic(event.target.files[0])}
-        />
-        <Row style={{ height: '100%' }}>
-          <Col xs={2} className="col-profile-pic">
-            <Dropdown style={{ height: '100%', top: '14%' }}>
-              <DropdownToggle className="network-pic-btn">
-                <div role="button" onClick={browseFile} onKeyDown={null} tabIndex="-1">
-                  <img
-                    style={{ width: '70%' }}
-                    src={userProfile.UserInfoProfileImageLink}
-                    className="img-avatar"
-                    alt="admin@bootstrapmaster.com"
-                  />
-                </div>
-              </DropdownToggle>
-            </Dropdown>
-          </Col>
-          <Col xs={7} className="col-profile-info">
-            <Row>
-              <Col sm={1} style={{ paddingLeft: '0px', paddingRight: '0px', textAlign: 'right' }}>
-                <i
-                  className="cui-pencil icons"
-                  role="button"
-                  style={{ cursor: 'pointer' }}
-                  onClick={toggleEdit}
-                  onKeyDown={null}
-                  tabIndex="-1"
-                />
-              </Col>
-              <Col xs={9}>
-                {isEdit ? (
-                  <div>
-                    <Input
-                      style={{ width: '40%', marginBottom: '0.5rem' }}
-                      type="text"
-                      id="name"
-                      placeholder={`${userProfile.ProfileFirstname} ${userProfile.ProfileSurname}`}
-                      onChange={handleProfileInputChange}
+      <BlockUi tag="div" blocking={blocking} style={{ height: '100%' }}>
+        <div className="profile-container">
+          <CreateCompanyModal
+            ref={createCompanyModalRef}
+            userKey={auth.uid}
+            userEmail={user.UserInfoEmail}
+            updateCompany={responseToCreate}
+          />
+          <InviteToCompanyModal ref={inviteToCompanyModalRef} />
+          <RequestToJoinModal
+            ref={requestToJoinModalRef}
+            userId={auth.uid}
+            profile={currentProfile}
+          />
+          <input
+            type="file"
+            id="file"
+            ref={fileInput}
+            style={{ display: 'none' }}
+            onChange={event => changeProfilePic(event.target.files[0])}
+          />
+          <Row style={{ height: '100%' }}>
+            <Col xs={2} className="col-profile-pic">
+              <Dropdown style={{ height: '100%', top: '14%' }}>
+                <DropdownToggle className="network-pic-btn">
+                  <div role="button" onClick={browseFile} onKeyDown={null} tabIndex="-1">
+                    <img
+                      style={{ width: '70%' }}
+                      src={userProfile.UserInfoProfileImageLink}
+                      className="img-avatar"
+                      alt="admin@bootstrapmaster.com"
                     />
                   </div>
-                ) : (
-                  <h4>{`${userProfile.ProfileFirstname} ${userProfile.ProfileSurname}`}</h4>
-                )}
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={1} />
-              <Col xs={4}>
-                {isEdit ? (
-                  <div>
+                </DropdownToggle>
+              </Dropdown>
+            </Col>
+            <Col xs={7} className="col-profile-info">
+              <Row>
+                <Col sm={1} style={{ paddingLeft: '0px', paddingRight: '0px', textAlign: 'right' }}>
+                  <i
+                    className="cui-pencil icons"
+                    role="button"
+                    style={{ cursor: 'pointer' }}
+                    onClick={toggleEdit}
+                    onKeyDown={null}
+                    tabIndex="-1"
+                  />
+                </Col>
+                <Col xs={9}>
+                  {isEdit ? (
+                    <div>
+                      <Input
+                        style={{ width: '40%', marginBottom: '0.5rem' }}
+                        type="text"
+                        id="name"
+                        placeholder={`${userProfile.ProfileFirstname} ${
+                          userProfile.ProfileSurname
+                        }`}
+                        onChange={handleProfileInputChange}
+                      />
+                    </div>
+                  ) : (
+                    <h4>{`${userProfile.ProfileFirstname} ${userProfile.ProfileSurname}`}</h4>
+                  )}
+                </Col>
+              </Row>
+              <Row>
+                <Col xs={1} />
+                <Col xs={4}>
+                  {isEdit ? (
+                    <div>
+                      <Input
+                        style={{ width: '100%', marginBottom: '0.5rem' }}
+                        type="text"
+                        id="email"
+                        placeholder={userProfile.ProfileEmail}
+                        onChange={handleProfileInputChange}
+                      />
+                    </div>
+                  ) : (
+                    <p className="profile-email">
+                      <em>{userProfile.ProfileEmail}</em>
+                    </p>
+                  )}
+                </Col>
+              </Row>
+              <Row>
+                <Col xs={1} />
+                <Col xs={4}>
+                  {isEdit ? (
                     <Input
-                      style={{ width: '100%', marginBottom: '0.5rem' }}
-                      type="text"
-                      id="email"
-                      placeholder={userProfile.ProfileEmail}
+                      style={{ width: '100%' }}
+                      type="textarea"
+                      id="desc"
+                      placeholder={
+                        userProfile.Description === undefined ? '-' : userProfile.Description
+                      }
                       onChange={handleProfileInputChange}
                     />
-                  </div>
-                ) : (
-                  <p className="profile-email">
-                    <em>{userProfile.ProfileEmail}</em>
-                  </p>
-                )}
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={1} />
-              <Col xs={4}>
-                {isEdit ? (
-                  <Input
-                    style={{ width: '100%' }}
-                    type="textarea"
-                    id="desc"
-                    placeholder={
-                      userProfile.Description === undefined ? '-' : userProfile.Description
-                    }
-                    onChange={handleProfileInputChange}
-                  />
-                ) : (
-                  <div style={{ height: '50px', wordBreak: 'break-all' }}>
-                    <p>{userProfile.Description === undefined ? '-' : userProfile.Description}</p>
-                  </div>
-                )}
-              </Col>
-            </Row>
-            <Row style={{ marginTop: '20px' }}>
-              <Col xs={1} />
-              <Col xs={4}>
-                <a href="/#/network">Reset Password</a>
-              </Col>
-            </Row>
-          </Col>
-          <Col xs={3} className="col-profile-button">
-            <Row>
-              <Button
-                className="profile-btn"
-                onClick={() => inviteToCompanyModalRef.current.triggerInviteToCompany([], companyList)
-                }
-              >
-                <i className="cui-user-follow icons network-btn-icon" />
-                Invite colleagues to join
-              </Button>
-            </Row>
-            <Row>
-              <Button
-                onClick={() => requestToJoinModalRef.current.triggerRequestToJoin()}
-                className="profile-btn"
-              >
-                <i className="cui-graph icons network-btn-icon" />
-                Request to join Company
-              </Button>
-            </Row>
-            <Row>
-              <Button
-                className="profile-btn create"
-                onClick={() => createCompanyModalRef.current.triggerCreateCompany()}
-              >
-                <i className="fa fa-plus-circle network-btn-icon" />
-                Create New Company
-              </Button>
-            </Row>
-          </Col>
-        </Row>
-      </div>
-      <div
-        className="profile-table-container"
-        style={{
-          marginLeft: '5rem',
-          marginRight: '5rem',
-          height: '65%',
-        }}
-      >
-        <MainDataTable
-          data={[].concat(...companyList)}
-          column={profileColumns}
-          cssClass="profile-table"
-          wraperClass="profile-table-wraper"
-          isBorder={false}
-          rowEvents={tableRowEvents}
-        />
-      </div>
+                  ) : (
+                    <div style={{ height: '50px', wordBreak: 'break-all' }}>
+                      <p>{userProfile.Description === undefined ? '-' : userProfile.Description}</p>
+                    </div>
+                  )}
+                </Col>
+              </Row>
+              <Row style={{ marginTop: '20px' }}>
+                <Col xs={1} />
+                <Col xs={4}>
+                  <a href="/#/network">Reset Password</a>
+                </Col>
+              </Row>
+            </Col>
+            <Col xs={3} className="col-profile-button">
+              <Row>
+                <Button
+                  className="profile-btn"
+                  onClick={() => inviteToCompanyModalRef.current.triggerInviteToCompany([], companyList)
+                  }
+                >
+                  <i className="cui-user-follow icons network-btn-icon" />
+                  Invite colleagues to join
+                </Button>
+              </Row>
+              <Row>
+                <Button
+                  onClick={() => requestToJoinModalRef.current.triggerRequestToJoin()}
+                  className="profile-btn"
+                >
+                  <i className="cui-graph icons network-btn-icon" />
+                  Request to join Company
+                </Button>
+              </Row>
+              <Row>
+                <Button
+                  className="profile-btn create"
+                  onClick={() => createCompanyModalRef.current.triggerCreateCompany()}
+                >
+                  <i className="fa fa-plus-circle network-btn-icon" />
+                  Create New Company
+                </Button>
+              </Row>
+            </Col>
+          </Row>
+        </div>
+        <div
+          className="profile-table-container"
+          style={{
+            marginLeft: '5rem',
+            marginRight: '5rem',
+            height: '65%',
+          }}
+        >
+          <MainDataTable
+            data={[].concat(...companyList)}
+            column={profileColumns}
+            cssClass="profile-table"
+            wraperClass="profile-table-wraper"
+            isBorder={false}
+            rowEvents={tableRowEvents}
+          />
+        </div>
+      </BlockUi>
     </div>
   );
 };
