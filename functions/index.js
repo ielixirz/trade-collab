@@ -296,3 +296,49 @@ exports.ManageShipmentMember = functions.firestore
         .set({ ShipmentMember: PayloadObject }, { merge: true });
     }
   });
+
+exports.CreateDefaultTemplateCompanyUserAccessibility = functions.firestore
+  .document('Company/{CompanyKey}')
+  .onCreate(async (snapshot, context) => {
+    const CompanyUserAccessibilityPayload = [
+      {
+        CompanyUserAccessibilityIndex: 1,
+        CompanyUserAccessibilityRoleName: 'Owner',
+        CompanyUserAccessibilityRolePermissionCode: '11111111111111'
+      },
+      {
+        CompanyUserAccessibilityIndex: 5,
+        CompanyUserAccessibilityRoleName: 'Basic',
+        CompanyUserAccessibilityRolePermissionCode: '11000110100000'
+      },
+      {
+        CompanyUserAccessibilityIndex: 2,
+        CompanyUserAccessibilityRoleName: 'Executive',
+        CompanyUserAccessibilityRolePermissionCode: '11111111111110'
+      },
+      {
+        CompanyUserAccessibilityIndex: 4,
+        CompanyUserAccessibilityRoleName: 'Staff',
+        CompanyUserAccessibilityRolePermissionCode: '11101110110000'
+      },
+      {
+        CompanyUserAccessibilityIndex: 3,
+        CompanyUserAccessibilityRoleName: 'Senior',
+        CompanyUserAccessibilityRolePermissionCode: '11111111111110'
+      }
+    ];
+
+    const CompanyUserAccessibilityActionList = [];
+
+    await CompanyUserAccessibilityPayload.forEach(Item => {
+      const Action = admin
+        .firestore()
+        .collection('Company')
+        .doc(context.params.CompanyKey)
+        .collection('CompanyUserAccessibility')
+        .add(Item);
+      CompanyUserAccessibilityActionList.push(Action);
+    });
+
+    return Promise.all(CompanyUserAccessibilityActionList);
+  });
