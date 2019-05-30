@@ -18,7 +18,7 @@ const CompanyMemberRefPath = CompanyKey => FirebaseApp.firestore()
 const CompanyUserAccessibilityRefPath = CompanyKey => FirebaseApp.firestore()
   .collection('Company')
   .doc(CompanyKey)
-  .collection('CompanyUserMatrix');
+  .collection('CompanyUserAccessibility');
 
 /* Example CreateCompany
     {
