@@ -172,10 +172,10 @@ exports.ReaderLastestMessage = functions.firestore
 
 exports.CreateChatRoomMessageKeyList = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMessage/{ChatRoomMessageKey}')
-  .onCreate((snapshot, context) => {
+  .onCreate(async (snapshot, context) => {
     try {
       const ChatRoomMessageKey = context.params.ChatRoomMessageKey;
-      return admin
+      await admin
         .firestore()
         .collection('Shipment')
         .doc(context.params.ShipmentKey)
@@ -191,6 +191,55 @@ exports.CreateChatRoomMessageKeyList = functions.firestore
             merge: true
           }
         );
+      
+        const GetChatRoomProfileList = await admin.firestore()
+          .collection('Shipment')
+          .doc(context.params.ShipmentKey)
+          .collection('ChatRoom')
+          .doc(context.params.ChatRoomKey)
+          .collection('ChatRoomMessageReader')
+          .get()
+
+        const GetChatRoomMessageKeyList = await admin.firestore()
+          .collection('Shipment')
+          .doc(context.params.ShipmentKey)
+          .collection('ChatRoom')
+          .doc(context.params.ChatRoomKey)
+          .collection('ChatRoomMessageReader')
+          .doc('ChatRoomMessageKeyList')
+          .get()
+
+        const ChatRoomMessageKeyList = GetChatRoomMessageKeyList.data().ChatRoomMessageKeyList;
+
+        const ChatRoomProfileBatch = admin.firestore().batch()
+
+        GetChatRoomProfileList.docs.map( async (ProfileItem) => {
+
+          const SetCount = admin.firestore().collection('UserPersonalize').doc(ProfileItem.id).collection('ShipmentNotificationCount').doc(context.params.ShipmentKey)
+
+          const StartIndex = _.indexOf(
+            ChatRoomMessageKeyList,
+            ProfileItem.data().ChatRoomMessageReaderLastestMessageKey
+          );
+
+          const EndIndex = _.indexOf(
+            ChatRoomMessageKeyList,
+            ChatRoomMessageKeyList.slice(-1).pop()
+          );
+
+          const ChatRoomMessageKeyListSlice = _.slice(
+            ChatRoomMessageKeyList,
+            StartIndex,
+            EndIndex + 1
+          );
+          
+          const UnReadMessageCount = ChatRoomMessageKeyListSlice.length
+          
+          ChatRoomProfileBatch.set(SetCount,{ChatRoomCount: UnReadMessageCount})
+        })
+      
+        return ChatRoomProfileBatch.commit()
+
     } catch (error) {
       return error;
     }
@@ -342,3 +391,43 @@ exports.CreateDefaultTemplateCompanyUserAccessibility = functions.firestore
 
     return Promise.all(CompanyUserAccessibilityActionList);
   });
+
+  exports.NotificationMessageCount = functions.firestore.document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMessage/{ChatRoomMessageKey}').onCreate(async (snapshot, context) => {
+    try {
+      const SnapshotData = snapshot.data()
+
+      // +UserPersonalize
+      //   >ProfileKey
+      //   ShipmentPin (Array<string (ShipmentKey)>)
+      //   +ShipmentOrdering
+      //       >ShipmentKey
+      //           ChatRoomOrdering (Array<string (ChatRoomKey)>)
+      //   +ShipmentReferenceDisplay
+      //       >ShipmentKey
+      //           ShipmentReferenceSelect (string) [RefOwner]
+      //   +ShipmentNotificationCount
+      //       >ShipmentKey
+      //           ShipmentFristJoin (bool)
+      //           ShipmentAllCount (number)
+      //           ShipmentMasterDataCount (number)
+      //           ShipmentFileCount (number)
+      //           ChatRoomCount (object)
+      //               {
+      //                   ChatRoomKey: ChatRoomCount
+      //               }
+
+      const GetChatRoomProfileList = await admin.firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ChatRoom')
+        .doc(context.params.ChatRoomKey)
+        .collection('ChatRoomMessageReader')
+        .get()
+
+      const GetChatRoomMessageKeyList
+
+    }
+    catch (error) {
+      return error 
+    }
+  })
