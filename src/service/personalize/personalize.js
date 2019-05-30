@@ -49,4 +49,11 @@ export const ClearUnReadChatMessage = (ProfileKey, ShipmentKey, ChatRoomKey) => 
   );
 };
 
-// export const DecreaseShipmentCount =
+export const DecreaseShipmentCount = (ProfileKey, ShipmentKey, DecreaseNumber) => from(
+  UserPersonalizeCountRefPath(ProfileKey, ShipmentKey).set(
+    {
+      ShipmentAllCount: firebase.firestore.FieldValue.increment(DecreaseNumber * -1),
+    },
+    { merge: true },
+  ),
+);
