@@ -211,12 +211,29 @@ exports.CreateChatRoomMessageKeyList = functions.firestore
         .doc('ChatRoomMessageKeyList')
         .get();
 
-      const ChatRoomMessageKeyList = GetChatRoomMessageKeyList.data().ChatRoomMessageKeyList;
+      // const ChatRoomMessageKeyList = GetChatRoomMessageKeyList.data().ChatRoomMessageKeyList;
 
       const ChatRoomProfileBatch = admin.firestore().batch();
 
       GetChatRoomProfileList.docs.map(async ProfileItem => {
-        if (ProfileItem.id !== 'ChatRoomMessageKeyList') {
+        if (
+          ProfileItem.id !== 'ChatRoomMessageKeyList' &&
+          ProfileItem.id !== snapshot.data().ChatRoomMessageSenderKey
+        ) {
+          const CountPayload = {};
+
+          // CountPayload[context.params.ChatRoomKey] = firebase.firestore.FieldValue.increment(1);
+
+          _.set(
+            CountPayload,
+            `ChatRoomCount.${context.params.ChatRoomKey}`,
+            admin.firestore.FieldValue.increment(1)
+          );
+
+          console.log(CountPayload);
+
+          // CountPayload[context.params.ChatRoomKey] = 0;
+
           const SetCount = admin
             .firestore()
             .collection('UserPersonalize')
@@ -224,25 +241,25 @@ exports.CreateChatRoomMessageKeyList = functions.firestore
             .collection('ShipmentNotificationCount')
             .doc(context.params.ShipmentKey);
 
-          const StartIndex = _.indexOf(
-            ChatRoomMessageKeyList,
-            ProfileItem.data().ChatRoomMessageReaderLastestMessageKey
-          );
+          // const StartIndex = _.indexOf(
+          //   ChatRoomMessageKeyList,
+          //   ProfileItem.data().ChatRoomMessageReaderLastestMessageKey
+          // );
 
-          const EndIndex = _.indexOf(
-            ChatRoomMessageKeyList,
-            ChatRoomMessageKeyList.slice(-1).pop()
-          );
+          // const EndIndex = _.indexOf(
+          //   ChatRoomMessageKeyList,
+          //   ChatRoomMessageKeyList.slice(-1).pop()
+          // );
 
-          const ChatRoomMessageKeyListSlice = _.slice(
-            ChatRoomMessageKeyList,
-            StartIndex,
-            EndIndex + 1
-          );
+          // const ChatRoomMessageKeyListSlice = _.slice(
+          //   ChatRoomMessageKeyList,
+          //   StartIndex,
+          //   EndIndex + 1
+          // );
 
-          const UnReadMessageCount = ChatRoomMessageKeyListSlice.length;
+          // const UnReadMessageCount = ChatRoomMessageKeyListSlice.length - 1;
 
-          ChatRoomProfileBatch.set(SetCount, { ChatRoomCount: UnReadMessageCount });
+          ChatRoomProfileBatch.set(SetCount, CountPayload, { merge: true });
         }
       });
 
