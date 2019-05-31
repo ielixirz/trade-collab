@@ -345,14 +345,21 @@ exports.ManageShipmentMember = functions.firestore
 
       const UserPersonalizeProfileBatch = admin.firestore().batch();
 
-      ProfileKeyList.forEach(Item => {
+      ProfileKeyList.forEach(async (Item) => {
         const TriggerFirstJoin = admin
           .firestore()
           .collection('UserPersonalize')
           .doc(Item)
           .collection('ShipmentNotificationCount')
           .doc(context.params.ShipmentKey);
-        UserPersonalizeProfileBatch.set(TriggerFirstJoin, { ShipmentFristJoin: true });
+        
+        const GetFirstJoin = await TriggerFirstJoin.get()
+        const FirstJoinStatus = GetFirstJoin.data().ShipmentFristJoin
+
+        if(!FirstJoinStatus || FirstJoinStatus === false) {
+          UserPersonalizeProfileBatch.set(TriggerFirstJoin, { ShipmentFristJoin: true });
+        }
+        
       });
 
       UserPersonalizeProfileBatch.commit();
