@@ -331,6 +331,8 @@ exports.ManageShipmentMember = functions.firestore
 
     // NotiCount First join shipment
 
+    const UserPersonalizeProfileActionList = [];
+
     if (!oldValue && newValue) {
       const UserKey = newValue.ChatRoomMemberUserKey;
 
@@ -343,26 +345,31 @@ exports.ManageShipmentMember = functions.firestore
 
       const ProfileKeyList = GetUserProfileList.docs.map(ProfileItem => ProfileItem.id);
 
-      const UserPersonalizeProfileBatch = admin.firestore().batch();
-
-      ProfileKeyList.forEach(async (Item) => {
+      ProfileKeyList.forEach(async Item => {
         const TriggerFirstJoin = admin
           .firestore()
           .collection('UserPersonalize')
           .doc(Item)
           .collection('ShipmentNotificationCount')
           .doc(context.params.ShipmentKey);
-        
-        const GetFirstJoin = await TriggerFirstJoin.get()
-        const FirstJoinStatus = GetFirstJoin.data().ShipmentFristJoin
 
-        if(!FirstJoinStatus || FirstJoinStatus === false) {
-          UserPersonalizeProfileBatch.set(TriggerFirstJoin, { ShipmentFristJoin: true });
+        const GetFirstJoin = await TriggerFirstJoin.get();
+        let FirstJoinStatus = undefined;
+
+        if (GetFirstJoin.data() !== undefined) {
+          FirstJoinStatus = GetFirstJoin.data().ShipmentFristJoin;
         }
-        
-      });
 
-      UserPersonalizeProfileBatch.commit();
+        console.log(FirstJoinStatus);
+
+        if (!GetFirstJoin || FirstJoinStatus === undefined) {
+          const SetFirstJoinAction = await TriggerFirstJoin.set(
+            { ShipmentFristJoin: true },
+            { merge: true }
+          );
+          UserPersonalizeProfileActionList.push(SetFirstJoinAction);
+        }
+      });
     }
 
     // End NotiCount First join shipment
@@ -392,11 +399,13 @@ exports.ManageShipmentMember = functions.firestore
         PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyKey'] =
           SnapshotDataObject['ChatRoomMemberCompanyKey'];
 
-      return admin
+      const AddShipmentMember = await admin
         .firestore()
         .collection('Shipment')
         .doc(context.params.ShipmentKey)
         .set({ ShipmentMember: PayloadObject }, { merge: true });
+
+      return Promise.all([UserPersonalizeProfileActionList, AddShipmentMember]);
     } else if (oldValue && !newValue) {
       PayloadObject[oldValue['ChatRoomMemberUserKey']] = null;
 
