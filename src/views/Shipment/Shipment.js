@@ -549,7 +549,7 @@ class Shipment extends Component {
             <Col md={3} />
           </Row>
         </Modal>
-        <Nav>
+        <Nav className="shipment-navbar">
           <NavItem>
             <NavLink
               className={classnames({ active: this.state.activeTab === '1' })}
