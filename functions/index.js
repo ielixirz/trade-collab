@@ -172,10 +172,10 @@ exports.ReaderLastestMessage = functions.firestore
 
 exports.CreateChatRoomMessageKeyList = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMessage/{ChatRoomMessageKey}')
-  .onCreate((snapshot, context) => {
+  .onCreate(async (snapshot, context) => {
     try {
       const ChatRoomMessageKey = context.params.ChatRoomMessageKey;
-      return admin
+      await admin
         .firestore()
         .collection('Shipment')
         .doc(context.params.ShipmentKey)
@@ -191,6 +191,79 @@ exports.CreateChatRoomMessageKeyList = functions.firestore
             merge: true
           }
         );
+
+      const GetChatRoomProfileList = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ChatRoom')
+        .doc(context.params.ChatRoomKey)
+        .collection('ChatRoomMessageReader')
+        .get();
+
+      const GetChatRoomMessageKeyList = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ChatRoom')
+        .doc(context.params.ChatRoomKey)
+        .collection('ChatRoomMessageReader')
+        .doc('ChatRoomMessageKeyList')
+        .get();
+
+      // const ChatRoomMessageKeyList = GetChatRoomMessageKeyList.data().ChatRoomMessageKeyList;
+
+      const ChatRoomProfileBatch = admin.firestore().batch();
+
+      GetChatRoomProfileList.docs.map(async ProfileItem => {
+        if (
+          ProfileItem.id !== 'ChatRoomMessageKeyList' &&
+          ProfileItem.id !== snapshot.data().ChatRoomMessageSenderKey
+        ) {
+          const CountPayload = {};
+
+          // CountPayload[context.params.ChatRoomKey] = firebase.firestore.FieldValue.increment(1);
+
+          _.set(
+            CountPayload,
+            `ChatRoomCount.${context.params.ChatRoomKey}`,
+            admin.firestore.FieldValue.increment(1)
+          );
+
+          console.log(CountPayload);
+
+          // CountPayload[context.params.ChatRoomKey] = 0;
+
+          const SetCount = admin
+            .firestore()
+            .collection('UserPersonalize')
+            .doc(ProfileItem.id)
+            .collection('ShipmentNotificationCount')
+            .doc(context.params.ShipmentKey);
+
+          // const StartIndex = _.indexOf(
+          //   ChatRoomMessageKeyList,
+          //   ProfileItem.data().ChatRoomMessageReaderLastestMessageKey
+          // );
+
+          // const EndIndex = _.indexOf(
+          //   ChatRoomMessageKeyList,
+          //   ChatRoomMessageKeyList.slice(-1).pop()
+          // );
+
+          // const ChatRoomMessageKeyListSlice = _.slice(
+          //   ChatRoomMessageKeyList,
+          //   StartIndex,
+          //   EndIndex + 1
+          // );
+
+          // const UnReadMessageCount = ChatRoomMessageKeyListSlice.length - 1;
+
+          ChatRoomProfileBatch.set(SetCount, CountPayload, { merge: true });
+        }
+      });
+
+      return ChatRoomProfileBatch.commit();
     } catch (error) {
       return error;
     }
@@ -255,6 +328,37 @@ exports.ManageShipmentMember = functions.firestore
   .onWrite(async (change, context) => {
     const oldValue = change.before.data();
     const newValue = change.after.data();
+
+    // NotiCount First join shipment
+
+    if (!oldValue && newValue) {
+      const UserKey = newValue.ChatRoomMemberUserKey;
+
+      const GetUserProfileList = await admin
+        .firestore()
+        .collection('UserInfo')
+        .doc(UserKey)
+        .collection('Profile')
+        .get();
+
+      const ProfileKeyList = GetUserProfileList.docs.map(ProfileItem => ProfileItem.id);
+
+      const UserPersonalizeProfileBatch = admin.firestore().batch();
+
+      ProfileKeyList.forEach(Item => {
+        const TriggerFirstJoin = admin
+          .firestore()
+          .collection('UserPersonalize')
+          .doc(Item)
+          .collection('ShipmentNotificationCount')
+          .doc(context.params.ShipmentKey);
+        UserPersonalizeProfileBatch.set(TriggerFirstJoin, { ShipmentFristJoin: true });
+      });
+
+      UserPersonalizeProfileBatch.commit();
+    }
+
+    // End NotiCount First join shipment
 
     let PayloadObject = {};
 
