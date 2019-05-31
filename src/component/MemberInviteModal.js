@@ -4,7 +4,9 @@
 /* eslint-disable filenames/match-regex */
 import _ from 'lodash';
 import React from 'react';
-import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
+import {
+  Button, Modal, ModalHeader, ModalBody,
+} from 'reactstrap';
 import './MemberModal.css';
 
 import MemberSearchField from './memberInviteModal/MemberSearchField';
@@ -18,22 +20,22 @@ class MemberInviteModal extends React.Component {
     this.state = {
       modal: false,
       collection: [],
-      invitationCollection: []
+      invitationCollection: [],
     };
   }
 
   toggle = () => {
     this.setState(prevState => ({
-      modal: !prevState.modal
+      modal: !prevState.modal,
     }));
   };
 
-  isInvited = email => {
+  isInvited = (email) => {
     const { invitationCollection } = this.state;
     return invitationCollection.find(profile => profile.Email === email);
   };
 
-  shouldInvite = invite => {
+  shouldInvite = (invite) => {
     const { invitationCollection } = this.state;
     const exist = this.isInvited(invite.Email);
     console.log(invitationCollection);
@@ -42,16 +44,16 @@ class MemberInviteModal extends React.Component {
         const updated = _.filter(invitationCollection, profile => profile.email !== invite.email);
         this.setState({ invitationCollection: updated });
       } else {
-        let updated = [];
-        _.forEach(invitationCollection, item => {
+        const updated = [];
+        _.forEach(invitationCollection, (item) => {
           if (item.Email === invite.Email) {
             updated.push({
               ...item,
-              ...invite
+              ...invite,
             });
           } else {
             updated.push({
-              ...item
+              ...item,
             });
           }
         });
@@ -63,20 +65,16 @@ class MemberInviteModal extends React.Component {
     }
   };
 
-  onResultList = collection => {
-    let oldlist = this.state.collection;
+  onResultList = (collection) => {
+    const oldlist = this.state.collection;
 
-    _.forEach(collection, member => {
+    _.forEach(collection, (member) => {
       const data = member.data();
       const { UserInfoProfileImageLink, UserInfoEmail } = data;
-      if (
-        !_.find(oldlist, item => {
-          return item.Email === UserInfoEmail;
-        })
-      ) {
+      if (!_.find(oldlist, item => item.Email === UserInfoEmail)) {
         oldlist.push({
           Image: UserInfoProfileImageLink,
-          Email: UserInfoEmail
+          Email: UserInfoEmail,
         });
       }
     });
@@ -90,16 +88,16 @@ class MemberInviteModal extends React.Component {
     console.log('member', this.props);
     let input = invitationCollection;
 
-    _.forEach(invitationCollection, item => {
-      _.forEach(member, memberItem => {
+    _.forEach(invitationCollection, (item) => {
+      _.forEach(member, (memberItem) => {
         if (memberItem.ChatRoomMemberEmail === item.Email) {
           UpdateChatRoomMember(ShipmentKey, ChatRoomKey, memberItem.ChatRoomMemberKey, {
             ...memberItem,
-            ChatRoomMemberRole: item.Role
+            ChatRoomMemberRole: item.Role,
           }).subscribe({
-            next: res => {
+            next: (res) => {
               console.log(res);
-            }
+            },
           });
           input = _.filter(input, email => email.Email !== memberItem.ChatRoomMemberEmail);
         }
@@ -110,9 +108,9 @@ class MemberInviteModal extends React.Component {
     if (input.length > 0) {
       const result = CreateChatMultipleInvitation(input, ShipmentKey, ChatRoomKey);
       result.subscribe({
-        next: res => {
+        next: (res) => {
           console.log(res);
-        }
+        },
       });
     }
 
@@ -135,14 +133,14 @@ class MemberInviteModal extends React.Component {
             marginLeft: '2rem',
             marginRight: '1rem',
             color: 'white',
-            backgroundColor: '#16A085'
+            backgroundColor: '#16A085',
           }}
           onClick={this.toggle}
         >
           <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
           Invite
         </Button>
-        <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
+        <Modal isOpen={this.state.modal} toggle={this.toggle} className="member-invite-modal">
           <ModalHeader toggle={this.toggle} close={this.renderCloseButton()}>
             Invite people to this chat
           </ModalHeader>
@@ -161,11 +159,13 @@ class MemberInviteModal extends React.Component {
                   marginLeft: '2rem',
                   marginRight: '1rem',
                   color: 'white',
-                  backgroundColor: '#16A085'
+                  backgroundColor: '#16A085',
                 }}
                 onClick={this.onSubmit}
               >
-                Send Invitation ({invitationCollection.length})
+                Send Invitation (
+                {invitationCollection.length}
+)
               </Button>
             ) : null}
           </ModalBody>

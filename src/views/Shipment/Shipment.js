@@ -223,7 +223,7 @@ class Shipment extends Component {
     console.log(this.props.user);
     return (
       <div>
-        <Modal isOpen={this.state.modal} toggle={this.modal} className={this.props.className}>
+        <Modal isOpen={this.state.modal} toggle={this.modal} className="create-shipment">
           <ModalHeader toggle={this.modal}>
             <h2>Create New Shipment</h2>
           </ModalHeader>
