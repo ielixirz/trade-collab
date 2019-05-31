@@ -462,3 +462,35 @@ exports.CreateDefaultTemplateCompanyUserAccessibility = functions.firestore
 
     return Promise.all(CompanyUserAccessibilityActionList);
   });
+
+exports.ShipmentAllCount = functions.firestore
+  .document('UserPersonalize/{ProfileKey}/ShipmentNotificationCount/{ShipmentKey}')
+  .onWrite(async (change, context) => {
+    const oldValue = change.before.data();
+    const newValue = change.after.data();
+
+    if (newValue) {
+      let SumShipmentAllCount = 0;
+      let SunChatCount = 0;
+      let ShipmentMasterDataCount = 0;
+      let ShipmentFileCount = 0;
+
+      if (newValue.ChatRoomCount) {
+        for (var ChatRoomKey in newValue.ChatRoomCount) {
+          SunChatCount += newValue.ChatRoomCount[ChatRoomKey];
+        }
+      }
+
+      if (newValue.ShipmentMasterDataCount) {
+        ShipmentMasterDataCount = newValue.ShipmentMasterDataCount;
+      }
+
+      if (newValue.ShipmentFileCount) {
+        ShipmentFileCount = newValue.ShipmentFileCount;
+      }
+
+      SumShipmentAllCount = SunChatCount + ShipmentMasterDataCount + ShipmentFileCount;
+
+      return change.after.ref.set({ ShipmentAllCount: SumShipmentAllCount }, { merge: true });
+    }
+  });
