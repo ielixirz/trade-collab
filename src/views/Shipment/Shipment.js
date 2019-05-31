@@ -688,7 +688,6 @@ class Shipment extends Component {
 const styles = {
   title: {
     fontSize: 16,
-    fontWeight: 'bold',
     color: '#707070',
     cursor: 'pointer',
   },

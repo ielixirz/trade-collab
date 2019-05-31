@@ -272,6 +272,10 @@ div.seenby {
   border-bottom: 2px solid #ededed;
 }
 
+.shipment-navbar > .nav-item > .active.nav-link {
+  font-weight: bold;
+}
+
 .shipment-search-bar > label {
   width: 100%;
 }
