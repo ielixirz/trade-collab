@@ -469,7 +469,7 @@ exports.ShipmentAllCount = functions.firestore
     const oldValue = change.before.data();
     const newValue = change.after.data();
 
-    if (newValue) {
+    if (oldValue !== newValue && newValue) {
       let SumShipmentAllCount = 0;
       let SunChatCount = 0;
       let ShipmentMasterDataCount = 0;
