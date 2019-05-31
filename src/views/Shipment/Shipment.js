@@ -146,8 +146,7 @@ class Shipment extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.activeTab !== this.state.activeTab) {
-      console.log('fetch shipment');
-      this.props.fetchShipments(this.state.typeShipment);
+      this.props.fetchShipments(this.state.typeShipment, this.toggleBlocking);
     }
   }
 
