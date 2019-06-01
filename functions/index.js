@@ -654,3 +654,36 @@ exports.CopyMasterDataETAETD = functions.firestore
       }
     }
   });
+
+// +UserNotification
+//   >UserNotificationKey
+//       UserNotificationReadStatus (bool)
+//       UserNotificationType (string)
+//       UserNotificationTimestamp (timestamp)
+//       UserNotificationImageURL (string)
+//       UserNotificationFirstname (string)
+//       UserNotificationSurname (string)
+//       UserNotificationUserInfoKey (string)
+//       UserNotificationCompanyName (string)
+//       UserNotificationCompanyKey (string)
+//       UserNotificationRedirectPage (string)
+//       UserNotificationShipmentKey (string)
+//       UserNotificationChatroonKey (string)
+
+exports.NotiBellInviteToJoinCompany = functions.firestore
+  .document('UserInfo/{UserKey}/UserInvitation/{UserInvitation')
+  .onCreate(async (snapshot, context) => {
+    return admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(context.params.UserKey)
+      .collection('UserNotification')
+      .add({
+        UserNotificationReadStatus: false,
+        UserNotificationType: 'InviteToJoinCompany',
+        UserNotificationTimestamp: admin.firestore.FieldValue.serverTimestamp(),
+        UserNotificationUserInfoKey: context.params.UserKey,
+        UserNotificationCompanyName: 'MockCompanyName',
+        UserNotificationCompanyKey: snapshot.data().CompanyInvitationCompanyKey
+      });
+  });
