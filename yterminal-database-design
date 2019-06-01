@@ -14,6 +14,7 @@
         ShipmentCreatorUserKey (string)
         ShipmentCreateTimestamp (timestamp)
         ShipmentLastestUpdateTimestamp (timestamp)
+        ShipmentMemberList (array <string>)
         ShipmentMember (object<object>)
             {
                 ShipmentMemberUserKey : 
