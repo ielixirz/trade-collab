@@ -269,10 +269,12 @@ exports.CreateChatRoomMessageKeyList = functions.firestore
     }
   });
 
-exports.AutoCreateMasterDataDefaultTemplate = functions.firestore
+exports.OnCreateShipment = functions.firestore
   .document('Shipment/{ShipmentKey}')
   .onCreate(async (snapshot, context) => {
     try {
+      // AutoCreateMasterDataDefaultTemplate
+
       const GetMasterDataDefaultTemplate = await admin
         .firestore()
         .collection('MasterData')
@@ -288,6 +290,7 @@ exports.AutoCreateMasterDataDefaultTemplate = functions.firestore
         .collection('ShipmentShareData')
         .doc('DefaultTemplate')
         .set(MasterDataDefaultTemplateData);
+
       const AddShipmentShareList = await admin
         .firestore()
         .collection('Shipment')
@@ -300,7 +303,51 @@ exports.AutoCreateMasterDataDefaultTemplate = functions.firestore
             merge: true
           }
         );
-      return Promise.all([CreateShipmentShareData, AddShipmentShareList]);
+
+      // End AutoCreateMasterDataDefaultTemplate
+
+      // AutoAddOwnerShipmemtMemberWhenCreateShipment
+
+      let PayloadObject = {};
+
+      const ShipmentMemberUserKey = snapshot.data().ShipmentCreatorUserKey;
+      const ShipmetMemberRole = snapshot.data().ShipmentCreatorType;
+
+      const GetUserInfo = await admin
+        .firestore()
+        .collection('UserInfo')
+        .doc(ShipmentMemberUserKey)
+        .get();
+      const UserEmail = GetUserInfo.data().UserInfoEmail;
+
+      PayloadObject[ShipmentMemberUserKey] = {};
+
+      PayloadObject[ShipmentMemberUserKey][ShipmentMemberEmail] = UserEmail;
+      PayloadObject[ShipmentMemberUserKey][ShipmentMemberRole] = ShipmetMemberRole;
+
+      const AddShipmentMember = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .set({ ShipmentMember: PayloadObject }, { merge: true });
+
+      const AddShipmentMemberList = await admin
+        .firestore()
+        .collection()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .set(
+          { ShipmentMemberList: admin.firestore.FieldValue.arrayUnion(ShipmentMemberUserKey) },
+          { merge: true }
+        );
+
+      // End AutoAddOwnerShipmemtMemberWhenCreateShipment
+      return Promise.all([
+        CreateShipmentShareData,
+        AddShipmentShareList,
+        AddShipmentMember,
+        AddShipmentMemberList
+      ]);
     } catch (error) {
       return error;
     }
@@ -375,11 +422,10 @@ exports.ManageShipmentMember = functions.firestore
     // End NotiCount First join shipment
 
     let PayloadObject = {};
+    const ShipmentMemberUserKey = SnapshotDataObject['ChatRoomMemberUserKey'];
 
     if (newValue) {
       const SnapshotDataObject = newValue;
-
-      const ShipmentMemberUserKey = SnapshotDataObject['ChatRoomMemberUserKey'];
 
       PayloadObject[ShipmentMemberUserKey] = {};
 
@@ -405,15 +451,43 @@ exports.ManageShipmentMember = functions.firestore
         .doc(context.params.ShipmentKey)
         .set({ ShipmentMember: PayloadObject }, { merge: true });
 
-      return Promise.all([UserPersonalizeProfileActionList, AddShipmentMember]);
+      const AddShipmentMemberList = await admin
+        .firestore()
+        .collection()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .set(
+          { ShipmentMemberList: admin.firestore.FieldValue.arrayUnion(ShipmentMemberUserKey) },
+          { merge: true }
+        );
+
+      return Promise.all([
+        UserPersonalizeProfileActionList,
+        AddShipmentMember,
+        AddShipmentMemberList
+      ]);
     } else if (oldValue && !newValue) {
       PayloadObject[oldValue['ChatRoomMemberUserKey']] = null;
 
-      return admin
+      const DeletePayload = {};
+
+      DeletePayload[ShipmentMemberUserKey] = admin.firestore.FieldValue.delete();
+
+      const DeleteShipmentMember = await admin
         .firestore()
         .collection('Shipment')
         .doc(context.params.ShipmentKey)
-        .set({ ShipmentMember: PayloadObject }, { merge: true });
+        .update(DeletePayload);
+
+      const DeleteShipmentMemberList = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .update({
+          ShipmentMemberList: admin.firestore.FieldValue.arrayRemove(ShipmentMemberUserKey)
+        });
+
+      return Promise.all([DeleteShipmentMember, DeleteShipmentMemberList]);
     }
   });
 
@@ -468,24 +542,6 @@ exports.ShipmentAllCount = functions.firestore
   .onWrite(async (change, context) => {
     const oldValue = change.before.data();
     const newValue = change.after.data();
-
-    // ShipmentFristJoin (bool)
-    //             ShipmentAllCount (number)
-    //             ShipmentMasterDataCount (number)
-    //             ShipmentFileCount (number)
-    //             ChatRoomCount (object)
-    //                 {
-    //                     ChatRoomKey: ChatRoomCount
-    //                 }
-
-    // if (
-    //   oldValue.ShipmentFristJoin === newValue.ShipmentFristJoin &&
-    //   oldValue.ShipmentAllCount === newValue.ShipmentAllCount &&
-    //   oldValue.ShipmentMasterDataCount === newValue.ShipmentMasterDataCount &&
-    //   oldValue.ShipmentFileCount === newValue.ShipmentFileCount &&
-    //   oldValue.ChatRoomCount === newValue.ChatRoomCount
-    // )
-    //   return null;
 
     if (newValue) {
       let SumShipmentAllCount = 0;
