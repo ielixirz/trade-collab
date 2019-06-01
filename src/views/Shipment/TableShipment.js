@@ -149,6 +149,7 @@ class TableShipment extends React.Component {
     super(props);
     this.state = {
       pinned: {},
+      isEdit: false,
       input: {
         refs: [],
         newRef: {
@@ -157,7 +158,8 @@ class TableShipment extends React.Component {
           ShipmentReferenceCompanyKey: ''
         }
       },
-      submiting: ''
+      submiting: '',
+      shipments: []
     };
   }
 
@@ -209,12 +211,13 @@ class TableShipment extends React.Component {
     });
   };
 
+  editShipment(shipmentKey, data) {}
   renderRefComponent(index, ref, shipmentKey) {
     const {
       input: { refs }
     } = this.state;
     const user = this.props.user;
-
+    console.log(this.props);
     const userref = _.get(this.state, `input.refs.${user.uid}`, {
       ShipmentReferenceKey: user.uid,
       ShipmentReferenceID: '',
@@ -266,8 +269,10 @@ class TableShipment extends React.Component {
                       value={refItem.ShipmentReferenceID}
                       onChange={e => {
                         const value = e.target.value;
-                        this.props.editShipmentRef(shipmentKey, item.ShipmentReferenceKey, {
-                          ...item,
+                        // (ShipmentKey, refKey, Data)
+                        console.log(refItem);
+                        this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
+                          ...refItem,
                           ShipmentReferenceID: value,
                           ShipmentReferenceCompanyKey: refItem.ShipmentReferenceCompanyKey,
                           ShipmentReferenceCompanyName: refItem.ShipmentReferenceCompanyName
@@ -275,7 +280,11 @@ class TableShipment extends React.Component {
                       }}
                       onKeyPress={event => {
                         if (event.key === 'Enter') {
-                          UpdateShipmentReference(shipmentKey, item.ShipmentReferenceKey, item);
+                          UpdateShipmentReference(
+                            shipmentKey,
+                            refItem.ShipmentReferenceKey,
+                            refItem
+                          );
                         }
                       }}
                       maxLength={50}
@@ -462,7 +471,7 @@ class TableShipment extends React.Component {
         ETA: new Date(eta.seconds * 1000).toLocaleString(),
         '': this.renderDescription(index, item),
         Status: this.renderStatusComponent(item),
-        uid: _.get(item, 'ShipmentID', '')
+        uid: item.ShipmentID
       };
     });
     input = createDataTable(input);
@@ -578,13 +587,30 @@ class TableShipment extends React.Component {
               </Col>
               <Col xs="6" />
               <Col xs="2" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
-                <Button style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 10 }}>
-                  <span style={{ fontWeight: 'bold', color: 'white' }}>Save</span>
-                </Button>
-                <Button style={{ backgroundColor: 'white', marginTop: 2, marginRight: 10 }}>
-                  <i className="icons cui-pencil" style={{ color: 'black' }} />
-                  <span style={{ fontWeight: 'bold', color: '#707070' }}>Edit</span>
-                </Button>
+                {this.state.isEdit ? (
+                  <Button
+                    style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 10 }}
+                    onClick={() => {
+                      this.setState({
+                        isEdit: false
+                      });
+                    }}
+                  >
+                    <span style={{ fontWeight: 'bold', color: 'white' }}>Save</span>
+                  </Button>
+                ) : (
+                  <Button
+                    style={{ backgroundColor: 'white', marginTop: 2, marginRight: 10 }}
+                    onClick={() => {
+                      this.setState({
+                        isEdit: true
+                      });
+                    }}
+                  >
+                    <i className="icons cui-pencil" style={{ color: 'black' }} />
+                    <span style={{ fontWeight: 'bold', color: '#707070' }}>Edit</span>
+                  </Button>
+                )}
               </Col>
             </Row>
             <div

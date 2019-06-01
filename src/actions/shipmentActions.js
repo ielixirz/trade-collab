@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {
   EDIT_SHIPMENT_REF,
-  FETCH_SHIPMENT_LIST,
+  FETCH_SHIPMENT_LIST_DATA,
   FETCH_SHIPMENT_REF_LIST,
   UPDATE_SHIPMENT_REF
 } from '../constants/constants';
@@ -20,7 +20,6 @@ export const fetchShipments = (typeStatus: any, toggleBlockCallback) => (dispatc
     }
   } = getState();
 
-  toggleBlockCallback();
   let shipments = [];
   shipmentsObservable.unsubscribe();
   shipmentsObservable = CombineShipmentAndShipmentReference(
@@ -33,27 +32,34 @@ export const fetchShipments = (typeStatus: any, toggleBlockCallback) => (dispatc
     next: res => {
       shipments = _.map(res, item => ({
         uid: item.id,
-        ...item
+        ...item,
+        ShipmentReferenceList: _.map(item.ShipmentReferenceList, item => {
+          return {
+            id: item.id,
+            ShipmentReferenceKey: item.id,
+            ...item.data()
+          };
+        })
       }));
       dispatch({
-        type: FETCH_SHIPMENT_LIST,
+        type: FETCH_SHIPMENT_LIST_DATA,
         payload: shipments
       });
-      const allrefs = [];
+      const allrefs = {};
+
       _.forEach(shipments, item => {
         const refs = _.get(item, 'ShipmentReferenceList', []);
         const result = [];
         if (refs.length > 0) {
           _.forEach(refs, ref => {
             result[ref.id] = {
-              ShipmentReferenceKey: ref.id,
-              ...ref.data()
+              ...ref
             };
           });
         }
+
         allrefs[item.ShipmentID] = result;
       });
-      toggleBlockCallback();
       dispatch({
         type: FETCH_SHIPMENT_REF_LIST,
         payload: allrefs
@@ -62,7 +68,9 @@ export const fetchShipments = (typeStatus: any, toggleBlockCallback) => (dispatc
     error: err => {
       console.log(err);
     },
-    complete: () => {}
+    complete: () => {
+      console.log('Hello World');
+    }
   });
 };
 
@@ -70,7 +78,7 @@ export const editShipmentRef = (ShipmentKey, refKey, Data) => dispatch => {
   dispatch({
     type: EDIT_SHIPMENT_REF,
     id: ShipmentKey,
-    refKey,
+    refKey: refKey,
     payload: Data
   });
 };
@@ -104,21 +112,22 @@ export const fetchMoreShipments = (typeStatus: any) => (dispatch, getState) => {
         ...item
       }));
       dispatch({
-        type: FETCH_SHIPMENT_LIST,
+        type: FETCH_SHIPMENT_LIST_DATA,
         payload: shipments
       });
-      const allrefs = [];
+      const allrefs = {};
+
       _.forEach(shipments, item => {
         const refs = _.get(item, 'ShipmentReferenceList', []);
         const result = [];
         if (refs.length > 0) {
           _.forEach(refs, ref => {
             result[ref.id] = {
-              ShipmentReferenceKey: ref.id,
-              ...ref.data()
+              ...ref
             };
           });
         }
+
         allrefs[item.ShipmentID] = result;
       });
       dispatch({
