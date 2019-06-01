@@ -42,7 +42,7 @@ class MemberModal extends React.Component {
   render() {
     const { count, list: member } = this.props;
     let shipmentMember = [];
-
+    console.log(this.props);
     _.forEach(member, item => {
       if (item.ChatRoomMemberCompanyName === '') {
         if (_.isEmpty(shipmentMember['Individual'])) {
@@ -60,7 +60,7 @@ class MemberModal extends React.Component {
         }
       }
     });
-
+    let props = this.props;
     return (
       <div>
         <Button color="link" onClick={this.toggle}>
@@ -102,7 +102,7 @@ class MemberModal extends React.Component {
             </Row>
             <hr />
             {Object.keys(shipmentMember).map(function(key, index) {
-              return <MemberInChat title={key} member={shipmentMember[key]} />;
+              return <MemberInChat title={key} member={shipmentMember[key]} {...props} />;
             })}
           </ModalBody>
         </Modal>

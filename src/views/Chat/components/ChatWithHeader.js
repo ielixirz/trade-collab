@@ -103,7 +103,8 @@ class ChatWithHeader extends Component {
   }
 
   renderAssignCompany(ChatRoomType, hasInvite = false) {
-    const { companies } = this.props;
+    const { companies, ChatRoomData, user, ShipmentData } = this.props;
+    console.log(ShipmentData);
 
     let options = [];
     options = _.map(companies, item => ({
@@ -221,7 +222,7 @@ class ChatWithHeader extends Component {
               member={member}
             />
             <Button className="btn-chat-label">|</Button>
-            <MemberModal count={member.length} list={member} />
+            <MemberModal {...this.props} count={member.length} list={member} />
 
             <Button className="btn-chat-label">|</Button>
             <Button className="btn-chat-label">

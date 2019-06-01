@@ -70,34 +70,7 @@ const ChatMessage = ({ message, i }) => {
                             const { filename = 'nameoffile', type = 'pdf' } = item;
                             return (
                               <div>
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="131"
-                                  height="15"
-                                  viewBox="0 0 131 15"
-                                >
-                                  <text
-                                    id="nameoffile.pdf_PDF_15_KB_"
-                                    data-name="nameoffile.pdf PDF 15 KB     "
-                                    transform="translate(0 12)"
-                                    fill="#4a4a4a"
-                                    font-size="11"
-                                    font-family="Muli-Regular, Muli"
-                                  >
-                                    <tspan x="0" y="0">
-                                      {filename}
-                                    </tspan>
-                                    <tspan y="0" font-size="12">
-                                      {' '}
-                                    </tspan>
-                                    <tspan y="0" font-size="8">
-                                      {type}
-                                    </tspan>
-                                    <tspan y="0" font-size="12">
-                                      {' '}
-                                    </tspan>
-                                  </text>
-                                </svg>
+                                {filename}
                                 <br />
                               </div>
                             );
@@ -194,6 +167,17 @@ const ChatMessage = ({ message, i }) => {
                 {text}
                 {hasFile ? (
                   <Row>
+                    <Col xs="auto">
+                      {files.map(item => {
+                        const { filename = 'nameoffile', type = 'pdf' } = item;
+                        return (
+                          <div>
+                            {filename}
+                            <br />
+                          </div>
+                        );
+                      })}
+                    </Col>
                     <Col
                       xs="auto"
                       style={{
@@ -241,44 +225,6 @@ const ChatMessage = ({ message, i }) => {
                           />
                         </svg>
                       </a>
-                    </Col>
-                    <Col xs="8">
-                      {files.map(item => {
-                        const { filename = 'nameoffile', type = 'pdf' } = item;
-                        return (
-                          <div>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="131"
-                              height="15"
-                              viewBox="0 0 131 15"
-                            >
-                              <text
-                                id="nameoffile.pdf_PDF_15_KB_"
-                                data-name="nameoffile.pdf PDF 15 KB     "
-                                transform="translate(0 12)"
-                                fill="#4a4a4a"
-                                font-size="11"
-                                font-family="Muli-Regular, Muli"
-                              >
-                                <tspan x="0" y="0">
-                                  {filename}
-                                </tspan>
-                                <tspan y="0" font-size="12">
-                                  {' '}
-                                </tspan>
-                                <tspan y="0" font-size="8">
-                                  {type}
-                                </tspan>
-                                <tspan y="0" font-size="12">
-                                  {' '}
-                                </tspan>
-                              </text>
-                            </svg>
-                            <br />
-                          </div>
-                        );
-                      })}
                     </Col>
                   </Row>
                 ) : (

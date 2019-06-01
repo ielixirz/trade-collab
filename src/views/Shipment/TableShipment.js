@@ -19,6 +19,8 @@ import {
   fetchShipments,
   updateShipmentRef,
 } from '../../actions/shipmentActions';
+import { combineLatest } from 'rxjs';
+import moment from 'moment';
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import {
@@ -34,6 +36,7 @@ import {
   InputGroupAddon,
   InputGroupText,
 } from 'reactstrap';
+import ShipmentInlineDate from './components/ShipmentInlineDate';
 
 import { NoteShipment } from './NoteShipment';
 import { AlertShipment } from './AlertShipment';
@@ -45,6 +48,7 @@ import {
   GetShipmentDetail,
   GetShipmentReferenceList,
 } from '../../service/shipment/shipment';
+import { UpdateMasterData } from '../../service/masterdata/masterdata';
 import { GetShipmentPin } from '../../service/personalize/personalize';
 import { connect } from 'react-redux';
 import { SAVE_CREDENCIAL } from '../../constants/constants';
@@ -160,6 +164,7 @@ class TableShipment extends React.Component {
       },
       submiting: {},
       shipments: [],
+      inlineUpdate: {},
     };
   }
 
@@ -195,6 +200,26 @@ class TableShipment extends React.Component {
     }
   };
 
+  handleCalendarUpdate = (date, shipmentKey, field) => {
+    // eslint-disable-next-line react/no-access-state-in-setstate
+    const updateObj = { ...this.state.inlineUpdate };
+    if (Object.prototype.hasOwnProperty.call(updateObj, shipmentKey)) {
+      if (field === 'ShipperETDDate') {
+        updateObj[shipmentKey].ShipperETDDate = date;
+      } else {
+        updateObj[shipmentKey].ConsigneeETAPortDate = date;
+      }
+    } else if (field === 'ShipperETDDate') {
+      updateObj[shipmentKey] = { ShipperETDDate: date };
+    } else {
+      updateObj[shipmentKey] = { ConsigneeETAPortDate: date };
+    }
+
+    this.setState({
+      inlineUpdate: updateObj,
+    });
+  };
+
   fetchPinned = () => {
     const { uid } = this.props.user;
     GetShipmentPin(uid).subscribe({
@@ -211,7 +236,19 @@ class TableShipment extends React.Component {
     });
   };
 
-  editShipment(shipmentKey, data) {}
+  editShipment() {
+    this.props.toggleBlock();
+    const updateObj = { ...this.state.inlineUpdate };
+    const updateObs = [];
+    Object.keys(updateObj).forEach((key) => {
+      updateObs.push(UpdateMasterData(key, 'DefaultTemplate', updateObj[key]));
+    });
+
+    combineLatest(updateObs).subscribe(() => {
+      this.props.fetchShipments();
+      this.props.toggleBlock();
+    });
+  }
 
   renderRefComponent(index, ref, shipmentKey) {
     const {
@@ -466,6 +503,41 @@ class TableShipment extends React.Component {
     input = _.map(collection, (item, index) => {
       const etd = _.get(item, 'ShipperETDDate', 0);
       const eta = _.get(item, 'ConsigneeETAPortDate', 0);
+
+      if (this.state.isEdit) {
+        return {
+          alert: this.renderAlertComponent(index, item),
+          Ref: this.renderRefComponent(
+            index,
+            _.get(item, 'ShipmentReferenceList', []),
+            item.ShipmentID,
+          ),
+          Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
+          Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
+          Product: _.get(item, 'ShipmentProductName', ''),
+          ETD: (
+            <ShipmentInlineDate
+              initialValue={etd === null ? null : new Date(etd.seconds * 1000)}
+              id="etd-port"
+              shipmentKey={item.ShipmentID}
+              field="ShipperETDDate"
+              updateHandle={this.handleCalendarUpdate}
+            />
+          ),
+          ETA: (
+            <ShipmentInlineDate
+              initialValue={etd === null ? null : new Date(eta.seconds * 1000)}
+              id="eta-port"
+              shipmentKey={item.ShipmentID}
+              field="ConsigneeETAPortDate"
+              updateHandle={this.handleCalendarUpdate}
+            />
+          ),
+          '': this.renderDescription(index, item),
+          Status: this.renderStatusComponent(item),
+          uid: item.ShipmentID,
+        };
+      }
       return {
         alert: this.renderAlertComponent(index, item),
         Ref: this.renderRefComponent(
@@ -476,8 +548,8 @@ class TableShipment extends React.Component {
         Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
         Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
         Product: _.get(item, 'ShipmentProductName', ''),
-        ETD: etd === null ? 'Not Available' : new Date(etd.seconds * 1000).toLocaleString(),
-        ETA: eta === null ? 'Not Available' : new Date(eta.seconds * 1000).toLocaleString(),
+        ETD: etd === null ? 'Not Available' : moment(etd.seconds * 1000).format('DD MMM YYYY'),
+        ETA: eta === null ? 'Not Available' : moment(eta.seconds * 1000).format('DD MMM YYYY'),
         '': this.renderDescription(index, item),
         Status: this.renderStatusComponent(item),
         uid: item.ShipmentID,
@@ -595,6 +667,7 @@ class TableShipment extends React.Component {
                   <Button
                     style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 10 }}
                     onClick={() => {
+                      this.editShipment();
                       this.setState({
                         isEdit: false,
                       });

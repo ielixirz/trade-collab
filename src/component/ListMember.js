@@ -2,10 +2,13 @@ import React from 'react';
 import { ListGroup, ListGroupItem, Row, Col } from 'reactstrap';
 import RoleBadges from './RoleBadges.js';
 import _ from 'lodash';
+import { LeaveChatRoomMember } from '../service/chat/chat';
 
 export default class ListMember extends React.Component {
   render() {
     const { item: member } = this.props;
+    console.log(member.ChatRoomMemberKey);
+    console.log(this.props);
     let email = _.get(member, 'ChatRoomMemberEmail', '');
     let role = _.map(member.ChatRoomMemberRole, item => {
       let matches = item.match(/\b(\w)/g); // ['J','S','O','N']
@@ -16,7 +19,7 @@ export default class ListMember extends React.Component {
     return (
       <div>
         <ListGroup flush>
-          <ListGroupItem disabled tag="a" href="#">
+          <ListGroupItem tag="a" href="#">
             <Row>
               <Col xs="6" sm="7" className="text-left">
                 <span>
@@ -49,8 +52,32 @@ export default class ListMember extends React.Component {
                   );
                 })}
               </Col>
-              <Col xs="6" sm="2">
-                <i className="fa fa-trash-o" style={{ opacity: 0.7, marginLeft: 60 }} />
+              <Col
+                style={{
+                  'z-index': 10
+                }}
+              >
+                <a
+                  href="#"
+                  onClick={e => {
+                    e.preventDefault();
+
+                    let result = LeaveChatRoomMember(
+                      this.props.ShipmentKey,
+                      this.props.ChatRoomKey,
+                      member.ChatRoomMemberKey
+                    ).subscribe({
+                      next: res => {
+                        console.log(res);
+                      },
+                      complete: res => {
+                        result.unsubscribe();
+                      }
+                    });
+                  }}
+                >
+                  <i className="fa fa-trash-o" style={{ opacity: 0.7, marginLeft: 60 }} />
+                </a>
               </Col>
             </Row>
           </ListGroupItem>

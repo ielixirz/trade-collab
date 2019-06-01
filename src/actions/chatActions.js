@@ -145,6 +145,7 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
 export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
   const tabs = [];
   _.forEach(chats, item => {
+    console.log(item);
     tabs.push({
       id: tabs.length + 1,
       roomName: item.roomName,
@@ -152,7 +153,8 @@ export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
       ChatRoomData: item.ChatRoomData,
-      position: item.position
+      position: item.position,
+      member: item.member
     });
   });
 
@@ -169,7 +171,8 @@ export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
       chatMsg: item.chatMsg,
       active: item.active,
       ChatRoomData: item.ChatRoomData,
-      position: index
+      position: index,
+      member: item.member
     };
   });
   dispatch({ type: MOVE_TAB, payload: originalReducer });
@@ -186,7 +189,8 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
       ChatRoomData: item.ChatRoomData,
-      position: item.index
+      position: item.index,
+      member: item.member
     });
   });
   const newTabs = tabs.map(tab => ({
@@ -201,7 +205,8 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
       roomName: item.roomName,
       active: item.active,
       ChatRoomData: item.ChatRoomData,
-      position: index
+      position: index,
+      member: item.member
     };
   });
   dispatch({ type: MOVE_TAB, payload: originalReducer });
