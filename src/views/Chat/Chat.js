@@ -37,7 +37,12 @@ import {
 import ChatWithHeader from './components/ChatWithHeader';
 import ChatCreateRoom from './components/ChatCreateRoom';
 
-import { CreateChatRoom, EditChatRoom, UpdateChatRoomMessageReader } from '../../service/chat/chat';
+import {
+  AddChatRoomMember,
+  CreateChatRoom,
+  EditChatRoom,
+  UpdateChatRoomMessageReader
+} from '../../service/chat/chat';
 import './Chat.css';
 import './MasterDetail.css';
 import { GetShipmentDetail } from '../../service/shipment/shipment';
@@ -63,7 +68,8 @@ class Chat extends Component {
     this.fileInput = React.createRef();
   }
 
-  createChatRoom(fetchChatMessage, param, room) {
+  createChatRoom(fetchChatMessage, param, room, user) {
+    console.log(user);
     const shipmentkey = _.get(param, 'shipmentkey', 'HDTPONlnceJeG5yAA1Zy');
     CreateChatRoom(shipmentkey, {
       ChatRoomType: room,
@@ -72,6 +78,20 @@ class Chat extends Component {
       next: result => {
         const data = result.path.split('/');
         fetchChatMessage(data[data.length - 1], shipmentkey, result.id);
+
+        AddChatRoomMember(shipmentkey, result.id, {
+          [user.uid]: {
+            ChatRoomMemberEmail: user.email,
+            ChatRoomMemberImageUrl: '',
+            ChatRoomMemberRole: [room],
+            ChatRoomMemberCompanyName: '',
+            ChatRoomMemberCompanyKey: ''
+          }
+        }).subscribe({
+          next: result => {
+            console.log(result);
+          }
+        });
       },
       complete: result => {
         console.log(result);
@@ -89,6 +109,7 @@ class Chat extends Component {
           createChatRoom={this.createChatRoom}
           fetchChatMessage={this.props.fetchChatMessage}
           param={params}
+          user={this.props.user}
         />
       );
     }

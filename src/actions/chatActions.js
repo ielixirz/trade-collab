@@ -316,6 +316,7 @@ export const getChatRoomList = (shipmentKey, uid) => dispatch => {
       const chatrooms = [];
       snapshot.map((d, index) => {
         const chatRoomKey = d.id;
+
         const data = d.data();
 
         chatrooms.push({
