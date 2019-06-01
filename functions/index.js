@@ -671,7 +671,7 @@ exports.CopyMasterDataETAETD = functions.firestore
 //       UserNotificationChatroonKey (string)
 
 exports.NotiBellInviteToJoinCompany = functions.firestore
-  .document('UserInfo/{UserKey}/UserInvitation/{UserInvitation')
+  .document('UserInfo/{UserKey}/UserInvitation/{UserInvitationKey}')
   .onCreate(async (snapshot, context) => {
     return admin
       .firestore()
@@ -685,5 +685,24 @@ exports.NotiBellInviteToJoinCompany = functions.firestore
         UserNotificationUserInfoKey: context.params.UserKey,
         UserNotificationCompanyName: snapshot.data().CompanyInvitationCompanyName,
         UserNotificationCompanyKey: snapshot.data().CompanyInvitationCompanyKey
+      });
+  });
+
+exports.NotiBellRequestToJoinCompany = functions.firestore
+  .document('Company/{CompanyKey}/CompanyRequest/{CompanyRequestKey}')
+  .onCreate(async (snapshot, context) => {
+    return admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(context.params.UserKey)
+      .collection('UserNotification')
+      .add({
+        UserNotificationReadStatus: false,
+        UserNotificationType: 'RequestToJoinCompany',
+        UserNotificationTimestamp: admin.firestore.FieldValue.serverTimestamp(),
+        UserNotificationUserInfoKey: snapshot.data().UserRequestUserKey,
+        UserNotificationFirstname: snapshot.data().UserRequestFristname,
+        UserNotificationSurname: snapshot.data().UserRequestSurname,
+        UserNotificationCompanyKey: context.params.CompanyKey
       });
   });
