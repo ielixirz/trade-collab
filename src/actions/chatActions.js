@@ -4,9 +4,15 @@ import {
   moveTab as MOVE_TAB,
   TYPING_TEXT,
   FETCH_CHAT_ROOMS,
-  SEND_MESSAGE
+  SEND_MESSAGE,
+  FETCH_CHAT_MEMBER
 } from '../constants/constants';
-import { GetChatMessage, CreateChatMessage, GetChatRoomList } from '../service/chat/chat';
+import {
+  GetChatMessage,
+  CreateChatMessage,
+  GetChatRoomList,
+  GetChatRoomMemberList
+} from '../service/chat/chat';
 
 export const typing = data => dispatch => {
   const text = data.target.value;
@@ -17,7 +23,7 @@ export const typing = data => dispatch => {
   });
 };
 
-let chatroom = {};
+const chatroom = {};
 let chatMessage = null;
 
 export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
@@ -26,11 +32,11 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
 ) => {
   const { profileReducer } = getState();
 
-  let sender = _.find(
+  const sender = _.find(
     profileReducer.ProfileList,
     item => item.id === profileReducer.ProfileDetail.id
   );
-  let room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}`, false);
+  const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}`, false);
   if (room) {
     room.unsubscribe();
   }
@@ -49,6 +55,23 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
           type: FETCH_CHAT,
           id: ChatRoomKey,
           payload: res
+        });
+
+        GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
+          next: res => {
+            const members = _.map(res, item => {
+              console.log(item);
+              return {
+                ChatRoomMemberKey: item.id,
+                ...item.data()
+              };
+            });
+            dispatch({
+              type: FETCH_CHAT_MEMBER,
+              id: ChatRoomKey,
+              payload: members
+            });
+          }
         });
       },
       error: err => {
@@ -93,9 +116,9 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
   }
 };
 export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getState) => {
-  let chats = _.get(getState().ChatReducer, `chatroomsMsg.${ChatRoomKey}.chatMsg`, []).length;
+  const chats = _.get(getState().ChatReducer, `chatroomsMsg.${ChatRoomKey}.chatMsg`, []).length;
 
-  let room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}`, false);
+  const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}`, false);
   if (room) {
     room.unsubscribe();
   }
@@ -122,6 +145,7 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
 export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
   const tabs = [];
   _.forEach(chats, item => {
+    console.log(item);
     tabs.push({
       id: tabs.length + 1,
       roomName: item.roomName,
@@ -129,7 +153,8 @@ export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
       ChatRoomData: item.ChatRoomData,
-      position: item.position
+      position: item.position,
+      member: item.member
     });
   });
 
@@ -146,7 +171,8 @@ export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
       chatMsg: item.chatMsg,
       active: item.active,
       ChatRoomData: item.ChatRoomData,
-      position: index
+      position: index,
+      member: item.member
     };
   });
   dispatch({ type: MOVE_TAB, payload: originalReducer });
@@ -163,7 +189,8 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
       ChatRoomData: item.ChatRoomData,
-      position: item.index
+      position: item.index,
+      member: item.member
     });
   });
   const newTabs = tabs.map(tab => ({
@@ -178,7 +205,8 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
       roomName: item.roomName,
       active: item.active,
       ChatRoomData: item.ChatRoomData,
-      position: index
+      position: index,
+      member: item.member
     };
   });
   dispatch({ type: MOVE_TAB, payload: originalReducer });
@@ -186,7 +214,7 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
 
 export const selectChat = chatkey => (dispatch, getState) => {};
 
-export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getState) => {
+export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch, getState) => {
   // ShipmentKey,ChatRoomKey,Data
   // {
   //   ChatRoomMessageSender : ProfileKey,
@@ -198,23 +226,38 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getSta
   // eslint-disable-next-line prefer-destructuring
   const user = authReducer.user;
 
-  let sender = _.find(
+  const sender = _.find(
     profileReducer.ProfileList,
     item => item.id === profileReducer.ProfileDetail.id
   );
 
   if (_.get(user, 'uid', false)) {
-    const msg = {
-      ChatRoomMessageSender: sender.ProfileFirstname,
-      ChatRoomMessageSenderKey: sender.id,
-      ChatRoomMessageContext: text,
-      ChatRoomMessageType: 'Text',
-      ChatRoomMessageTimestamp: new Date()
-    };
-    dispatch({
-      type: SEND_MESSAGE,
-      payload: { ...msg, isSending: true, isSuccess: false }
-    });
+    let msg = {};
+    if (!isFile || isFile === undefined) {
+      msg = {
+        ChatRoomMessageSender: sender.ProfileFirstname,
+        ChatRoomMessageSenderKey: sender.id,
+        ChatRoomMessageContext: text,
+        ChatRoomMessageType: 'Text',
+        ChatRoomMessageTimestamp: new Date()
+      };
+      dispatch({
+        type: SEND_MESSAGE,
+        payload: { ...msg, isSending: true, isSuccess: false }
+      });
+    } else {
+      msg = {
+        ChatRoomMessageSender: sender.ProfileFirstname,
+        ChatRoomMessageSenderKey: sender.id,
+        ChatRoomMessageContext: text, // File in the form of Text; Maybe this need to be refactor later.
+        ChatRoomMessageType: 'File',
+        ChatRoomMessageTimestamp: new Date()
+      };
+      dispatch({
+        type: SEND_MESSAGE,
+        payload: { ...msg, isSending: true, isSuccess: false }
+      });
+    }
     if (text === 'test error') {
       dispatch({
         type: SEND_MESSAGE,
@@ -227,8 +270,8 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getSta
             ...msg,
             isSending: false,
             isSuccess: false,
-            ShipmentKey: ShipmentKey,
-            ChatRoomKey: ChatRoomKey
+            ShipmentKey,
+            ChatRoomKey
           }
         });
       }, 1000);
@@ -250,8 +293,8 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getSta
                 ...msg,
                 isSending: false,
                 isSuccess: false,
-                ShipmentKey: ShipmentKey,
-                ChatRoomKey: ChatRoomKey
+                ShipmentKey,
+                ChatRoomKey
               }
             });
             console.log(err);
@@ -271,13 +314,14 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text) => (dispatch, getSta
   }
 };
 
-export const getChatRoomList = shipmentKey => dispatch => {
-  GetChatRoomList(shipmentKey).subscribe({
+export const getChatRoomList = (shipmentKey, uid) => dispatch => {
+  GetChatRoomList(shipmentKey, uid).subscribe({
     next: snapshot => {
       const originalReducer = [];
       const chatrooms = [];
       snapshot.map((d, index) => {
         const chatRoomKey = d.id;
+
         const data = d.data();
 
         chatrooms.push({

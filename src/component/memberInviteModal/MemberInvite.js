@@ -9,18 +9,21 @@ import MemberRoleModal from './MemberRoleModal';
 import './styles.scss';
 
 class MemberInvite extends React.Component {
-  onSelectRole = (role) => {
+  onSelectRole = role => {
     const { existRoles } = this.props;
+    console.log('selected role ', role, 'existRoles', existRoles);
+    console.log('existRoles.includes(role)', existRoles.includes(role));
     let updated = null;
     if (existRoles.includes(role)) {
       updated = _.filter(existRoles, data => data !== role);
     } else {
       updated = [...existRoles, role];
+      console.log(updated);
     }
     this.handleRoleSelected(updated);
   };
 
-  handleRoleSelected = (updated) => {
+  handleRoleSelected = updated => {
     const { profile, shouldInvite } = this.props;
     const { Image, Email } = profile;
     shouldInvite({ Image, Email, Role: updated });

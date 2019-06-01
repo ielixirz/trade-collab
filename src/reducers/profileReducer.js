@@ -1,9 +1,9 @@
 // eslint-disable-next-line filenames/match-exported
-import { FETCH_PROFILE_LIST, FETCH_PROFILE_DETAIL } from '../constants/constants';
+import { FETCH_PROFILE_LIST, FETCH_PROFILE_DETAIL, CLEAR_PROFILE } from '../constants/constants';
 
 const INITIAL_STATE = {
   ProfileList: [],
-  ProfileDetail: {}
+  ProfileDetail: {},
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -11,13 +11,19 @@ export default (state = INITIAL_STATE, action) => {
     case FETCH_PROFILE_LIST:
       return {
         ...state,
-        ProfileList: action.payload
+        ProfileList: action.payload,
       };
 
     case FETCH_PROFILE_DETAIL:
       return {
         ...state,
-        ProfileDetail: action.payload
+        ProfileDetail: action.payload,
+      };
+    case CLEAR_PROFILE:
+      return {
+        ...state,
+        ProfileDetail: {},
+        ProfileList: [],
       };
     default:
       return state;

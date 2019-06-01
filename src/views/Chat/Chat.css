@@ -367,3 +367,39 @@ h2.time-background:before {
   width: 95%;
   z-index: -1;
 }
+
+.uploading-file-row {
+  margin-bottom: 2px;
+  margin-left: 5px;
+  margin-right: 5px;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border: 2px solid #cccccc;
+}
+
+.file-row {
+  border: 0;
+}
+
+.file-row:hover {
+  background-color: #367fee1c;
+  border-radius: 5px;
+}
+
+.delete-btn-enable {
+  color: rgb(22, 160, 133);
+  font-weight: bold;
+}
+
+.delete-btn-disable {
+  color: grey;
+  font-weight: bold;
+}
+
+.mb-3.upload {
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border: 2px solid #707070;
+}

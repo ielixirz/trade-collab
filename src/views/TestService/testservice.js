@@ -18,11 +18,19 @@ import {
   IsCompanyMember,
   GetCompanyMember,
   CombineCreateCompanyWithCreateCompanyMember,
+  CreateCompanyUserAccessibility,
+  GetCompanyUserAccessibility,
+  UpdataCompanyUserAccessibility,
+  DeleteCompanyUserAccessibility,
 } from '../../service/company/company';
 
 import { GetUserRequest } from '../../service/join/request';
 
-import { CombineShipmentAndShipmentReference } from '../../service/shipment/shipment';
+import {
+  CombineShipmentAndShipmentReference,
+  TestCollectionGroup,
+  CreateShipmentMember,
+} from '../../service/shipment/shipment';
 
 import {
   AddShipmentPin,
@@ -144,14 +152,32 @@ const TestService = () => {
     // GetUserCompany('nen3b2GCqSQIUyTHuFret0Yx9f02').subscribe(console.log);
     // GetCompanyMember('oFT40OYTReLd6GQR1kIv').subscribe(console.log);
     // GetUserRequest('nen3b2GCqSQIUyTHuFret0Yx9f02').subscribe(console.log);
-    // CombineShipmentAndShipmentReference('', '', 'asc', 100).subscribe(console.log);
+    // CombineShipmentAndShipmentReference(
+    //   '',
+    //   '',
+    //   'asc',
+    //   100,
+    //   'nen3b2GCqSQIUyTHuFret0Yx9f02',
+    // ).subscribe(console.log);
+    // TestCollectionGroup('nen3b2GCqSQIUyTHuFret0Yx9f02').subscribe(eiei => console.log(eiei.map(item => item.data())));
+    // CreateShipmentMember('0uPJ5a84MeNEwkqwJq1g', 'nen3b2GCqSQIUyTHuFret0Yx9f02', {
+    //   ShipmentMemberEmail: 'eiei@email.com',
+    // });
     // AddShipmentPin('2sYaYykLYOd5a2D4FPbV', '555555').subscribe(console.log);
     // DeleteShipmentPin('2sYaYykLYOd5a2D4FPbV', '555555').subscribe(console.log);
     // GetShipmentPin('2sYaYykLYOd5a2D4FPbV').subscribe(console.log);
-
-    CombineCreateCompanyWithCreateCompanyMember({ com_name: '123' }, 'UserInfoKey', {
-      name: 'name',
-    }).subscribe(console.log);
+    // CombineCreateCompanyWithCreateCompanyMember({ com_name: '123' }, 'UserInfoKey', {
+    //   name: 'name',
+    // }).subscribe(console.log);
+    // CreateCompanyUserAccessibility('TestCompany', {
+    //   CompanyUserAccessibilityRoleName: 'Admin',
+    //   CompanyUserAccessibilityRolePermissionCode: '11111',
+    // }).subscribe(console.log);
+    // GetCompanyUserAccessibility('TestCompany').subscribe(console.log);
+    // UpdataCompanyUserAccessibility('TestCompany', '29Qnsob3H6rcqXtI9v8B', {
+    //   CompanyUserAccessibilityRolePermissionCode: '22222',
+    // }).subscribe(console.log);
+    // DeleteCompanyUserAccessibility('TestCompany', '29Qnsob3H6rcqXtI9v8B').subscribe(console.log);
   }, []);
 
   return (

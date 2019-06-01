@@ -7,6 +7,7 @@ import React, { Component, Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { Container } from 'reactstrap';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import { AppAside, AppHeader } from '@coreui/react';
 // sidebar nav config
@@ -51,15 +52,24 @@ class DefaultLayout extends Component {
             <Container fluid>
               <Suspense fallback={this.loading()}>
                 <Switch>
-                  {routes.map((route, idx) => (route.component ? (
-                    <Route
-                      key={idx}
-                      path={route.path}
-                      exact={route.exact}
-                      name={route.name}
-                      render={props => <route.component {...props} />}
-                    />
-                  ) : null))}
+                  {routes.map((route, idx) =>
+                    route.component ? (
+                      <Route
+                        key={idx}
+                        path={route.path}
+                        exact={route.exact}
+                        name={route.name}
+                        render={props => {
+                          console.log(props);
+                          return route.validation(
+                            route.isProfileRequired,
+                            this.props,
+                            <route.component {...props} />
+                          );
+                        }}
+                      />
+                    ) : null
+                  )}
                 </Switch>
               </Suspense>
             </Container>
@@ -75,14 +85,19 @@ class DefaultLayout extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  const { authReducer } = state;
+const mapStateToProps = state => {
+  const { authReducer, profileReducer } = state;
+  const profile = _.find(
+    profileReducer.ProfileList,
+    item => item.id === profileReducer.ProfileDetail.id
+  );
   return {
     auth: authReducer.user,
+    currentProfile: profile
   };
 };
 
 export default connect(
   mapStateToProps,
-  { getUserInfoDetail, getProlfileList },
+  { getUserInfoDetail, getProlfileList }
 )(DefaultLayout);

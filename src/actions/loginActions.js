@@ -1,8 +1,14 @@
-import { FILL_CREDENCIAL, SAVE_CREDENCIAL } from '../constants/constants';
+import {
+  FETCH_COMPANY_USER,
+  FETCH_USER_DETAIL,
+  FILL_CREDENCIAL,
+  SAVE_CREDENCIAL,
+} from '../constants/constants';
 import { LoginWithEmail } from '../service/auth/login';
 import { getUserInfoDetail } from './userActions';
 import 'firebase/auth';
 import { FirebaseApp } from '../service/firebase';
+import { GetUserCompany, GetUserInfoDetail } from '../service/user/user';
 
 export const typinglogin = data => (dispatch) => {
   // eslint-disable-next-line prefer-destructuring
@@ -29,6 +35,44 @@ export const login = data => (dispatch) => {
         type: SAVE_CREDENCIAL,
         payload: res.user,
       });
+      GetUserInfoDetail(res.user.uid).subscribe({
+        next: (snapshot) => {
+          const SnapshotData = snapshot.data();
+          let originalReducer = {};
+          if (SnapshotData) {
+            originalReducer = {
+              UserInfoUsername: SnapshotData.UserInfoUsername,
+              UserInfoEmail: SnapshotData.UserInfoEmail,
+              UserInfoBio: SnapshotData.UserInfoBio,
+              UserInfoProfileImageLink: SnapshotData.UserInfoProfileImageLink,
+              UserInfoCreateTimestamp: SnapshotData.UserInfoCreateTimestamp,
+              UserInfoAccountType: SnapshotData.UserInfoAccountType,
+              UserInfoCompanyName: SnapshotData.UserInfoCompanyName,
+              UserInfoCompanyRelate: SnapshotData.UserInfoCompanyRelate,
+            };
+            dispatch({
+              type: FETCH_USER_DETAIL,
+              payload: originalReducer,
+            });
+          } else {
+            console.error('Error from system : User data not found');
+          }
+        },
+        error: (err) => {
+          console.log(err);
+          alert(err.message);
+        },
+        complete: () => {},
+      });
+      GetUserCompany(res.user.uid).subscribe({
+        next: (res) => {
+          dispatch({
+            type: FETCH_COMPANY_USER,
+            payload: res,
+          });
+        },
+      });
+
       window.location.replace('#/selectprofile');
     },
     error: (err) => {

@@ -45,7 +45,7 @@ img {
 .top_spac {
   margin: 20px 0 0;
 }
-.modal-content {
+.create-shipment > .modal-content {
   width: 650px;
   padding-right: 5px;
   padding-left: 5px;
@@ -237,7 +237,7 @@ td {
 
 div.boo {
   border: 0px solid white;
-  height: 90vh;
+  height: 88vh;
   /* overflow: auto; */
 }
 
@@ -264,6 +264,25 @@ div.seenby {
 }
 .alert-column:hover .showdot .showthatdot {
   display: block;
+}
+
+.shipment-navbar {
+  margin-top: 5px;
+  padding-bottom: 5px;
+  border-bottom: 2px solid #ededed;
+}
+
+.shipment-navbar > .nav-item > .active.nav-link {
+  font-weight: bold;
+}
+
+.shipment-search-bar > label {
+  width: 100%;
+}
+
+/* Override Core UI Nav Bar*/
+.app-header.navbar {
+  border-bottom: 2px solid #ededed;
 }
 
 /* Shipment DataTable */

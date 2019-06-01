@@ -3,7 +3,8 @@ import {
   TYPING_TEXT,
   moveTab,
   FETCH_CHAT_ROOMS,
-  SEND_MESSAGE
+  SEND_MESSAGE,
+  FETCH_CHAT_MEMBER
 } from '../constants/constants';
 import _ from 'lodash';
 const ShipmentKey = 'HDTPONlnceJeG5yAA1Zy';
@@ -37,6 +38,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         chatrooms: {
+          ...state.chatrooms,
           ...action.payload
         }
       };
@@ -44,6 +46,7 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         chatrooms: {
+          ...state.chatrooms,
           ...action.payload
         }
       };
@@ -52,6 +55,17 @@ export default (state = INITIAL_STATE, action) => {
         ...state,
         msg: {
           ...action.payload
+        }
+      };
+    case FETCH_CHAT_MEMBER:
+      return {
+        ...state,
+        chatrooms: {
+          ...state.chatrooms,
+          [action.id]: {
+            ...state.chatrooms[action.id],
+            member: action.payload
+          }
         }
       };
     default:

@@ -1,6 +1,7 @@
+/* eslint-disable filenames/match-regex */
 import React from 'react';
 
-const shipmentListContext = React.createContext({
+const ShipmentContext = React.createContext({
   shipmentList: [
     {
       id: 1,
@@ -16,4 +17,4 @@ const shipmentListContext = React.createContext({
   ]
 });
 
-export default shipmentListContext;
+export default ShipmentContext;

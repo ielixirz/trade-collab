@@ -12,23 +12,24 @@ import {
   InputGroupAddon,
   Input,
   Row,
-  Col,
+  Col
 } from 'reactstrap';
 import './MemberModal.css';
 import MemberInChat from './MemberInChat';
+import * as _ from 'lodash';
 
 class MemberModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      modal: false,
+      modal: false
     };
   }
 
   toggle = () => {
     console.log('toggle');
     this.setState(prevState => ({
-      modal: !prevState.modal,
+      modal: !prevState.modal
     }));
   };
 
@@ -39,7 +40,27 @@ class MemberModal extends React.Component {
   );
 
   render() {
-    const { count } = this.props;
+    const { count, list: member } = this.props;
+    let shipmentMember = [];
+    console.log(this.props);
+    _.forEach(member, item => {
+      if (item.ChatRoomMemberCompanyName === '') {
+        if (_.isEmpty(shipmentMember['Individual'])) {
+          shipmentMember['Individual'] = [];
+          shipmentMember['Individual'].push(item);
+        } else {
+          shipmentMember['Individual'].push(item);
+        }
+      } else {
+        if (_.isEmpty(shipmentMember[item.ChatRoomMemberCompanyName])) {
+          shipmentMember[item.ChatRoomMemberCompanyName] = [];
+          shipmentMember[item.ChatRoomMemberCompanyName].push(item);
+        } else {
+          shipmentMember[item.ChatRoomMemberCompanyName].push(item);
+        }
+      }
+    });
+    let props = this.props;
     return (
       <div>
         <Button color="link" onClick={this.toggle}>
@@ -68,7 +89,7 @@ class MemberModal extends React.Component {
                   Members In this chat
                 </span>
               </Col>
-              <Col xs="6" sm="3" right>
+              <Col xs="6" sm="3">
                 <span style={{ color: '#707070' }} className="float-right">
                   Role in shipment:
                 </span>
@@ -80,9 +101,9 @@ class MemberModal extends React.Component {
               </Col>
             </Row>
             <hr />
-            <MemberInChat title="Individual" individual />
-            <MemberInChat title="Fresh product" individual={false} allRows={['cd', 'ef', 'c']} />
-            <MemberInChat title="Tp venture" individual={false} />
+            {Object.keys(shipmentMember).map(function(key, index) {
+              return <MemberInChat title={key} member={shipmentMember[key]} {...props} />;
+            })}
           </ModalBody>
         </Modal>
       </div>

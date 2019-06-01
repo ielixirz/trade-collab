@@ -23,6 +23,7 @@ import { connect } from 'react-redux';
 import logo from '../../assets/img/brand/logo.svg';
 import sygnet from '../../assets/img/brand/sygnet.svg';
 import { logout } from '../../actions/loginActions';
+import { clearProfile } from '../../actions/profileActions';
 import './style.css';
 
 const propTypes = {
@@ -33,6 +34,7 @@ const defaultProps = {};
 
 class DefaultHeader extends Component {
   logout = () => {
+    this.props.clearProfile();
     this.props.logout(this.redirect);
   };
 
@@ -188,7 +190,7 @@ class DefaultHeader extends Component {
               </span>
             </DropdownToggle>
             <DropdownMenu right>
-              <DropdownItem onClick={() => this.logout()}>logout</DropdownItem>
+              <DropdownItem onClick={() => this.logout()}>Logout</DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>
           <NavItem className="px-1" style={{ marginRight: 5 }}>
@@ -222,5 +224,5 @@ const styles = {
 };
 export default connect(
   mapStateToProps,
-  { logout },
+  { logout, clearProfile },
 )(DefaultHeader);
