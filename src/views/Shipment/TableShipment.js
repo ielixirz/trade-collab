@@ -351,6 +351,7 @@ class TableShipment extends React.Component {
                                   }
                                 }
                               });
+                              this.props.fetchShipments();
                             }
                           });
                         } else {
