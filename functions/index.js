@@ -421,10 +421,10 @@ exports.ManageShipmentMember = functions.firestore
     // End NotiCount First join shipment
 
     let PayloadObject = {};
-    const ShipmentMemberUserKey = SnapshotDataObject['ChatRoomMemberUserKey'];
 
     if (newValue) {
       const SnapshotDataObject = newValue;
+      const ShipmentMemberUserKey = SnapshotDataObject['ChatRoomMemberUserKey'];
 
       PayloadObject[ShipmentMemberUserKey] = {};
 
@@ -466,6 +466,9 @@ exports.ManageShipmentMember = functions.firestore
       ]);
     } else if (oldValue && !newValue) {
       PayloadObject[oldValue['ChatRoomMemberUserKey']] = null;
+
+      const SnapshotDataObject = oldValue;
+      const ShipmentMemberUserKey = SnapshotDataObject['ChatRoomMemberUserKey'];
 
       const DeletePayload = {};
 
