@@ -94,7 +94,7 @@ export const EditChatRoom = (ShipmentKey, ChatRoomKey, Data) => from(ChatRoomRef
 
 export const EditChatRoomFileLink = (ShipmentKey, ChatRoomKey, Data) => from(ChatRoomRefPath(ShipmentKey, ChatRoomKey).set({ ChatRoomFileLink: Data }, { merge: true }));
 
-export const GetChatRoomList = ShipmentKey => collection(ShipmentRefPath(ShipmentKey));
+export const GetChatRoomList = (ShipmentKey, UserKey) => collection(ShipmentRefPath(ShipmentKey).where('ChatRoomMemberList', 'array-contains', UserKey));
 
 export const GetChatRoomDetail = (ShipmentKey, ChatRoomKey) => doc(ChatRoomRefPath(ShipmentKey, ChatRoomKey));
 
@@ -139,4 +139,10 @@ export const GetChatRoomMemberList = (ShipmentKey, ChatRoomKey) => collection(Ch
 
 export const UpdateChatRoomMessageReader = (ShipmentKey, ChatRoomKey, ProfileKey, Data) => from(
   ChatRoomMessageReaderRefPath(ShipmentKey, ChatRoomKey, ProfileKey).set(Data, { merge: true }),
+);
+
+export const LeaveChatRoomMember = (ShipmentKey, ChatRoomKey, ChatRoomMemberKey) => collection(
+  ChatRoomMemberRefPath(ShipmentKey, ChatRoomKey)
+    .doc(ChatRoomMemberKey)
+    .delete(),
 );
