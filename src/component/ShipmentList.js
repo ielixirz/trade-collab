@@ -86,10 +86,10 @@ const ShipmentList = () => {
                     )}
                     <br />
                     <b>
-                      {data.ShipperETD === null ? (
+                      {data.ShipperETDDate === null ? (
                         <span style={{ color: '#B3B3B3' }}>Est. Time of Departure from Port</span>
                       ) : (
-                        `Port ETD: ${moment(data.ShipperETD.seconds * 1000).format('DD MMM YYYY')}`
+                        `Port ETD: ${moment(data.ShipperETDDate.seconds * 1000).format('DD MMM YYYY')}`
                       )}
                     </b>
                   </Col>
@@ -154,31 +154,31 @@ const ShipmentList = () => {
                     )}
                     <br />
                     <b>
-                      {data.ConsigneeETAPort === null ? (
+                      {data.ConsigneeETAPortDate === null ? (
                         <span style={{ color: '#B3B3B3' }}>Est. Time of Arrive to Port</span>
                       ) : (
-                        `Port ETA: ${moment(data.ConsigneeETAPort.seconds * 1000).format(
+                        `Port ETA: ${moment(data.ConsigneeETAPortDate.seconds * 1000).format(
                           'DD MMM YYYY'
                         )}`
                       )}
                     </b>
                     <br />
                     <b>
-                      {data.ConsigneeETAWarehouse === null ? (
+                      {data.ConsigneeETAWarehouseDate === null ? (
                         <span style={{ color: '#B3B3B3' }}>Est. Time of Arrive to Warehouse</span>
                       ) : (
-                        `Warehouse ETA: ${moment(data.ConsigneeETAWarehouse.seconds * 1000).format(
+                        `Warehouse ETA: ${moment(data.ConsigneeETAWarehouseDate.seconds * 1000).format(
                           'DD MMM YYYY'
                         )}`
                       )}
                     </b>{' '}
-                    {data.ShipperETD === null ||
-                    data.ConsigneeETAPort === null ||
-                    data.ConsigneeETAWarehouse === null
+                    {data.ShipperETDDate === null ||
+                    data.ConsigneeETAPortDate === null ||
+                    data.ConsigneeETAWarehouseDate === null
                       ? ''
                       : `+${GetDiffDay(
-                          data.ConsigneeETAWarehouse.seconds * 1000,
-                          data.ConsigneeETAPort.seconds * 1000
+                          data.ConsigneeETAWarehouseDate.seconds * 1000,
+                          data.ConsigneeETAPortDate.seconds * 1000
                         )} Days from ETA at Port`}
                   </Col>
                 </Row>
