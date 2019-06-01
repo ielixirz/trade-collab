@@ -368,7 +368,11 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
                   <div role="button" onClick={browseFile} onKeyDown={null} tabIndex="-1">
                     <img
                       style={{ width: '70%' }}
-                      src={userProfile.UserInfoProfileImageLink}
+                      src={
+                        userProfile.UserInfoProfileImageLink === undefined
+                          ? '../assets/img/default-grey.jpg'
+                          : userProfile.UserInfoProfileImageLink
+                      }
                       className="img-avatar"
                       alt="admin@bootstrapmaster.com"
                     />
