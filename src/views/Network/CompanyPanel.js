@@ -595,12 +595,13 @@ Members (
                       </Col>
                       <Col xs={2} style={{ paddingLeft: 0 }}>
                         <Select
-                          isMulti
                           name="colors"
                           id="role-filter"
                           className="basic-multi-select role-filter-select"
                           classNamePrefix="select"
-                          placeholder="Admin (4)"
+                          placeholder="Filter Role"
+                          options={mockRoleList}
+                          {...toolKitProps.searchProps}
                         />
                       </Col>
                     </Row>
