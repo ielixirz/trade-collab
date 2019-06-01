@@ -1,11 +1,18 @@
 import React from 'react';
 import { ListGroup, ListGroupItem, Row, Col } from 'reactstrap';
 import RoleBadges from './RoleBadges.js';
+import _ from 'lodash';
 
 export default class ListMember extends React.Component {
   render() {
     const { item: member } = this.props;
-    let email = member.ChatRoomMemberEmail;
+    let email = _.get(member, 'ChatRoomMemberEmail', '');
+    let role = _.map(member.ChatRoomMemberRole, item => {
+      let matches = item.match(/\b(\w)/g); // ['J','S','O','N']
+      let acronym = matches.join(''); // JSON
+      return acronym;
+    });
+    console.log(role);
     return (
       <div>
         <ListGroup flush>
@@ -25,7 +32,22 @@ export default class ListMember extends React.Component {
                 <span style={{ marginLeft: 40, fontSize: 12 }}>{email}</span>
               </Col>
               <Col xs="6" sm="3">
-                <RoleBadges roleBadges="E" />
+                {role.map(item => {
+                  return (
+                    <span
+                      className="badge-role"
+                      style={{
+                        borderColor: 'black',
+                        borderStyle: 'solid',
+                        color: 'black',
+                        borderWidth: 0.5,
+                        marginRight: '5px'
+                      }}
+                    >
+                      {item}
+                    </span>
+                  );
+                })}
               </Col>
               <Col xs="6" sm="2">
                 <i className="fa fa-trash-o" style={{ opacity: 0.7, marginLeft: 60 }} />

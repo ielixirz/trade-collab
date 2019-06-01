@@ -36,7 +36,7 @@ class MemberInChat extends Component {
 
   render() {
     const { member } = this.props;
-    console.log(member);
+
     return (
       <div>
         <Row>
@@ -66,8 +66,6 @@ class MemberInChat extends Component {
           {member.map(item => {
             return <ListMember item={item} />;
           })}
-
-          <ListMember />
         </Collapse>
       </div>
     );

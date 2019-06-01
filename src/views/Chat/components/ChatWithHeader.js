@@ -4,9 +4,7 @@
 /* eslint-disable filenames/match-regex */
 import _ from 'lodash';
 import React, { Component } from 'react';
-import {
-  Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input,
-} from 'reactstrap';
+import { Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
 import Select from 'react-select';
 import MemberModal from '../../../component/MemberModal';
 import MemberInviteModal from '../../../component/MemberInviteModal';
@@ -21,7 +19,7 @@ import { CreateChatMultipleInvitation } from '../../../service/join/invite';
 
 const AVAILABLE_ROLES = {
   Importer: 'Exporter',
-  Exporter: 'Importer',
+  Exporter: 'Importer'
 };
 
 class ChatWithHeader extends Component {
@@ -43,26 +41,24 @@ class ChatWithHeader extends Component {
 
   handleAssignCompany(e, role) {
     console.log(this.props);
-    const {
-      companies, member, ShipmentKey, ChatRoomKey,
-    } = this.props;
+    const { companies, member, ShipmentKey, ChatRoomKey } = this.props;
     console.log('member', member);
     const pickedCompany = _.find(companies, item => item.CompanyKey === e.value);
 
     if (pickedCompany) {
       GetCompanyMember(e.value).subscribe({
-        next: (res) => {
+        next: res => {
           const CompanyMember = _.map(res, item => ({
-            ...item.data(),
+            ...item.data()
           }));
           const inviteRole = [];
           inviteRole.push(role);
           console.log('CompanyMember', CompanyMember);
           const inviteMember = [];
-          _.forEach(CompanyMember, (memberItem) => {
+          _.forEach(CompanyMember, memberItem => {
             const chatMember = _.find(
               member,
-              item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail,
+              item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail
             );
 
             // ChatRoomMemberEmail: "punjasin@gmail.com"
@@ -77,8 +73,8 @@ class ChatWithHeader extends Component {
                 {
                   ...chatMember,
                   ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
-                },
+                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+                }
               );
               console.log(result);
             } else {
@@ -91,17 +87,17 @@ class ChatWithHeader extends Component {
                 Image: '',
                 Role: inviteRole,
                 ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
+                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
               });
             }
           });
           console.log(inviteMember);
           CreateChatMultipleInvitation(inviteMember, ShipmentKey, ChatRoomKey).subscribe({
-            next: (res) => {
+            next: res => {
               console.log(res);
-            },
+            }
           });
-        },
+        }
       });
     }
   }
@@ -112,7 +108,7 @@ class ChatWithHeader extends Component {
     let options = [];
     options = _.map(companies, item => ({
       value: item.CompanyKey,
-      label: item.CompanyName,
+      label: item.CompanyName
     }));
 
     if (hasInvite) {
@@ -122,26 +118,22 @@ class ChatWithHeader extends Component {
             backgroundColor: 'rgba(242, 175, 41, 0.3)',
             height: 'auto',
             padding: '10px',
-            borderRadius: '5px',
+            borderRadius: '5px'
           }}
         >
           <p
             style={{
               fontWeight: 700,
-              color: '#000000',
+              color: '#000000'
             }}
           >
-            You have been invited you as
-            {' '}
-            {ChatRoomType}
-            {' '}
-for this shipment.
+            You have been invited you as {ChatRoomType} for this shipment.
           </p>
           <p>Choose the company you want to use to handle this shipment</p>
 
           <div>
             <Select
-              onChange={(e) => {
+              onChange={e => {
                 this.handleAssignCompany(e, ChatRoomType);
               }}
               name="company"
@@ -157,26 +149,22 @@ for this shipment.
           backgroundColor: 'rgba(242, 175, 41, 0.3)',
           height: 'auto',
           padding: '10px',
-          borderRadius: '5px',
+          borderRadius: '5px'
         }}
       >
         <p
           style={{
             fontWeight: 700,
-            color: '#000000',
+            color: '#000000'
           }}
         >
-          You have assigned your self as an
-          {' '}
-          {ChatRoomType}
-          {' '}
-for this shipment
+          You have assigned your self as an {ChatRoomType} for this shipment
         </p>
         <p>Select a company, to inform your team about this shipment</p>
 
         <div>
           <Select
-            onChange={(e) => {
+            onChange={e => {
               this.handleAssignCompany(e, ChatRoomType);
             }}
             name="company"
@@ -213,7 +201,7 @@ for this shipment
       onDropChatStyle,
       onDragOver,
       onDragLeave,
-      onFileDrop,
+      onFileDrop
     } = this.props;
     let lastkey = '';
     const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
@@ -223,7 +211,7 @@ for this shipment
         <Row
           style={{
             backgroundColor: 'white',
-            borderBottom: '1px solid #707070',
+            borderBottom: '1px solid #707070'
           }}
         >
           <Breadcrumb className="chat-toolbar">
@@ -233,7 +221,8 @@ for this shipment
               member={member}
             />
             <Button className="btn-chat-label">|</Button>
-            <MemberModal count={ChatRoomMember.length} />
+            <MemberModal count={member.length} list={member} />
+
             <Button className="btn-chat-label">|</Button>
             <Button className="btn-chat-label">
               Ref#
@@ -258,9 +247,9 @@ for this shipment
                       ChatRoomMessageReaderProfileImageUrl: _.get(
                         sender,
                         'UserInfoProfileImageLink',
-                        '',
+                        ''
                       ),
-                      ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
+                      ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
                     });
                   }
                   lastkey = chatMsg[chatMsg.length - 1].id;
@@ -276,18 +265,18 @@ for this shipment
                     fetchMoreMessage(ChatRoomKey, ShipmentKey);
                   }
                 }}
-                ref={(el) => {
+                ref={el => {
                   this.msgChatRef = el;
                 }}
               >
                 {_.get(this.props.ShipmentData, 'ShipmentCreatorUserKey', false) === user.uid
                   ? this.renderAssignCompany(this.props.ShipmentData.ShipmentCreatorType)
                   : isInvited
-                    ? this.renderAssignCompany(
+                  ? this.renderAssignCompany(
                       isInvited.ChatRoomMemberRole[0],
-                      _.get(isInvited, 'ChatRoomMemberCompanyKey', false),
+                      _.get(isInvited, 'ChatRoomMemberCompanyKey', false)
                     )
-                    : ''}
+                  : ''}
                 {chatMsg.map((msg, i) => {
                   const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = 'sender';
@@ -308,7 +297,7 @@ for this shipment
                       prev: chatMsg[i - 1],
                       isLast: chatMsg.length - 1 === i,
                       hasFile: true,
-                      files: msgJson.files,
+                      files: msgJson.files
                     };
                   } else {
                     message = {
@@ -319,7 +308,7 @@ for this shipment
                       readers: msg.ChatRoomMessageReader,
                       prev: chatMsg[i - 1],
                       isLast: chatMsg.length - 1 === i,
-                      hasFile: false,
+                      hasFile: false
                     };
                   }
 
@@ -344,11 +333,12 @@ for this shipment
                       id="file"
                       ref={fileInputRef}
                       style={{ display: 'none' }}
-                      onChange={event => uploadModalRef.current.triggerUploading(
-                        event.target.files,
-                        ShipmentKey,
-                        ChatRoomKey,
-                      )
+                      onChange={event =>
+                        uploadModalRef.current.triggerUploading(
+                          event.target.files,
+                          ShipmentKey,
+                          ChatRoomKey
+                        )
                       }
                     />
                   </InputGroupAddon>
@@ -364,15 +354,15 @@ for this shipment
                             ChatRoomMessageReaderProfileImageUrl: _.get(
                               sender,
                               'UserInfoProfileImageLink',
-                              '',
+                              ''
                             ),
-                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
+                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
                           });
                         }
                         lastkey = chatMsg[chatMsg.length - 1].id;
                       }
                     }}
-                    onChange={(e) => {
+                    onChange={e => {
                       // (ShipmentKey, ChatRoomKey, ProfileKey, Data)
                       // ChatRoomMessageKeyList *(Static document name) (Create for util)
                       // ChatRoomMessageKeyList (Array<string>)
@@ -397,16 +387,16 @@ for this shipment
                             ChatRoomMessageReaderProfileImageUrl: _.get(
                               sender,
                               'UserInfoProfileImageLink',
-                              '',
+                              ''
                             ),
-                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
+                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
                           });
                         }
                         lastkey = chatMsg[chatMsg.length - 1].id;
                       }
                       typing(e);
                     }}
-                    onKeyPress={(event) => {
+                    onKeyPress={event => {
                       if (event.key === 'Enter') {
                         sendMessage(ChatRoomKey, ShipmentKey, text);
                         scrollChatToBottom();
