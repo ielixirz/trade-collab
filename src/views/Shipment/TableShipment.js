@@ -20,7 +20,6 @@ import {
   updateShipmentRef,
 } from '../../actions/shipmentActions';
 
-import DatePicker from 'react-date-picker';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import {
   Row,
@@ -35,6 +34,7 @@ import {
   InputGroupAddon,
   InputGroupText,
 } from 'reactstrap';
+import ShipmentInlineDate from './components/ShipmentInlineDate';
 
 import { NoteShipment } from './NoteShipment';
 import { AlertShipment } from './AlertShipment';
@@ -194,6 +194,13 @@ class TableShipment extends React.Component {
         });
       });
     }
+  };
+
+  handleCalendarUpdate = (date, shipmentKey, field) => {
+    console.log(date);
+    console.log(shipmentKey);
+    console.log(field);
+    // TO DO : update eta etd
   };
 
   fetchPinned = () => {
@@ -480,17 +487,21 @@ class TableShipment extends React.Component {
           Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
           Product: _.get(item, 'ShipmentProductName', ''),
           ETD: (
-            <DatePicker
-              id="eta-port"
-              onChange={null} // TODO Bind onchange
-              value={etd === null ? null : new Date(etd.seconds * 1000)}
+            <ShipmentInlineDate
+              initialValue={etd === null ? null : new Date(etd.seconds * 1000)}
+              id="etd-port"
+              shipmentKey={item.ShipmentID}
+              field="ShipperETDDate"
+              updateHandle={this.handleCalendarUpdate}
             />
           ),
           ETA: (
-            <DatePicker
+            <ShipmentInlineDate
+              initialValue={etd === null ? null : new Date(eta.seconds * 1000)}
               id="eta-port"
-              onChange={null} // TODO Bind onchange
-              value={eta === null ? null : new Date(eta.seconds * 1000)}
+              shipmentKey={item.ShipmentID}
+              field="ConsigneeETAPortDate"
+              updateHandle={this.handleCalendarUpdate}
             />
           ),
           '': this.renderDescription(index, item),
