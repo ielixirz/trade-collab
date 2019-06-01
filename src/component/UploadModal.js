@@ -40,8 +40,8 @@ const UploadModal = forwardRef((props, ref) => {
 
   const messageRef = useRef();
 
-  const toggle = () => {
-    if (toggle) {
+  const toggle = (isCancel) => {
+    if (isCancel) {
       // eslint-disable-next-line no-use-before-define
       cancelUpload('ALL');
       setIsInitial(true);
@@ -113,7 +113,7 @@ const UploadModal = forwardRef((props, ref) => {
       }
       setChatRoomKey(chatRoomKey);
       setShipmentKey(shipmentKey);
-      toggle();
+      toggle(false);
     },
   }));
 
@@ -144,7 +144,7 @@ const UploadModal = forwardRef((props, ref) => {
               alert(err.message);
             },
             complete: () => {
-              'TO DO LOG';
+              toggle(true);
             },
           });
         },
@@ -158,7 +158,6 @@ const UploadModal = forwardRef((props, ref) => {
       });
     });
     setIsInitial(true);
-    toggle();
     // props.sendMessage(chatRoomKey, shipmentKey, `${message} [ ${fileName} ]`);
   };
 
@@ -176,7 +175,7 @@ const UploadModal = forwardRef((props, ref) => {
         uploadFiles.splice(index, 1);
         setUploadedFiles(uploadFiles);
         if (uploadFiles.length === 0) {
-          toggle();
+          toggle(true);
         }
       }
     }
