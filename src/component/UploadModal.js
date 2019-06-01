@@ -23,6 +23,7 @@ import {
   PutFile,
   GetMetaDataFromStorageRefPath,
   GetURLFromStorageRefPath,
+  GetURLFromStorageRefString,
   DeleteFileFromStorageRefPath,
 } from '../service/storage/managestorage';
 import { EditChatRoomFileLink } from '../service/chat/chat';
@@ -117,6 +118,26 @@ const UploadModal = forwardRef((props, ref) => {
     },
   }));
 
+  const generateFileMessage = () => {
+    const urlObs = [];
+    const msgFiles = [];
+    _.forEach(uploadedFiles, (file) => {
+      urlObs.push(GetURLFromStorageRefString(file.refPath));
+    });
+
+    combineLatest(urlObs).subscribe((urls, text) => {
+      _.forEach(urls, (url, index) => {
+        msgFiles.push({
+          filename: uploadedFiles[index].fileName,
+          type: 'pdf',
+          link: url,
+        });
+      });
+      const msg = JSON.stringify({ msg: text, files: msgFiles });
+      props.sendMessage(chatRoomKey, shipmentKey, msg, true);
+    });
+  };
+
   const confirmUpload = () => {
     _.forEach(uploadedFiles, (file) => {
       GetMetaDataFromStorageRefPath(file.refPath).subscribe({
@@ -157,8 +178,8 @@ const UploadModal = forwardRef((props, ref) => {
         },
       });
     });
+    generateFileMessage();
     setIsInitial(true);
-    // props.sendMessage(chatRoomKey, shipmentKey, `${message} [ ${fileName} ]`);
   };
 
   const cancelUpload = (index) => {

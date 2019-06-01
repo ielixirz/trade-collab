@@ -16,25 +16,22 @@ export const PutFile = (StorageRefPath, File) => {
   return put(RefPath, File);
 };
 
-export const GetTaskProgress = ObserablePut => fromTask(ObserablePut).pipe(
-  map(snapshot => snapshot.bytesTransferred),
-);
+export const GetTaskProgress = ObserablePut => fromTask(ObserablePut).pipe(map(snapshot => snapshot.bytesTransferred));
 
-export const GetPercentage = ObserablePut => percentage(ObserablePut).pipe(
-  map(snapshot => snapshot.progress),
-);
+export const GetPercentage = ObserablePut => percentage(ObserablePut).pipe(map(snapshot => snapshot.progress));
 
-export const GetDownloadURL = ObserablePut => ObserablePut.pipe(
-  map(snapshot => snapshot.downloadURL),
-);
+export const GetDownloadURL = ObserablePut => ObserablePut.pipe(map(snapshot => snapshot.downloadURL));
 
-export const GetTotalFileSize = ObserablePut => ObserablePut.pipe(
-  map(snapshot => snapshot.totalBytes),
-);
+export const GetTotalFileSize = ObserablePut => ObserablePut.pipe(map(snapshot => snapshot.totalBytes));
 
 export const GetStorageRefPathFromURL = Url => storage.refFromURL(Url);
 
 export const GetURLFromStorageRefPath = StorageRefPath => getDownloadURL(StorageRefPath);
+
+export const GetURLFromStorageRefString = (StorageRefPath) => {
+  const RefPath = storage.ref(StorageRefPath);
+  return getDownloadURL(RefPath);
+};
 
 export const GetMetaDataFromStorageRefPath = (StorageRefPath) => {
   const RefPath = storage.ref(StorageRefPath);
