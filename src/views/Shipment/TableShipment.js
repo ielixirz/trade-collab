@@ -17,7 +17,7 @@ import {
   editShipmentRef,
   fetchMoreShipments,
   fetchShipments,
-  updateShipmentRef,
+  updateShipmentRef
 } from '../../actions/shipmentActions';
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
@@ -32,7 +32,7 @@ import {
   PopoverBody,
   InputGroup,
   InputGroupAddon,
-  InputGroupText,
+  InputGroupText
 } from 'reactstrap';
 
 import { NoteShipment } from './NoteShipment';
@@ -43,7 +43,7 @@ import {
   EditShipment,
   UpdateShipmentReference,
   GetShipmentDetail,
-  GetShipmentReferenceList,
+  GetShipmentReferenceList
 } from '../../service/shipment/shipment';
 import { GetShipmentPin } from '../../service/personalize/personalize';
 import { connect } from 'react-redux';
@@ -61,7 +61,7 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning'],
+        status: ['intransit', 'planning']
       },
       {
         ref: 'INVPT',
@@ -70,7 +70,7 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning'],
+        status: ['intransit', 'planning']
       },
       {
         ref: 'INVPT',
@@ -79,7 +79,7 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning'],
+        status: ['intransit', 'planning']
       },
       {
         ref: 'INVPT',
@@ -88,7 +88,7 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning'],
+        status: ['intransit', 'planning']
       },
       {
         ref: 'INVPT',
@@ -97,7 +97,7 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning'],
+        status: ['intransit', 'planning']
       },
       {
         ref: 'INVPT',
@@ -106,58 +106,60 @@ class TableShipment extends React.Component {
         product: 'coconut',
         etd: 'date',
         eta: 'date',
-        status: ['intransit', 'planning'],
-      },
+        status: ['intransit', 'planning']
+      }
     ],
     columns: [
       {
         dataField: 'ref',
-        text: 'Ref:',
+        text: 'Ref:'
       },
       {
         dataField: 'seller',
         text: 'Seller',
-        sort: true,
+        sort: true
       },
       {
         dataField: 'buyer',
         text: 'Buyer',
-        sort: true,
+        sort: true
       },
       {
         dataField: 'product',
-        text: 'Product',
+        text: 'Product'
       },
       {
         dataField: 'etd',
         text: 'ETD',
-        sort: true,
+        sort: true
       },
       {
         dataField: 'eta',
         text: 'ETA',
-        sort: true,
+        sort: true
       },
       {
         dataField: 'status',
-        text: 'Status',
-      },
-    ],
+        text: 'Status'
+      }
+    ]
   };
 
   constructor(props) {
     super(props);
     this.state = {
       pinned: {},
+      isEdit: false,
       input: {
         refs: [],
         newRef: {
           ShipmentReferenceID: '',
           ShipmentReferenceCompanyName: '',
-          ShipmentReferenceCompanyKey: '',
-        },
+          ShipmentReferenceCompanyKey: ''
+        }
       },
-      submiting: '',
+      submiting: {},
+      shipments: []
     };
   }
 
@@ -165,7 +167,7 @@ class TableShipment extends React.Component {
     this.fetchPinned();
   }
 
-  addToPinCollection = (result) => {
+  addToPinCollection = result => {
     const { pinned } = this.state;
     const fetched = result.data();
     const data = { ...fetched, ShipmentID: result.id, PIN: true };
@@ -173,20 +175,20 @@ class TableShipment extends React.Component {
     this.setState({ pinned: collection });
   };
 
-  handleShipmentPinned = (pins) => {
+  handleShipmentPinned = pins => {
     if (pins.length <= 0) {
       this.setState({ pinned: {} });
     } else {
       this.setState({ pinned: {} }, () => {
-        pins.forEach((pinned) => {
+        pins.forEach(pinned => {
           GetShipmentDetail(pinned).subscribe({
             next: this.addToPinCollection,
-            error: (err) => {
+            error: err => {
               console.log(err);
             },
             complete: () => {
               this.forceUpdate();
-            },
+            }
           });
         });
       });
@@ -196,30 +198,30 @@ class TableShipment extends React.Component {
   fetchPinned = () => {
     const { uid } = this.props.user;
     GetShipmentPin(uid).subscribe({
-      next: (res) => {
+      next: res => {
         this.handleShipmentPinned(res);
       },
-      error: (err) => {
+      error: err => {
         console.log(err);
       },
       complete: () => {
         console.log('Updated');
         this.forceUpdate();
-      },
+      }
     });
   };
 
+  editShipment(shipmentKey, data) {}
   renderRefComponent(index, ref, shipmentKey) {
     const {
-      input: { refs },
+      input: { refs }
     } = this.state;
     const user = this.props.user;
-
     const userref = _.get(this.state, `input.refs.${user.uid}`, {
       ShipmentReferenceKey: user.uid,
       ShipmentReferenceID: '',
       ShipmentReferenceCompanyName: '',
-      ShipmentReferenceCompanyKey: '',
+      ShipmentReferenceCompanyKey: ''
     });
 
     let alreadyHave = false;
@@ -240,7 +242,6 @@ class TableShipment extends React.Component {
             {ref.map((ref, refIndex) => {
               const item = _.get(this.props, `refs.${shipmentKey}.${ref.id}`, {});
               if (user.uid === item.ShipmentReferenceCompanyKey) {
-                console.log('true');
                 alreadyHave = true;
               }
               const refItem = item;
@@ -255,11 +256,7 @@ class TableShipment extends React.Component {
                         name={`shipmentRef${refIndex}`}
                         value={refItem.ShipmentReferenceKey}
                       />
-                      Ref #
-                      {refIndex + 1}
-: (
-                      {refItem.ShipmentReferenceCompanyName}
-)
+                      Ref #{refIndex + 1}: ({refItem.ShipmentReferenceCompanyName})
                     </Label>
                   </Col>
                   <Col xs={5}>
@@ -268,18 +265,23 @@ class TableShipment extends React.Component {
                       name={`shipmentRefID${refIndex}`}
                       id={`shipmentRefID${refIndex}`}
                       value={refItem.ShipmentReferenceID}
-                      onChange={(e) => {
+                      onChange={e => {
                         const value = e.target.value;
-                        this.props.editShipmentRef(shipmentKey, item.ShipmentReferenceKey, {
-                          ...item,
+                        // (ShipmentKey, refKey, Data)
+                        this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
+                          ...refItem,
                           ShipmentReferenceID: value,
                           ShipmentReferenceCompanyKey: refItem.ShipmentReferenceCompanyKey,
-                          ShipmentReferenceCompanyName: refItem.ShipmentReferenceCompanyName,
+                          ShipmentReferenceCompanyName: refItem.ShipmentReferenceCompanyName
                         });
                       }}
-                      onKeyPress={(event) => {
+                      onKeyPress={event => {
                         if (event.key === 'Enter') {
-                          UpdateShipmentReference(shipmentKey, item.ShipmentReferenceKey, item);
+                          UpdateShipmentReference(
+                            shipmentKey,
+                            refItem.ShipmentReferenceKey,
+                            refItem
+                          );
                         }
                       }}
                       maxLength={50}
@@ -301,9 +303,7 @@ class TableShipment extends React.Component {
                       name={`shipmentRef${ref.length}`}
                       value
                     />
-                    Ref #
-                    {ref.length + 1}
-: Exporter
+                    Ref #{ref.length + 1}: Exporter
                   </Label>
                 </Col>
                 <Col xs={5}>
@@ -312,7 +312,7 @@ class TableShipment extends React.Component {
                     name={`shipmentRefID${ref.length + 1}`}
                     id={`shipmentRefID${ref.length + 1}`}
                     value={this.state.input.newRef.ShipmentReferenceID}
-                    onChange={(e) => {
+                    onChange={e => {
                       const value = e.target.value;
                       this.setState({
                         input: {
@@ -320,44 +320,49 @@ class TableShipment extends React.Component {
                             ...this.state.input.newRef,
                             ShipmentReferenceID: value,
                             ShipmentReferenceCompanyKey: user.uid,
-                            ShipmentReferenceCompanyName: user.email,
-                          },
-                        },
+                            ShipmentReferenceCompanyName: user.email
+                          }
+                        }
                       });
                     }}
-                    onKeyPress={(event) => {
+                    onKeyPress={event => {
                       if (event.key === 'Enter') {
                         console.log('is Submitting ', this.state.submiting);
 
-                        if (_.isEmpty(this.state.submiting)) {
+                        if (
+                          _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) === false
+                        ) {
+                          this.setState({
+                            submiting: {
+                              ...this.state.submiting,
+                              [shipmentKey]: {
+                                isSubmit: true
+                              }
+                            }
+                          });
                           CreateShipmentReference(shipmentKey, this.state.input.newRef).subscribe({
-                            next: (res) => {
-                              console.log(res.id);
+                            next: res => {
                               this.setState({
-                                submiting: res.id,
+                                submiting: {
+                                  ...this.state.submiting,
+                                  [shipmentKey]: {
+                                    refid: res.id,
+                                    isSubmit: true
+                                  }
+                                }
                               });
-                              const shipment = GetShipmentReferenceList(shipmentKey).subscribe({
-                                next: (res) => {
-                                  const data = _.map(res, ref => ({
-                                    ShipmentReferenceKey: ref.id,
-                                    ...ref.data(),
-                                  }));
-                                  this.props.updateShipmentRef(shipmentKey, data);
-                                  console.log(data);
-                                },
-                              });
-                              _.delay(() => {
-                                shipment.unsubscribe();
-                              }, 3000);
-                            },
+                              this.props.fetchShipments();
+                            }
                           });
                         } else {
-                          console.log('update');
-                          UpdateShipmentReference(
-                            shipmentKey,
-                            this.state.submiting,
-                            this.state.input.newRef,
-                          );
+                          console.log('update', this.state.input.newRef);
+                          if (_.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0) {
+                            UpdateShipmentReference(
+                              shipmentKey,
+                              _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
+                              this.state.input.newRef
+                            );
+                          }
                         }
                       }
                     }}
@@ -381,10 +386,10 @@ class TableShipment extends React.Component {
         <Input
           type="select"
           value={item.ShipmentStatus}
-          onChange={(e) => {
+          onChange={e => {
             const value = e.target.value;
             EditShipment(item.ShipmentID, {
-              ShipmentStatus: value,
+              ShipmentStatus: value
             });
           }}
         >
@@ -447,7 +452,7 @@ class TableShipment extends React.Component {
     }
     const filtered = _.filter(
       this.props.input,
-      shipment => !_.find(this.state.pinned, pin => shipment.ShipmentID === pin.ShipmentID),
+      shipment => !_.find(this.state.pinned, pin => shipment.ShipmentID === pin.ShipmentID)
     );
     const mappedPin = _.map(this.state.pinned, pin => pin);
     const collection = [...mappedPin, ...filtered];
@@ -459,7 +464,7 @@ class TableShipment extends React.Component {
         Ref: this.renderRefComponent(
           index,
           _.get(item, 'ShipmentReferenceList', []),
-          item.ShipmentID,
+          item.ShipmentID
         ),
         Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
         Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
@@ -468,7 +473,7 @@ class TableShipment extends React.Component {
         ETA: new Date(eta.seconds * 1000).toLocaleString(),
         '': this.renderDescription(index, item),
         Status: this.renderStatusComponent(item),
-        uid: _.get(item, 'ShipmentID', ''),
+        uid: item.ShipmentID
       };
     });
     input = createDataTable(input);
@@ -479,7 +484,7 @@ class TableShipment extends React.Component {
       mode: 'checkbox',
       clickToSelect: true,
       hideSelectColumn: true,
-      bgColor: '#F5FBFA',
+      bgColor: '#F5FBFA'
     };
     const pageListRenderer = ({ pages, onPageChange }) => {
       const pageWithoutIndication = pages.filter(p => typeof p.page !== 'string');
@@ -496,7 +501,7 @@ class TableShipment extends React.Component {
     };
     const sizePerPageRenderer = ({ options, currSizePerPage, onSizePerPageChange }) => (
       <div className="btn-group" role="group">
-        {options.map((option) => {
+        {options.map(option => {
           const isSelect = currSizePerPage === `${option.page}`;
           return (
             <button
@@ -513,11 +518,11 @@ class TableShipment extends React.Component {
     );
     const options = {
       pageListRenderer,
-      sizePerPageRenderer,
+      sizePerPageRenderer
     };
-    const MySearch = (props) => {
+    const MySearch = props => {
       let input;
-      const handleClick = (event) => {
+      const handleClick = event => {
         const query = event.target.value;
         props.onSearch(query);
       };
@@ -550,49 +555,64 @@ class TableShipment extends React.Component {
     };
     const rowEvents = {
       onClick: (e, row, rowIndex) => {
-        console.log('targetrow', e.target.tagName);
-
         if (
-          e.target.tagName !== 'SELECT'
-          && e.target.tagName !== 'I'
-          && e.target.tagName !== 'DIV'
-          && e.target.tagName !== 'INPUT'
-          && e.target.tagName !== 'P'
+          e.target.tagName !== 'SELECT' &&
+          e.target.tagName !== 'I' &&
+          e.target.tagName !== 'DIV' &&
+          e.target.tagName !== 'INPUT' &&
+          e.target.tagName !== 'P'
         ) {
           window.location.href = `#/chat/${row.uid}`;
         }
-        this.setState({
-          submiting: '',
-        });
-      },
+      }
     };
     return (
       <ToolkitProvider keyField="id" data={data} columns={columns} search>
         {props => (
           <div>
             <Row>
-              <Col xs="3" className="shipment-search-bar">
+              <Col xs="2">
                 <SearchBar
                   {...props.searchProps}
                   placeholder="&#xF002; Typing"
                   id="search"
-                  style={{ width: '100%', height: 38 }}
+                  style={{ width: 250, height: 38 }}
                 />
               </Col>
-              <Col xs="3">
+              <Col xs="2">
                 <MySearch {...props.searchProps} />
               </Col>
-              <Col xs="5" />
-              <Col xs="1" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
-                <Button style={{ backgroundColor: 'white', marginTop: 2, marginRight: 10 }}>
-                  <i className="icons cui-pencil" style={{ color: 'black' }} />
-                  <span style={{ fontWeight: 'bold', color: '#707070' }}>Edit</span>
-                </Button>
+              <Col xs="6" />
+              <Col xs="2" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
+                {this.state.isEdit ? (
+                  <Button
+                    style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 10 }}
+                    onClick={() => {
+                      this.setState({
+                        isEdit: false
+                      });
+                    }}
+                  >
+                    <span style={{ fontWeight: 'bold', color: 'white' }}>Save</span>
+                  </Button>
+                ) : (
+                  <Button
+                    style={{ backgroundColor: 'white', marginTop: 2, marginRight: 10 }}
+                    onClick={() => {
+                      this.setState({
+                        isEdit: true
+                      });
+                    }}
+                  >
+                    <i className="icons cui-pencil" style={{ color: 'black' }} />
+                    <span style={{ fontWeight: 'bold', color: '#707070' }}>Edit</span>
+                  </Button>
+                )}
               </Col>
             </Row>
             <div
               className="table"
-              onScroll={(e) => {
+              onScroll={e => {
                 const obj = e.target;
                 const isTrigger = obj.scrollTop === obj.scrollHeight - obj.offsetHeight;
                 if (isTrigger) {
@@ -619,7 +639,7 @@ class TableShipment extends React.Component {
 
 const mapStateToProps = state => ({
   ...state.authReducer,
-  refs: state.shipmentReducer.ShipmentRefs,
+  refs: state.shipmentReducer.ShipmentRefs
 });
 
 export default connect(
@@ -628,6 +648,6 @@ export default connect(
     fetchShipments,
     fetchMoreShipments,
     editShipmentRef,
-    updateShipmentRef,
-  },
+    updateShipmentRef
+  }
 )(TableShipment);

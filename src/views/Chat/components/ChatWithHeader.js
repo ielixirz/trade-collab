@@ -24,8 +24,12 @@ const AVAILABLE_ROLES = {
 
 class ChatWithHeader extends Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
-    const objDiv = document.getElementById('chathistory');
-    objDiv.scrollTop = objDiv.scrollHeight;
+    console.log(prevProps, 'prevProps');
+    console.log(this.props, 'props');
+    if (prevProps.chatMsg.length !== this.props.chatMsg.length) {
+      const objDiv = document.getElementById('chathistory');
+      objDiv.scrollTop = objDiv.scrollHeight;
+    }
   }
 
   UpdateReader(ShipmentKey, ChatRoomKey, sender, data) {

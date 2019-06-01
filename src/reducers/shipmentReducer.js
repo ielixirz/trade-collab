@@ -1,18 +1,18 @@
 import {
   EDIT_SHIPMENT_REF,
-  FETCH_SHIPMENT_LIST,
+  FETCH_SHIPMENT_LIST_DATA,
   FETCH_SHIPMENT_REF_LIST,
   UPDATE_SHIPMENT_REF
 } from '../constants/constants';
 
 const INITIAL_STATE = {
   Shipments: [],
-  ShipmentRefs: []
+  ShipmentRefs: {}
 };
 
 export default function reducer(state = INITIAL_STATE, action) {
   switch (action.type) {
-    case FETCH_SHIPMENT_LIST:
+    case FETCH_SHIPMENT_LIST_DATA:
       return {
         ...state,
         Shipments: action.payload
