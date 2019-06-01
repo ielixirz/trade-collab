@@ -496,24 +496,6 @@ exports.ShipmentAllCount = functions.firestore
     const oldValue = change.before.data();
     const newValue = change.after.data();
 
-    // ShipmentFristJoin (bool)
-    //             ShipmentAllCount (number)
-    //             ShipmentMasterDataCount (number)
-    //             ShipmentFileCount (number)
-    //             ChatRoomCount (object)
-    //                 {
-    //                     ChatRoomKey: ChatRoomCount
-    //                 }
-
-    // if (
-    //   oldValue.ShipmentFristJoin === newValue.ShipmentFristJoin &&
-    //   oldValue.ShipmentAllCount === newValue.ShipmentAllCount &&
-    //   oldValue.ShipmentMasterDataCount === newValue.ShipmentMasterDataCount &&
-    //   oldValue.ShipmentFileCount === newValue.ShipmentFileCount &&
-    //   oldValue.ChatRoomCount === newValue.ChatRoomCount
-    // )
-    //   return null;
-
     if (newValue) {
       let SumShipmentAllCount = 0;
       let SunChatCount = 0;
