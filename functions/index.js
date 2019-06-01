@@ -377,6 +377,15 @@ exports.ManageShipmentMember = functions.firestore
 
     const UserKey = newValue.ChatRoomMemberUserKey;
 
+    const GetUserProfileList = await admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(UserKey)
+      .collection('Profile')
+      .get();
+
+    const ProfileKeyList = GetUserProfileList.docs.map(ProfileItem => ProfileItem.id);
+
     // ChatRoomMemberList
 
     if (!oldValue && newValue) {
@@ -392,7 +401,10 @@ exports.ManageShipmentMember = functions.firestore
         );
     }
 
+    const DeleteNotiCountServiceList = [];
+
     if (oldValue && !newValue) {
+      // Delete ChatRoomMemberKey from ChatRoomMemberList
       await admin
         .firestore()
         .collection('Shipment')
@@ -403,6 +415,23 @@ exports.ManageShipmentMember = functions.firestore
           { ChatRoomMemberList: admin.firestore.FieldValue.arrayRemove(UserKey) },
           { merge: true }
         );
+
+      // Delete Noti-Count
+
+      ProfileKeyList.forEach(async Item => {
+        const DeletePayload = {};
+        DeletePayload[context.params.ChatRoomKey] = admin.firestore.FieldValue.delete();
+
+        const DeleteNotiCount = await admin
+          .firestore()
+          .collection('UserPersonalize')
+          .doc(Item)
+          .collection('ShipmentNotificationCount')
+          .doc(context.params.ShipmentKey)
+          .update(DeletePayload);
+
+        DeleteNotiCountServiceList.push(DeleteNotiCount);
+      });
     }
 
     // End ChatRoomMemberList
@@ -412,15 +441,6 @@ exports.ManageShipmentMember = functions.firestore
     const UserPersonalizeProfileActionList = [];
 
     if (!oldValue && newValue) {
-      const GetUserProfileList = await admin
-        .firestore()
-        .collection('UserInfo')
-        .doc(UserKey)
-        .collection('Profile')
-        .get();
-
-      const ProfileKeyList = GetUserProfileList.docs.map(ProfileItem => ProfileItem.id);
-
       ProfileKeyList.forEach(async Item => {
         const TriggerFirstJoin = admin
           .firestore()
@@ -518,7 +538,11 @@ exports.ManageShipmentMember = functions.firestore
           ShipmentMemberList: admin.firestore.FieldValue.arrayRemove(ShipmentMemberUserKey)
         });
 
-      return Promise.all([DeleteShipmentMember, DeleteShipmentMemberList]);
+      return Promise.all([
+        DeleteShipmentMember,
+        DeleteShipmentMemberList,
+        DeleteNotiCountServiceList
+      ]);
     }
   });
 
