@@ -644,10 +644,13 @@ exports.CopyMasterDataETAETD = functions.firestore
           .firestore()
           .collection('Shipment')
           .doc(context.params.ShipmentKey)
-          .set({
-            ShipperETDDate: newValue.ShipperETDDate,
-            ConsigneeETAPortDate: newValue.ConsigneeETAPortDate
-          });
+          .set(
+            {
+              ShipperETDDate: newValue.ShipperETDDate,
+              ConsigneeETAPortDate: newValue.ConsigneeETAPortDate
+            },
+            { merge: true }
+          );
       }
     }
   });
