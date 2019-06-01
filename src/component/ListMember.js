@@ -32,9 +32,7 @@ export default class ListMember extends React.Component {
                   />
                 </span>
 
-                <span style={{ marginLeft: 40, fontSize: 12 }}>
-                  <a href={'/#'}>{email}</a>
-                </span>
+                <span style={{ marginLeft: 40, fontSize: 12 }}>{email}</span>
               </Col>
               <Col xs="6" sm="3">
                 {role.map(item => {
