@@ -247,7 +247,7 @@ class Chat extends Component {
     const {
       match: { params }
     } = this.props;
-    this.props.getChatRoomList(params.shipmentkey); // MOCK SHIPMENT KEY
+    this.props.getChatRoomList(params.shipmentkey, this.props.user.uid); // MOCK SHIPMENT KEY
     const chats = _.filter(this.props.ChatReducer.chatrooms, item => {
       if (item.ShipmentKey === 'custom') return true;
       return item.ShipmentKey === params.shipmentkey;
