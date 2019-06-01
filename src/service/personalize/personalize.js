@@ -49,14 +49,14 @@ export const ClearUnReadChatMessage = (ProfileKey, ShipmentKey, ChatRoomKey) => 
   );
 };
 
-export const DecreaseShipmentCount = (ProfileKey, ShipmentKey, DecreaseNumber) => from(
-  UserPersonalizeCountRefPath(ProfileKey, ShipmentKey).set(
-    {
-      ShipmentAllCount: firebase.firestore.FieldValue.increment(DecreaseNumber * -1),
-    },
-    { merge: true },
-  ),
-);
+// export const DecreaseShipmentCount = (ProfileKey, ShipmentKey, DecreaseNumber) => from(
+//   UserPersonalizeCountRefPath(ProfileKey, ShipmentKey).set(
+//     {
+//       ShipmentAllCount: firebase.firestore.FieldValue.increment(DecreaseNumber * -1),
+//     },
+//     { merge: true },
+//   ),
+// );
 
 export const ShipmentFirstJoinTrigger = (ProfileKey, ShipmentKey) => from(
   UserPersonalizeCountRefPath(ProfileKey, ShipmentKey).set(
@@ -65,4 +65,8 @@ export const ShipmentFirstJoinTrigger = (ProfileKey, ShipmentKey) => from(
     },
     { merge: true },
   ),
+);
+
+export const GetShipmentTotalCount = ProfileKey => doc(UserPersonalizeRefPath(ProfileKey)).pipe(
+  map(ProfilePersonalize => ProfilePersonalize.data().ShipmentTotalCount),
 );
