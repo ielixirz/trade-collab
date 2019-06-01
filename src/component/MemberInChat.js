@@ -64,7 +64,7 @@ class MemberInChat extends Component {
         )}
         <Collapse isOpen={this.state.collapse}>
           {member.map(item => {
-            return <ListMember item={item} />;
+            return <ListMember item={item} {...this.props} />;
           })}
         </Collapse>
       </div>

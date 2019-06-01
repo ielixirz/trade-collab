@@ -102,8 +102,9 @@ class ChatWithHeader extends Component {
     }
   }
 
-  renderAssignCompany(ChatRoomType, hasInvite = false) {
-    const { companies } = this.props;
+  renderAssignCompany() {
+    const { companies, ChatRoomData, user, ShipmentData } = this.props;
+    console.log(ShipmentData);
 
     let options = [];
     options = _.map(companies, item => ({
@@ -111,68 +112,68 @@ class ChatWithHeader extends Component {
       label: item.CompanyName
     }));
 
-    if (hasInvite) {
-      return (
-        <div
-          style={{
-            backgroundColor: 'rgba(242, 175, 41, 0.3)',
-            height: 'auto',
-            padding: '10px',
-            borderRadius: '5px'
-          }}
-        >
-          <p
-            style={{
-              fontWeight: 700,
-              color: '#000000'
-            }}
-          >
-            You have been invited you as {ChatRoomType} for this shipment.
-          </p>
-          <p>Choose the company you want to use to handle this shipment</p>
-
-          <div>
-            <Select
-              onChange={e => {
-                this.handleAssignCompany(e, ChatRoomType);
-              }}
-              name="company"
-              options={options}
-            />
-          </div>
-        </div>
-      );
-    }
-    return (
-      <div
-        style={{
-          backgroundColor: 'rgba(242, 175, 41, 0.3)',
-          height: 'auto',
-          padding: '10px',
-          borderRadius: '5px'
-        }}
-      >
-        <p
-          style={{
-            fontWeight: 700,
-            color: '#000000'
-          }}
-        >
-          You have assigned your self as an {ChatRoomType} for this shipment
-        </p>
-        <p>Select a company, to inform your team about this shipment</p>
-
-        <div>
-          <Select
-            onChange={e => {
-              this.handleAssignCompany(e, ChatRoomType);
-            }}
-            name="company"
-            options={options}
-          />
-        </div>
-      </div>
-    );
+    // if (hasInvite) {
+    //   return (
+    //     <div
+    //       style={{
+    //         backgroundColor: 'rgba(242, 175, 41, 0.3)',
+    //         height: 'auto',
+    //         padding: '10px',
+    //         borderRadius: '5px'
+    //       }}
+    //     >
+    //       <p
+    //         style={{
+    //           fontWeight: 700,
+    //           color: '#000000'
+    //         }}
+    //       >
+    //         You have been invited you as {ChatRoomType} for this shipment.
+    //       </p>
+    //       <p>Choose the company you want to use to handle this shipment</p>
+    //
+    //       <div>
+    //         <Select
+    //           onChange={e => {
+    //             this.handleAssignCompany(e, ChatRoomType);
+    //           }}
+    //           name="company"
+    //           options={options}
+    //         />
+    //       </div>
+    //     </div>
+    //   );
+    // }
+    // return (
+    //   <div
+    //     style={{
+    //       backgroundColor: 'rgba(242, 175, 41, 0.3)',
+    //       height: 'auto',
+    //       padding: '10px',
+    //       borderRadius: '5px'
+    //     }}
+    //   >
+    //     <p
+    //       style={{
+    //         fontWeight: 700,
+    //         color: '#000000'
+    //       }}
+    //     >
+    //       You have assigned your self as an {ChatRoomType} for this shipment
+    //     </p>
+    //     <p>Select a company, to inform your team about this shipment</p>
+    //
+    //     <div>
+    //       <Select
+    //         onChange={e => {
+    //           this.handleAssignCompany(e, ChatRoomType);
+    //         }}
+    //         name="company"
+    //         options={options}
+    //       />
+    //     </div>
+    //   </div>
+    // );
   }
 
   render() {
@@ -221,7 +222,7 @@ class ChatWithHeader extends Component {
               member={member}
             />
             <Button className="btn-chat-label">|</Button>
-            <MemberModal count={member.length} list={member} />
+            <MemberModal {...this.props} count={member.length} list={member} />
 
             <Button className="btn-chat-label">|</Button>
             <Button className="btn-chat-label">

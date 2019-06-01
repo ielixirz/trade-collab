@@ -274,6 +274,7 @@ class Chat extends Component {
     });
     GetShipmentDetail(params.shipmentkey).subscribe({
       next: res => {
+        console.log(res.data());
         this.setState({
           shipments: {
             ...res.data()
