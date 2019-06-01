@@ -23,21 +23,33 @@ import { CreateCompanyMultipleInvitation } from '../service/join/invite';
 const mockRoleList = [
   {
     value: {
-      role: 'Admin',
+      role: 'Owner',
     },
-    label: 'Admin',
+    label: 'Owner',
   },
   {
     value: {
-      role: 'Manager',
+      role: 'Executive',
     },
-    label: 'Manager',
+    label: 'Executive',
+  },
+  {
+    value: {
+      role: 'Senior',
+    },
+    label: 'Senior',
   },
   {
     value: {
       role: 'Staff',
     },
     label: 'Staff',
+  },
+  {
+    value: {
+      role: 'Basic',
+    },
+    label: 'Basic',
   },
 ];
 
