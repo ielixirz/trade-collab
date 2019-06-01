@@ -631,3 +631,23 @@ exports.ShipmentAllCount = functions.firestore
         .set({ ShipmentTotalCount: Payload }, { merge: true });
     }
   });
+
+exports.CopyMasterDataETAETD = functions.firestore
+  .document('Shipment/{ShipmentKey}/ShipmentShareData/{ShipmentShareDataKey}')
+  .onWrite(async (change, context) => {
+    const oldValue = change.before.data();
+    const newValue = change.after.data();
+
+    if (newValue) {
+      if (change.after.id === 'DefaultTemplate') {
+        return admin
+          .firestore()
+          .collection(Shipment)
+          .doc(context.params.ShipmentKey)
+          .set({
+            ShipperETDDate: newValue.ShipperETDDate,
+            ConsigneeETAPortDate: newValue.ConsigneeETAPortDate
+          });
+      }
+    }
+  });
