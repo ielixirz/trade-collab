@@ -1,12 +1,12 @@
-.modal-header {
+.member-invite-modal > .modal-header {
   border-bottom: 0 none;
 }
 
-.modal-footer {
+.member-invite-modal > .modal-footer {
   border-top: 0 none;
 }
 
-.modal-content {
+.member-invite-modal > .modal-content {
   width: 750px;
   margin-left: -150px;
 }

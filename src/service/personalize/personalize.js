@@ -57,3 +57,12 @@ export const DecreaseShipmentCount = (ProfileKey, ShipmentKey, DecreaseNumber) =
     { merge: true },
   ),
 );
+
+export const ShipmentFirstJoinTrigger = (ProfileKey, ShipmentKey) => from(
+  UserPersonalizeCountRefPath(ProfileKey, ShipmentKey).set(
+    {
+      ShipmentFristJoin: false,
+    },
+    { merge: true },
+  ),
+);

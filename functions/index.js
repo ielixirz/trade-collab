@@ -331,6 +331,8 @@ exports.ManageShipmentMember = functions.firestore
 
     // NotiCount First join shipment
 
+    const UserPersonalizeProfileActionList = [];
+
     if (!oldValue && newValue) {
       const UserKey = newValue.ChatRoomMemberUserKey;
 
@@ -343,19 +345,31 @@ exports.ManageShipmentMember = functions.firestore
 
       const ProfileKeyList = GetUserProfileList.docs.map(ProfileItem => ProfileItem.id);
 
-      const UserPersonalizeProfileBatch = admin.firestore().batch();
-
-      ProfileKeyList.forEach(Item => {
+      ProfileKeyList.forEach(async Item => {
         const TriggerFirstJoin = admin
           .firestore()
           .collection('UserPersonalize')
           .doc(Item)
           .collection('ShipmentNotificationCount')
           .doc(context.params.ShipmentKey);
-        UserPersonalizeProfileBatch.set(TriggerFirstJoin, { ShipmentFristJoin: true });
-      });
 
-      UserPersonalizeProfileBatch.commit();
+        const GetFirstJoin = await TriggerFirstJoin.get();
+        let FirstJoinStatus = undefined;
+
+        if (GetFirstJoin.data() !== undefined) {
+          FirstJoinStatus = GetFirstJoin.data().ShipmentFristJoin;
+        }
+
+        console.log(FirstJoinStatus);
+
+        if (!GetFirstJoin || FirstJoinStatus === undefined) {
+          const SetFirstJoinAction = await TriggerFirstJoin.set(
+            { ShipmentFristJoin: true },
+            { merge: true }
+          );
+          UserPersonalizeProfileActionList.push(SetFirstJoinAction);
+        }
+      });
     }
 
     // End NotiCount First join shipment
@@ -385,11 +399,13 @@ exports.ManageShipmentMember = functions.firestore
         PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyKey'] =
           SnapshotDataObject['ChatRoomMemberCompanyKey'];
 
-      return admin
+      const AddShipmentMember = await admin
         .firestore()
         .collection('Shipment')
         .doc(context.params.ShipmentKey)
         .set({ ShipmentMember: PayloadObject }, { merge: true });
+
+      return Promise.all([UserPersonalizeProfileActionList, AddShipmentMember]);
     } else if (oldValue && !newValue) {
       PayloadObject[oldValue['ChatRoomMemberUserKey']] = null;
 
@@ -445,4 +461,54 @@ exports.CreateDefaultTemplateCompanyUserAccessibility = functions.firestore
     });
 
     return Promise.all(CompanyUserAccessibilityActionList);
+  });
+
+exports.ShipmentAllCount = functions.firestore
+  .document('UserPersonalize/{ProfileKey}/ShipmentNotificationCount/{ShipmentKey}')
+  .onWrite(async (change, context) => {
+    const oldValue = change.before.data();
+    const newValue = change.after.data();
+
+    // ShipmentFristJoin (bool)
+    //             ShipmentAllCount (number)
+    //             ShipmentMasterDataCount (number)
+    //             ShipmentFileCount (number)
+    //             ChatRoomCount (object)
+    //                 {
+    //                     ChatRoomKey: ChatRoomCount
+    //                 }
+
+    if (
+      oldValue.ShipmentFristJoin === newValue.ShipmentFristJoin &&
+      oldValue.ShipmentAllCount === newValue.ShipmentAllCount &&
+      oldValue.ShipmentMasterDataCount === newValue.ShipmentMasterDataCount &&
+      oldValue.ShipmentFileCount === newValue.ShipmentFileCount &&
+      oldValue.ChatRoomCount === newValue.ChatRoomCount
+    )
+      return null;
+
+    if (oldValue.ChatRoomCount !== newValue.ChatRoomCount) {
+      let SumShipmentAllCount = 0;
+      let SunChatCount = 0;
+      let ShipmentMasterDataCount = 0;
+      let ShipmentFileCount = 0;
+
+      if (newValue.ChatRoomCount) {
+        for (var ChatRoomKey in newValue.ChatRoomCount) {
+          SunChatCount += newValue.ChatRoomCount[ChatRoomKey];
+        }
+      }
+
+      if (newValue.ShipmentMasterDataCount) {
+        ShipmentMasterDataCount = newValue.ShipmentMasterDataCount;
+      }
+
+      if (newValue.ShipmentFileCount) {
+        ShipmentFileCount = newValue.ShipmentFileCount;
+      }
+
+      SumShipmentAllCount = SunChatCount + ShipmentMasterDataCount + ShipmentFileCount;
+
+      return change.after.ref.set({ ShipmentAllCount: SumShipmentAllCount }, { merge: true });
+    }
   });

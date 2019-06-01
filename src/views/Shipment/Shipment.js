@@ -146,8 +146,7 @@ class Shipment extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.activeTab !== this.state.activeTab) {
-      console.log('fetch shipment');
-      this.props.fetchShipments(this.state.typeShipment);
+      this.props.fetchShipments(this.state.typeShipment, this.toggleBlocking);
     }
   }
 
@@ -221,7 +220,7 @@ class Shipment extends Component {
     console.log(this.props.user);
     return (
       <div>
-        <Modal isOpen={this.state.modal} toggle={this.modal} className={this.props.className}>
+        <Modal isOpen={this.state.modal} toggle={this.modal} className="create-shipment">
           <ModalHeader toggle={this.modal}>
             <h2>Create New Shipment</h2>
           </ModalHeader>
@@ -544,7 +543,7 @@ class Shipment extends Component {
             <Col md={3} />
           </Row>
         </Modal>
-        <Nav>
+        <Nav className="shipment-navbar">
           <NavItem>
             <NavLink
               className={classnames({ active: this.state.activeTab === '1' })}
@@ -673,7 +672,6 @@ class Shipment extends Component {
 const styles = {
   title: {
     fontSize: 16,
-    fontWeight: 'bold',
     color: '#707070',
     cursor: 'pointer'
   },
