@@ -478,16 +478,16 @@ exports.ShipmentAllCount = functions.firestore
     //                     ChatRoomKey: ChatRoomCount
     //                 }
 
-    if (
-      oldValue.ShipmentFristJoin === newValue.ShipmentFristJoin &&
-      oldValue.ShipmentAllCount === newValue.ShipmentAllCount &&
-      oldValue.ShipmentMasterDataCount === newValue.ShipmentMasterDataCount &&
-      oldValue.ShipmentFileCount === newValue.ShipmentFileCount &&
-      oldValue.ChatRoomCount === newValue.ChatRoomCount
-    )
-      return null;
+    // if (
+    //   oldValue.ShipmentFristJoin === newValue.ShipmentFristJoin &&
+    //   oldValue.ShipmentAllCount === newValue.ShipmentAllCount &&
+    //   oldValue.ShipmentMasterDataCount === newValue.ShipmentMasterDataCount &&
+    //   oldValue.ShipmentFileCount === newValue.ShipmentFileCount &&
+    //   oldValue.ChatRoomCount === newValue.ChatRoomCount
+    // )
+    //   return null;
 
-    if (oldValue.ChatRoomCount !== newValue.ChatRoomCount) {
+    if (newValue) {
       let SumShipmentAllCount = 0;
       let SunChatCount = 0;
       let ShipmentMasterDataCount = 0;
@@ -509,6 +509,14 @@ exports.ShipmentAllCount = functions.firestore
 
       SumShipmentAllCount = SunChatCount + ShipmentMasterDataCount + ShipmentFileCount;
 
-      return change.after.ref.set({ ShipmentAllCount: SumShipmentAllCount }, { merge: true });
+      const Payload = {};
+
+      Payload[context.params.ShipmentKey] = SumShipmentAllCount;
+
+      return admin
+        .firestore()
+        .collection('UserPersonalize')
+        .doc(context.params.ProfileKey)
+        .set({ ShipmentTotalCount: Payload }, { merge: true });
     }
   });
