@@ -5,7 +5,7 @@
 import React from 'react';
 import { Card, CardBody, Row, Col, Button, UncontrolledCollapse } from 'reactstrap';
 
-const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
+const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
   <Card>
     <CardBody>
       <Row>
@@ -31,7 +31,7 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
             size="lg"
             active
             onClick={() => {
-              createChatRoom(fetchChatMessage, param, 'Inbound Custom Broker');
+              createChatRoom(fetchChatMessage, param, 'Inbound Custom Broker', user);
             }}
           >
             Inbound Custom Broker
@@ -46,7 +46,7 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
             size="lg"
             active
             onClick={() => {
-              createChatRoom(fetchChatMessage, param, 'Inbound Forwarder');
+              createChatRoom(fetchChatMessage, param, 'Inbound Forwarder', user);
             }}
           >
             Inbound Forwarder
@@ -70,7 +70,7 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
             }}
             active
             onClick={() => {
-              createChatRoom(fetchChatMessage, param, 'Importer');
+              createChatRoom(fetchChatMessage, param, 'Importer', user);
             }}
           >
             Importer
@@ -85,7 +85,7 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
             }}
             active
             onClick={() => {
-              createChatRoom(fetchChatMessage, param, 'Outbound Forwarder');
+              createChatRoom(fetchChatMessage, param, 'Outbound Forwarder', user);
             }}
           >
             Outbound Forwarder
@@ -117,7 +117,7 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
                   }}
                   active
                   onClick={() => {
-                    createChatRoom(fetchChatMessage, param, 'Blank Chat');
+                    createChatRoom(fetchChatMessage, param, 'Blank Chat', user);
                   }}
                 >
                   Blank Chat
@@ -135,7 +135,7 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Exporter');
+                  createChatRoom(fetchChatMessage, param, 'Exporter', user);
                 }}
               >
                 Exporter
@@ -148,7 +148,7 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Importer');
+                  createChatRoom(fetchChatMessage, param, 'Importer', user);
                 }}
               >
                 Importer
@@ -165,7 +165,7 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Outbound Forwarder');
+                  createChatRoom(fetchChatMessage, param, 'Outbound Forwarder', user);
                 }}
               >
                 Outbound Forwarder
@@ -178,7 +178,7 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Inbound Forwarder');
+                  createChatRoom(fetchChatMessage, param, 'Inbound Forwarder', user);
                 }}
               >
                 Inbound Forwarder
@@ -195,7 +195,7 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Outbound Custom Broker');
+                  createChatRoom(fetchChatMessage, param, 'Outbound Custom Broker', user);
                 }}
               >
                 Outbound Custom Broker
@@ -208,7 +208,7 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Inbound Custom Broker');
+                  createChatRoom(fetchChatMessage, param, 'Inbound Custom Broker', user);
                 }}
               >
                 Inbound Custom Broker
@@ -224,7 +224,7 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
                   marginRight: '200px'
                 }}
                 onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Outbound Trucking');
+                  createChatRoom(fetchChatMessage, param, 'Outbound Trucking', user);
                 }}
                 active
               >
@@ -238,7 +238,7 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Inbound Trucking');
+                  createChatRoom(fetchChatMessage, param, 'Inbound Trucking', user);
                 }}
               >
                 Inbound Trucking
@@ -255,7 +255,7 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Exporter Warehouse');
+                  createChatRoom(fetchChatMessage, param, 'Exporter Warehouse', user);
                 }}
               >
                 Exporter Warehouse
@@ -268,7 +268,7 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage }) => (
                 }}
                 active
                 onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Importer Warehouse');
+                  createChatRoom(fetchChatMessage, param, 'Importer Warehouse', user);
                 }}
               >
                 Importer Warehouse
