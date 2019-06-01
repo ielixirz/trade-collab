@@ -1,11 +1,11 @@
 import React from 'react';
-import {
-  ListGroup, ListGroupItem, Row, Col,
-} from 'reactstrap';
+import { ListGroup, ListGroupItem, Row, Col } from 'reactstrap';
 import RoleBadges from './RoleBadges.js';
 
 export default class ListMember extends React.Component {
   render() {
+    const { item: member } = this.props;
+    let email = member.ChatRoomMemberEmail;
     return (
       <div>
         <ListGroup flush>
@@ -21,9 +21,8 @@ export default class ListMember extends React.Component {
                     height="30"
                   />
                 </span>
-                <span style={{ marginLeft: 10 }}>Kael the invoker</span>
-                <br />
-                <span style={{ marginLeft: 40, fontSize: 12 }}>invoker@dot2.com</span>
+
+                <span style={{ marginLeft: 40, fontSize: 12 }}>{email}</span>
               </Col>
               <Col xs="6" sm="3">
                 <RoleBadges roleBadges="E" />

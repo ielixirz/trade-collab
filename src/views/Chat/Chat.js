@@ -72,6 +72,9 @@ class Chat extends Component {
       next: result => {
         const data = result.path.split('/');
         fetchChatMessage(data[data.length - 1], shipmentkey, result.id);
+      },
+      complete: result => {
+        console.log(result);
       }
     });
   }

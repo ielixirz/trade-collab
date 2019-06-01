@@ -9,7 +9,7 @@ import {
   ListGroupItem,
   ListGroup,
   Media,
-  Badge,
+  Badge
 } from 'reactstrap';
 import RoleBadges from './RoleBadges.js';
 import ListMember from './ListMember.js';
@@ -18,9 +18,9 @@ const styles = {
   arrow: {
     fontSize: 20,
     marginRight: 5,
-    color: '#707070',
+    color: '#707070'
   },
-  icons: { color: 'black', fontSize: 12 },
+  icons: { color: 'black', fontSize: 12 }
 };
 
 class MemberInChat extends Component {
@@ -35,6 +35,8 @@ class MemberInChat extends Component {
   }
 
   render() {
+    const { member } = this.props;
+    console.log(member);
     return (
       <div>
         <Row>
@@ -52,11 +54,7 @@ class MemberInChat extends Component {
               <span style={{ cursor: 'pointer' }}>{this.props.title}</span>
             </span>
           </Col>
-          <Col xs="6" sm="3">
-            <div style={{ marginLeft: -5 }}>
-              {this.props.individual ? null : <RoleBadges roleBadges="E" />}
-            </div>
-          </Col>
+          <Col xs="6" sm="3" />
           <Col xs="6" sm="2" />
         </Row>
         {this.props.individual ? (
@@ -65,7 +63,10 @@ class MemberInChat extends Component {
           <hr style={{ borderTopWidth: 1, borderStyle: 'solid', borderColor: '#333' }} />
         )}
         <Collapse isOpen={this.state.collapse}>
-          <ListMember />
+          {member.map(item => {
+            return <ListMember item={item} />;
+          })}
+
           <ListMember />
         </Collapse>
       </div>
