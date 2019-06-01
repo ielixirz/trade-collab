@@ -375,11 +375,10 @@ exports.ManageShipmentMember = functions.firestore
     // End NotiCount First join shipment
 
     let PayloadObject = {};
+    const ShipmentMemberUserKey = SnapshotDataObject['ChatRoomMemberUserKey'];
 
     if (newValue) {
       const SnapshotDataObject = newValue;
-
-      const ShipmentMemberUserKey = SnapshotDataObject['ChatRoomMemberUserKey'];
 
       PayloadObject[ShipmentMemberUserKey] = {};
 
@@ -405,15 +404,43 @@ exports.ManageShipmentMember = functions.firestore
         .doc(context.params.ShipmentKey)
         .set({ ShipmentMember: PayloadObject }, { merge: true });
 
-      return Promise.all([UserPersonalizeProfileActionList, AddShipmentMember]);
+      const AddShipmentMemberList = await admin
+        .firestore()
+        .collection()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .set(
+          { ShipmentMemberList: admin.firestore.FieldValue.arrayUnion(ShipmentMemberUserKey) },
+          { merge: true }
+        );
+
+      return Promise.all([
+        UserPersonalizeProfileActionList,
+        AddShipmentMember,
+        AddShipmentMemberList
+      ]);
     } else if (oldValue && !newValue) {
       PayloadObject[oldValue['ChatRoomMemberUserKey']] = null;
 
-      return admin
+      const DeletePayload = {};
+
+      DeletePayload[ShipmentMemberUserKey] = admin.firestore.FieldValue.delete();
+
+      const DeleteShipmentMember = await admin
         .firestore()
         .collection('Shipment')
         .doc(context.params.ShipmentKey)
-        .set({ ShipmentMember: PayloadObject }, { merge: true });
+        .update(DeletePayload);
+
+      const DeleteShipmentMemberList = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .update({
+          ShipmentMemberList: admin.firestore.FieldValue.arrayRemove(ShipmentMemberUserKey)
+        });
+
+      return Promise.all([DeleteShipmentMember, DeleteShipmentMemberList]);
     }
   });
 
