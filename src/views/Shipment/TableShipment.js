@@ -158,7 +158,7 @@ class TableShipment extends React.Component {
           ShipmentReferenceCompanyKey: ''
         }
       },
-      submiting: '',
+      submiting: {},
       shipments: []
     };
   }
@@ -217,7 +217,6 @@ class TableShipment extends React.Component {
       input: { refs }
     } = this.state;
     const user = this.props.user;
-    console.log(this.props);
     const userref = _.get(this.state, `input.refs.${user.uid}`, {
       ShipmentReferenceKey: user.uid,
       ShipmentReferenceID: '',
@@ -243,7 +242,6 @@ class TableShipment extends React.Component {
             {ref.map((ref, refIndex) => {
               const item = _.get(this.props, `refs.${shipmentKey}.${ref.id}`, {});
               if (user.uid === item.ShipmentReferenceCompanyKey) {
-                console.log('true');
                 alreadyHave = true;
               }
               const refItem = item;
@@ -270,7 +268,6 @@ class TableShipment extends React.Component {
                       onChange={e => {
                         const value = e.target.value;
                         // (ShipmentKey, refKey, Data)
-                        console.log(refItem);
                         this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
                           ...refItem,
                           ShipmentReferenceID: value,
@@ -332,35 +329,39 @@ class TableShipment extends React.Component {
                       if (event.key === 'Enter') {
                         console.log('is Submitting ', this.state.submiting);
 
-                        if (_.isEmpty(this.state.submiting)) {
+                        if (
+                          _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) === false
+                        ) {
+                          this.setState({
+                            submiting: {
+                              ...this.state.submiting,
+                              [shipmentKey]: {
+                                isSubmit: true
+                              }
+                            }
+                          });
                           CreateShipmentReference(shipmentKey, this.state.input.newRef).subscribe({
                             next: res => {
-                              console.log(res.id);
                               this.setState({
-                                submiting: res.id
-                              });
-                              const shipment = GetShipmentReferenceList(shipmentKey).subscribe({
-                                next: res => {
-                                  const data = _.map(res, ref => ({
-                                    ShipmentReferenceKey: ref.id,
-                                    ...ref.data()
-                                  }));
-                                  this.props.updateShipmentRef(shipmentKey, data);
-                                  console.log(data);
+                                submiting: {
+                                  ...this.state.submiting,
+                                  [shipmentKey]: {
+                                    refid: res.id,
+                                    isSubmit: true
+                                  }
                                 }
                               });
-                              _.delay(() => {
-                                shipment.unsubscribe();
-                              }, 3000);
                             }
                           });
                         } else {
-                          console.log('update');
-                          UpdateShipmentReference(
-                            shipmentKey,
-                            this.state.submiting,
-                            this.state.input.newRef
-                          );
+                          console.log('update', this.state.input.newRef);
+                          if (_.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0) {
+                            UpdateShipmentReference(
+                              shipmentKey,
+                              _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
+                              this.state.input.newRef
+                            );
+                          }
                         }
                       }
                     }}
@@ -553,8 +554,6 @@ class TableShipment extends React.Component {
     };
     const rowEvents = {
       onClick: (e, row, rowIndex) => {
-        console.log('targetrow', e.target.tagName);
-
         if (
           e.target.tagName !== 'SELECT' &&
           e.target.tagName !== 'I' &&
@@ -564,9 +563,6 @@ class TableShipment extends React.Component {
         ) {
           window.location.href = `#/chat/${row.uid}`;
         }
-        this.setState({
-          submiting: ''
-        });
       }
     };
     return (
