@@ -1,23 +1,23 @@
 import _ from 'lodash';
+import { Observable } from 'rxjs';
 import {
   EDIT_SHIPMENT_REF,
   FETCH_SHIPMENT_LIST_DATA,
   FETCH_SHIPMENT_REF_LIST,
-  UPDATE_SHIPMENT_REF
+  UPDATE_SHIPMENT_REF,
 } from '../constants/constants';
 import {
   CombineShipmentAndShipmentReference,
   CreateShipmentReference,
-  GetShipmentList
+  GetShipmentList,
 } from '../service/shipment/shipment';
-import { Observable } from 'rxjs';
 
 let shipmentsObservable = new Observable().subscribe();
 export const fetchShipments = (typeStatus: any, toggleBlockCallback) => (dispatch, getState) => {
   const {
     authReducer: {
-      user: { uid }
-    }
+      user: { uid },
+    },
   } = getState();
 
   let shipments = [];
@@ -27,33 +27,35 @@ export const fetchShipments = (typeStatus: any, toggleBlockCallback) => (dispatc
     '',
     'asc',
     20,
-    uid
+    uid,
   ).subscribe({
-    next: res => {
+    next: (res) => {
       shipments = _.map(res, item => ({
         uid: item.id,
         ...item,
-        ShipmentReferenceList: _.map(item.ShipmentReferenceList, item => {
-          return {
-            id: item.id,
-            ShipmentReferenceKey: item.id,
-            ...item.data()
-          };
-        })
+        ShipmentReferenceList: _.map(item.ShipmentReferenceList, item => ({
+          id: item.id,
+          ShipmentReferenceKey: item.id,
+          ...item.data(),
+        })),
+        ShipperETDDate: item.ShipperETDDate === undefined ? null : item.ShipperETDDate,
+        ConsigneeETAPortDate: item.ConsigneeETAPortDate === undefined ? null : item.ShipperETDDate,
+        ConsigneeETAWarehouseDate:
+          item.ConsigneeETAWarehouseDate === undefined ? null : item.ShipperETDDate,
       }));
       dispatch({
         type: FETCH_SHIPMENT_LIST_DATA,
-        payload: shipments
+        payload: shipments,
       });
       const allrefs = {};
 
-      _.forEach(shipments, item => {
+      _.forEach(shipments, (item) => {
         const refs = _.get(item, 'ShipmentReferenceList', []);
         const result = [];
         if (refs.length > 0) {
-          _.forEach(refs, ref => {
+          _.forEach(refs, (ref) => {
             result[ref.id] = {
-              ...ref
+              ...ref,
             };
           });
         }
@@ -62,40 +64,40 @@ export const fetchShipments = (typeStatus: any, toggleBlockCallback) => (dispatc
       });
       dispatch({
         type: FETCH_SHIPMENT_REF_LIST,
-        payload: allrefs
+        payload: allrefs,
       });
     },
-    error: err => {
+    error: (err) => {
       console.log(err);
     },
     complete: () => {
       console.log('Hello World');
-    }
+    },
   });
 };
 
-export const editShipmentRef = (ShipmentKey, refKey, Data) => dispatch => {
+export const editShipmentRef = (ShipmentKey, refKey, Data) => (dispatch) => {
   dispatch({
     type: EDIT_SHIPMENT_REF,
     id: ShipmentKey,
-    refKey: refKey,
-    payload: Data
+    refKey,
+    payload: Data,
   });
 };
 
-export const updateShipmentRef = (ShipmentKey, data) => dispatch => {
+export const updateShipmentRef = (ShipmentKey, data) => (dispatch) => {
   dispatch({
     type: UPDATE_SHIPMENT_REF,
     id: ShipmentKey,
-    payload: data
+    payload: data,
   });
 };
 
 export const fetchMoreShipments = (typeStatus: any) => (dispatch, getState) => {
   const {
     authReducer: {
-      user: { uid }
-    }
+      user: { uid },
+    },
   } = getState();
   let shipments = [];
   shipmentsObservable.unsubscribe();
@@ -104,26 +106,26 @@ export const fetchMoreShipments = (typeStatus: any) => (dispatch, getState) => {
     '',
     'asc',
     getState().shipmentReducer.Shipments.length + 10,
-    uid
+    uid,
   ).subscribe({
-    next: res => {
+    next: (res) => {
       shipments = _.map(res, item => ({
         uid: item.id,
-        ...item
+        ...item,
       }));
       dispatch({
         type: FETCH_SHIPMENT_LIST_DATA,
-        payload: shipments
+        payload: shipments,
       });
       const allrefs = {};
 
-      _.forEach(shipments, item => {
+      _.forEach(shipments, (item) => {
         const refs = _.get(item, 'ShipmentReferenceList', []);
         const result = [];
         if (refs.length > 0) {
-          _.forEach(refs, ref => {
+          _.forEach(refs, (ref) => {
             result[ref.id] = {
-              ...ref
+              ...ref,
             };
           });
         }
@@ -132,13 +134,13 @@ export const fetchMoreShipments = (typeStatus: any) => (dispatch, getState) => {
       });
       dispatch({
         type: FETCH_SHIPMENT_REF_LIST,
-        payload: allrefs
+        payload: allrefs,
       });
     },
-    error: err => {
+    error: (err) => {
       console.log(err);
     },
-    complete: () => {}
+    complete: () => {},
   });
 };
 export const test = () => null;
