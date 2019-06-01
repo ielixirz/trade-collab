@@ -375,13 +375,43 @@ exports.ManageShipmentMember = functions.firestore
     const oldValue = change.before.data();
     const newValue = change.after.data();
 
+    const UserKey = newValue.ChatRoomMemberUserKey;
+
+    // ChatRoomMemberList
+
+    if (!oldValue && newValue) {
+      await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ChatRoom')
+        .doc(context.params.ChatRoomKey)
+        .set(
+          { ChatRoomMemberList: admin.firestore.FieldValue.arrayUnion(UserKey) },
+          { merge: true }
+        );
+    }
+
+    if (oldValue && !newValue) {
+      await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ChatRoom')
+        .doc(context.params.ChatRoomKey)
+        .set(
+          { ChatRoomMemberList: admin.firestore.FieldValue.arrayRemove(UserKey) },
+          { merge: true }
+        );
+    }
+
+    // End ChatRoomMemberList
+
     // NotiCount First join shipment
 
     const UserPersonalizeProfileActionList = [];
 
     if (!oldValue && newValue) {
-      const UserKey = newValue.ChatRoomMemberUserKey;
-
       const GetUserProfileList = await admin
         .firestore()
         .collection('UserInfo')
