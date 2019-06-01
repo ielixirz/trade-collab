@@ -170,6 +170,10 @@
 +UserPersonalize
     >ProfileKey
         ShipmentPin (Array<string (ShipmentKey)>)
+        ShipmentTotalCount (object)
+            {
+                ShipmentKey: CountValue (number) 
+            }
         +ShipmentOrdering
             >ShipmentKey
                 ChatRoomOrdering (Array<string (ChatRoomKey)>)
@@ -179,7 +183,6 @@
         +ShipmentNotificationCount
             >ShipmentKey
                 ShipmentFristJoin (bool)
-                ShipmentAllCount (number)
                 ShipmentMasterDataCount (number)
                 ShipmentFileCount (number)
                 ChatRoomCount (object)
