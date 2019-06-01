@@ -19,7 +19,7 @@ export default class ListMember extends React.Component {
     return (
       <div>
         <ListGroup flush>
-          <ListGroupItem disabled tag="a" href="#">
+          <ListGroupItem tag="a" href="#">
             <Row>
               <Col xs="6" sm="7" className="text-left">
                 <span>
