@@ -269,10 +269,12 @@ exports.CreateChatRoomMessageKeyList = functions.firestore
     }
   });
 
-exports.AutoCreateMasterDataDefaultTemplate = functions.firestore
+exports.OnCreateShipment = functions.firestore
   .document('Shipment/{ShipmentKey}')
   .onCreate(async (snapshot, context) => {
     try {
+      // AutoCreateMasterDataDefaultTemplate
+
       const GetMasterDataDefaultTemplate = await admin
         .firestore()
         .collection('MasterData')
@@ -288,6 +290,7 @@ exports.AutoCreateMasterDataDefaultTemplate = functions.firestore
         .collection('ShipmentShareData')
         .doc('DefaultTemplate')
         .set(MasterDataDefaultTemplateData);
+
       const AddShipmentShareList = await admin
         .firestore()
         .collection('Shipment')
@@ -300,7 +303,51 @@ exports.AutoCreateMasterDataDefaultTemplate = functions.firestore
             merge: true
           }
         );
-      return Promise.all([CreateShipmentShareData, AddShipmentShareList]);
+
+      // End AutoCreateMasterDataDefaultTemplate
+
+      // AutoAddOwnerShipmemtMemberWhenCreateShipment
+
+      let PayloadObject = {};
+
+      const ShipmentMemberUserKey = snapshot.data().ShipmentCreatorUserKey;
+      const ShipmetMemberRole = snapshot.data().ShipmentCreatorType;
+
+      const GetUserInfo = await admin
+        .firestore()
+        .collection('UserInfo')
+        .doc(ShipmentMemberUserKey)
+        .get();
+      const UserEmail = GetUserInfo.data().UserInfoEmail;
+
+      PayloadObject[ShipmentMemberUserKey] = {};
+
+      PayloadObject[ShipmentMemberUserKey][ShipmentMemberEmail] = UserEmail;
+      PayloadObject[ShipmentMemberUserKey][ShipmentMemberRole] = ShipmetMemberRole;
+
+      const AddShipmentMember = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .set({ ShipmentMember: PayloadObject }, { merge: true });
+
+      const AddShipmentMemberList = await admin
+        .firestore()
+        .collection()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .set(
+          { ShipmentMemberList: admin.firestore.FieldValue.arrayUnion(ShipmentMemberUserKey) },
+          { merge: true }
+        );
+
+      // End AutoAddOwnerShipmemtMemberWhenCreateShipment
+      return Promise.all([
+        CreateShipmentShareData,
+        AddShipmentShareList,
+        AddShipmentMember,
+        AddShipmentMemberList
+      ]);
     } catch (error) {
       return error;
     }
