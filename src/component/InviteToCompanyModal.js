@@ -257,7 +257,9 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
       inviteDataList.push(inviteData);
     });
     CreateCompanyMultipleInvitation(inviteDataList, company.key).subscribe(() => {});
-    props.clearInput();
+    if (props.clearInput !== undefined) {
+      props.clearInput();
+    }
     setinvitedEmails([]);
     toggle();
   };
