@@ -117,9 +117,9 @@ const SettingPanel = (props, { auth }) => {
 
   const addRole = (roleName, lastIndex) => {
     CreateCompanyUserAccessibility(props.match.params.key, {
-      CompanyUserMatrixRoleIndex: lastIndex + 1,
-      CompanyUserMatrixRoleName: roleName,
-      CompanyUserMatrixRolePermissionCode: '00000000000000',
+      CompanyUserAccessibilityIndex: lastIndex + 1,
+      CompanyUserAccessibilityRoleName: roleName,
+      CompanyUserAccessibilityRolePermissionCode: '00000000000000',
     });
   };
 
@@ -129,7 +129,7 @@ const SettingPanel = (props, { auth }) => {
 
   const updateRole = (editedRoleName, key) => {
     UpdateCompanyUserAccessibility(props.match.params.key, key, {
-      CompanyUserMatrixRoleName: editedRoleName,
+      CompanyUserAccessibilityRoleName: editedRoleName,
     });
   };
 
@@ -139,9 +139,9 @@ const SettingPanel = (props, { auth }) => {
     updateArray[matrixIndex] = updateArray[matrixIndex] === '0' ? '1' : '0';
     const matrix = updateArray.join('');
     UpdateCompanyUserAccessibility(props.match.params.key, key, {
-      CompanyUserMatrixRoleIndex: index,
-      CompanyUserMatrixRoleName: roleName,
-      CompanyUserMatrixRolePermissionCode: matrix,
+      CompanyUserAccessibilityIndex: index,
+      CompanyUserAccessibilityRoleName: roleName,
+      CompanyUserAccessibilityRolePermissionCode: matrix,
     }).subscribe(() => {
       setLastUpdate({
         user: props.auth.uid,
@@ -167,10 +167,10 @@ const SettingPanel = (props, { auth }) => {
 
     _.forEach(fetchResult, (result) => {
       initialCol.push({
-        dataField: result.CompanyUserMatrixRoleName,
+        dataField: result.CompanyUserAccessibilityRoleName,
         text: (
           <RoleButton
-            roleName={result.CompanyUserMatrixRoleName}
+            roleName={result.CompanyUserAccessibilityRoleName}
             deleteHandler={() => deleteRole(result.id)}
             editHandler={editingRole => updateRole(editingRole, result.id)}
           />
@@ -185,21 +185,21 @@ const SettingPanel = (props, { auth }) => {
         headerAlign: 'center',
       });
       let increment = 0;
-      const matrixArray = result.CompanyUserMatrixRolePermissionCode.split('');
+      const matrixArray = result.CompanyUserAccessibilityRolePermissionCode.split('');
       _.forEach(matrixArray, (binary, index) => {
         if (index === 0 || index === 9) {
           increment += 1;
         }
         initialRow[index + increment] = {
           ...initialRow[index + increment],
-          [result.CompanyUserMatrixRoleName]: (
+          [result.CompanyUserAccessibilityRoleName]: (
             <PermissionButton
               binary={binary}
               updatePermission={() => updatePermission(
-                result.CompanyUserMatrixRoleName,
+                result.CompanyUserAccessibilityRoleName,
                 matrixArray,
                 index,
-                result.CompanyUserMatrixRoleIndex,
+                result.CompanyUserAccessibilityIndex,
                 result.id,
               )
               }

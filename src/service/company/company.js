@@ -106,7 +106,7 @@ export const CreateCompanyUserAccessibility = (CompanyKey, Data) => from(Company
 
 // eslint-disable-next-line max-len
 export const GetCompanyUserAccessibility = CompanyKey => collection(
-  CompanyUserAccessibilityRefPath(CompanyKey).orderBy('CompanyUserMatrixRoleIndex', 'asc'),
+  CompanyUserAccessibilityRefPath(CompanyKey).orderBy('CompanyUserAccessibilityIndex', 'asc'),
 );
 
 // eslint-disable-next-line max-len
