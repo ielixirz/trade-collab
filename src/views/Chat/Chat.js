@@ -80,13 +80,12 @@ class Chat extends Component {
         fetchChatMessage(data[data.length - 1], shipmentkey, result.id);
 
         AddChatRoomMember(shipmentkey, result.id, {
-          [user.uid]: {
-            ChatRoomMemberEmail: user.email,
-            ChatRoomMemberImageUrl: '',
-            ChatRoomMemberRole: [room],
-            ChatRoomMemberCompanyName: '',
-            ChatRoomMemberCompanyKey: ''
-          }
+          ChatRoomMemberUserKey: user.uid,
+          ChatRoomMemberEmail: user.email,
+          ChatRoomMemberImageUrl: '',
+          ChatRoomMemberRole: [room],
+          ChatRoomMemberCompanyName: '',
+          ChatRoomMemberCompanyKey: ''
         }).subscribe({
           next: result => {
             console.log(result);
