@@ -333,7 +333,6 @@ exports.OnCreateShipment = functions.firestore
 
       const AddShipmentMemberList = await admin
         .firestore()
-        .collection()
         .collection('Shipment')
         .doc(context.params.ShipmentKey)
         .set(
@@ -453,7 +452,6 @@ exports.ManageShipmentMember = functions.firestore
 
       const AddShipmentMemberList = await admin
         .firestore()
-        .collection()
         .collection('Shipment')
         .doc(context.params.ShipmentKey)
         .set(
