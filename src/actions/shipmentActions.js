@@ -39,9 +39,10 @@ export const fetchShipments = (typeStatus: any, toggleBlockCallback) => (dispatc
           ...item.data(),
         })),
         ShipperETDDate: item.ShipperETDDate === undefined ? null : item.ShipperETDDate,
-        ConsigneeETAPortDate: item.ConsigneeETAPortDate === undefined ? null : item.ShipperETDDate,
+        ConsigneeETAPortDate:
+          item.ConsigneeETAPortDate === undefined ? null : item.ConsigneeETAPortDate,
         ConsigneeETAWarehouseDate:
-          item.ConsigneeETAWarehouseDate === undefined ? null : item.ShipperETDDate,
+          item.ConsigneeETAWarehouseDate === undefined ? null : item.ConsigneeETAWarehouseDate,
       }));
       dispatch({
         type: FETCH_SHIPMENT_LIST_DATA,

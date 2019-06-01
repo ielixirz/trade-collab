@@ -634,6 +634,7 @@ class Shipment extends Component {
                   <TableShipment
                     input={this.props.shipments}
                     typeShipment={this.state.typeShipment}
+                    toggleBlock={this.toggleBlocking}
                   />
                 </BlockUi>
               </Col>
