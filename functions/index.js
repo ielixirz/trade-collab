@@ -642,7 +642,7 @@ exports.CopyMasterDataETAETD = functions.firestore
       if (change.after.id === 'DefaultTemplate') {
         return admin
           .firestore()
-          .collection(Shipment)
+          .collection('Shipment')
           .doc(context.params.ShipmentKey)
           .set({
             ShipperETDDate: newValue.ShipperETDDate,
