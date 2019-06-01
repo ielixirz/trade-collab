@@ -322,8 +322,8 @@ exports.OnCreateShipment = functions.firestore
 
       PayloadObject[ShipmentMemberUserKey] = {};
 
-      PayloadObject[ShipmentMemberUserKey][ShipmentMemberEmail] = UserEmail;
-      PayloadObject[ShipmentMemberUserKey][ShipmentMemberRole] = ShipmetMemberRole;
+      PayloadObject[ShipmentMemberUserKey]['ShipmentMemberEmail'] = UserEmail;
+      PayloadObject[ShipmentMemberUserKey]['ShipmentMemberRole'] = ShipmetMemberRole;
 
       const AddShipmentMember = await admin
         .firestore()
