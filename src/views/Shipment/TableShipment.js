@@ -463,7 +463,6 @@ class TableShipment extends React.Component {
     );
     const mappedPin = _.map(this.state.pinned, pin => pin);
     const collection = [...mappedPin, ...filtered];
-    console.log(collection);
     input = _.map(collection, (item, index) => {
       const etd = _.get(item, 'ShipperETDDate', 0);
       const eta = _.get(item, 'ConsigneeETAPortDate', 0);
