@@ -55,21 +55,33 @@ const mockCompany = {
 const mockRoleList = [
   {
     value: {
-      role: 'Admin',
+      role: 'Owner',
     },
-    label: 'Admin',
+    label: 'Owner',
   },
   {
     value: {
-      role: 'Manager',
+      role: 'Executive',
     },
-    label: 'Manager',
+    label: 'Executive',
+  },
+  {
+    value: {
+      role: 'Senior',
+    },
+    label: 'Senior',
   },
   {
     value: {
       role: 'Staff',
     },
     label: 'Staff',
+  },
+  {
+    value: {
+      role: 'Basic',
+    },
+    label: 'Basic',
   },
 ];
 
@@ -524,7 +536,7 @@ const CompanyPanel = (props) => {
                       if (invitedEmails.length > 0) {
                         inviteToCompanyModalRef.current.triggerInviteToCompany(invitedEmails, {
                           companyName: company.CompanyName,
-                          key: 'props.match.params.key',
+                          key: props.match.params.key,
                         });
                       }
                     }}
