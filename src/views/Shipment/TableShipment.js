@@ -20,6 +20,7 @@ import {
   updateShipmentRef,
 } from '../../actions/shipmentActions';
 
+import DatePicker from 'react-date-picker';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import {
   Row,
@@ -466,6 +467,37 @@ class TableShipment extends React.Component {
     input = _.map(collection, (item, index) => {
       const etd = _.get(item, 'ShipperETDDate', 0);
       const eta = _.get(item, 'ConsigneeETAPortDate', 0);
+
+      if (this.state.isEdit) {
+        return {
+          alert: this.renderAlertComponent(index, item),
+          Ref: this.renderRefComponent(
+            index,
+            _.get(item, 'ShipmentReferenceList', []),
+            item.ShipmentID,
+          ),
+          Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
+          Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
+          Product: _.get(item, 'ShipmentProductName', ''),
+          ETD: (
+            <DatePicker
+              id="eta-port"
+              onChange={null} // TODO Bind onchange
+              value={etd === null ? null : new Date(etd.seconds * 1000)}
+            />
+          ),
+          ETA: (
+            <DatePicker
+              id="eta-port"
+              onChange={null} // TODO Bind onchange
+              value={eta === null ? null : new Date(eta.seconds * 1000)}
+            />
+          ),
+          '': this.renderDescription(index, item),
+          Status: this.renderStatusComponent(item),
+          uid: item.ShipmentID,
+        };
+      }
       return {
         alert: this.renderAlertComponent(index, item),
         Ref: this.renderRefComponent(
