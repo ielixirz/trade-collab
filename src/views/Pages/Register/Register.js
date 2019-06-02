@@ -117,7 +117,7 @@ class Register extends Component {
 
                     <div className="col-sm-12 text-center">
                       <button
-                        className="button button1"
+                        className="regis-button button1"
                         type="submit"
                         onClick={this.saveAndContinue}
                       >
