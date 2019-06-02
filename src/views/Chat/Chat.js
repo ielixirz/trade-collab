@@ -77,7 +77,7 @@ class Chat extends Component {
       next: result => {
         const data = result.path.split('/');
         let chatkey = result.id;
-        AddChatRoomMember(shipmentkey, result.id, {
+        let ChatRoomMember = AddChatRoomMember(shipmentkey, result.id, {
           ChatRoomMemberUserKey: user.uid,
           ChatRoomMemberEmail: user.email,
           ChatRoomMemberImageUrl: '',
@@ -87,6 +87,7 @@ class Chat extends Component {
         }).subscribe({
           next: result => {
             fetchChatMessage(data[data.length - 1], shipmentkey, chatkey);
+            ChatRoomMember.unsubscribe();
           }
         });
       },
