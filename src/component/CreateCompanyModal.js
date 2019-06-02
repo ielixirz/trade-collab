@@ -52,7 +52,7 @@ const CreateCompanyModal = forwardRef((props, ref) => {
     const userData = {
       UserMemberEmail: props.userEmail,
       UserMemberPosition: '-',
-      CompanyUserAccessibilityRoleName: 'Owner',
+      UserMemberRoleName: 'Owner',
       CompanyUserAccessibilityRolePermissionCode: '11111111111111',
       UserMemberCompanyStandingStatus: 'Active',
       UserMemberJoinedTimestamp: new Date(),
