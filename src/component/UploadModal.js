@@ -169,7 +169,7 @@ const UploadModal = forwardRef((props, ref) => {
               alert(err.message);
             },
             complete: () => {
-              toggle(true);
+              toggle(false);
             },
           });
         },
