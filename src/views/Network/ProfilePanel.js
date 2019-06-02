@@ -21,7 +21,8 @@ import RequestToJoinModal from '../../component/RequestToJoinModal';
 import { profileColumns } from '../../constants/network';
 
 import { UpdateProfile } from '../../service/user/profile';
-import { GetUserCompany } from '../../service/user/user';
+import { GetUserCompany, LeaveCompany } from '../../service/user/user';
+import { RemoveFromCompany } from '../../service/company/company';
 import { GetUserRequest } from '../../service/join/request';
 import {
   GetUserInvitation,
@@ -107,6 +108,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
   const [companyList, setCompanyList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [acceptedInvite, setAcceptedInvite] = useState(undefined);
+  const [leaving, setLeaving] = useState(undefined);
   const [newCompany, setNewCompany] = useState(undefined);
   const [blocking, setBlocking] = useState(true);
 
@@ -117,6 +119,14 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
 
   const toggleBlocking = () => {
     setBlocking(!blocking);
+  };
+
+  const leaveCompany = (e, companyKey, memberKey, index) => {
+    e.stopPropagation();
+    LeaveCompany(companyKey, memberKey);
+    RemoveFromCompany(companyKey, memberKey);
+    // eslint-disable-next-line no-use-before-define
+    setLeaving({ index, isLeave: true });
   };
 
   const fetchCompany = (userKey) => {
@@ -142,16 +152,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
           position: '-',
           role: '-',
           status: renderStatus(item.CompanyRequestStatus),
-          button: (
-            <ThreeDotDropdown
-              options={[
-                {
-                  text: 'Leave',
-                  function: null,
-                },
-              ]}
-            />
-          ),
+          button: '',
         });
       });
 
@@ -175,22 +176,13 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
             role: item.CompanyInvitationRole,
             // eslint-disable-next-line no-use-before-define
             status: renderStatus(status, inviteData, responseToInvite),
-            button: (
-              <ThreeDotDropdown
-                options={[
-                  {
-                    text: 'Leave',
-                    function: null,
-                  },
-                ]}
-              />
-            ),
+            button: '',
           });
           invitedIndex += 1;
         }
       });
 
-      joins.forEach((item) => {
+      joins.forEach((item, index) => {
         joinedList.push({
           key: item.CompanyKey,
           company: item.CompanyName,
@@ -203,7 +195,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
               options={[
                 {
                   text: 'Leave',
-                  function: null,
+                  function: e => leaveCompany(e, item.CompanyKey, userKey, index),
                 },
               ]}
             />
@@ -231,29 +223,31 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
     });
   };
 
-  const updateCompanyList = (invite) => {
+  const updateCompanyList = (update) => {
     const currentList = companyList;
-    if (invite.status === 'Approve') {
-      currentList[1].splice(invite.data.index, 1);
+    if (update.isLeave) {
+      currentList[0].splice(update.index, 1);
+    } else if (update.status === 'Approve') {
+      currentList[1].splice(update.data.index, 1);
       currentList[0].push({
-        key: invite.data.cKey,
-        company: invite.data.cName,
-        position: invite.data.position,
-        role: invite.data.role,
+        key: update.data.cKey,
+        company: update.data.cName,
+        position: update.data.position,
+        role: update.data.role,
         status: renderStatus('Active', undefined, undefined),
         button: (
           <ThreeDotDropdown
             options={[
               {
                 text: 'Leave',
-                function: null,
+                function: e => leaveCompany(e, update.data.cKey, update.data.uKey),
               },
             ]}
           />
         ),
       });
     } else {
-      currentList[1].splice(invite.data.index, 1);
+      currentList[1].splice(update.data.index, 1);
     }
     setCompanyList(currentList);
   };
@@ -262,10 +256,12 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
     setUserProfile(currentProfile);
     if (acceptedInvite) {
       updateCompanyList(acceptedInvite);
+    } else if (leaving) {
+      updateCompanyList(leaving);
     } else {
       fetchCompany(auth.uid);
     }
-  }, [acceptedInvite, newCompany]);
+  }, [acceptedInvite, newCompany, leaving]);
 
   const toggleEdit = () => {
     if (isEdit) {
