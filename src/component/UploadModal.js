@@ -34,6 +34,7 @@ const UploadModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [isConfirming, setConfirming] = useState(false);
   const [isInitial, setIsInitial] = useState(true);
   const [shipmentKey, setShipmentKey] = useState(null);
   const [chatRoomKey, setChatRoomKey] = useState(null);
@@ -42,6 +43,7 @@ const UploadModal = forwardRef((props, ref) => {
   const messageRef = useRef();
 
   const toggle = (isCancel) => {
+    setConfirming(false);
     if (isCancel) {
       // eslint-disable-next-line no-use-before-define
       cancelUpload('ALL');
@@ -139,6 +141,8 @@ const UploadModal = forwardRef((props, ref) => {
   };
 
   const confirmUpload = () => {
+    setConfirming(true);
+    setIsUploading(true);
     _.forEach(uploadedFiles, (file) => {
       GetMetaDataFromStorageRefPath(file.refPath).subscribe({
         next: (metaData) => {
@@ -263,6 +267,7 @@ Upload Files (
           color="primary"
           onClick={confirmUpload}
           style={{ backgroundColor: '#16a085', margin: 'auto', width: '300px' }}
+          disabled={isConfirming}
         >
           <b>Send</b>
         </Button>

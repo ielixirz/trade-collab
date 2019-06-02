@@ -656,21 +656,6 @@ exports.CopyMasterDataETAETD = functions.firestore
     }
   });
 
-// +UserNotification
-//   >UserNotificationKey
-//       UserNotificationReadStatus (bool)
-//       UserNotificationType (string)
-//       UserNotificationTimestamp (timestamp)
-//       UserNotificationImageURL (string)
-//       UserNotificationFirstname (string)
-//       UserNotificationSurname (string)
-//       UserNotificationUserInfoKey (string)
-//       UserNotificationCompanyName (string)
-//       UserNotificationCompanyKey (string)
-//       UserNotificationRedirectPage (string)
-//       UserNotificationShipmentKey (string)
-//       UserNotificationChatroonKey (string)
-
 exports.NotiBellInviteToJoinCompany = functions.firestore
   .document('UserInfo/{UserKey}/UserInvitation/{UserInvitationKey}')
   .onCreate(async (snapshot, context) => {
@@ -724,4 +709,81 @@ exports.NotiBellRequestToJoinCompany = functions.firestore
     });
 
     return Promise.all(RequestToJoinServiceList);
+  });
+
+exports.NotiBellAcceptedIntoCompany = functions.firestore
+  .document('UserInfo/{UserKey}/UserInvitation/{UserInvitationKey}')
+  .onUpdate(async (change, context) => {
+    const oldValue = change.before.data();
+    const newValue = change.after.data();
+
+    if (
+      newValue.CompanyInvitationStatus === 'Approve' &&
+      oldValue.CompanyInvitationStatus !== 'Approve'
+    ) {
+      const CompanyKey = newValue.CompanyInvitationCompanyKey;
+
+      const GetCompanyMember = await admin
+        .firestore()
+        .collection('Company')
+        .doc(CompanyKey)
+        .collection('CompanyMember')
+        .get();
+
+      const CompanyMemberKeyList = GetCompanyMember.docs.map(
+        CompanyMemberItem => CompanyMemberItem.id
+      );
+
+      const GetUserInfo = await admin
+        .firestore()
+        .collection('UserInfo')
+        .doc(context.params.UserKey)
+        .get();
+
+      // +UserNotification
+      //   >UserNotificationKey
+      //       UserNotificationReadStatus (bool)
+      //       UserNotificationType (string)
+      //       UserNotificationTimestamp (timestamp)
+      //       UserNotificationImageURL (string)
+      //       UserNotificationFirstname (string)
+      //       UserNotificationSurname (string)
+      //       UserNotificationUserInfoKey (string)
+      //       UserNotificationCompanyName (string)
+      //       UserNotificationCompanyKey (string)
+      //       UserNotificationRedirectPage (string)
+      //       UserNotificationShipmentKey (string)
+      //       UserNotificationChatroonKey (string)
+
+      //           CompanyInvitationReference (reference)
+      //           CompanyInvitationCompanyKey (string)
+      //           CompanyInvitationName (string)
+      //           CompanyInvitationEmail (string)
+      //           CompanyInvitationPosition (string)
+      //           CompanyInvitationRole (string)
+      //           CompanyInvitationTimestamp (timestamp)
+      //           CompanyInvitationStatus (string) ('Reject','Approve','Pending')
+
+      const AcceptedIntoCompanyServiceList = [];
+
+      CompanyMemberKeyList.forEach(async Item => {
+        const RequestToJoinAction = await admin
+          .firestore()
+          .collection('UserInfo')
+          .doc(Item)
+          .collection('UserNotification')
+          .add({
+            UserNotificationReadStatus: false,
+            UserNotificationType: 'AcceptedIntoCompany',
+            UserNotificationTimestamp: admin.firestore.FieldValue.serverTimestamp(),
+            UserNotificationUserInfoKey: context.params.UserKey,
+            UserNotificationUserEmail: GetUserInfo.data().UserInfoEmail,
+            UserNotificationCompanyKey: context.params.CompanyKey
+          });
+
+        AcceptedIntoCompanyServiceList.push(RequestToJoinAction);
+      });
+
+      return Promise.all(AcceptedIntoCompanyServiceList);
+    }
   });

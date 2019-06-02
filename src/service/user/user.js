@@ -13,6 +13,11 @@ const UserCompanyRefPath = UserInfoKey => FirebaseApp.firestore()
   .doc(UserInfoKey)
   .collection('UserCompany');
 
+const UserNotificationRefPath = UserInfoKey => FirebaseApp.firestore()
+  .collection('UserInfo')
+  .doc(UserInfoKey)
+  .collection('UserNotification');
+
 /*
     {
         UserInfoUsername (string)
@@ -78,3 +83,19 @@ export const GetUserCompany = (UserInfoKey) => {
 
 // eslint-disable-next-line max-len
 export const CreateUserCompany = (UserInfoKey, Data) => from(UserCompanyRefPath(UserInfoKey).add(Data));
+
+// eslint-disable-next-line max-len
+export const GetUserNotificationList = UserInfoKey => collection(UserNotificationRefPath(UserInfoKey));
+
+export const SetUserNotificationRead = (UserInfoKey, UserNotificationKey) => from(
+  UserNotificationRefPath(UserInfoKey)
+    .doc(UserNotificationKey)
+    .set(
+      {
+        UserNotificationReadStatus: true,
+      },
+      {
+        merge: true,
+      },
+    ),
+);
