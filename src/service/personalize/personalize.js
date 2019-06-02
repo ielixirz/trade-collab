@@ -70,3 +70,5 @@ export const ShipmentFirstJoinTrigger = (ProfileKey, ShipmentKey) => from(
 export const GetShipmentTotalCount = ProfileKey => doc(UserPersonalizeRefPath(ProfileKey)).pipe(
   map(ProfilePersonalize => ProfilePersonalize.data().ShipmentTotalCount),
 );
+
+export const GetShipmentNotificationCount = (ProfileKey, ShipmentKey) => doc(UserPersonalizeCountRefPath(ProfileKey, ShipmentKey));
