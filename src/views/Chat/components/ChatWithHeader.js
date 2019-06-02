@@ -112,8 +112,8 @@ class ChatWithHeader extends Component {
   }
 
   renderAssignCompany(ChatRoomType, hasInvite = false) {
-    const { companies, ChatRoomData, user, ShipmentData } = this.props;
-    console.log('this.props', ChatRoomData);
+    const { companies, ChatRoomData, user, ShipmentData, ShipmentKey, ChatRoomKey } = this.props;
+    console.log('props', this.props);
 
     let options = [];
     options = _.map(companies, item => ({
@@ -291,6 +291,12 @@ class ChatWithHeader extends Component {
                     Role: role,
                     ChatRoomMemberCompanyName: '',
                     ChatRoomMemberCompanyKey: ''
+                  });
+                  console.log(inviteMember);
+                  CreateChatMultipleInvitation(inviteMember, ShipmentKey, ChatRoomKey).subscribe({
+                    next: res => {
+                      console.log(res);
+                    }
                   });
                 }}
               >
