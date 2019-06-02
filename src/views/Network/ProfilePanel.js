@@ -123,7 +123,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
 
   const leaveCompany = (e, companyKey, memberKey, index) => {
     e.stopPropagation();
-    LeaveCompany(companyKey, memberKey);
+    // LeaveCompany(companyKey, memberKey);
     RemoveFromCompany(companyKey, memberKey);
     // eslint-disable-next-line no-use-before-define
     setLeaving({ index, isLeave: true });
