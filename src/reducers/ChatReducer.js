@@ -38,7 +38,6 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         chatrooms: {
-          ...state.chatrooms,
           ...action.payload
         }
       };

@@ -29,7 +29,8 @@ class ChatWithHeader extends Component {
     super(props);
 
     this.state = {
-      company: ''
+      company: '',
+      email: ''
     };
   }
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -112,7 +113,7 @@ class ChatWithHeader extends Component {
 
   renderAssignCompany(ChatRoomType, hasInvite = false) {
     const { companies, ChatRoomData, user, ShipmentData } = this.props;
-    console.log('ShipmentData', ShipmentData);
+    console.log('this.props', ChatRoomData);
 
     let options = [];
     options = _.map(companies, item => ({
@@ -146,7 +147,7 @@ class ChatWithHeader extends Component {
                 this shipment
               </p>
               <p>Select a company, to inform your team about this shipment</p>
-              asd
+
               <Row>
                 <Col xs={6}>
                   <Select
@@ -241,6 +242,65 @@ class ChatWithHeader extends Component {
           );
         }
       }
+    }
+
+    if (_.size(ChatRoomData.ChatRoomMemberList) < 2) {
+      return (
+        <div
+          style={{
+            backgroundColor: 'rgba(88, 202, 219, 0.3)',
+            height: 'auto',
+            padding: '10px',
+            borderRadius: '5px',
+            zIndex: '100'
+          }}
+        >
+          <p
+            style={{
+              fontWeight: 700,
+              color: '#000000'
+            }}
+          >
+            Input your {ChatRoomType} e-mail address only for this shipment
+          </p>
+
+          <Row>
+            <Col xs={6}>
+              <Input
+                value={this.state.email}
+                placeholder="...input email address"
+                onChange={e => this.setState({ email: e.target.value })}
+              />
+            </Col>
+            <Col xs={2}>
+              <Button
+                className="invite-btn"
+                style={{
+                  marginLeft: '2rem',
+                  marginRight: '1rem',
+                  color: 'white',
+                  backgroundColor: '#16A085'
+                }}
+                onClick={() => {
+                  const inviteMember = [];
+                  const role = [];
+                  role.push(ChatRoomType);
+                  inviteMember.push({
+                    Email: this.state.email,
+                    Image: '',
+                    Role: role,
+                    ChatRoomMemberCompanyName: '',
+                    ChatRoomMemberCompanyKey: ''
+                  });
+                }}
+              >
+                <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
+                Invite
+              </Button>
+            </Col>
+          </Row>
+        </div>
+      );
     }
   }
 
