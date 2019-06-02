@@ -390,11 +390,18 @@ e-mail address only for this shipment
     const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
     let ref = '';
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
-    console.log('ShipmentReferenceList', ship);
-    if (ship.ShipmentReferenceList.length > 0) {
-      ref = ship.ShipmentReferenceList[0];
-      console.log(ref, 'reffff');
+    if (isInvited) {
+      if (ship.ShipmentReferenceList.length > 0) {
+        ref = _.find(
+          ship.ShipmentReferenceList,
+          item => item.ShipmentReferenceCompanyKey === isInvited.ChatRoomMemberCompanyKey,
+        );
+        console.log(ref, 'reffff');
+      }
+    } else {
+      ref = 'No Refferenc                                                                                                                                                                                                                         e';
     }
+
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
         <Row
