@@ -86,3 +86,16 @@ export const CreateUserCompany = (UserInfoKey, Data) => from(UserCompanyRefPath(
 
 // eslint-disable-next-line max-len
 export const GetUserNotificationList = UserInfoKey => collection(UserNotificationRefPath(UserInfoKey));
+
+export const SetUserNotificationRead = (UserInfoKey, UserNotificationKey) => from(
+  UserNotificationRefPath(UserInfoKey)
+    .doc(UserNotificationKey)
+    .set(
+      {
+        UserNotificationReadStatus: true,
+      },
+      {
+        merge: true,
+      },
+    ),
+);
