@@ -171,13 +171,6 @@ class TableShipment extends React.Component {
 
   componentDidMount() {
     this.fetchPinned();
-    GetShipmentTotalCount(this.props.sender.id).subscribe({
-      next: res => {
-        this.setState({
-          notification: res
-        });
-      }
-    });
   }
 
   addToPinCollection = result => {
@@ -468,15 +461,17 @@ class TableShipment extends React.Component {
 
   renderAlertComponent(index, item, shipmentkey) {
     const { uid } = this.props.user;
+    let notifications = _.get(this.props, `notification.${shipmentkey}`, 0);
+
     return (
       <div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           {_.get(item, 'PIN') && item.PIN === true ? (
             <i className="fa fa-map-pin" style={{ marginBottom: 5, opacity: 0.8 }} />
           ) : null}
-          {_.get(this.state, `notification.${shipmentkey}`, 0) > 0 ? (
+          {notifications > 0 ? (
             <Badge color="danger" pill style={{ marginBottom: -15 }}>
-              {_.get(this.state, `notification.${shipmentkey}`, 0)}
+              {notifications}
             </Badge>
           ) : null}
         </div>
@@ -549,7 +544,7 @@ class TableShipment extends React.Component {
         };
       }
       return {
-        alert: this.renderAlertComponent(index, item),
+        alert: this.renderAlertComponent(index, item, item.ShipmentID),
         Ref: this.renderRefComponent(
           index,
           _.get(item, 'ShipmentReferenceList', []),
@@ -741,7 +736,8 @@ const mapStateToProps = state => {
   return {
     ...state.authReducer,
     refs: state.shipmentReducer.ShipmentRefs,
-    sender: sender
+    sender: sender,
+    notification: state.shipmentReducer.notification
   };
 };
 

@@ -4,6 +4,7 @@ import {
   EDIT_SHIPMENT_REF,
   FETCH_SHIPMENT_LIST_DATA,
   FETCH_SHIPMENT_REF_LIST,
+  NOTIFICATIONS,
   UPDATE_SHIPMENT_REF
 } from '../constants/constants';
 import {
@@ -26,6 +27,14 @@ export const fetchShipments = (typeStatus: any, toggleBlockCallback) => (dispatc
     profileReducer.ProfileList,
     item => item.id === profileReducer.ProfileDetail.id
   );
+  GetShipmentTotalCount(sender.id).subscribe({
+    next: res => {
+      dispatch({
+        type: NOTIFICATIONS,
+        payload: res
+      });
+    }
+  });
 
   let shipments = [];
   shipmentsObservable.unsubscribe();
