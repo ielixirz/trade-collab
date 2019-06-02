@@ -683,7 +683,7 @@ exports.NotiBellInviteToJoinCompany = functions.firestore
         UserNotificationType: 'InviteToJoinCompany',
         UserNotificationTimestamp: admin.firestore.FieldValue.serverTimestamp(),
         UserNotificationUserInfoKey: context.params.UserKey,
-        UserNotificationCompanyName: snapshot.data().CompanyInvitationCompanyName,
+        UserNotificationCompanyName: snapshot.data().CompanyInvitationName,
         UserNotificationCompanyKey: snapshot.data().CompanyInvitationCompanyKey
       });
   });
