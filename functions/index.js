@@ -787,3 +787,71 @@ exports.NotiBellAcceptedIntoCompany = functions.firestore
       return Promise.all(AcceptedIntoCompanyServiceList);
     }
   });
+
+exports.NotiBellChangeOfRoleWithInCompany = functions.firestore
+  .document('Company/{CompanyKey}/CompanyMember/{CompanyMemberKey}')
+  .onUpdate(async (change, context) => {
+    const oldValue = change.before.data();
+    const newValue = change.after.data();
+
+    if (newValue.UserMemberRoleName !== oldValue.UserMemberRoleName) {
+      const GetCompanyMember = await admin
+        .firestore()
+        .collection('Company')
+        .doc(context.params.CompanyKey)
+        .collection('CompanyMember')
+        .get();
+
+      const CompanyMemberKeyList = GetCompanyMember.docs.map(
+        CompanyMemberItem => CompanyMemberItem.id
+      );
+
+      const ChangeOfRoleWithInCompanyServiceList = [];
+
+      CompanyMemberKeyList.forEach(async Item => {
+        const RequestToJoinAction = await admin
+          .firestore()
+          .collection('UserInfo')
+          .doc(Item)
+          .collection('UserNotification')
+          .add({
+            UserNotificationReadStatus: false,
+            UserNotificationType: 'ChangeOfRoleWithInCompany',
+            UserNotificationTimestamp: admin.firestore.FieldValue.serverTimestamp(),
+            UserNotificationUserInfoKey: change.after.id,
+            UserNotificationUserInfoEmail: newValue.UserMemberEmail,
+            UserNotificationNewRole: newValue.UserMemberRoleName,
+            UserNotificationOldRole: oldValue.UserMemberRoleName,
+            UserNotificationCompanyKey: context.params.CompanyKey
+          });
+
+        ChangeOfRoleWithInCompanyServiceList.push(RequestToJoinAction);
+      });
+
+      return Promise.all(ChangeOfRoleWithInCompanyServiceList);
+    }
+  });
+
+// +UserNotification
+//   >UserNotificationKey
+//       UserNotificationReadStatus (bool)
+//       UserNotificationType (string)
+//       UserNotificationTimestamp (timestamp)
+//       UserNotificationImageURL (string)
+//       UserNotificationFirstname (string)
+//       UserNotificationSurname (string)
+//       UserNotificationUserInfoKey (string)
+//       UserNotificationCompanyName (string)
+//       UserNotificationCompanyKey (string)
+//       UserNotificationRedirectPage (string)
+//       UserNotificationShipmentKey (string)
+//       UserNotificationChatroonKey (string)
+
+// +CompanyMember (Array<object>)
+//   >UserKey
+//     UserMemberEmail (string)
+//     UserMemberPosition (string)
+//     UserMemberRoleName (string)
+//     UserMatrixRolePermissionCode (string) (Binary number)
+//     UserMemberCompanyStandingStatus (string)
+//     UserMemberJoinedTimestamp (timestamp)
