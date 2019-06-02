@@ -124,124 +124,124 @@ class ChatWithHeader extends Component {
     console.log('isHaveRole', isHaveRole);
 
     if (_.size(isHaveRole.ShipmentMemberRole) > 0) {
-      return (
-        <div
-          style={{
-            backgroundColor: 'rgba(242, 175, 41, 0.3)',
-            height: 'auto',
-            padding: '10px',
-            borderRadius: '5px'
-          }}
-        >
-          <p
-            style={{
-              fontWeight: 700,
-              color: '#000000'
-            }}
-          >
-            You have assigned your self as an {_.join(isHaveRole.ShipmentMemberRole, ',')} for this
-            shipment
-          </p>
-          <p>Select a company, to inform your team about this shipment</p>
-
-          <Row>
-            <Col xs={6}>
-              <Select
-                onChange={e => {
-                  this.setState({ company: e.target.value });
-                }}
-                name="company"
-                options={options}
-                value={this.state.company}
-              />
-            </Col>
-            <Col xs={2}>
-              <Button
-                className="invite-btn"
+      if (isHaveRole.ShipmentMemberCompanyName === '') {
+        if (ShipmentData.ShipmentCreatorUserKey === user.uid) {
+          return (
+            <div
+              style={{
+                backgroundColor: 'rgba(242, 175, 41, 0.3)',
+                height: 'auto',
+                padding: '10px',
+                borderRadius: '5px',
+                zIndex: '100'
+              }}
+            >
+              <p
                 style={{
-                  marginLeft: '2rem',
-                  marginRight: '1rem',
-                  color: 'white',
-                  backgroundColor: '#16A085'
-                }}
-                onClick={() => {
-                  this.handleAssignCompany(
-                    this.state.company,
-                    ChatRoomType,
-                    isHaveRole.ShipmentMemberRole
-                  );
+                  fontWeight: 700,
+                  color: '#000000'
                 }}
               >
-                <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
-                Invite
-              </Button>
-            </Col>
-          </Row>
-        </div>
-      );
-    }
-    if (hasInvite) {
-      return (
-        <div
-          style={{
-            backgroundColor: 'rgba(242, 175, 41, 0.3)',
-            height: 'auto',
-            padding: '10px',
-            borderRadius: '5px'
-          }}
-        >
-          <p
-            style={{
-              fontWeight: 700,
-              color: '#000000'
-            }}
-          >
-            You have been invited you as {ChatRoomType} for this shipment.
-          </p>
-          <p>Choose the company you want to use to handle this shipment</p>
-
-          <div>
-            <Select
-              onChange={e => {
-                this.handleAssignCompany(e, ChatRoomType);
+                You have assigned your self as an {_.join(isHaveRole.ShipmentMemberRole, ',')} for
+                this shipment
+              </p>
+              <p>Select a company, to inform your team about this shipment</p>
+              asd
+              <Row>
+                <Col xs={6}>
+                  <Select
+                    onChange={e => {
+                      this.setState({ company: e });
+                    }}
+                    name="company"
+                    options={options}
+                    value={this.state.company}
+                  />
+                </Col>
+                <Col xs={2}>
+                  <Button
+                    className="invite-btn"
+                    style={{
+                      marginLeft: '2rem',
+                      marginRight: '1rem',
+                      color: 'white',
+                      backgroundColor: '#16A085'
+                    }}
+                    onClick={() => {
+                      this.handleAssignCompany(
+                        this.state.company,
+                        ChatRoomType,
+                        isHaveRole.ShipmentMemberRole
+                      );
+                    }}
+                  >
+                    <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
+                    Invite
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          );
+        } else {
+          return (
+            <div
+              style={{
+                backgroundColor: 'rgba(242, 175, 41, 0.3)',
+                height: 'auto',
+                padding: '10px',
+                borderRadius: '5px',
+                zIndex: '100'
               }}
-              name="company"
-              options={options}
-            />
-          </div>
-        </div>
-      );
+            >
+              <p
+                style={{
+                  fontWeight: 700,
+                  color: '#000000'
+                }}
+              >
+                {user.email} has been invited as {_.join(isHaveRole.ShipmentMemberRole, ',')} for
+                this shipment
+              </p>
+              <p>Select a company, to inform your team about this shipment</p>
+              asd
+              <Row>
+                <Col xs={6}>
+                  <Select
+                    onChange={e => {
+                      this.setState({ company: e });
+                    }}
+                    name="company"
+                    options={options}
+                    value={this.state.company}
+                  />
+                </Col>
+                <Col xs={2}>
+                  <Button
+                    className="invite-btn"
+                    style={{
+                      marginLeft: '2rem',
+                      marginRight: '1rem',
+                      color: 'white',
+                      backgroundColor: '#16A085'
+                    }}
+                    onClick={() => {
+                      this.handleAssignCompany(
+                        this.state.company,
+                        ChatRoomType,
+                        isHaveRole.ShipmentMemberRole
+                      );
+                    }}
+                  >
+                    <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
+                    Invite
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          );
+        }
+      }
     }
-    return (
-      <div
-        style={{
-          backgroundColor: 'rgba(242, 175, 41, 0.3)',
-          height: 'auto',
-          padding: '10px',
-          borderRadius: '5px'
-        }}
-      >
-        <p
-          style={{
-            fontWeight: 700,
-            color: '#000000'
-          }}
-        >
-          You have assigned your self as an {ChatRoomType} for this shipment
-        </p>
-        <p>Select a company, to inform your team about this shipment</p>
-
-        <div>
-          <Select
-            onChange={e => {
-              this.handleAssignCompany(e, ChatRoomType);
-            }}
-            name="company"
-            options={options}
-          />
-        </div>
-      </div>
-    );
   }
 
   render() {
