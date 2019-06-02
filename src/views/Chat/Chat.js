@@ -160,6 +160,7 @@ class Chat extends Component {
         onDragOver={this.onDragOver}
         onDragLeave={this.onDragLeave}
         onFileDrop={this.onFileDrop}
+        shipments={this.props.shipments}
       />
     );
   }
@@ -426,6 +427,7 @@ const mapStateToProps = state => {
     ChatReducer,
     user: authReducer.user,
     sender,
+    shipments: state.shipmentReducer.Shipments,
     companies: companyReducer.UserCompany
   };
 };

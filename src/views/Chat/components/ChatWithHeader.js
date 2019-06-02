@@ -368,11 +368,18 @@ class ChatWithHeader extends Component {
       onDropChatStyle,
       onDragOver,
       onDragLeave,
-      onFileDrop
+      onFileDrop,
+      shipments
     } = this.props;
     let lastkey = '';
     const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
-    console.log('isInvited', isInvited);
+    let ref = '';
+    let ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
+    console.log('ShipmentReferenceList', ship);
+    if (ship.ShipmentReferenceList.length > 0) {
+      ref = ship.ShipmentReferenceList[0];
+      console.log(ref, 'reffff');
+    }
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
         <Row
@@ -391,10 +398,7 @@ class ChatWithHeader extends Component {
             <MemberModal {...this.props} count={member.length} list={member} />
 
             <Button className="btn-chat-label">|</Button>
-            <Button className="btn-chat-label">
-              Ref#
-              {ChatRoomKey}
-            </Button>
+            <Button className="btn-chat-label">Ref# {ref.ShipmentReferenceID}</Button>
           </Breadcrumb>
         </Row>
         <Row>

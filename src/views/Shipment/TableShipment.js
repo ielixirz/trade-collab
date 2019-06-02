@@ -285,6 +285,7 @@ class TableShipment extends React.Component {
                 if (hasCompany.ShipmentMemberCompanyKey === item.ShipmentReferenceCompanyKey) {
                   alreadyHave = true;
                 }
+
                 const refItem = item;
                 return (
                   <Row>
@@ -327,7 +328,10 @@ class TableShipment extends React.Component {
                         }}
                         maxLength={50}
                         bsSize="sm"
-                        disabled={user.uid !== refItem.ShipmentReferenceCompanyKey}
+                        disabled={
+                          hasCompany.ShipmentMemberCompanyKey !==
+                          refItem.ShipmentReferenceCompanyKey
+                        }
                       />
                     </Col>
                   </Row>
@@ -344,7 +348,7 @@ class TableShipment extends React.Component {
                         name={`shipmentRef${ref.length}`}
                         value
                       />
-                      Ref #{ref.length + 1}: Exporter
+                      Ref #{ref.length + 1}: {hasCompany.ShipmentMemberCompanyName}
                     </Label>
                   </Col>
                   <Col xs={5}>
