@@ -49,7 +49,7 @@ import {
   GetShipmentReferenceList
 } from '../../service/shipment/shipment';
 import { UpdateMasterData } from '../../service/masterdata/masterdata';
-import { GetShipmentPin } from '../../service/personalize/personalize';
+import { GetShipmentPin, GetShipmentTotalCount } from '../../service/personalize/personalize';
 import { connect } from 'react-redux';
 import { SAVE_CREDENCIAL } from '../../constants/constants';
 
@@ -164,12 +164,20 @@ class TableShipment extends React.Component {
       },
       submiting: {},
       shipments: [],
-      inlineUpdate: {}
+      inlineUpdate: {},
+      notification: []
     };
   }
 
   componentDidMount() {
     this.fetchPinned();
+    GetShipmentTotalCount(this.props.sender.id).subscribe({
+      next: res => {
+        this.setState({
+          notification: res
+        });
+      }
+    });
   }
 
   addToPinCollection = result => {
@@ -256,7 +264,6 @@ class TableShipment extends React.Component {
     } = this.state;
     const user = this.props.user;
     let hasCompany = _.get(ShipmentMember, `${user.uid}`, {});
-    console.log('hasCompany', hasCompany);
     const userref = _.get(this.state, `input.refs.${user.uid}`, {
       ShipmentReferenceKey: user.uid,
       ShipmentReferenceID: '',
@@ -459,7 +466,7 @@ class TableShipment extends React.Component {
     );
   }
 
-  renderAlertComponent(index, item) {
+  renderAlertComponent(index, item, shipmentkey) {
     const { uid } = this.props.user;
     return (
       <div>
@@ -467,9 +474,9 @@ class TableShipment extends React.Component {
           {_.get(item, 'PIN') && item.PIN === true ? (
             <i className="fa fa-map-pin" style={{ marginBottom: 5, opacity: 0.8 }} />
           ) : null}
-          {item.seen ? (
+          {_.get(this.state, `notification.${shipmentkey}`, 0) > 0 ? (
             <Badge color="danger" pill style={{ marginBottom: -15 }}>
-              2
+              {_.get(this.state, `notification.${shipmentkey}`, 0)}
             </Badge>
           ) : null}
         </div>
@@ -508,7 +515,7 @@ class TableShipment extends React.Component {
 
       if (this.state.isEdit) {
         return {
-          alert: this.renderAlertComponent(index, item),
+          alert: this.renderAlertComponent(index, item, item.ShipmentID),
           Ref: this.renderRefComponent(
             index,
             _.get(item, 'ShipmentReferenceList', []),
@@ -723,10 +730,20 @@ class TableShipment extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  ...state.authReducer,
-  refs: state.shipmentReducer.ShipmentRefs
-});
+const mapStateToProps = state => {
+  const { profileReducer } = state;
+
+  const sender = _.find(
+    profileReducer.ProfileList,
+    item => item.id === profileReducer.ProfileDetail.id
+  );
+
+  return {
+    ...state.authReducer,
+    refs: state.shipmentReducer.ShipmentRefs,
+    sender: sender
+  };
+};
 
 export default connect(
   mapStateToProps,

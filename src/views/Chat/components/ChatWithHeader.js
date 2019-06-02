@@ -13,11 +13,17 @@ import FileSide from '../FileSide';
 import ShipmentSide from '../ShipmentSide';
 import ChatMessage from './ChatMessage';
 import PreMessage from './PreMessage';
-import { UpdateChatRoomMember, UpdateChatRoomMessageReader } from '../../../service/chat/chat';
+import {
+  GetChatRoomMemberList,
+  UpdateChatRoomMember,
+  UpdateChatRoomMessageReader
+} from '../../../service/chat/chat';
 import { GetCompanyMember } from '../../../service/company/company';
 import { CreateChatMultipleInvitation } from '../../../service/join/invite';
 import { moveTab } from '../../../actions/chatActions';
 import { PutFile } from '../../../service/storage/managestorage';
+import { FETCH_CHAT_MEMBER, FETCH_COMPANY_USER } from '../../../constants/constants';
+import { GetUserCompany } from '../../../service/user/user';
 
 const AVAILABLE_ROLES = {
   Importer: 'Exporter',
@@ -30,7 +36,8 @@ class ChatWithHeader extends Component {
 
     this.state = {
       company: '',
-      email: ''
+      email: '',
+      companies: []
     };
   }
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -40,6 +47,15 @@ class ChatWithHeader extends Component {
       const objDiv = document.getElementById('chathistory');
       objDiv.scrollTop = objDiv.scrollHeight;
     }
+  }
+  componentDidMount() {
+    GetUserCompany(this.props.user.uid).subscribe({
+      next: res => {
+        this.setState({
+          companies: res
+        });
+      }
+    });
   }
 
   UpdateReader(ShipmentKey, ChatRoomKey, sender, data) {
@@ -51,77 +67,89 @@ class ChatWithHeader extends Component {
 
   handleAssignCompany(e, role, userRole) {
     console.log(this.props);
-    const { companies, member, ShipmentKey, ChatRoomKey } = this.props;
-    console.log('member', member);
+    const { companies, ShipmentKey, ChatRoomKey } = this.props;
     const pickedCompany = _.find(companies, item => item.CompanyKey === e.value);
 
-    if (pickedCompany) {
-      GetCompanyMember(e.value).subscribe({
-        next: res => {
-          const CompanyMember = _.map(res, item => ({
+    GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
+      next: res => {
+        const member = _.map(res, item => {
+          console.log(item);
+          return {
+            ChatRoomMemberKey: item.id,
             ...item.data()
-          }));
-          const inviteRole = userRole;
-          console.log('CompanyMember', CompanyMember);
-          const inviteMember = [];
-          _.forEach(CompanyMember, memberItem => {
-            const chatMember = _.find(
-              member,
-              item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail
-            );
-
-            // ChatRoomMemberEmail: "punjasin@gmail.com"
-            // ChatRoomMemberKey: "DtUSy9J4aYzu7tGWjHUK"
-            // ChatRoomMemberRole: (2) ["Custom Broker Outbound", "Forwarder Outbound"]
-            // ChatRoomMemberUserKey: "v4q6ksx4AhaMbekVLvWl0dKuaWf2"
-            if (chatMember) {
-              const result = UpdateChatRoomMember(
-                ShipmentKey,
-                ChatRoomKey,
-                chatMember.ChatRoomMemberKey,
-                {
-                  ...chatMember,
-                  ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
-                }
-              );
-              console.log(result);
-            } else {
-              // Email: "punjasin@gmail.com"
-              // Image: undefined
-              // Role: (2) ["Custom Broker Outbound", "Forwarder Outbound"]
-
-              inviteMember.push({
-                Email: memberItem.UserMemberEmail,
-                Image: '',
-                Role: inviteRole,
-                ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
-              });
-            }
-          });
-          console.log(inviteMember);
-          CreateChatMultipleInvitation(inviteMember, ShipmentKey, ChatRoomKey).subscribe({
+          };
+        });
+        if (pickedCompany) {
+          let getCompany = GetCompanyMember(e.value).subscribe({
             next: res => {
-              console.log(res);
+              const CompanyMember = _.map(res, item => ({
+                ...item.data()
+              }));
+              const inviteRole = userRole;
+              console.log('CompanyMember', CompanyMember);
+              const inviteMember = [];
+              _.forEach(CompanyMember, memberItem => {
+                const chatMember = _.find(
+                  member,
+                  item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail
+                );
+
+                if (chatMember) {
+                  const result = UpdateChatRoomMember(
+                    ShipmentKey,
+                    ChatRoomKey,
+                    chatMember.ChatRoomMemberKey,
+                    {
+                      ...chatMember,
+                      ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+                      ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+                    }
+                  );
+                  console.log(result);
+                } else {
+                  // Email: "punjasin@gmail.com"
+                  // Image: undefined
+                  // Role: (2) ["Custom Broker Outbound", "Forwarder Outbound"]
+
+                  inviteMember.push({
+                    Email: memberItem.UserMemberEmail,
+                    Image: '',
+                    Role: inviteRole,
+                    ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+                    ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+                  });
+                }
+              });
+              console.log('inviteMember', inviteMember);
+              let invite = CreateChatMultipleInvitation(
+                inviteMember,
+                ShipmentKey,
+                ChatRoomKey
+              ).subscribe({
+                next: res => {
+                  console.log(res);
+                  invite.unsubscribe();
+                }
+              });
+              getCompany.unsubscribe();
             }
           });
         }
-      });
-    }
+      }
+    });
   }
 
   renderAssignCompany(ChatRoomType, hasInvite = false) {
-    const { companies, ChatRoomData, user, ShipmentData, ShipmentKey, ChatRoomKey } = this.props;
+    const { ChatRoomData, user, ShipmentData, ShipmentKey, ChatRoomKey } = this.props;
+
+    const isHaveRole = _.get(ShipmentData, `ShipmentMember.${user.uid}`, {});
+    let companies = this.state.companies;
 
     let options = [];
     options = _.map(companies, item => ({
       value: item.CompanyKey,
       label: item.CompanyName
     }));
-
-    const isHaveRole = _.get(ShipmentData, `ShipmentMember.${user.uid}`, {});
-
     if (_.size(isHaveRole.ShipmentMemberRole) > 0) {
       if (_.isEmpty(isHaveRole.ShipmentMemberCompanyName)) {
         if (ShipmentData.ShipmentCreatorUserKey === user.uid) {
@@ -291,9 +319,14 @@ class ChatWithHeader extends Component {
                     ChatRoomMemberCompanyKey: ''
                   });
                   console.log(inviteMember);
-                  CreateChatMultipleInvitation(inviteMember, ShipmentKey, ChatRoomKey).subscribe({
+                  let invite = CreateChatMultipleInvitation(
+                    inviteMember,
+                    ShipmentKey,
+                    ChatRoomKey
+                  ).subscribe({
                     next: res => {
                       console.log(res);
+                      invite.unsubscribe();
                     }
                   });
                 }}
@@ -372,7 +405,11 @@ class ChatWithHeader extends Component {
               onDragLeave={onDragLeave}
               onDrop={event => onFileDrop(event, ShipmentKey, ChatRoomKey)}
               onMouseEnter={() => {
+                console.log('lastkey', lastkey);
+
                 if (chatMsg.length > 0) {
+                  console.log('chatMsg', chatMsg[chatMsg.length - 1].id);
+
                   if (chatMsg[chatMsg.length - 1].id !== lastkey) {
                     this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
                       ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
@@ -531,8 +568,10 @@ class ChatWithHeader extends Component {
                     }}
                     onKeyPress={event => {
                       if (event.key === 'Enter') {
-                        sendMessage(ChatRoomKey, ShipmentKey, text);
-                        scrollChatToBottom();
+                        if (text !== '') {
+                          sendMessage(ChatRoomKey, ShipmentKey, text);
+                          scrollChatToBottom();
+                        }
                       }
                     }}
                   />

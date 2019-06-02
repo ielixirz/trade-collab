@@ -7,15 +7,13 @@ import { LeaveChatRoomMember } from '../service/chat/chat';
 export default class ListMember extends React.Component {
   render() {
     const { item: member } = this.props;
-    console.log(member.ChatRoomMemberKey);
-    console.log(this.props);
+
     let email = _.get(member, 'ChatRoomMemberEmail', '');
     let role = _.map(member.ChatRoomMemberRole, item => {
       let matches = item.match(/\b(\w)/g); // ['J','S','O','N']
       let acronym = matches.join(''); // JSON
       return acronym;
     });
-    console.log(role);
     return (
       <div>
         <ListGroup flush>
@@ -68,7 +66,7 @@ export default class ListMember extends React.Component {
                       member.ChatRoomMemberKey
                     ).subscribe({
                       next: res => {
-                        console.log(res);
+                        result.unsubscribe();
                       },
                       complete: res => {
                         result.unsubscribe();

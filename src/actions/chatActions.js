@@ -30,12 +30,6 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
   dispatch,
   getState
 ) => {
-  const { profileReducer } = getState();
-
-  const sender = _.find(
-    profileReducer.ProfileList,
-    item => item.id === profileReducer.ProfileDetail.id
-  );
   const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}`, false);
   if (room) {
     room.unsubscribe();
