@@ -343,6 +343,7 @@ class ChatWithHeader extends Component {
 
   render() {
     const {
+      alert,
       user,
       msg: sending,
       chatMsg,
