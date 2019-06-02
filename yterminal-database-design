@@ -176,6 +176,10 @@
             {
                 ShipmentKey: CountValue (number) 
             }
+        ShipmentFirstJoin (object)
+            {
+                ShipmentKey: BoolValue (bool)
+            }
         +ShipmentOrdering
             >ShipmentKey
                 ChatRoomOrdering (Array<string (ChatRoomKey)>)
@@ -184,7 +188,6 @@
                 ShipmentReferenceSelect (string) [RefOwner]
         +ShipmentNotificationCount
             >ShipmentKey
-                ShipmentFristJoin (bool)
                 ShipmentMasterDataCount (number)
                 ShipmentFileCount (number)
                 ChatRoomCount (object)
