@@ -9,7 +9,8 @@ import _ from 'lodash';
 const ThreeDotDropdown = ({ options }) => {
   const [open, setOpen] = useState(false);
 
-  const toggle = () => {
+  const toggle = (e) => {
+    e.stopPropagation();
     setOpen(!open);
   };
 

@@ -147,15 +147,11 @@ const CompanyPanel = (props) => {
   const [updatePosition, setUpdatePosition] = useState({});
   const [acceptedRequest, setAcceptedRequest] = useState(undefined);
   const [isMember, setIsMember] = useState(false);
-  const [blocking, setBlocking] = useState(true);
+  const [blocking, setBlocking] = useState(false);
 
   const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
   const inviteInput = useRef(null);
-
-  const toggleBlocking = () => {
-    setBlocking(!blocking);
-  };
 
   const handleInputPositionChange = (event, key) => {
     const temp = updatePosition;
@@ -180,6 +176,7 @@ const CompanyPanel = (props) => {
   };
 
   const fetchMember = (companyKey) => {
+    setBlocking(true);
     combineLatest([
       GetCompanyInvitation(companyKey).pipe(
         map(docs => docs.map((d) => {
@@ -262,9 +259,9 @@ const CompanyPanel = (props) => {
         _.forEach(users, (profile, index) => {
           members[index].name = `${profile[0].ProfileFirstname} ${profile[0].ProfileSurname}`;
         });
+        setBlocking(false);
         setMemberList(members.concat(invited));
       });
-      toggleBlocking();
     });
   };
 

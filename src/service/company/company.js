@@ -121,3 +121,9 @@ export const DeleteCompanyUserAccessibility = (CompanyKey, CompanyUserAccessibil
     .doc(CompanyUserAccessibilityKey)
     .delete(),
 );
+
+export const RemoveFromCompany = (CompanyKey, MemberKey) => collection(
+  CompanyMemberRefPath(CompanyKey)
+    .doc(MemberKey)
+    .delete(),
+);

@@ -159,7 +159,7 @@ class ForgotPass extends React.Component {
                     />
                   </div>
                   <div className="col-sm-12 text-center">
-                    <button className="button button1" type="submit">
+                    <button className="forget-button button1" type="submit">
                       <span style={{ color: '#fff' }}>Reset Password</span>
                     </button>
                   </div>

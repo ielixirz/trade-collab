@@ -176,6 +176,10 @@
             {
                 ShipmentKey: CountValue (number) 
             }
+        ShipmentFirstJoin (object)
+            {
+                ShipmentKey: BoolValue (bool)
+            }
         +ShipmentOrdering
             >ShipmentKey
                 ChatRoomOrdering (Array<string (ChatRoomKey)>)
@@ -184,7 +188,6 @@
                 ShipmentReferenceSelect (string) [RefOwner]
         +ShipmentNotificationCount
             >ShipmentKey
-                ShipmentFristJoin (bool)
                 ShipmentMasterDataCount (number)
                 ShipmentFileCount (number)
                 ChatRoomCount (object)
@@ -205,8 +208,8 @@
             >UserKey
                 UserMemberEmail (string)
                 UserMemberPosition (string)
-                UserMemberRoleName (string) 
-                UserMatrixRolePermissionCode (string) (Binary number)
+                CompanyUserAccessibilityRoleName (string) 
+                CompanyUserAccessibilityRolePermissionCode (string) (Binary number)
                 UserMemberCompanyStandingStatus (string)
                 UserMemberJoinedTimestamp (timestamp)
         +CompanyInvitation (Company pull who one)

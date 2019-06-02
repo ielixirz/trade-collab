@@ -63,17 +63,24 @@ export const ClearUnReadChatMessage = (ProfileKey, ShipmentKey, ChatRoomKey) => 
 //   ),
 // );
 
-export const ShipmentFirstJoinTrigger = (ProfileKey, ShipmentKey) =>
-  from(
-    UserPersonalizeCountRefPath(ProfileKey, ShipmentKey).set(
-      {
-        ShipmentFristJoin: false
-      },
-      { merge: true }
-    )
-  );
+export const ShipmentFirstJoinTrigger = (ProfileKey, ShipmentKey) => {
+  const FirstJoinTriggerPayload = { ShipmentFristJoin: {} };
+
+  FirstJoinTriggerPayload.ShipmentFristJoin[ShipmentKey] = firebase.firestore.FieldValue.delete();
+
+  return from(UserPersonalizeRefPath(ProfileKey).set(FirstJoinTriggerPayload, { merge: true }));
+};
 
 export const GetShipmentTotalCount = ProfileKey =>
   doc(UserPersonalizeRefPath(ProfileKey)).pipe(
     map(ProfilePersonalize => ProfilePersonalize.data().ShipmentTotalCount)
+  );
+
+// eslint-disable-next-line max-len
+export const GetShipmentNotificationCount = (ProfileKey, ShipmentKey) =>
+  doc(UserPersonalizeCountRefPath(ProfileKey, ShipmentKey));
+
+export const GetShipmentFirstJoin = ProfileKey =>
+  doc(UserPersonalizeRefPath(ProfileKey)).pipe(
+    map(ProfilePersonalize => ProfilePersonalize.data().ShipmentFirstJoin)
   );
