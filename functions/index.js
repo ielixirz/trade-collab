@@ -445,24 +445,25 @@ exports.ManageShipmentMember = functions.firestore
         const TriggerFirstJoin = admin
           .firestore()
           .collection('UserPersonalize')
-          .doc(Item)
-          .collection('ShipmentNotificationCount')
-          .doc(context.params.ShipmentKey);
+          .doc(Item);
 
         const GetFirstJoin = await TriggerFirstJoin.get();
-        let FirstJoinStatus = undefined;
+        let FirstJoinStatus = GetFirstJoin[context.params.ShipmentKey];
 
-        if (GetFirstJoin.data() !== undefined) {
-          FirstJoinStatus = GetFirstJoin.data().ShipmentFristJoin;
-        }
+        // if (GetFirstJoin.data() !== undefined) {
+        //   FirstJoinStatus = GetFirstJoin.data().ShipmentFristJoin;
+        // }
 
-        console.log(FirstJoinStatus);
+        // console.log(FirstJoinStatus);
+
+        const FirstJoinPayloadObject = { ShipmentFristJoin: {} };
+
+        FirstJoinPayloadObject['ShipmentFristJoin'][context.params.ShipmentKey] = true;
 
         if (!GetFirstJoin || FirstJoinStatus === undefined) {
-          const SetFirstJoinAction = await TriggerFirstJoin.set(
-            { ShipmentFristJoin: true },
-            { merge: true }
-          );
+          const SetFirstJoinAction = await TriggerFirstJoin.set(FirstJoinPayloadObject, {
+            merge: true
+          });
           UserPersonalizeProfileActionList.push(SetFirstJoinAction);
         }
       });
