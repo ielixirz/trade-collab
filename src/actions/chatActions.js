@@ -55,16 +55,6 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
           payload: res
         });
 
-        let clearUnReadChatMessage = ClearUnReadChatMessage(
-          sender.id,
-          ShipmentKey,
-          ChatRoomKey
-        ).subscribe({
-          next: res => {
-            clearUnReadChatMessage.unsubscribe();
-          }
-        });
-
         GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
           next: res => {
             const members = _.map(res, item => {
@@ -242,7 +232,15 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch
     profileReducer.ProfileList,
     item => item.id === profileReducer.ProfileDetail.id
   );
-
+  let clearUnReadChatMessage = ClearUnReadChatMessage(
+    sender.id,
+    ShipmentKey,
+    ChatRoomKey
+  ).subscribe({
+    next: res => {
+      clearUnReadChatMessage.unsubscribe();
+    }
+  });
   if (_.get(user, 'uid', false)) {
     let msg = {};
     if (!isFile || isFile === undefined) {
