@@ -692,18 +692,36 @@ exports.NotiBellInviteToJoinCompany = functions.firestore
 exports.NotiBellRequestToJoinCompany = functions.firestore
   .document('Company/{CompanyKey}/CompanyRequest/{CompanyRequestKey}')
   .onCreate(async (snapshot, context) => {
-    return admin
+    const GetCompanyMember = await admin
       .firestore()
-      .collection('UserInfo')
-      .doc(context.params.UserKey)
-      .collection('UserNotification')
-      .add({
-        UserNotificationReadStatus: false,
-        UserNotificationType: 'RequestToJoinCompany',
-        UserNotificationTimestamp: admin.firestore.FieldValue.serverTimestamp(),
-        UserNotificationUserInfoKey: snapshot.data().UserRequestUserKey,
-        UserNotificationFirstname: snapshot.data().UserRequestFristname,
-        UserNotificationSurname: snapshot.data().UserRequestSurname,
-        UserNotificationCompanyKey: context.params.CompanyKey
-      });
+      .collection('Company')
+      .doc(context.params.CompanyKey)
+      .collection('CompanyMember')
+      .get();
+    const CompanyMemberKeyList = GetCompanyMember.docs.map(
+      CompanyMemberItem => CompanyMemberItem.id
+    );
+
+    const RequestToJoinServiceList = [];
+
+    CompanyMemberKeyList.forEach(async Item => {
+      const RequestToJoinAction = await admin
+        .firestore()
+        .collection('UserInfo')
+        .doc(Item)
+        .collection('UserNotification')
+        .add({
+          UserNotificationReadStatus: false,
+          UserNotificationType: 'RequestToJoinCompany',
+          UserNotificationTimestamp: admin.firestore.FieldValue.serverTimestamp(),
+          UserNotificationUserInfoKey: snapshot.data().UserRequestUserKey,
+          UserNotificationFirstname: snapshot.data().UserRequestFristname,
+          UserNotificationSurname: snapshot.data().UserRequestSurname,
+          UserNotificationCompanyKey: context.params.CompanyKey
+        });
+
+      RequestToJoinServiceList.push(RequestToJoinAction);
+    });
+
+    return Promise.all(RequestToJoinServiceList);
   });
