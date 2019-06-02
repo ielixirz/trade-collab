@@ -113,7 +113,6 @@ class ChatWithHeader extends Component {
 
   renderAssignCompany(ChatRoomType, hasInvite = false) {
     const { companies, ChatRoomData, user, ShipmentData, ShipmentKey, ChatRoomKey } = this.props;
-    console.log('props', this.props);
 
     let options = [];
     options = _.map(companies, item => ({
@@ -122,10 +121,9 @@ class ChatWithHeader extends Component {
     }));
 
     const isHaveRole = _.get(ShipmentData, `ShipmentMember.${user.uid}`, {});
-    console.log('isHaveRole', isHaveRole);
 
     if (_.size(isHaveRole.ShipmentMemberRole) > 0) {
-      if (isHaveRole.ShipmentMemberCompanyName === '') {
+      if (_.isEmpty(isHaveRole.ShipmentMemberCompanyName)) {
         if (ShipmentData.ShipmentCreatorUserKey === user.uid) {
           return (
             <div
@@ -204,7 +202,7 @@ class ChatWithHeader extends Component {
                 this shipment
               </p>
               <p>Select a company, to inform your team about this shipment</p>
-              asd
+
               <Row>
                 <Col xs={6}>
                   <Select
