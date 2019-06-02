@@ -72,3 +72,7 @@ export const GetShipmentTotalCount = ProfileKey => doc(UserPersonalizeRefPath(Pr
 
 // eslint-disable-next-line max-len
 export const GetShipmentNotificationCount = (ProfileKey, ShipmentKey) => doc(UserPersonalizeCountRefPath(ProfileKey, ShipmentKey));
+
+export const GetShipmentFirstJoin = ProfileKey => doc(UserPersonalizeRefPath(ProfileKey)).pipe(
+  map(ProfilePersonalize => ProfilePersonalize.data().ShipmentFirstJoin),
+);
