@@ -2,21 +2,21 @@
 import _ from 'lodash';
 
 const LABEL = {
-  id: 'id',
+  id: 'id'
 };
 
-export const createDataTable = (input) => {
+export const createDataTable = input => {
   const data = _.map(input, (item, index) => ({
     id: _.get(item, 'id', index) + 1,
-    ...item,
+    ...item
   }));
-  const columns = _.map(_.keys(data[0]), (item) => {
+  const columns = _.map(_.keys(data[0]), item => {
     if (item === 'uid') {
       return {
         text: _.get(LABEL, item, item),
         dataField: item,
         sort: true,
-        hidden: true,
+        hidden: true
       };
     }
     if (item === '') {
@@ -25,12 +25,12 @@ export const createDataTable = (input) => {
         dataField: item,
         sort: false,
         style: {
-          width: '2.5%',
+          width: '2.5%'
         },
         headerAlign: 'center',
         headerStyle: {
-          width: '2.5%',
-        },
+          width: '2.5%'
+        }
       };
     }
     if (item === 'alert') {
@@ -39,13 +39,13 @@ export const createDataTable = (input) => {
         dataField: item,
         sort: false,
         style: {
-          width: '5%',
+          width: '5%'
         },
         headerAlign: 'center',
         headerStyle: {
-          width: '5%',
+          width: '5%'
         },
-        classes: 'alert-column',
+        classes: 'alert-column'
       };
     }
     if (item === 'Ref') {
@@ -54,13 +54,13 @@ export const createDataTable = (input) => {
         dataField: item,
         sort: false,
         style: {
-          width: '12%',
+          width: '12%'
         },
         headerAlign: 'left',
         align: 'left',
         headerStyle: {
-          width: '12%',
-        },
+          width: '12%'
+        }
       };
     }
     if (item === 'Product') {
@@ -69,13 +69,13 @@ export const createDataTable = (input) => {
         dataField: item,
         sort: false,
         style: {
-          width: '20%',
+          width: '20%'
         },
         headerAlign: 'center',
         align: 'center',
         headerStyle: {
-          width: '20%',
-        },
+          width: '20%'
+        }
       };
     }
     if (item === 'id') {
@@ -83,7 +83,15 @@ export const createDataTable = (input) => {
         text: _.get(LABEL, item, item),
         dataField: item,
         sort: true,
-        hidden: true,
+        hidden: true
+      };
+    }
+    if (item === 'ShipmentMember') {
+      return {
+        text: _.get(LABEL, item, item),
+        dataField: item,
+        sort: true,
+        hidden: true
       };
     }
     return {
@@ -92,12 +100,12 @@ export const createDataTable = (input) => {
       sort: true,
       headerAlign: 'center',
       align: 'center',
-      width: '15%',
+      width: '15%'
     };
   });
 
   return {
     columns,
-    data,
+    data
   };
 };

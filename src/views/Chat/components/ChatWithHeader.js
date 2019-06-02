@@ -16,6 +16,8 @@ import PreMessage from './PreMessage';
 import { UpdateChatRoomMember, UpdateChatRoomMessageReader } from '../../../service/chat/chat';
 import { GetCompanyMember } from '../../../service/company/company';
 import { CreateChatMultipleInvitation } from '../../../service/join/invite';
+import { moveTab } from '../../../actions/chatActions';
+import { PutFile } from '../../../service/storage/managestorage';
 
 const AVAILABLE_ROLES = {
   Importer: 'Exporter',
@@ -23,6 +25,14 @@ const AVAILABLE_ROLES = {
 };
 
 class ChatWithHeader extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      company: '',
+      email: ''
+    };
+  }
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log(prevProps, 'prevProps');
     console.log(this.props, 'props');
@@ -39,7 +49,7 @@ class ChatWithHeader extends Component {
     refresh();
   }
 
-  handleAssignCompany(e, role) {
+  handleAssignCompany(e, role, userRole) {
     console.log(this.props);
     const { companies, member, ShipmentKey, ChatRoomKey } = this.props;
     console.log('member', member);
@@ -51,8 +61,7 @@ class ChatWithHeader extends Component {
           const CompanyMember = _.map(res, item => ({
             ...item.data()
           }));
-          const inviteRole = [];
-          inviteRole.push(role);
+          const inviteRole = userRole;
           console.log('CompanyMember', CompanyMember);
           const inviteMember = [];
           _.forEach(CompanyMember, memberItem => {
@@ -103,8 +112,7 @@ class ChatWithHeader extends Component {
   }
 
   renderAssignCompany(ChatRoomType, hasInvite = false) {
-    const { companies, ChatRoomData, user, ShipmentData } = this.props;
-    console.log(ShipmentData);
+    const { companies, ChatRoomData, user, ShipmentData, ShipmentKey, ChatRoomKey } = this.props;
 
     let options = [];
     options = _.map(companies, item => ({
@@ -112,14 +120,137 @@ class ChatWithHeader extends Component {
       label: item.CompanyName
     }));
 
-    if (hasInvite) {
+    const isHaveRole = _.get(ShipmentData, `ShipmentMember.${user.uid}`, {});
+
+    if (_.size(isHaveRole.ShipmentMemberRole) > 0) {
+      if (_.isEmpty(isHaveRole.ShipmentMemberCompanyName)) {
+        if (ShipmentData.ShipmentCreatorUserKey === user.uid) {
+          return (
+            <div
+              style={{
+                backgroundColor: 'rgba(242, 175, 41, 0.3)',
+                height: 'auto',
+                padding: '10px',
+                borderRadius: '5px',
+                zIndex: '100'
+              }}
+            >
+              <p
+                style={{
+                  fontWeight: 700,
+                  color: '#000000'
+                }}
+              >
+                You have assigned your self as an {_.join(isHaveRole.ShipmentMemberRole, ',')} for
+                this shipment
+              </p>
+              <p>Select a company, to inform your team about this shipment</p>
+
+              <Row>
+                <Col xs={6}>
+                  <Select
+                    onChange={e => {
+                      this.setState({ company: e });
+                    }}
+                    name="company"
+                    options={options}
+                    value={this.state.company}
+                  />
+                </Col>
+                <Col xs={2}>
+                  <Button
+                    className="invite-btn"
+                    style={{
+                      marginLeft: '2rem',
+                      marginRight: '1rem',
+                      color: 'white',
+                      backgroundColor: '#16A085'
+                    }}
+                    onClick={() => {
+                      this.handleAssignCompany(
+                        this.state.company,
+                        ChatRoomType,
+                        isHaveRole.ShipmentMemberRole
+                      );
+                    }}
+                  >
+                    <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
+                    Invite
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          );
+        } else {
+          return (
+            <div
+              style={{
+                backgroundColor: 'rgba(242, 175, 41, 0.3)',
+                height: 'auto',
+                padding: '10px',
+                borderRadius: '5px',
+                zIndex: '100'
+              }}
+            >
+              <p
+                style={{
+                  fontWeight: 700,
+                  color: '#000000'
+                }}
+              >
+                {user.email} has been invited as {_.join(isHaveRole.ShipmentMemberRole, ',')} for
+                this shipment
+              </p>
+              <p>Select a company, to inform your team about this shipment</p>
+
+              <Row>
+                <Col xs={6}>
+                  <Select
+                    onChange={e => {
+                      this.setState({ company: e });
+                    }}
+                    name="company"
+                    options={options}
+                    value={this.state.company}
+                  />
+                </Col>
+                <Col xs={2}>
+                  <Button
+                    className="invite-btn"
+                    style={{
+                      marginLeft: '2rem',
+                      marginRight: '1rem',
+                      color: 'white',
+                      backgroundColor: '#16A085'
+                    }}
+                    onClick={() => {
+                      this.handleAssignCompany(
+                        this.state.company,
+                        ChatRoomType,
+                        isHaveRole.ShipmentMemberRole
+                      );
+                    }}
+                  >
+                    <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
+                    Invite
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          );
+        }
+      }
+    }
+
+    if (_.size(ChatRoomData.ChatRoomMemberList) < 2) {
       return (
         <div
           style={{
-            backgroundColor: 'rgba(242, 175, 41, 0.3)',
+            backgroundColor: 'rgba(88, 202, 219, 0.3)',
             height: 'auto',
             padding: '10px',
-            borderRadius: '5px'
+            borderRadius: '5px',
+            zIndex: '100'
           }}
         >
           <p
@@ -128,52 +259,53 @@ class ChatWithHeader extends Component {
               color: '#000000'
             }}
           >
-            You have been invited you as {ChatRoomType} for this shipment.
+            Input your {ChatRoomType} e-mail address only for this shipment
           </p>
-          <p>Choose the company you want to use to handle this shipment</p>
 
-          <div>
-            <Select
-              onChange={e => {
-                this.handleAssignCompany(e, ChatRoomType);
-              }}
-              name="company"
-              options={options}
-            />
-          </div>
+          <Row>
+            <Col xs={6}>
+              <Input
+                value={this.state.email}
+                placeholder="...input email address"
+                onChange={e => this.setState({ email: e.target.value })}
+              />
+            </Col>
+            <Col xs={2}>
+              <Button
+                className="invite-btn"
+                style={{
+                  marginLeft: '2rem',
+                  marginRight: '1rem',
+                  color: 'white',
+                  backgroundColor: '#16A085'
+                }}
+                onClick={() => {
+                  const inviteMember = [];
+                  const role = [];
+                  role.push(ChatRoomType);
+                  inviteMember.push({
+                    Email: this.state.email,
+                    Image: '',
+                    Role: role,
+                    ChatRoomMemberCompanyName: '',
+                    ChatRoomMemberCompanyKey: ''
+                  });
+                  console.log(inviteMember);
+                  CreateChatMultipleInvitation(inviteMember, ShipmentKey, ChatRoomKey).subscribe({
+                    next: res => {
+                      console.log(res);
+                    }
+                  });
+                }}
+              >
+                <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
+                Invite
+              </Button>
+            </Col>
+          </Row>
         </div>
       );
     }
-    return (
-      <div
-        style={{
-          backgroundColor: 'rgba(242, 175, 41, 0.3)',
-          height: 'auto',
-          padding: '10px',
-          borderRadius: '5px'
-        }}
-      >
-        <p
-          style={{
-            fontWeight: 700,
-            color: '#000000'
-          }}
-        >
-          You have assigned your self as an {ChatRoomType} for this shipment
-        </p>
-        <p>Select a company, to inform your team about this shipment</p>
-
-        <div>
-          <Select
-            onChange={e => {
-              this.handleAssignCompany(e, ChatRoomType);
-            }}
-            name="company"
-            options={options}
-          />
-        </div>
-      </div>
-    );
   }
 
   render() {

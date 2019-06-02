@@ -181,6 +181,8 @@ export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
 export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => {
   const chats = getState().ChatReducer.chatrooms;
   const tabs = [];
+  console.log('selectedIndex', selectedIndex);
+  console.log('selectedID', selectedID);
   _.forEach(chats, item => {
     tabs.push({
       id: tabs.length + 1,
@@ -193,10 +195,12 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
       member: item.member
     });
   });
+  console.log(tabs);
   const newTabs = tabs.map(tab => ({
     ...tab,
     active: tab.id === selectedID
   }));
+
   const originalReducer = [];
   _.forEach(newTabs, (item, index) => {
     originalReducer[item.ChatRoomKey] = {

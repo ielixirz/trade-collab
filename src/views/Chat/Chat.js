@@ -69,7 +69,6 @@ class Chat extends Component {
   }
 
   createChatRoom(fetchChatMessage, param, room, user) {
-    console.log(user);
     const shipmentkey = _.get(param, 'shipmentkey', 'HDTPONlnceJeG5yAA1Zy');
     CreateChatRoom(shipmentkey, {
       ChatRoomType: room,
@@ -77,8 +76,7 @@ class Chat extends Component {
     }).subscribe({
       next: result => {
         const data = result.path.split('/');
-        fetchChatMessage(data[data.length - 1], shipmentkey, result.id);
-
+        let chatkey = result.id;
         AddChatRoomMember(shipmentkey, result.id, {
           ChatRoomMemberUserKey: user.uid,
           ChatRoomMemberEmail: user.email,
@@ -88,7 +86,7 @@ class Chat extends Component {
           ChatRoomMemberCompanyKey: ''
         }).subscribe({
           next: result => {
-            console.log(result);
+            fetchChatMessage(data[data.length - 1], shipmentkey, chatkey);
           }
         });
       },
