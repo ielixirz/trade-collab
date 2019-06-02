@@ -46,6 +46,7 @@ import {
 import './Chat.css';
 import './MasterDetail.css';
 import { GetShipmentDetail } from '../../service/shipment/shipment';
+import { GetShipmentNotificationCount } from '../../service/personalize/personalize';
 
 class Chat extends Component {
   constructor(props) {
@@ -61,7 +62,8 @@ class Chat extends Component {
       tabs: [],
       roomeditor: {},
       onDropChatStyle: false,
-      shipments: {}
+      shipments: {},
+      chatAlert: []
     };
 
     this.uploadModalRef = React.createRef();
@@ -130,6 +132,7 @@ class Chat extends Component {
 
     return (
       <ChatWithHeader
+        alert={this.state.chatAlert}
         msg={msg}
         user={user}
         sender={sender}
@@ -281,7 +284,14 @@ class Chat extends Component {
         });
       }
     });
-
+    GetShipmentNotificationCount(this.props.sender.id, params.shipmentkey).subscribe({
+      next: res => {
+        console.log('GetShipmentNotificationCount', res.data());
+        this.setState({
+          chatAlert: res.data()
+        });
+      }
+    });
     const tabs = [];
     _.forEach(chats, (item, index) => {
       tabs.push({
@@ -331,7 +341,9 @@ class Chat extends Component {
           {item.roomName}
           {item.roomName !== '+' ? (
             <Badge pill className="notibadge" color="danger">
-              5
+              {_.get(this.state, `chatAlert.ChatRoomCount.${item.ChatRoomKey}`, 0) > 0
+                ? _.get(this.state, `chatAlert.ChatRoomCount.${item.ChatRoomKey}`, 0)
+                : ''}
             </Badge>
           ) : (
             ''

@@ -13,6 +13,7 @@ import {
   GetChatRoomList,
   GetChatRoomMemberList
 } from '../service/chat/chat';
+import { ClearUnReadChatMessage } from '../service/personalize/personalize';
 
 export const typing = data => dispatch => {
   const text = data.target.value;
@@ -30,6 +31,13 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
   dispatch,
   getState
 ) => {
+  const { authReducer, profileReducer } = getState();
+  // eslint-disable-next-line prefer-destructuring
+
+  const sender = _.find(
+    profileReducer.ProfileList,
+    item => item.id === profileReducer.ProfileDetail.id
+  );
   const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}`, false);
   if (room) {
     room.unsubscribe();
@@ -40,10 +48,6 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
     GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
       next: res => {
         console.log(res);
-        // if (res.length > 0 && res[0].ChatRoomMessageSenderKey !== sender.id) {
-        //   const audio = new Audio('/unconvinced.ogg');
-        //   audio.play();
-        // }
 
         dispatch({
           type: FETCH_CHAT,
@@ -228,7 +232,15 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch
     profileReducer.ProfileList,
     item => item.id === profileReducer.ProfileDetail.id
   );
-
+  let clearUnReadChatMessage = ClearUnReadChatMessage(
+    sender.id,
+    ShipmentKey,
+    ChatRoomKey
+  ).subscribe({
+    next: res => {
+      clearUnReadChatMessage.unsubscribe();
+    }
+  });
   if (_.get(user, 'uid', false)) {
     let msg = {};
     if (!isFile || isFile === undefined) {
