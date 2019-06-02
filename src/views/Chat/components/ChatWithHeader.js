@@ -123,122 +123,120 @@ class ChatWithHeader extends Component {
     const isHaveRole = _.get(ShipmentData, `ShipmentMember.${user.uid}`, {});
 
     if (_.size(isHaveRole.ShipmentMemberRole) > 0) {
-      if (_.isEmpty(isHaveRole.ShipmentMemberCompanyName)) {
-        if (ShipmentData.ShipmentCreatorUserKey === user.uid) {
-          return (
-            <div
+      if (ShipmentData.ShipmentCreatorUserKey === user.uid) {
+        return (
+          <div
+            style={{
+              backgroundColor: 'rgba(242, 175, 41, 0.3)',
+              height: 'auto',
+              padding: '10px',
+              borderRadius: '5px',
+              zIndex: '100'
+            }}
+          >
+            <p
               style={{
-                backgroundColor: 'rgba(242, 175, 41, 0.3)',
-                height: 'auto',
-                padding: '10px',
-                borderRadius: '5px',
-                zIndex: '100'
+                fontWeight: 700,
+                color: '#000000'
               }}
             >
-              <p
-                style={{
-                  fontWeight: 700,
-                  color: '#000000'
-                }}
-              >
-                You have assigned your self as an {_.join(isHaveRole.ShipmentMemberRole, ',')} for
-                this shipment
-              </p>
-              <p>Select a company, to inform your team about this shipment</p>
+              You have assigned your self as an {_.join(isHaveRole.ShipmentMemberRole, ',')} for
+              this shipment
+            </p>
+            <p>Select a company, to inform your team about this shipment</p>
 
-              <Row>
-                <Col xs={6}>
-                  <Select
-                    onChange={e => {
-                      this.setState({ company: e });
-                    }}
-                    name="company"
-                    options={options}
-                    value={this.state.company}
-                  />
-                </Col>
-                <Col xs={2}>
-                  <Button
-                    className="invite-btn"
-                    style={{
-                      marginLeft: '2rem',
-                      marginRight: '1rem',
-                      color: 'white',
-                      backgroundColor: '#16A085'
-                    }}
-                    onClick={() => {
-                      this.handleAssignCompany(
-                        this.state.company,
-                        ChatRoomType,
-                        isHaveRole.ShipmentMemberRole
-                      );
-                    }}
-                  >
-                    <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
-                    Invite
-                  </Button>
-                </Col>
-              </Row>
-            </div>
-          );
-        } else {
-          return (
-            <div
+            <Row>
+              <Col xs={6}>
+                <Select
+                  onChange={e => {
+                    this.setState({ company: e });
+                  }}
+                  name="company"
+                  options={options}
+                  value={this.state.company}
+                />
+              </Col>
+              <Col xs={2}>
+                <Button
+                  className="invite-btn"
+                  style={{
+                    marginLeft: '2rem',
+                    marginRight: '1rem',
+                    color: 'white',
+                    backgroundColor: '#16A085'
+                  }}
+                  onClick={() => {
+                    this.handleAssignCompany(
+                      this.state.company,
+                      ChatRoomType,
+                      isHaveRole.ShipmentMemberRole
+                    );
+                  }}
+                >
+                  <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
+                  Invite
+                </Button>
+              </Col>
+            </Row>
+          </div>
+        );
+      } else {
+        return (
+          <div
+            style={{
+              backgroundColor: 'rgba(242, 175, 41, 0.3)',
+              height: 'auto',
+              padding: '10px',
+              borderRadius: '5px',
+              zIndex: '100'
+            }}
+          >
+            <p
               style={{
-                backgroundColor: 'rgba(242, 175, 41, 0.3)',
-                height: 'auto',
-                padding: '10px',
-                borderRadius: '5px',
-                zIndex: '100'
+                fontWeight: 700,
+                color: '#000000'
               }}
             >
-              <p
-                style={{
-                  fontWeight: 700,
-                  color: '#000000'
-                }}
-              >
-                {user.email} has been invited as {_.join(isHaveRole.ShipmentMemberRole, ',')} for
-                this shipment
-              </p>
-              <p>Select a company, to inform your team about this shipment</p>
+              {user.email} has been invited as {_.join(isHaveRole.ShipmentMemberRole, ',')} for this
+              shipment
+            </p>
+            <p>Select a company, to inform your team about this shipment</p>
 
-              <Row>
-                <Col xs={6}>
-                  <Select
-                    onChange={e => {
-                      this.setState({ company: e });
-                    }}
-                    name="company"
-                    options={options}
-                    value={this.state.company}
-                  />
-                </Col>
-                <Col xs={2}>
-                  <Button
-                    className="invite-btn"
-                    style={{
-                      marginLeft: '2rem',
-                      marginRight: '1rem',
-                      color: 'white',
-                      backgroundColor: '#16A085'
-                    }}
-                    onClick={() => {
-                      this.handleAssignCompany(
-                        this.state.company,
-                        ChatRoomType,
-                        isHaveRole.ShipmentMemberRole
-                      );
-                    }}
-                  >
-                    <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
-                    Invite
-                  </Button>
-                </Col>
-              </Row>
-            </div>
-          );
-        }
+            <Row>
+              <Col xs={6}>
+                <Select
+                  onChange={e => {
+                    this.setState({ company: e });
+                  }}
+                  name="company"
+                  options={options}
+                  value={this.state.company}
+                />
+              </Col>
+              <Col xs={2}>
+                <Button
+                  className="invite-btn"
+                  style={{
+                    marginLeft: '2rem',
+                    marginRight: '1rem',
+                    color: 'white',
+                    backgroundColor: '#16A085'
+                  }}
+                  onClick={() => {
+                    this.handleAssignCompany(
+                      this.state.company,
+                      ChatRoomType,
+                      isHaveRole.ShipmentMemberRole
+                    );
+                  }}
+                >
+                  <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
+                  Invite
+                </Button>
+              </Col>
+            </Row>
+          </div>
+        );
       }
     }
 
