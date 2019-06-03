@@ -271,7 +271,7 @@ class TableShipment extends React.Component {
   };
 
   editShipment() {
-    this.props.toggleBlock();
+    this.props.toggleBlock(true);
     const updateObj = { ...this.state.inlineUpdate };
     const updateObs = [];
     Object.keys(updateObj).forEach((key) => {
@@ -280,8 +280,11 @@ class TableShipment extends React.Component {
 
     combineLatest(updateObs).subscribe(() => {
       this.props.fetchShipments();
-      this.props.toggleBlock();
+      this.props.toggleBlock(false);
     });
+    if (updateObs.length === 0) {
+      this.props.toggleBlock(false);
+    }
   }
 
   renderRefComponent(index, ref, shipmentKey, ShipmentMember) {
