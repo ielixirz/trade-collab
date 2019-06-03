@@ -832,6 +832,67 @@ exports.NotiBellChangeOfRoleWithInCompany = functions.firestore
     }
   });
 
+exports.LeaveCompany = functions.firestore
+  .document('Company/{CompanyKey}/CompanyMember/{CompanyMemberKey}')
+  .onDelete(async (snapshot, context) => {
+    const UserKey = snapshot.id;
+
+    const GetUserCompany = await admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(UserKey)
+      .collection('UserCompany')
+      .where(
+        'UserCompanyReference',
+        '==',
+        admin
+          .firestore()
+          .collection('Company')
+          .doc(context.params.CompanyKey)
+      )
+      .get();
+
+    const UserCompanyDeleteServiceList = [];
+
+    GetUserCompany.docs.forEach(async Item => {
+      const DeleteUserCompany = await admin
+        .firestore()
+        .doc(Item.ref.path)
+        .delete();
+      UserCompanyDeleteServiceList.push(DeleteUserCompany);
+    });
+
+    // ShipmentMember
+
+    const GetShipmentOfShipmentMemberOnThisCompany = await admin
+      .firestore()
+      .collection('Shipment')
+      .where(`ShipmentMember.${UserKey}.ShipmentMemberCompanyKey`, '==', context.params.CompanyKey)
+      .get();
+
+    const ShipmentMemberDeleteList = [];
+
+    GetShipmentOfShipmentMemberOnThisCompany.forEach(async Item => {
+      const DeleteShipmentMemberPayload = { ShipmentMember: {} };
+
+      DeleteShipmentMemberPayload['ShipmentMember'][UserKey] = {
+        ShipmentMemberCompanyName: admin.firestore.FieldValue.delete(),
+        ShipmentMemberCompanyKey: admin.firestore.FieldValue.delete()
+      };
+
+      const ShipmentMember = await admin
+        .firestore()
+        .doc(Item.ref.path)
+        .update(DeleteShipmentMemberPayload);
+
+      ShipmentMemberDeleteList.push(ShipmentMember);
+    });
+
+    // ChatRoomMember
+
+    // ShipmentReference
+  });
+
 // +UserNotification
 //   >UserNotificationKey
 //       UserNotificationReadStatus (bool)
