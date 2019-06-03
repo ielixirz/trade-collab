@@ -205,12 +205,12 @@ tbody tr {
 .table.profile-table > thead > tr > th {
   color: #9b9b9b;
   border: none;
-  font-size: medium;
+  font-size: 1.1vw;
 }
 
 .table.profile-table > tbody > tr {
   background-color: white;
-  font-size: large;
+  font-size: 1.1vw;
 }
 
 .table.profile-table > tbody > tr > td {
@@ -275,12 +275,12 @@ tbody tr {
   border-width: thin;
   border-bottom: 1;
   border-top: none;
-  font-size: medium;
+  font-size: 1.1vw;
 }
 
 .table.company-table > tbody > tr {
   background-color: white;
-  font-size: large;
+  font-size: 1.1vw;
 }
 
 .table.company-table > tbody > tr > td {
