@@ -633,7 +633,7 @@ exports.ShipmentAllCount = functions.firestore
     }
   });
 
-exports.CopyMasterDataETAETD = functions.firestore
+exports.CopyInsideMasterDataToShipment = functions.firestore
   .document('Shipment/{ShipmentKey}/ShipmentShareData/{ShipmentShareDataKey}')
   .onWrite(async (change, context) => {
     const oldValue = change.before.data();
@@ -647,6 +647,8 @@ exports.CopyMasterDataETAETD = functions.firestore
           .doc(context.params.ShipmentKey)
           .set(
             {
+              ShipperPort: newValue.ShipperPort,
+              ConsigneePort: newValue.ConsigneePort,
               ShipperETDDate: newValue.ShipperETDDate,
               ConsigneeETAPortDate: newValue.ConsigneeETAPortDate
             },
