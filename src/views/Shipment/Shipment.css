@@ -182,36 +182,9 @@ input {
 .yterminalRef {
   width: 400px;
 }
-.mesgs {
-  float: left;
-  padding: 30px 15px 0 25px;
-  width: 100%;
-}
 
-.outgoing_msg {
-  overflow: hidden;
-  margin: 26px 0 26px;
-}
-.sent_msg {
-  float: right;
-  width: 46%;
-}
-.input_msg_write input {
-  background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
-  border: medium none;
-  color: #4c4c4c;
-  font-size: 15px;
-  min-height: 48px;
-  width: 100%;
-}
 .user-name {
   font-weight: bolder;
-}
-.type_msg {
-  border: 1px solid #c4c4c4;
-  position: relative;
-  margin-bottom: 10px;
-  padding: 5px;
 }
 
 td {
