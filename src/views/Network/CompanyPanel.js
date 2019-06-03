@@ -27,6 +27,7 @@ import {
   GetCompanyMember,
   IsCompanyMember,
   UpdateCompanyMember,
+  GetCompanyUserAccessibility,
 } from '../../service/company/company';
 import { GetProlfileList } from '../../service/user/profile';
 
@@ -58,36 +59,6 @@ const initRoleList = [
       role: 'ALL',
     },
     label: 'ALL',
-  },
-  {
-    value: {
-      role: 'Owner',
-    },
-    label: 'Owner',
-  },
-  {
-    value: {
-      role: 'Executive',
-    },
-    label: 'Executive',
-  },
-  {
-    value: {
-      role: 'Senior',
-    },
-    label: 'Senior',
-  },
-  {
-    value: {
-      role: 'Staff',
-    },
-    label: 'Staff',
-  },
-  {
-    value: {
-      role: 'Basic',
-    },
-    label: 'Basic',
   },
 ];
 
@@ -149,6 +120,7 @@ const CompanyPanel = (props) => {
   const [isEdit, setIsEdit] = useState(false);
   const [incomingRequest, setIncomingRequest] = useState([]);
   const [memberList, setMemberList] = useState([]);
+  const [roleList, setRoleList] = useState(initRoleList);
   const [filterRole, setFilterRole] = useState(undefined);
   const [updateRole, setUpdateRole] = useState({});
   const [updatePosition, setUpdatePosition] = useState({});
@@ -359,6 +331,18 @@ const CompanyPanel = (props) => {
         console.log('TO DO LOG');
       },
     });
+    GetCompanyUserAccessibility(props.match.params.key)
+      .pipe(map(docs => docs.map(d => d.data())))
+      .subscribe((userMatrix) => {
+        const initRoles = [...roleList];
+        const roles = userMatrix.map(matrix => ({
+          value: {
+            role: matrix.CompanyUserAccessibilityRoleName,
+          },
+          label: matrix.CompanyUserAccessibilityRoleName,
+        }));
+        setRoleList(initRoles.concat(roles));
+      });
     fetchIncomingRequest(props.match.params.key);
     fetchMember(props.match.params.key);
   }, [acceptedRequest]);
@@ -616,7 +600,7 @@ Members (
                         className="basic-multi-select role-filter-select"
                         classNamePrefix="select"
                         placeholder="Filter Role"
-                        options={initRoleList}
+                        options={roleList}
                         onChange={event => setFilterRole(event.value.role)}
                       />
                     </Col>
