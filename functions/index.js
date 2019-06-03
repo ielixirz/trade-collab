@@ -837,6 +837,8 @@ exports.LeaveCompany = functions.firestore
   .onDelete(async (snapshot, context) => {
     const UserKey = snapshot.id;
 
+    // UserCompany
+
     const GetUserCompany = await admin
       .firestore()
       .collection('UserInfo')
@@ -890,7 +892,33 @@ exports.LeaveCompany = functions.firestore
 
     // ChatRoomMember
 
-    // ShipmentReference
+    const GetChatRoomMemberCollectionGroup = await admin
+      .firestore()
+      .collectionGroup('ChatRoomMember')
+      .where('ChatRoomMemberUserKey', '==', UserKey)
+      .where('ChatRoomMemberCompanyKey', '==', context.params.CompanyKey)
+      .get();
+
+    const DeleteCompanyInChatRoomMemberServiceList = [];
+
+    GetChatRoomMemberCollectionGroup.docs.forEach(async Item => {
+      const DeleteCompanyInChatRoomMember = await admin
+        .firestore()
+        .doc(Item.ref.path)
+        .update({
+          ChatRoomMemberCompanyName: admin.firestore.FieldValue.delete(),
+          ChatRoomMemberCompanyKey: admin.firestore.FieldValue.delete()
+        });
+      DeleteCompanyInChatRoomMemberServiceList.push(DeleteCompanyInChatRoomMember);
+    });
+
+    // ShipmentReference ?
+
+    return Promise.all([
+      UserCompanyDeleteServiceList,
+      ShipmentMemberDeleteList,
+      DeleteCompanyInChatRoomMemberServiceList
+    ]);
   });
 
 // +UserNotification
