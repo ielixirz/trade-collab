@@ -237,7 +237,7 @@ for
             >
               {user.email}
               {' '}
-has been invited as
+has been invited as {' '}
               {_.join(isHaveRole.ShipmentMemberRole, ',')}
               {' '}
 for this shipment
