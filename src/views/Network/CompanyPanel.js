@@ -567,7 +567,7 @@ const CompanyPanel = (props) => {
             )}
           </Row>
         </div>
-        {isMember ? (
+        {isMember && incomingRequest.length > 0 ? (
           <div className="incoming-request-container">
             <div className="company-table-label">
               <Row>
@@ -581,7 +581,7 @@ Incoming Request (
             <MainDataTable
               data={incomingRequest}
               column={incomingRequestColumns}
-              cssClass="company-table"
+              cssClass="company-table incoming"
               wraperClass="company-table-wraper"
               isBorder={false}
             />
@@ -590,55 +590,53 @@ Incoming Request (
           ''
         )}
         {isMember ? (
-          <div className="company-member-container">
-            <ToolkitProvider keyField="name" data={memberList} columns={memberDataColumns} search>
-              {toolKitProps => (
-                <div>
-                  <div className="company-table-label">
-                    <Row>
-                      <Col xs={7} style={{ paddingLeft: 0 }}>
-                        <h4>
+          <ToolkitProvider keyField="name" data={memberList} columns={memberDataColumns} search>
+            {toolKitProps => (
+              <div className="company-member-container">
+                <div className="company-table-label">
+                  <Row>
+                    <Col xs={7} style={{ paddingLeft: 0 }}>
+                      <h4>
 Members (
-                          {memberList.length}
+                        {memberList.length}
 )
-                        </h4>
-                      </Col>
-                      <Col xs={3} style={{ paddingRight: 0 }}>
-                        <SearchBar
-                          placeholder="&#xF002; Typing"
-                          style={{ width: '210%' }}
-                          {...toolKitProps.searchProps}
-                        />
-                      </Col>
-                      <Col xs={2} style={{ paddingLeft: 0 }}>
-                        <Select
-                          name="colors"
-                          id="role-filter"
-                          className="basic-multi-select role-filter-select"
-                          classNamePrefix="select"
-                          placeholder="Filter Role"
-                          options={initRoleList}
-                          onChange={event => setFilterRole(event.value.role)}
-                        />
-                      </Col>
-                    </Row>
-                  </div>
-                  <MainDataTable
-                    toolkitbaseProps={{ ...toolKitProps.baseProps }}
-                    data={memberList}
-                    filter={filterMemberRole}
-                    filterKeyword={filterRole}
-                    isFilter={filterRole !== undefined}
-                    column={memberDataColumns}
-                    cssClass="company-table member"
-                    wraperClass="company-table-wraper"
-                    isBorder={false}
-                    toolkit="search"
-                  />
+                      </h4>
+                    </Col>
+                    <Col xs={3} style={{ paddingRight: 0 }}>
+                      <SearchBar
+                        placeholder="&#xF002; Typing"
+                        style={{ width: '210%' }}
+                        {...toolKitProps.searchProps}
+                      />
+                    </Col>
+                    <Col xs={2} style={{ paddingLeft: 0 }}>
+                      <Select
+                        name="colors"
+                        id="role-filter"
+                        className="basic-multi-select role-filter-select"
+                        classNamePrefix="select"
+                        placeholder="Filter Role"
+                        options={initRoleList}
+                        onChange={event => setFilterRole(event.value.role)}
+                      />
+                    </Col>
+                  </Row>
                 </div>
-              )}
-            </ToolkitProvider>
-          </div>
+                <MainDataTable
+                  toolkitbaseProps={{ ...toolKitProps.baseProps }}
+                  data={memberList}
+                  filter={filterMemberRole}
+                  filterKeyword={filterRole}
+                  isFilter={filterRole !== undefined}
+                  column={memberDataColumns}
+                  cssClass="company-table member"
+                  wraperClass="company-table-wraper"
+                  isBorder={false}
+                  toolkit="search"
+                />
+              </div>
+            )}
+          </ToolkitProvider>
         ) : (
           ''
         )}

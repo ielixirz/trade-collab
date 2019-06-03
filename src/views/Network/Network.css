@@ -163,7 +163,6 @@
 .incoming-request-container {
   margin-left: 5rem;
   margin-right: 5rem;
-  height: 30%;
   background-color: white;
   margin-top: 0.5rem;
 }
@@ -171,7 +170,6 @@
 .company-member-container {
   margin-left: 5rem;
   margin-right: 5rem;
-  height: 35%;
   background-color: white;
   margin-top: 0.5rem;
 }
@@ -250,7 +248,16 @@ tbody tr {
 
 .table.company-table.member > tbody {
   display: block;
-  height: 15vh; /* Just for the demo          */
+  height: 25vh;
+  max-height: 60vh; /* Just for the demo          */
+  overflow-y: auto; /* Trigger vertical scroll    */
+  overflow-x: hidden; /* Hide the horizontal scroll */
+}
+
+.table.company-table.incoming > tbody {
+  display: block;
+  height: 10vh;
+  max-height: 25vh; /* Just for the demo          */
   overflow-y: auto; /* Trigger vertical scroll    */
   overflow-x: hidden; /* Hide the horizontal scroll */
 }
