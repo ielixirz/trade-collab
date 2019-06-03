@@ -58,3 +58,21 @@ hr.listHr {
   color: black;
   border: none;
 }
+
+.btn-see-chatmember {
+  background: none;
+  border: none;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.btn-see-chatmember:hover {
+  background: none;
+  border: none;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.btn-see-chatmember:focus {
+  box-shadow: none;
+}
