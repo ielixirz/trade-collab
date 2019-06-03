@@ -8,6 +8,7 @@ import React from 'react';
 import './Shipment.css';
 
 import _ from 'lodash';
+import Select from 'react-select';
 import BootstrapTable from 'react-bootstrap-table-next';
 
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
@@ -53,6 +54,38 @@ import { GetShipmentPin, GetShipmentTotalCount } from '../../service/personalize
 import { connect } from 'react-redux';
 import { SAVE_CREDENCIAL } from '../../constants/constants';
 
+const SHIPMENT_STATUS_OPTIONS = [
+  {
+    value: {
+      status: 'In Transit',
+    },
+    label: 'In Transit',
+  },
+  {
+    value: {
+      role: 'Order',
+    },
+    label: 'Order',
+  },
+  {
+    value: {
+      role: 'Delayed',
+    },
+    label: 'Delayed',
+  },
+  {
+    value: {
+      role: 'Cancelled',
+    },
+    label: 'Cancelled',
+  },
+  {
+    value: {
+      role: 'Deliverd',
+    },
+    label: 'Deliverd',
+  },
+];
 const { SearchBar } = Search;
 
 class TableShipment extends React.Component {
@@ -674,13 +707,23 @@ class TableShipment extends React.Component {
                   {...props.searchProps}
                   placeholder="&#xF002; Typing"
                   id="search"
-                  style={{ width: 250, height: 38 }}
+                  style={{ width: 200, height: 38 }}
                 />
               </Col>
-              <Col xs="2">
-                <MySearch {...props.searchProps} />
+              <Col xs="3">
+                <Select
+                  name="colors"
+                  id="role-filter"
+                  className="basic-multi-select role-filter-select"
+                  classNamePrefix="select"
+                  placeholder="Filter Status"
+                  styles={{ control: styles => ({ ...styles, width: '250px' }) }}
+                  options={SHIPMENT_STATUS_OPTIONS}
+                  onChange={null}
+                />
+                {' '}
               </Col>
-              <Col xs="6" />
+              <Col xs="5" />
               <Col xs="2" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
                 {this.state.isEdit ? (
                   <Button
