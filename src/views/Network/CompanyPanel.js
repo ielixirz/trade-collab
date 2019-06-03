@@ -2,7 +2,7 @@
 /* eslint-disable filenames/match-regex */
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
-import { combineLatest, zip } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import _ from 'lodash';
 import BlockUi from 'react-block-ui';
@@ -52,7 +52,13 @@ const mockCompany = {
   website: 'www.website.com',
 };
 
-const mockRoleList = [
+const initRoleList = [
+  {
+    value: {
+      role: 'ALL',
+    },
+    label: 'ALL',
+  },
   {
     value: {
       role: 'Owner',
@@ -143,6 +149,7 @@ const CompanyPanel = (props) => {
   const [isEdit, setIsEdit] = useState(false);
   const [incomingRequest, setIncomingRequest] = useState([]);
   const [memberList, setMemberList] = useState([]);
+  const [filterRole, setFilterRole] = useState(undefined);
   const [updateRole, setUpdateRole] = useState({});
   const [updatePosition, setUpdatePosition] = useState({});
   const [acceptedRequest, setAcceptedRequest] = useState(undefined);
@@ -173,6 +180,19 @@ const CompanyPanel = (props) => {
     IsCompanyMember(companyKey, userKey).subscribe((member) => {
       setIsMember(member);
     });
+  };
+
+  const filterMemberRole = (role, member) => {
+    let filterMembers = member;
+    if (role !== 'ALL') {
+      filterMembers = member.filter((m) => {
+        if (m.role.props === undefined) {
+          return m.role === role;
+        }
+        return m.role.props.text === role;
+      });
+    }
+    return filterMembers;
   };
 
   const fetchMember = (companyKey) => {
@@ -217,7 +237,7 @@ const CompanyPanel = (props) => {
               text={member.UserMemberRoleName}
               turnType="dropdown"
               data={{
-                options: mockRoleList,
+                options: initRoleList,
                 onChangeFn: input => updateMember(companyKey, member.key, { UserMemberRoleName: input.value.role }),
               }}
             />
@@ -302,7 +322,7 @@ const CompanyPanel = (props) => {
               <Select
                 name="company"
                 id="company-invite"
-                options={mockRoleList}
+                options={initRoleList}
                 className="basic-multi-select"
                 classNamePrefix="select"
                 placeholder="Choose Role"
@@ -597,8 +617,8 @@ Members (
                           className="basic-multi-select role-filter-select"
                           classNamePrefix="select"
                           placeholder="Filter Role"
-                          options={mockRoleList}
-                          {...toolKitProps.searchProps}
+                          options={initRoleList}
+                          onChange={event => setFilterRole(event.value.role)}
                         />
                       </Col>
                     </Row>
@@ -606,6 +626,9 @@ Members (
                   <MainDataTable
                     toolkitbaseProps={{ ...toolKitProps.baseProps }}
                     data={memberList}
+                    filter={filterMemberRole}
+                    filterKeyword={filterRole}
+                    isFilter={filterRole !== undefined}
                     column={memberDataColumns}
                     cssClass="company-table member"
                     wraperClass="company-table-wraper"
