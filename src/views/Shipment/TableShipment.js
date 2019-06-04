@@ -292,12 +292,7 @@ class TableShipment extends React.Component {
   renderRefComponent(index, ref, shipmentKey, ShipmentMember) {
     const { user, companies } = this.props;
     let refs = [];
-    if (shipmentKey === '5MvYnwSeAhtlA5EfqUaJ') {
-      console.log('Check this shipments');
-      console.log(ref);
-      console.log(ref, shipmentKey, ShipmentMember);
-    }
-
+    console.log('this shipments ref', ref);
     _.forEach(companies, item => {
       _.forEach(ref, refitem => {
         if (shipmentKey === '5MvYnwSeAhtlA5EfqUaJ') {
@@ -315,7 +310,6 @@ class TableShipment extends React.Component {
       });
     });
     const hasCompany = _.get(ShipmentMember, `${user.uid}`, {});
-    console.log('Output refs', refs);
     let alreadyHave = refs.length > 0;
     if (!_.isEmpty(hasCompany.ShipmentMemberCompanyName)) {
       return (
@@ -419,23 +413,27 @@ class TableShipment extends React.Component {
                           }
                         });
                       }}
-                      onKeyPress={event => {
-                        if (event.key === 'Enter') {
-                          console.log('is Submitting ', this.state.submiting);
+                      onKeyPress={_.debounce(
+                        event => {
+                          if (event.key === 'Enter') {
+                            console.log('is Submitting ', this.state.submiting);
 
-                          if (
-                            _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) === false
-                          ) {
-                            this.setState({
-                              submiting: {
-                                ...this.state.submiting,
-                                [shipmentKey]: {
-                                  isSubmit: true
+                            if (
+                              _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) ===
+                              false
+                            ) {
+                              this.setState({
+                                submiting: {
+                                  ...this.state.submiting,
+                                  [shipmentKey]: {
+                                    isSubmit: true
+                                  }
                                 }
-                              }
-                            });
-                            CreateShipmentReference(shipmentKey, this.state.input.newRef).subscribe(
-                              {
+                              });
+                              CreateShipmentReference(
+                                shipmentKey,
+                                this.state.input.newRef
+                              ).subscribe({
                                 next: res => {
                                   this.setState({
                                     submiting: {
@@ -446,27 +444,26 @@ class TableShipment extends React.Component {
                                       }
                                     }
                                   });
-
-                                  this.props.editShipmentRef(shipmentKey, res.id, {
-                                    ...this.state.input.newRef,
-                                    ShipmentReferenceKey: res.id,
-                                    id: res.id
-                                  });
                                 }
+                              });
+                            } else {
+                              console.log('update', this.state.input.newRef);
+                              if (_.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0) {
+                                UpdateShipmentReference(
+                                  shipmentKey,
+                                  _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
+                                  this.state.input.newRef
+                                );
                               }
-                            );
-                          } else {
-                            console.log('update', this.state.input.newRef);
-                            if (_.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0) {
-                              UpdateShipmentReference(
-                                shipmentKey,
-                                _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
-                                this.state.input.newRef
-                              );
                             }
                           }
+                        },
+                        2000,
+                        {
+                          leading: true,
+                          trailing: false
                         }
-                      }}
+                      )}
                       maxLength={50}
                       bsSize="sm"
                     />

@@ -68,14 +68,16 @@ class ChatWithHeader extends Component {
   }
 
   handleAssignCompany(e, role, userRole) {
-    console.log(this.props);
-    const { companies, ShipmentKey, ChatRoomKey } = this.props;
+    console.log(e, role, userRole);
+    const { ShipmentKey, ChatRoomKey } = this.props;
+    const { companies } = this.state;
     const pickedCompany = _.find(companies, item => item.CompanyKey === e.value);
+    console.log(pickedCompany);
 
     GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
       next: res => {
         const member = _.map(res, item => {
-          console.log(item);
+          console.log(item.data());
           return {
             ChatRoomMemberKey: item.id,
             ...item.data()

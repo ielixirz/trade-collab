@@ -143,20 +143,25 @@ class Shipment extends Component {
   }
 
   componentDidMount() {
+    console.log('Fetched Company is');
     this.props.fetchShipments(this.state.typeShipment);
     GetUserCompany(this.props.user.uid).subscribe({
       next: res => {
         console.log('Fetched Company is', res);
         this.setState({
-          companies: res
+          companies: {
+            ...res
+          }
         });
       }
     });
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('has Update State');
+    console.log('has Update State', this.state);
     if (prevState.activeTab !== this.state.activeTab) {
+      console.log('reFetch');
+
       this.props.fetchShipments(this.state.typeShipment);
     }
   }
