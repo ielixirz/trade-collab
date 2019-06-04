@@ -206,14 +206,6 @@ class TableShipment extends React.Component {
 
   componentDidMount() {
     this.fetchPinned();
-    GetUserCompany(this.props.user.uid).subscribe({
-      next: res => {
-        console.log('Fetched Company is', res);
-        this.setState({
-          companies: res
-        });
-      }
-    });
   }
 
   addToPinCollection = result => {
@@ -298,25 +290,32 @@ class TableShipment extends React.Component {
   }
 
   renderRefComponent(index, ref, shipmentKey, ShipmentMember) {
-    const { user } = this.props;
-    const { companies } = this.state;
+    const { user, companies } = this.props;
     let refs = [];
+    if (shipmentKey === '5MvYnwSeAhtlA5EfqUaJ') {
+      console.log('Check this shipments');
+      console.log(ref);
+      console.log(ref, shipmentKey, ShipmentMember);
+    }
 
     _.forEach(companies, item => {
       _.forEach(ref, refitem => {
+        if (shipmentKey === '5MvYnwSeAhtlA5EfqUaJ') {
+          console.log(
+            'isSameKey',
+            shipmentKey,
+            item.CompanyKey,
+            refitem.ShipmentReferenceCompanyKey
+          );
+        }
+
         if (item.CompanyKey === refitem.ShipmentReferenceCompanyKey) {
           refs.push(refitem);
         }
       });
     });
     const hasCompany = _.get(ShipmentMember, `${user.uid}`, {});
-    const userref = _.get(this.state, `input.refs.${user.uid}`, {
-      ShipmentReferenceKey: user.uid,
-      ShipmentReferenceID: '',
-      ShipmentReferenceCompanyName: '',
-      ShipmentReferenceCompanyKey: ''
-    });
-
+    console.log('Output refs', refs);
     let alreadyHave = refs.length > 0;
     if (!_.isEmpty(hasCompany.ShipmentMemberCompanyName)) {
       return (
@@ -556,12 +555,26 @@ class TableShipment extends React.Component {
     if (this.props.input.length === 0) {
       return '';
     }
-    const filtered = _.filter(
-      this.props.input,
-      shipment => !_.find(this.state.pinned, pin => shipment.ShipmentID === pin.ShipmentID)
-    );
-    const mappedPin = _.map(this.state.pinned, pin => pin);
-    const collection = [...mappedPin, ...filtered];
+    // _.orderBy(myArr, [columnName], ['asc'])
+    console.log('Pin', this.state.pinned);
+
+    let filtered = _.map(this.props.input, shipment => {
+      let output = {
+        ...shipment,
+        PIN: false
+      };
+      _.forEach(this.state.pinned, pin => {
+        if (pin.ShipmentID === shipment.ShipmentID) {
+          output = {
+            ...shipment,
+            PIN: true
+          };
+        }
+      });
+      return output;
+    });
+    let collection = _.orderBy(filtered, ['PIN'], ['desc']);
+    console.log('collection', collection);
     input = _.map(collection, (item, index) => {
       const etd = _.get(item, 'ShipperETDDate', 0);
       const eta = _.get(item, 'ConsigneeETAPortDate', 0);
@@ -571,7 +584,7 @@ class TableShipment extends React.Component {
           alert: this.renderAlertComponent(index, item, item.ShipmentID),
           Ref: this.renderRefComponent(
             index,
-            _.get(item, 'ShipmentReferenceList', []),
+            item.ShipmentReferenceList,
             item.ShipmentID,
             item.ShipmentMember
           ),
@@ -605,7 +618,7 @@ class TableShipment extends React.Component {
         alert: this.renderAlertComponent(index, item, item.ShipmentID),
         Ref: this.renderRefComponent(
           index,
-          _.get(item, 'ShipmentReferenceList', []),
+          _.get(item, 'ShipmentReferenceList', {}),
           item.ShipmentID,
 
           item.ShipmentMember

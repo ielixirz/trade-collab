@@ -36,6 +36,7 @@ import TableShipment from './TableShipment';
 import { fetchShipments, fetchMoreShipments } from '../../actions/shipmentActions';
 import { CreateShipment } from '../../service/shipment/shipment';
 import './Shipment.css';
+import { GetUserCompany } from '../../service/user/user';
 
 class Shipment extends Component {
   constructor(props) {
@@ -57,6 +58,7 @@ class Shipment extends Component {
         method: '',
         type: ''
       },
+      companies: {},
       modal: false,
       dropdownOpen: false,
       blocking: false
@@ -142,6 +144,14 @@ class Shipment extends Component {
 
   componentDidMount() {
     this.props.fetchShipments(this.state.typeShipment);
+    GetUserCompany(this.props.user.uid).subscribe({
+      next: res => {
+        console.log('Fetched Company is', res);
+        this.setState({
+          companies: res
+        });
+      }
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -617,6 +627,7 @@ class Shipment extends Component {
               <Col sm="12">
                 <BlockUi tag="div" blocking={this.state.blocking} style={{ height: '100%' }}>
                   <TableShipment
+                    companies={this.state.companies}
                     input={this.props.shipments}
                     typeShipment={this.state.typeShipment}
                     toggleBlock={this.toggleBlocking}
@@ -630,6 +641,7 @@ class Shipment extends Component {
               <Col sm="12">
                 {' '}
                 <TableShipment
+                  companies={this.state.companies}
                   input={this.props.shipments}
                   typeShipment={this.state.typeShipment}
                 />
@@ -640,6 +652,7 @@ class Shipment extends Component {
             <Row>
               <Col sm="12">
                 <TableShipment
+                  companies={this.state.companies}
                   input={this.props.shipments}
                   typeShipment={this.state.typeShipment}
                 />
@@ -650,6 +663,7 @@ class Shipment extends Component {
             <Row>
               <Col sm="12">
                 <TableShipment
+                  companies={this.state.companies}
                   input={this.props.shipments}
                   typeShipment={this.state.typeShipment}
                 />
@@ -660,6 +674,7 @@ class Shipment extends Component {
             <Row>
               <Col sm="12">
                 <TableShipment
+                  companies={this.state.companies}
                   input={this.props.shipments}
                   typeShipment={this.state.typeShipment}
                 />
