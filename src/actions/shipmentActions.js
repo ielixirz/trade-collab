@@ -36,7 +36,7 @@ export const fetchShipments = (typeStatus: any, toggleBlockCallback) => (dispatc
     }
   });
 
-  let shipments = [];
+  let shipments = {};
   shipmentsObservable.unsubscribe();
   shipmentsObservable = CombineShipmentAndShipmentReference(
     typeStatus,
@@ -46,48 +46,33 @@ export const fetchShipments = (typeStatus: any, toggleBlockCallback) => (dispatc
     uid
   ).subscribe({
     next: res => {
-      shipments = _.map(res, item => ({
-        uid: item.id,
-        ...item,
-        ShipmentReferenceList: _.map(item.ShipmentReferenceList, item => ({
-          id: item.id,
-          ShipmentReferenceKey: item.id,
-          ...item.data()
-        })),
-        ShipperETDDate: item.ShipperETDDate === undefined ? null : item.ShipperETDDate,
-        ConsigneeETAPortDate:
-          item.ConsigneeETAPortDate === undefined ? null : item.ConsigneeETAPortDate,
-        ConsigneeETAWarehouseDate:
-          item.ConsigneeETAWarehouseDate === undefined ? null : item.ConsigneeETAWarehouseDate
-      }));
+      _.forEach(res, (item, refs) => {
+        shipments[item.ShipmentID] = {
+          uid: item.ShipmentID,
+          ...item,
+          ShipmentReferenceList: _.reduce(
+            item.ShipmentReferenceList,
+            (refs, item) => {
+              refs[item.id] = {
+                id: item.id,
+                ShipmentReferenceKey: item.id,
+                ...item.data()
+              };
+              return refs;
+            },
+            {}
+          ),
+          ShipperETDDate: item.ShipperETDDate === undefined ? null : item.ShipperETDDate,
+          ConsigneeETAPortDate:
+            item.ConsigneeETAPortDate === undefined ? null : item.ConsigneeETAPortDate,
+          ConsigneeETAWarehouseDate:
+            item.ConsigneeETAWarehouseDate === undefined ? null : item.ConsigneeETAWarehouseDate
+        };
+      });
+
       dispatch({
         type: FETCH_SHIPMENT_LIST_DATA,
         payload: shipments
-      });
-      const allrefs = {};
-
-      _.forEach(shipments, item => {
-        const refs = _.get(item, 'ShipmentReferenceList', []);
-        const result = [];
-        if (refs.length > 0) {
-          _.forEach(refs, ref => {
-            result[ref.id] = {
-              ...ref
-            };
-          });
-        }
-
-        allrefs[item.ShipmentID] = result;
-      });
-      dispatch({
-        type: FETCH_SHIPMENT_REF_LIST,
-        payload: allrefs
-      });
-
-      GetShipmentTotalCount(sender.id).subscribe({
-        next: res => {
-          console.log(res);
-        }
       });
     },
     error: err => {
@@ -103,7 +88,7 @@ export const editShipmentRef = (ShipmentKey, refKey, Data) => dispatch => {
   dispatch({
     type: EDIT_SHIPMENT_REF,
     id: ShipmentKey,
-    refKey,
+    refKey: refKey,
     payload: Data
   });
 };
@@ -122,7 +107,7 @@ export const fetchMoreShipments = (typeStatus: any) => (dispatch, getState) => {
       user: { uid }
     }
   } = getState();
-  let shipments = [];
+  let shipments = {};
   shipmentsObservable.unsubscribe();
   shipmentsObservable = CombineShipmentAndShipmentReference(
     typeStatus,
@@ -132,32 +117,32 @@ export const fetchMoreShipments = (typeStatus: any) => (dispatch, getState) => {
     uid
   ).subscribe({
     next: res => {
-      shipments = _.map(res, item => ({
-        uid: item.id,
-        ...item
-      }));
+      _.forEach(res, item => {
+        shipments[item.ShipmentID] = {
+          uid: item.ShipmentID,
+          ...item,
+          ShipmentReferenceList: _.reduce(
+            item.ShipmentReferenceList,
+            (refs, item) => {
+              refs[item.id] = {
+                id: item.id,
+                ShipmentReferenceKey: item.id,
+                ...item.data()
+              };
+              return refs;
+            },
+            {}
+          ),
+          ShipperETDDate: item.ShipperETDDate === undefined ? null : item.ShipperETDDate,
+          ConsigneeETAPortDate:
+            item.ConsigneeETAPortDate === undefined ? null : item.ConsigneeETAPortDate,
+          ConsigneeETAWarehouseDate:
+            item.ConsigneeETAWarehouseDate === undefined ? null : item.ConsigneeETAWarehouseDate
+        };
+      });
       dispatch({
         type: FETCH_SHIPMENT_LIST_DATA,
         payload: shipments
-      });
-      const allrefs = {};
-
-      _.forEach(shipments, item => {
-        const refs = _.get(item, 'ShipmentReferenceList', []);
-        const result = [];
-        if (refs.length > 0) {
-          _.forEach(refs, ref => {
-            result[ref.id] = {
-              ...ref
-            };
-          });
-        }
-
-        allrefs[item.ShipmentID] = result;
-      });
-      dispatch({
-        type: FETCH_SHIPMENT_REF_LIST,
-        payload: allrefs
       });
     },
     error: err => {

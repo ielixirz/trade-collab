@@ -41,11 +41,17 @@ export default function reducer(state = INITIAL_STATE, action) {
     case EDIT_SHIPMENT_REF:
       return {
         ...state,
-        ShipmentRefs: {
-          ...state.ShipmentRefs,
+        Shipments: {
+          ...state.Shipments,
           [action.id]: {
-            ...state.ShipmentRefs[action.id],
-            [action.refKey]: action.payload
+            ...state.Shipments[action.id],
+            ShipmentReferenceList: {
+              ...state.Shipments[action.id].ShipmentReferenceList,
+              [action.refKey]: {
+                ...state.Shipments[action.id].ShipmentReferenceList[action.refKey],
+                ...action.payload
+              }
+            }
           }
         }
       };
