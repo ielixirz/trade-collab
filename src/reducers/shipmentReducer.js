@@ -7,7 +7,7 @@ import {
 } from '../constants/constants';
 
 const INITIAL_STATE = {
-  Shipments: [],
+  Shipments: {},
   ShipmentRefs: {},
   notification: {}
 };

@@ -14,12 +14,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
 
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
-import {
-  editShipmentRef,
-  fetchMoreShipments,
-  fetchShipments,
-  updateShipmentRef
-} from '../../actions/shipmentActions';
+import { editShipmentRef, updateShipmentRef } from '../../actions/shipmentActions';
 import { combineLatest } from 'rxjs';
 import moment from 'moment';
 
@@ -547,9 +542,10 @@ class TableShipment extends React.Component {
   render() {
     let data = [];
     let columns = [];
-
     let input = [];
-    if (this.props.input.length === 0) {
+    console.log(_.size(this.props.input));
+    console.log('Props', this.props);
+    if (_.size(this.props.input) === 0) {
       return '';
     }
     // _.orderBy(myArr, [columnName], ['asc'])
@@ -781,7 +777,7 @@ class TableShipment extends React.Component {
                 const obj = e.target;
                 const isTrigger = obj.scrollTop === obj.scrollHeight - obj.offsetHeight;
                 if (isTrigger) {
-                  this.props.fetchMoreShipments();
+                  this.props.fetchMoreShipment();
                 }
               }}
             >
@@ -821,8 +817,6 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   {
-    fetchShipments,
-    fetchMoreShipments,
     editShipmentRef,
     updateShipmentRef
   }
