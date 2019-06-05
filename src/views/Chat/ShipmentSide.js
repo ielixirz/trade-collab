@@ -36,7 +36,9 @@ const styles = {
   },
 };
 
-const ShipmentData = ({ shipmentKey, chatroomKey, userKey }) => {
+const ShipmentData = ({
+  shipmentKey, chatroomKey, userKey, mainData,
+}) => {
   const initialState = useContext(ShipmentListContext);
 
   const [state, dispatch] = useReducer(shipmentReducer, initialState);
@@ -48,6 +50,7 @@ const ShipmentData = ({ shipmentKey, chatroomKey, userKey }) => {
         shipmentKey,
         chatroomKey,
         userKey,
+        mainData,
       }}
     >
       <ShipmentList />
@@ -72,7 +75,6 @@ class ShipmentSide extends Component {
   }
 
   render() {
-    console.log('ShipmentSideProps', this.props);
     return (
       <div>
         <Card onClick={this.triggerCollapse} style={styles.card}>
@@ -105,6 +107,7 @@ class ShipmentSide extends Component {
                 shipmentKey={this.props.shipmentKey}
                 chatroomKey={this.props.chatroomKey}
                 userKey={this.props.auth.uid}
+                mainData={this.props.mainData}
               />
             </Collapse>
           </CardBody>

@@ -19,7 +19,7 @@ const shipmentListGroupStyle = {
 };
 
 const ShipmentList = () => {
-  const { chatroomKey, shipmentKey } = useContext(ShipmentContext);
+  const { chatroomKey, shipmentKey, mainData } = useContext(ShipmentContext);
   const [masterData, setMasterData] = useState(undefined);
   const [lastUpdate, setLastUpdate] = useState(undefined);
   const masterDetailModalRef = useRef(null);

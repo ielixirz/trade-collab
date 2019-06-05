@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react/react-in-jsx-scope */
@@ -619,7 +620,7 @@ class ChatWithHeader extends Component {
               shipmentKey={ShipmentKey}
               chatroomKey={ChatRoomKey}
             />
-            <ShipmentSide shipmentKey={ShipmentKey} chatroomKey={ChatRoomKey} />
+            <ShipmentSide mainData={this.props.ShipmentData} shipmentKey={ShipmentKey} chatroomKey={ChatRoomKey} />
           </Col>
         </Row>
       </div>
