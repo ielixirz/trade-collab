@@ -961,3 +961,7 @@ const SendEmail = async TemplateMessage => {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
   return await sgMail.send(TemplateMessage);
 };
+
+exports.TestSendEmail = functions.https.onRequest(async (req, res) => {
+  return SendEmail(TestMessage);
+});
