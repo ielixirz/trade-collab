@@ -3,9 +3,13 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable filenames/match-regex */
 import React from 'react';
-import { Card, CardBody, Row, Col, Button, UncontrolledCollapse } from 'reactstrap';
+import {
+  Card, CardBody, Row, Col, Button, UncontrolledCollapse,
+} from 'reactstrap';
 
-const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
+const ChatCreateRoom = ({
+  createChatRoom, param, fetchChatMessage, user,
+}) => (
   <Card>
     <CardBody>
       <Row>
@@ -18,16 +22,16 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
       <Row
         style={{
           marginTop: '100px',
-          marginBottom: '100px'
+          marginBottom: '100px',
         }}
       >
         <Col />
         <Col className="text-lg-center">
           <Button
             style={{
-              width: '250px'
+              width: '250px',
             }}
-            color="yterminal"
+            color="chatcreate"
             size="lg"
             active
             onClick={() => {
@@ -40,9 +44,9 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
         <Col className="text-lg-center">
           <Button
             style={{
-              width: '250px'
+              width: '250px',
             }}
-            color="yterminal"
+            color="chatcreate"
             size="lg"
             active
             onClick={() => {
@@ -57,16 +61,16 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
       <Row
         style={{
           marginTop: '100px',
-          marginBottom: '100px'
+          marginBottom: '100px',
         }}
       >
         <Col />
         <Col className="text-lg-center">
           <Button
-            color="yterminal"
+            color="chatcreate"
             size="lg"
             style={{
-              width: '250px'
+              width: '250px',
             }}
             active
             onClick={() => {
@@ -78,10 +82,10 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
         </Col>
         <Col className="text-lg-center">
           <Button
-            color="yterminal"
+            color="chatcreate"
             size="lg"
             style={{
-              width: '250px'
+              width: '250px',
             }}
             active
             onClick={() => {
@@ -110,10 +114,10 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
             <Row>
               <Col>
                 <Button
-                  color="yterminal"
+                  color="chatcreate"
                   size="lg"
                   style={{
-                    width: '600px'
+                    width: '600px',
                   }}
                   active
                   onClick={() => {
@@ -127,11 +131,11 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
             <br />
             <Row>
               <Button
-                color="yterminal"
+                color="chatcreate"
                 size="lg"
                 style={{
                   width: '200px',
-                  marginRight: '200px'
+                  marginRight: '200px',
                 }}
                 active
                 onClick={() => {
@@ -141,10 +145,10 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
                 Exporter
               </Button>
               <Button
-                color="yterminal"
+                color="chatcreate"
                 size="lg"
                 style={{
-                  width: '200px'
+                  width: '200px',
                 }}
                 active
                 onClick={() => {
@@ -154,14 +158,15 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
                 Importer
               </Button>
             </Row>
-            <br />{' '}
+            <br />
+            {' '}
             <Row>
               <Button
-                color="yterminal"
+                color="chatcreate"
                 size="lg"
                 style={{
                   width: '200px',
-                  marginRight: '200px'
+                  marginRight: '200px',
                 }}
                 active
                 onClick={() => {
@@ -171,10 +176,10 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
                 Outbound Forwarder
               </Button>
               <Button
-                color="yterminal"
+                color="chatcreate"
                 size="lg"
                 style={{
-                  width: '200px'
+                  width: '200px',
                 }}
                 active
                 onClick={() => {
@@ -184,14 +189,15 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
                 Inbound Forwarder
               </Button>
             </Row>
-            <br />{' '}
+            <br />
+            {' '}
             <Row>
               <Button
-                color="yterminal"
+                color="chatcreate"
                 size="lg"
                 style={{
                   width: '200px',
-                  marginRight: '200px'
+                  marginRight: '200px',
                 }}
                 active
                 onClick={() => {
@@ -201,10 +207,10 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
                 Outbound Custom Broker
               </Button>
               <Button
-                color="yterminal"
+                color="chatcreate"
                 size="lg"
                 style={{
-                  width: '200px'
+                  width: '200px',
                 }}
                 active
                 onClick={() => {
@@ -214,14 +220,15 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
                 Inbound Custom Broker
               </Button>
             </Row>
-            <br />{' '}
+            <br />
+            {' '}
             <Row>
               <Button
-                color="yterminal"
+                color="chatcreate"
                 size="lg"
                 style={{
                   width: '200px',
-                  marginRight: '200px'
+                  marginRight: '200px',
                 }}
                 onClick={() => {
                   createChatRoom(fetchChatMessage, param, 'Outbound Trucking', user);
@@ -231,10 +238,10 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
                 Outbound Trucking
               </Button>
               <Button
-                color="yterminal"
+                color="chatcreate"
                 size="lg"
                 style={{
-                  width: '200px'
+                  width: '200px',
                 }}
                 active
                 onClick={() => {
@@ -244,14 +251,15 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
                 Inbound Trucking
               </Button>
             </Row>
-            <br />{' '}
+            <br />
+            {' '}
             <Row>
               <Button
-                color="yterminal"
+                color="chatcreate"
                 size="lg"
                 style={{
                   width: '200px',
-                  marginRight: '200px'
+                  marginRight: '200px',
                 }}
                 active
                 onClick={() => {
@@ -261,10 +269,10 @@ const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
                 Exporter Warehouse
               </Button>
               <Button
-                color="yterminal"
+                color="chatcreate"
                 size="lg"
                 style={{
-                  width: '200px'
+                  width: '200px',
                 }}
                 active
                 onClick={() => {

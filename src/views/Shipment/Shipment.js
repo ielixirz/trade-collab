@@ -34,16 +34,23 @@ import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 import TableShipment from './TableShipment';
 import { fetchShipments, fetchMoreShipments } from '../../actions/shipmentActions';
-import { CreateShipment } from '../../service/shipment/shipment';
+import {
+  CombineShipmentAndShipmentReference,
+  CreateShipment
+} from '../../service/shipment/shipment';
 import './Shipment.css';
+import { GetUserCompany } from '../../service/user/user';
+import { GetShipmentTotalCount } from '../../service/personalize/personalize';
+import _ from 'lodash';
 
 class Shipment extends Component {
   constructor(props) {
     super(props);
-
+    this.fetchMoreShipment = this.fetchMoreShipment.bind(this);
     this.toggle = this.toggle.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.dropdown = this.dropdown.bind(this);
+    this.fetchShipment = {};
     this.state = {
       activeTab: '1',
       typeShipment: '',
@@ -57,6 +64,7 @@ class Shipment extends Component {
         method: '',
         type: ''
       },
+      companies: {},
       modal: false,
       dropdownOpen: false,
       blocking: false
@@ -66,8 +74,8 @@ class Shipment extends Component {
     this.modal = this.modal.bind(this);
   }
 
-  toggleBlocking() {
-    this.setState({ blocking: !this.state.blocking });
+  toggleBlocking(block) {
+    this.setState({ blocking: block });
   }
 
   modal() {
@@ -124,7 +132,7 @@ class Shipment extends Component {
     parameter.ShipmentCreateTimestamp = new Date().getTime();
     CreateShipment(parameter).subscribe({
       next: res => {
-        this.props.fetchShipments(this.state.typeShipment, this.toggleBlocking);
+        this.props.fetchShipments(this.state.typeShipment);
       }
     });
 
@@ -140,13 +148,97 @@ class Shipment extends Component {
     }));
   }
 
+  fetchMoreShipment() {
+    this.fetchShipment.unsubscribe();
+    this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
+      next: notification => {
+        CombineShipmentAndShipmentReference(
+          this.state.typeShipment,
+          '',
+          'asc',
+          this.props.shipments.length + 10,
+          this.props.user.uid
+        ).subscribe({
+          next: shipment => {
+            this.props.fetchShipments(shipment, notification);
+          },
+          error: err => {
+            console.log(err);
+          },
+          complete: () => {
+            console.log('Hello World');
+          }
+        });
+      }
+    });
+  }
+
+  fetchShipmentReload() {
+    this.fetchShipment.unsubscribe();
+    this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
+      next: notification => {
+        CombineShipmentAndShipmentReference(
+          this.state.typeShipment,
+          '',
+          'asc',
+          this.props.shipments.length + 10,
+          this.props.user.uid
+        ).subscribe({
+          next: shipment => {
+            this.props.fetchShipments(shipment, notification);
+          },
+          error: err => {
+            console.log(err);
+          },
+          complete: () => {
+            console.log('Hello World');
+          }
+        });
+      }
+    });
+  }
+
   componentDidMount() {
-    this.props.fetchShipments(this.state.typeShipment, this.toggleBlocking);
+    this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
+      next: notification => {
+        CombineShipmentAndShipmentReference(
+          this.state.typeShipment,
+          '',
+          'asc',
+          20,
+          this.props.user.uid
+        ).subscribe({
+          next: shipment => {
+            this.props.fetchShipments(shipment, notification);
+          },
+          error: err => {
+            console.log(err);
+          },
+          complete: () => {
+            console.log('Hello World');
+          }
+        });
+      }
+    });
+
+    GetUserCompany(this.props.user.uid).subscribe({
+      next: res => {
+        console.log('Fetched Company is', res);
+        this.setState({
+          companies: {
+            ...res
+          }
+        });
+      }
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
+    console.log('has Update State', this.state);
     if (prevState.activeTab !== this.state.activeTab) {
-      this.props.fetchShipments(this.state.typeShipment, this.toggleBlocking);
+      console.log('reFetch');
+
+      this.props.fetchShipments(this.state.typeShipment);
     }
   }
 
@@ -546,10 +638,11 @@ class Shipment extends Component {
         <Nav className="shipment-navbar">
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.activeTab === '1' })}
+              className={classnames({ active: this.state.typeShipment === '' })}
               onClick={() => {
                 this.toggle('1');
                 this.setState({ typeShipment: '' });
+                this.fetchShipmentReload();
               }}
             >
               <span style={styles.title}>Alert</span> <span style={styles.lineTab}>|</span>
@@ -557,10 +650,11 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.activeTab === '2' })}
+              className={classnames({ active: this.state.typeShipment === 'Planning' })}
               onClick={() => {
-                this.toggle('2');
+                this.toggle('1');
                 this.setState({ typeShipment: 'Planning' });
+                this.fetchShipmentReload();
               }}
             >
               <span style={styles.title}>Plan</span> <span style={styles.lineTab}>|</span>
@@ -568,10 +662,11 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.activeTab === '3' })}
+              className={classnames({ active: this.state.typeShipment === 'active' })}
               onClick={() => {
-                this.toggle('3');
+                this.toggle('1');
                 this.setState({ typeShipment: 'active' });
+                this.fetchShipmentReload();
               }}
             >
               <span style={styles.title}>Active</span> <span style={styles.lineTab}>|</span>
@@ -579,10 +674,11 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.activeTab === '4' })}
+              className={classnames({ active: this.state.typeShipment === 'Delivered' })}
               onClick={() => {
-                this.toggle('4');
+                this.toggle('1');
                 this.setState({ typeShipment: 'Delivered' });
+                this.fetchShipmentReload();
               }}
             >
               <span style={styles.title}>Complete</span> <span style={styles.lineTab}>|</span>
@@ -590,10 +686,11 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.activeTab === '5' })}
+              className={classnames({ active: this.state.typeShipment === 'Cancelled' })}
               onClick={() => {
-                this.toggle('5');
+                this.toggle('1');
                 this.setState({ typeShipment: 'Cancelled' });
+                this.fetchShipmentReload();
               }}
             >
               <i className="icon-close" /> <span style={styles.title}>Cancel</span>
@@ -616,52 +713,13 @@ class Shipment extends Component {
               <Col sm="12">
                 <BlockUi tag="div" blocking={this.state.blocking} style={{ height: '100%' }}>
                   <TableShipment
-                    input={this.props.shipments}
+                    companies={this.state.companies}
+                    input={{ ...this.props.shipments }}
                     typeShipment={this.state.typeShipment}
                     toggleBlock={this.toggleBlocking}
+                    fetchMoreShipment={this.fetchMoreShipment}
                   />
                 </BlockUi>
-              </Col>
-            </Row>
-          </TabPane>
-          <TabPane tabId="2">
-            <Row>
-              <Col sm="12">
-                {' '}
-                <TableShipment
-                  input={this.props.shipments}
-                  typeShipment={this.state.typeShipment}
-                />
-              </Col>
-            </Row>
-          </TabPane>
-          <TabPane tabId="3">
-            <Row>
-              <Col sm="12">
-                <TableShipment
-                  input={this.props.shipments}
-                  typeShipment={this.state.typeShipment}
-                />
-              </Col>
-            </Row>
-          </TabPane>
-          <TabPane tabId="4">
-            <Row>
-              <Col sm="12">
-                <TableShipment
-                  input={this.props.shipments}
-                  typeShipment={this.state.typeShipment}
-                />
-              </Col>
-            </Row>
-          </TabPane>
-          <TabPane tabId="5">
-            <Row>
-              <Col sm="12">
-                <TableShipment
-                  input={this.props.shipments}
-                  typeShipment={this.state.typeShipment}
-                />
               </Col>
             </Row>
           </TabPane>
@@ -683,10 +741,20 @@ const styles = {
   }
 };
 
-const mapStateToProps = state => ({
-  shipments: state.shipmentReducer.Shipments,
-  user: state.authReducer.user
-});
+const mapStateToProps = state => {
+  const { ChatReducer, authReducer, profileReducer, companyReducer } = state;
+
+  const sender = _.find(
+    profileReducer.ProfileList,
+    item => item.id === profileReducer.ProfileDetail.id
+  );
+
+  return {
+    shipments: state.shipmentReducer.Shipments,
+    user: state.authReducer.user,
+    sender: sender
+  };
+};
 
 export default connect(
   mapStateToProps,

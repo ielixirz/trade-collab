@@ -67,7 +67,7 @@ const TurnAbleTextLabel = ({ text, turnType, data }) => {
         <span>{turnComponent}</span>
       ) : (
         <span role="button" onClick={turn} onKeyDown={null} tabIndex="-1">
-          {label}
+          {text}
         </span>
       )}
     </span>
