@@ -46,7 +46,7 @@ import _ from 'lodash';
 class Shipment extends Component {
   constructor(props) {
     super(props);
-
+    this.fetchMoreShipment = this.fetchMoreShipment.bind(this);
     this.toggle = this.toggle.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.dropdown = this.dropdown.bind(this);
