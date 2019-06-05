@@ -5,6 +5,8 @@ const firebase = require('firebase');
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 
+const sgMail = require('@sendgrid/mail');
+
 var serviceAccount = require('./yterminal-b0906-firebase-adminsdk-65p2b-1b8bfd2c44.json');
 
 admin.initializeApp({
@@ -946,3 +948,16 @@ exports.LeaveCompany = functions.firestore
 //     UserMatrixRolePermissionCode (string) (Binary number)
 //     UserMemberCompanyStandingStatus (string)
 //     UserMemberJoinedTimestamp (timestamp)
+
+const TestMessage = () => ({
+  to: 'test@example.com',
+  from: 'test@example.com',
+  subject: 'Sending with Twilio SendGrid is Fun',
+  text: 'and easy to do anywhere, even with Node.js',
+  html: '<strong>and easy to do anywhere, even with Node.js</strong>'
+});
+
+const SendEmail = async TemplateMessage => {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  return await sgMail.send(TemplateMessage);
+};
