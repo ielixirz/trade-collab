@@ -671,39 +671,7 @@ class TableShipment extends React.Component {
       pageListRenderer,
       sizePerPageRenderer
     };
-    const MySearch = props => {
-      let input;
-      const handleClick = event => {
-        const query = event.target.value;
-        props.onSearch(query);
-      };
-      return (
-        <div>
-          <InputGroup>
-            <InputGroupAddon addonType="prepend">
-              <InputGroupText style={{ backgroundColor: 'white' }}>
-                <i className="fa fa-filter" />
-              </InputGroupText>
-            </InputGroupAddon>
-            <Input
-              className="form-control"
-              id="statusSelect"
-              ref={n => (input = n)}
-              name="select"
-              type="select"
-              style={{ width: 170 }}
-              onChange={handleClick}
-            >
-              <option>Intransit</option>
-              <option>Order</option>
-              <option>Delayed</option>
-              <option>Cancelled</option>
-              <option>Delivered</option>
-            </Input>
-          </InputGroup>
-        </div>
-      );
-    };
+    
     const rowEvents = {
       onClick: (e, row, rowIndex) => {
         if (
