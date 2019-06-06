@@ -965,5 +965,7 @@ const SendEmail = async TemplateMessage => {
 };
 
 exports.TestSendEmail = functions.https.onRequest(async (req, res) => {
-  return SendEmail(TestMessage());
+  return SendEmail(TestMessage()).then(r => {
+    return res.status(200).send('Email Sended');
+  });
 });
