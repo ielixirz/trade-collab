@@ -85,7 +85,8 @@ const MasterDetailModal = forwardRef((props, ref) => {
   };
 
   useImperativeHandle(ref, () => ({
-    triggerMasterDetail(data) {
+    triggerMasterDetail(data, status) {
+      setShipmentStatus(status);
       setMasterData({ ...data });
       setETADayDiff(
         GetDiffDay(
@@ -207,6 +208,8 @@ const MasterDetailModal = forwardRef((props, ref) => {
     });
   };
 
+  const setDefaultStatusOptions = defaultStatus => statusOptions.find(option => option.value.status === defaultStatus);
+
   return (
     <Modal isOpen={modal} toggle={toggle} className="master-detail-modal modal-lg">
       <ModalHeader
@@ -223,6 +226,7 @@ const MasterDetailModal = forwardRef((props, ref) => {
             </Col>
             <Col xs="6">
               <Select
+                defaultValue={setDefaultStatusOptions(shipmentStatus)}
                 onChange={handleStatusSelectChange}
                 name="company"
                 id="master-detail-status-select"

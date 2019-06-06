@@ -51,7 +51,7 @@ const ShipmentList = () => {
                 <Col>
                   <Button
                     className="master-detail-btn edit"
-                    onClick={() => masterDetailModalRef.current.triggerMasterDetail(data)}
+                    onClick={() => masterDetailModalRef.current.triggerMasterDetail(data, mainData.ShipmentStatus)}
                   >
                     <i className="cui-pencil icons" style={{ marginRight: '0.5rem' }} />
                       Edit

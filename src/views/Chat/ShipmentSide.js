@@ -87,7 +87,11 @@ class ShipmentSide extends Component {
                 <span style={styles.title}>
                   Shipment Update :
                   {' '}
-                  <span style={styles.status}>In Transit</span>
+                  <span style={styles.status}>
+                    {this.props.mainData.ShipmentStatus === undefined
+                      ? '-'
+                      : this.props.mainData.ShipmentStatus}
+                  </span>
                 </span>
               </Col>
               <Col xs="2" className="text-right">
