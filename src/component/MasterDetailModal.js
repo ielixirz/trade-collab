@@ -15,6 +15,7 @@ import ImporterDetail from './masterDetailModal/ImporterDetail';
 import OtherDetail from './masterDetailModal/OtherDetail';
 
 import { UpdateMasterData } from '../service/masterdata/masterdata';
+import { EditShipment } from '../service/shipment/shipment';
 import { GetDiffDay } from '../utils/date';
 
 const statusOptions = [
@@ -100,6 +101,7 @@ const MasterDetailModal = forwardRef((props, ref) => {
 
   const handleStatusSelectChange = (select) => {
     setShipmentStatus(select.value.status);
+    EditShipment(shipmentKey, { ShipmentStatus: select.value.status });
   };
 
   const handleDetailInputChange = (event) => {
