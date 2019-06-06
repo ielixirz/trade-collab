@@ -959,6 +959,16 @@ const TestMessage = () => {
   };
 };
 
+const UnreadMessageTemplate = (To, From, Text, Html) => {
+  return {
+    to: To,
+    from: From,
+    subject: 'Yterminal - Unread your message',
+    text: Text,
+    html: Html
+  };
+};
+
 const SendEmail = async TemplateMessage => {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
   return await sgMail.send(TemplateMessage);
