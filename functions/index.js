@@ -5,6 +5,8 @@ const firebase = require('firebase');
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 
+const sgMail = require('@sendgrid/mail');
+
 var serviceAccount = require('./yterminal-b0906-firebase-adminsdk-65p2b-1b8bfd2c44.json');
 
 admin.initializeApp({
@@ -633,7 +635,7 @@ exports.ShipmentAllCount = functions.firestore
     }
   });
 
-exports.CopyMasterDataETAETD = functions.firestore
+exports.CopyInsideMasterDataToShipment = functions.firestore
   .document('Shipment/{ShipmentKey}/ShipmentShareData/{ShipmentShareDataKey}')
   .onWrite(async (change, context) => {
     const oldValue = change.before.data();
@@ -647,6 +649,8 @@ exports.CopyMasterDataETAETD = functions.firestore
           .doc(context.params.ShipmentKey)
           .set(
             {
+              ShipperPort: newValue.ShipperPort,
+              ConsigneePort: newValue.ConsigneePort,
               ShipperETDDate: newValue.ShipperETDDate,
               ConsigneeETAPortDate: newValue.ConsigneeETAPortDate
             },
@@ -832,6 +836,95 @@ exports.NotiBellChangeOfRoleWithInCompany = functions.firestore
     }
   });
 
+exports.LeaveCompany = functions.firestore
+  .document('Company/{CompanyKey}/CompanyMember/{CompanyMemberKey}')
+  .onDelete(async (snapshot, context) => {
+    const UserKey = snapshot.id;
+
+    // UserCompany
+
+    const GetUserCompany = await admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(UserKey)
+      .collection('UserCompany')
+      .where(
+        'UserCompanyReference',
+        '==',
+        admin
+          .firestore()
+          .collection('Company')
+          .doc(context.params.CompanyKey)
+      )
+      .get();
+
+    const UserCompanyDeleteServiceList = [];
+
+    GetUserCompany.docs.forEach(async Item => {
+      const DeleteUserCompany = await admin
+        .firestore()
+        .doc(Item.ref.path)
+        .delete();
+      UserCompanyDeleteServiceList.push(DeleteUserCompany);
+    });
+
+    // ShipmentMember
+
+    const GetShipmentOfShipmentMemberOnThisCompany = await admin
+      .firestore()
+      .collection('Shipment')
+      .where(`ShipmentMember.${UserKey}.ShipmentMemberCompanyKey`, '==', context.params.CompanyKey)
+      .get();
+
+    const ShipmentMemberDeleteList = [];
+
+    GetShipmentOfShipmentMemberOnThisCompany.forEach(async Item => {
+      const DeleteShipmentMemberPayload = { ShipmentMember: {} };
+
+      DeleteShipmentMemberPayload['ShipmentMember'][UserKey] = {
+        ShipmentMemberCompanyName: admin.firestore.FieldValue.delete(),
+        ShipmentMemberCompanyKey: admin.firestore.FieldValue.delete()
+      };
+
+      const ShipmentMember = await admin
+        .firestore()
+        .doc(Item.ref.path)
+        .update(DeleteShipmentMemberPayload);
+
+      ShipmentMemberDeleteList.push(ShipmentMember);
+    });
+
+    // ChatRoomMember
+
+    const GetChatRoomMemberCollectionGroup = await admin
+      .firestore()
+      .collectionGroup('ChatRoomMember')
+      .where('ChatRoomMemberUserKey', '==', UserKey)
+      .where('ChatRoomMemberCompanyKey', '==', context.params.CompanyKey)
+      .get();
+
+    const DeleteCompanyInChatRoomMemberServiceList = [];
+
+    GetChatRoomMemberCollectionGroup.docs.forEach(async Item => {
+      const DeleteCompanyInChatRoomMember = await admin
+        .firestore()
+        .doc(Item.ref.path)
+        .update({
+          ChatRoomMemberCompanyName: admin.firestore.FieldValue.delete(),
+          ChatRoomMemberCompanyKey: admin.firestore.FieldValue.delete()
+        });
+      DeleteCompanyInChatRoomMemberServiceList.push(DeleteCompanyInChatRoomMember);
+    });
+
+    // ShipmentReference ?
+
+    return Promise.all([
+      UserCompanyDeleteServiceList,
+      ShipmentMemberDeleteList,
+      DeleteCompanyInChatRoomMemberServiceList
+    ]);
+  });
+
 // +UserNotification
 //   >UserNotificationKey
 //       UserNotificationReadStatus (bool)
@@ -855,3 +948,22 @@ exports.NotiBellChangeOfRoleWithInCompany = functions.firestore
 //     UserMatrixRolePermissionCode (string) (Binary number)
 //     UserMemberCompanyStandingStatus (string)
 //     UserMemberJoinedTimestamp (timestamp)
+
+const TestMessage = () => {
+  return {
+    to: 'holy-wisdom@hotmail.com',
+    from: 'test@example.com',
+    subject: 'Sending with Twilio SendGrid is Fun',
+    text: 'and easy to do anywhere, even with Node.js',
+    html: '<strong>and easy to do anywhere, even with Node.js</strong>'
+  };
+};
+
+const SendEmail = async TemplateMessage => {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  return await sgMail.send(TemplateMessage);
+};
+
+exports.TestSendEmail = functions.https.onRequest(async (req, res) => {
+  return SendEmail(TestMessage());
+});
