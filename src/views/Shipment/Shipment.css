@@ -33,8 +33,8 @@ img {
 .btn.disabled,
 .btn:disabled {
   color: #23282c;
-  background-color: #ffffff;
-  border-color: #16a085;
+  background-color: #80d2de0d;
+  border-color: #58cadb;
   opacity: 1;
 }
 .inbox_msg {
@@ -46,10 +46,51 @@ img {
   margin: 20px 0 0;
 }
 .create-shipment > .modal-content {
-  width: 650px;
+  width: 700px;
   padding-right: 5px;
   padding-left: 5px;
+  right: 100px;
 }
+
+.create-shipment-role-btn {
+  width: 100%;
+}
+
+.create-shipment-role-btn.disabled {
+  font-weight: bold;
+}
+
+.create-shipment-dropdown-item-role {
+  font-weight: normal;
+}
+
+.create-shipment-dropdown-item-role:hover {
+  font-weight: bold;
+  background-color: #80d2de0d;
+}
+
+.create-shipment-field-title {
+  font-weight: bold;
+}
+
+.create-shipment-create-btn {
+  font-size: 1vw;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  width: 40%;
+  margin: auto;
+  color: white;
+  border-color: #16a085;
+  background-color: #16a085;
+  border: 2px solid;
+}
+
+.create-shipment-create-btn:hover {
+  color: #16a085;
+  border-color: #16a085;
+  background-color: white;
+}
+
 .recent_heading {
   float: left;
   width: 40%;
