@@ -631,7 +631,7 @@ exports.ShipmentAllCount = functions.firestore
         .firestore()
         .collection('UserPersonalize')
         .doc(context.params.ProfileKey)
-        .set({ ShipmentTotalCount: Payload , ShipmentChatCount: SunChatCount }, { merge: true });
+        .set({ ShipmentTotalCount: Payload, ShipmentChatCount: SunChatCount }, { merge: true });
     }
   });
 
@@ -949,6 +949,29 @@ exports.LeaveCompany = functions.firestore
 //     UserMemberCompanyStandingStatus (string)
 //     UserMemberJoinedTimestamp (timestamp)
 
+exports.AddEmailProfileInUserPersonalizeWhenCreateProfile = functions.firestore
+  .document('UserInfo/{UserKey}/Profile/{ProfileKey}')
+  .onWrite(async (change, context) => {
+    const oldValue = change.before.data();
+    const newValue = change.after.data();
+
+    const ProfileEmail = change.after.data().snapshot;
+
+    const AddProfileEmailAction = admin
+      .firestore()
+      .collection('UserPersonalize')
+      .doc(context.params.ProfileKey)
+      .set({ ProfileEmail: ProfileEmail }, { merge: true });
+
+    if (!oldValue && newValue.ProfileEmail) {
+      return AddProfileEmailAction;
+    }
+
+    if (oldValue.ProfileEmail !== newValue.ProfileEmail) {
+      return AddProfileEmailAction;
+    }
+  });
+
 const TestMessage = () => {
   return {
     to: 'holy-wisdom@hotmail.com',
@@ -959,10 +982,10 @@ const TestMessage = () => {
   };
 };
 
-const UnreadMessageTemplate = (To, From, Text, Html) => {
+const UnreadMessageTemplate = (To, Text, Html) => {
   return {
     to: To,
-    from: From,
+    from: 'noreply@yterminal.com',
     subject: 'Yterminal - Unread your message',
     text: Text,
     html: Html
@@ -984,6 +1007,7 @@ exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
   admin
     .firestore()
     .collection('UserPersonalize')
+    .where('ShipmentChatCount', '>', 0)
     .get();
 
   return SendEmail(TestMessage()).then(r => {
