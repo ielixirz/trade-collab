@@ -1004,13 +1004,21 @@ exports.TestSendEmail = functions.https.onRequest(async (req, res) => {
 });
 
 exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
-  admin
+  const GetShipmentChatCount = await admin
     .firestore()
     .collection('UserPersonalize')
     .where('ShipmentChatCount', '>', 0)
     .get();
 
-  return SendEmail(TestMessage()).then(r => {
-    return res.status(200).send('Email Sended');
+  GetShipmentChatCount.docs.forEach(async Item => {
+    const ProfileEmail = Item.data().ProfileEmail;
+    const ShipmentChatCount = Item.data().ShipmentChatCount;
+
+    return SendEmail(
+      UnreadMessageTemplate(ProfileEmail, `You have ${ShipmentChatCount} unread message`),
+      `<strong>You have ${ShipmentChatCount} unread message</strong>`
+    ).then(r => {
+      return res.status(200).send('Email Sended');
+    });
   });
 });
