@@ -176,6 +176,7 @@
             {
                 ShipmentKey: CountValue (number) 
             }
+        ShipmentChatCount (number)
         ShipmentFirstJoin (object)
             {
                 ShipmentKey: BoolValue (bool)
