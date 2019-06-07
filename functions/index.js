@@ -631,7 +631,7 @@ exports.ShipmentAllCount = functions.firestore
         .firestore()
         .collection('UserPersonalize')
         .doc(context.params.ProfileKey)
-        .set({ ShipmentTotalCount: Payload }, { merge: true });
+        .set({ ShipmentTotalCount: Payload , ShipmentChatCount: SunChatCount }, { merge: true });
     }
   });
 
@@ -975,6 +975,17 @@ const SendEmail = async TemplateMessage => {
 };
 
 exports.TestSendEmail = functions.https.onRequest(async (req, res) => {
+  return SendEmail(TestMessage()).then(r => {
+    return res.status(200).send('Email Sended');
+  });
+});
+
+exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
+  admin
+    .firestore()
+    .collection('UserPersonalize')
+    .get();
+
   return SendEmail(TestMessage()).then(r => {
     return res.status(200).send('Email Sended');
   });
