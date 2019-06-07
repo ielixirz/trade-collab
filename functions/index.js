@@ -1010,15 +1010,19 @@ exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
     .where('ShipmentChatCount', '>', 0)
     .get();
 
+  const UnreadSendEmailList = [];
+
   GetShipmentChatCount.docs.forEach(async Item => {
     const ProfileEmail = Item.data().ProfileEmail;
     const ShipmentChatCount = Item.data().ShipmentChatCount;
 
-    return SendEmail(
+    const SendEmail = await SendEmail(
       UnreadMessageTemplate(ProfileEmail, `You have ${ShipmentChatCount} unread message`),
       `<strong>You have ${ShipmentChatCount} unread message</strong>`
-    ).then(r => {
-      return res.status(200).send('Email Sended');
-    });
+    );
+
+    UnreadSendEmailList.push(SendEmail);
   });
+
+  return;
 });
