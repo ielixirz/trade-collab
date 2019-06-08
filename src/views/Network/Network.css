@@ -1,6 +1,6 @@
 .network-container {
+  font-size: 1em !important;
   background-color: rgb(247, 247, 247);
-  position: fixed !important;
   top: 6%;
   right: 0;
   bottom: 0;
@@ -42,7 +42,7 @@
 }
 
 .profile-btn {
-  font-size: 1vw;
+  font-size: 100%;
   font-weight: bold;
   width: 75%;
   margin-bottom: 1rem;
@@ -122,7 +122,7 @@
 }
 
 .company-access-btn {
-  font-size: 0.75vw;
+  font-size: 70%;
   font-weight: bold;
   width: 75%;
   margin-top: 0.7rem;
@@ -205,12 +205,12 @@ tbody tr {
 .table.profile-table > thead > tr > th {
   color: #9b9b9b;
   border: none;
-  font-size: 1.1vw;
+  font-size: 100%;
 }
 
 .table.profile-table > tbody > tr {
   background-color: white;
-  font-size: 1.1vw;
+  font-size: 100%;
 }
 
 .table.profile-table > tbody > tr > td {
@@ -275,12 +275,12 @@ tbody tr {
   border-width: thin;
   border-bottom: 1;
   border-top: none;
-  font-size: 1.1vw;
+  font-size: 100%;
 }
 
 .table.company-table > tbody > tr {
   background-color: white;
-  font-size: 1.1vw;
+  font-size: 100%;
 }
 
 .table.company-table > tbody > tr > td {
