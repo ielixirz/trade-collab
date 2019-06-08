@@ -45,6 +45,11 @@ img {
 .top_spac {
   margin: 20px 0 0;
 }
+
+.shipment-table-main-container {
+  font-size: 0.8vw;
+}
+
 .create-shipment > .modal-content {
   width: 700px;
   padding-right: 5px;
@@ -326,12 +331,10 @@ tbody > tr:hover {
 .table.shipment-table > thead > tr > th {
   color: #9b9b9b;
   border-top: none;
-  font-size: medium;
 }
 
 .table.shipment-table > tbody > tr {
   background-color: white;
-  font-size: large;
 }
 
 .table.shipment-table > tbody > tr > td {

@@ -315,7 +315,7 @@ class Shipment extends Component {
     } = this.state.input;
     console.log(this.props.user);
     return (
-      <div>
+      <div className="shipment-table-main-container">
         <Modal isOpen={this.state.modal} toggle={this.modal} className="create-shipment">
           <ModalHeader toggle={this.modal}>
             <h2>Create New Shipment</h2>
