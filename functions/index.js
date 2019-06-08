@@ -993,7 +993,7 @@ const UnreadMessageTemplate = (To, Text, Html) => {
 };
 
 const SendEmail = async TemplateMessage => {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  sgMail.setApiKey('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');
   return await sgMail.send(TemplateMessage);
 };
 
@@ -1012,20 +1012,23 @@ exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
 
   const UnreadSendEmailList = [];
 
-  GetShipmentChatCount.docs.forEach(async Item => {
+  GetShipmentChatCount.docs.forEach(Item => {
     const ProfileEmail = Item.data().ProfileEmail;
     const ShipmentChatCount = Item.data().ShipmentChatCount;
 
-    const SendEmail = await SendEmail(
-      UnreadMessageTemplate(
-        ProfileEmail,
-        `You have ${ShipmentChatCount} unread message`,
-        `<strong>You have ${ShipmentChatCount} unread message</strong>`
-      )
-    );
-
-    UnreadSendEmailList.push(SendEmail);
+    if (ProfileEmail) {
+      const SendEmailService = SendEmail(
+        UnreadMessageTemplate(
+          ProfileEmail,
+          `You have ${ShipmentChatCount} unread message`,
+          `<strong>You have ${ShipmentChatCount} unread message</strong>`
+        )
+      );
+      UnreadSendEmailList.push(SendEmailService);
+    }
   });
 
-  return Promise.all(UnreadSendEmailList);
+  return Promise.all(UnreadSendEmailList).then(_ => {
+    return res.status(200).send('All Email Sended !');
+  });
 });
