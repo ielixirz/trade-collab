@@ -955,7 +955,7 @@ exports.AddEmailProfileInUserPersonalizeWhenCreateProfile = functions.firestore
     const oldValue = change.before.data();
     const newValue = change.after.data();
 
-    const ProfileEmail = change.after.data().snapshot;
+    const ProfileEmail = newValue.ProfileEmail;
 
     const AddProfileEmailAction = admin
       .firestore()
@@ -1017,12 +1017,15 @@ exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
     const ShipmentChatCount = Item.data().ShipmentChatCount;
 
     const SendEmail = await SendEmail(
-      UnreadMessageTemplate(ProfileEmail, `You have ${ShipmentChatCount} unread message`),
-      `<strong>You have ${ShipmentChatCount} unread message</strong>`
+      UnreadMessageTemplate(
+        ProfileEmail,
+        `You have ${ShipmentChatCount} unread message`,
+        `<strong>You have ${ShipmentChatCount} unread message</strong>`
+      )
     );
 
     UnreadSendEmailList.push(SendEmail);
   });
 
-  return;
+  return Promise.all(UnreadSendEmailList);
 });
