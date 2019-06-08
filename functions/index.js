@@ -452,6 +452,8 @@ exports.ManageShipmentMember = functions.firestore
         const GetFirstJoin = await TriggerFirstJoin.get();
         let FirstJoinStatus = GetFirstJoin[context.params.ShipmentKey];
 
+        const ProfileEmail = GetFirstJoin.data().ProfileEmail;
+
         // if (GetFirstJoin.data() !== undefined) {
         //   FirstJoinStatus = GetFirstJoin.data().ShipmentFristJoin;
         // }
@@ -467,6 +469,16 @@ exports.ManageShipmentMember = functions.firestore
             merge: true
           });
           UserPersonalizeProfileActionList.push(SetFirstJoinAction);
+
+          if (ProfileEmail) {
+            await SendEmail(
+              InviteIntoShipmentTemplate(
+                ProfileEmail,
+                `You have new invitation into shipment `,
+                `<strong>You have new invitation into shipment</strong>`
+              )
+            );
+          }
         }
       });
     }
@@ -987,6 +999,16 @@ const UnreadMessageTemplate = (To, Text, Html) => {
     to: To,
     from: 'noreply@yterminal.com',
     subject: 'Yterminal - Unread your message',
+    text: Text,
+    html: Html
+  };
+};
+
+const InviteIntoShipmentTemplate = (To, Text, Html) => {
+  return {
+    to: To,
+    from: 'noreply@yterminal.com',
+    subject: 'Yterminal - Invite Into Shipment',
     text: Text,
     html: Html
   };
