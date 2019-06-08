@@ -631,7 +631,7 @@ exports.ShipmentAllCount = functions.firestore
         .firestore()
         .collection('UserPersonalize')
         .doc(context.params.ProfileKey)
-        .set({ ShipmentTotalCount: Payload }, { merge: true });
+        .set({ ShipmentTotalCount: Payload, ShipmentChatCount: SunChatCount }, { merge: true });
     }
   });
 
@@ -949,6 +949,29 @@ exports.LeaveCompany = functions.firestore
 //     UserMemberCompanyStandingStatus (string)
 //     UserMemberJoinedTimestamp (timestamp)
 
+exports.AddEmailProfileInUserPersonalizeWhenCreateProfile = functions.firestore
+  .document('UserInfo/{UserKey}/Profile/{ProfileKey}')
+  .onWrite(async (change, context) => {
+    const oldValue = change.before.data();
+    const newValue = change.after.data();
+
+    const ProfileEmail = newValue.ProfileEmail;
+
+    const AddProfileEmailAction = admin
+      .firestore()
+      .collection('UserPersonalize')
+      .doc(context.params.ProfileKey)
+      .set({ ProfileEmail: ProfileEmail }, { merge: true });
+
+    if (!oldValue && newValue.ProfileEmail) {
+      return AddProfileEmailAction;
+    }
+
+    if (oldValue.ProfileEmail !== newValue.ProfileEmail) {
+      return AddProfileEmailAction;
+    }
+  });
+
 const TestMessage = () => {
   return {
     to: 'holy-wisdom@hotmail.com',
@@ -959,13 +982,53 @@ const TestMessage = () => {
   };
 };
 
+const UnreadMessageTemplate = (To, Text, Html) => {
+  return {
+    to: To,
+    from: 'noreply@yterminal.com',
+    subject: 'Yterminal - Unread your message',
+    text: Text,
+    html: Html
+  };
+};
+
 const SendEmail = async TemplateMessage => {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  sgMail.setApiKey('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');
   return await sgMail.send(TemplateMessage);
 };
 
 exports.TestSendEmail = functions.https.onRequest(async (req, res) => {
   return SendEmail(TestMessage()).then(r => {
     return res.status(200).send('Email Sended');
+  });
+});
+
+exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
+  const GetShipmentChatCount = await admin
+    .firestore()
+    .collection('UserPersonalize')
+    .where('ShipmentChatCount', '>', 0)
+    .get();
+
+  const UnreadSendEmailList = [];
+
+  GetShipmentChatCount.docs.forEach(Item => {
+    const ProfileEmail = Item.data().ProfileEmail;
+    const ShipmentChatCount = Item.data().ShipmentChatCount;
+
+    if (ProfileEmail) {
+      const SendEmailService = SendEmail(
+        UnreadMessageTemplate(
+          ProfileEmail,
+          `You have ${ShipmentChatCount} unread message`,
+          `<strong>You have ${ShipmentChatCount} unread message</strong>`
+        )
+      );
+      UnreadSendEmailList.push(SendEmailService);
+    }
+  });
+
+  return Promise.all(UnreadSendEmailList).then(_ => {
+    return res.status(200).send('All Email Sended !');
   });
 });
