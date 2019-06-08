@@ -129,6 +129,7 @@ class Chat extends Component {
     const ChatRoomMember = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomMember`, []);
     const ChatRoomData = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomData`, []);
     const member = _.get(chatrooms, `[${ChatRoomKey}].member`, []);
+    console.log('ChatRoomMember', _.get(chatrooms, `[${ChatRoomKey}]`, {}));
 
     return (
       <ChatWithHeader

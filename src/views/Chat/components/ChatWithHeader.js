@@ -145,9 +145,11 @@ class ChatWithHeader extends Component {
   }
 
   renderAssignCompany(ChatRoomType, hasInvite = false) {
-    const { ChatRoomData, user, ShipmentData, ShipmentKey, ChatRoomKey } = this.props;
+    const { ChatRoomData, user, ShipmentData, ShipmentKey, ChatRoomKey, member } = this.props;
+    console.log('Chat Room member', member);
 
-    const isHaveRole = _.get(ShipmentData, `ShipmentMember.${user.uid}`, {});
+    const isHaveRole = _.find(member, item => item.ChatRoomMemberUserKey === user.uid);
+    // const isHaveRole = _.get(ShipmentData, `ShipmentMember.${user.uid}`, {});
     const companies = this.state.companies;
 
     let options = [];
@@ -155,6 +157,7 @@ class ChatWithHeader extends Component {
       value: item.CompanyKey,
       label: item.CompanyName
     }));
+
     if (_.size(isHaveRole.ShipmentMemberRole) > 0) {
       if (_.isEmpty(isHaveRole.ShipmentMemberCompanyName)) {
         if (ShipmentData.ShipmentCreatorUserKey === user.uid) {
@@ -375,6 +378,7 @@ class ChatWithHeader extends Component {
     } = this.props;
     let lastkey = '';
     const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
+    console.log('isInvited', isInvited);
     let ref = '';
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
     if (isInvited) {
@@ -389,7 +393,7 @@ class ChatWithHeader extends Component {
       ref =
         'No Refferenc                                                                                                                                                                                                                         e';
     }
-
+    console.log('ref is', ref);
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
         <Row
@@ -620,7 +624,11 @@ class ChatWithHeader extends Component {
               shipmentKey={ShipmentKey}
               chatroomKey={ChatRoomKey}
             />
-            <ShipmentSide mainData={this.props.ShipmentData} shipmentKey={ShipmentKey} chatroomKey={ChatRoomKey} />
+            <ShipmentSide
+              mainData={this.props.ShipmentData}
+              shipmentKey={ShipmentKey}
+              chatroomKey={ChatRoomKey}
+            />
           </Col>
         </Row>
       </div>

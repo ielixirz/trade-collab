@@ -122,6 +122,7 @@ class Shipment extends Component {
     }
     parameter.ShipmentProductName = input.product;
     parameter.ShipmentStatus = 'Planning';
+
     parameter.ShipmentCreatorUserKey = this.props.user.uid;
     if (input.role > 2) {
       if (input.bound === 1) {
