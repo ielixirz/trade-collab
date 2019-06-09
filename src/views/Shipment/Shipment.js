@@ -471,6 +471,7 @@ class Shipment extends Component {
                     onChange={this.writeText}
                     value={this.props.user.email}
                     readonly
+                    disabled
                   />
                 </Col>
               </FormGroup>
@@ -503,6 +504,8 @@ class Shipment extends Component {
                   />
                 </Col>
               </FormGroup>
+              {/* 
+              // TO BE REMOVE //
               <FormGroup row>
                 <Label for="Ref" sm={2} className="create-shipment-field-title">
                   Ref#
@@ -516,7 +519,7 @@ class Shipment extends Component {
                     value={this.state.input.ref}
                   />
                 </Col>
-              </FormGroup>
+              </FormGroup> */}
               <Row className="show-grid">
                 <Col md={3} />
                 <Col md={6}>
