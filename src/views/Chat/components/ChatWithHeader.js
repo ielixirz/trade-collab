@@ -230,8 +230,12 @@ class ChatWithHeader extends Component {
                 color: '#000000'
               }}
             >
-              {user.email} has been invited as
-              {_.join(isHaveRole.ShipmentMemberRole, ',')} for this shipment
+              {user.email}
+              {' '}
+has been invited as {' '}
+              {_.join(isHaveRole.ShipmentMemberRole, ',')}
+              {' '}
+for this shipment
             </p>
             <p>Select a company, to inform your team about this shipment</p>
 

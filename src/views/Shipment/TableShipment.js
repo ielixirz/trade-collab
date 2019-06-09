@@ -382,8 +382,7 @@ class TableShipment extends React.Component {
                       maxLength={50}
                       bsSize="sm"
                       disabled={
-                          hasCompany.ShipmentMemberCompanyKey
-                          !== refItem.ShipmentReferenceCompanyKey
+                        hasCompany.ShipmentMemberCompanyKey !== refItem.ShipmentReferenceCompanyKey
                         }
                     />
                   </Col>
@@ -495,9 +494,11 @@ class TableShipment extends React.Component {
 
   renderStatusComponent(item) {
     return (
-      <div>
+      <div onClick={e => e.stopPropagation()}>
         <Select
-          defaultValue={SHIPMENT_STATUS_OPTIONS.find(option => option.value.status === item.ShipmentStatus)}
+          defaultValue={SHIPMENT_STATUS_OPTIONS.find(
+            option => option.value.status === item.ShipmentStatus,
+          )}
           name="colors"
           id="shipment-status-select"
           className="basic-multi-select"

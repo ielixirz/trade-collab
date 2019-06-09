@@ -589,7 +589,7 @@ Members (
                     <Col xs={3} style={{ paddingRight: 0 }}>
                       <SearchBar
                         placeholder="&#xF002; Typing"
-                        style={{ width: '210%' }}
+                        style={{ width: '150%' }}
                         {...toolKitProps.searchProps}
                       />
                     </Col>
