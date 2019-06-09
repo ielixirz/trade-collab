@@ -71,8 +71,8 @@ const FileSide = (props) => {
                 <i className="fa fa-file" />
               </span>
               <span style={styles.title}>
-Shared Files (
-                {props.chatFile.length}
+                Shared Files (
+                {props.chatFile === undefined ? '0' : props.chatFile.length}
 )
               </span>
             </Col>
