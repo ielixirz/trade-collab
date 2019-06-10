@@ -17,6 +17,10 @@ const SelectRole = (props) => {
     setIsRoleSelect(true);
   };
 
+  const unSelectRole = () => {
+    setIsRoleSelect(false);
+  };
+
   const saveAndContinue = (e) => {
     e.preventDefault();
     if (isRoleSelect) {
@@ -46,6 +50,9 @@ const SelectRole = (props) => {
                     onClick={() => {
                       setSelectRole('Importer');
                     }}
+                    onBlur={() => {
+                      unSelectRole();
+                    }}
                   >
                     <Row className="cardRole-pic">
                       <img
@@ -63,6 +70,9 @@ const SelectRole = (props) => {
                     type="submit"
                     onClick={() => {
                       setSelectRole('Exporter');
+                    }}
+                    onBlur={() => {
+                      unSelectRole();
                     }}
                   >
                     <Row className="cardRole-pic">
@@ -82,6 +92,9 @@ const SelectRole = (props) => {
                     onClick={() => {
                       setSelectRole('Freight Forwarder');
                     }}
+                    onBlur={() => {
+                      unSelectRole();
+                    }}
                   >
                     <Row className="cardRole-pic">
                       <img
@@ -99,6 +112,9 @@ const SelectRole = (props) => {
                     type="submit"
                     onClick={() => {
                       setSelectRole('Custom Broker');
+                    }}
+                    onBlur={() => {
+                      unSelectRole();
                     }}
                   >
                     <Row className="cardRole-pic">
