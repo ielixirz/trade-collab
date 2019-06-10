@@ -672,10 +672,10 @@ exports.CopyInsideMasterDataToShipment = functions.firestore
     }
   });
 
-exports.NotiBellInviteToJoinCompany = functions.firestore
+exports.NotiBellAndEmailInviteToJoinCompany = functions.firestore
   .document('UserInfo/{UserKey}/UserInvitation/{UserInvitationKey}')
   .onCreate(async (snapshot, context) => {
-    return admin
+    const SendNotiBell = await admin
       .firestore()
       .collection('UserInfo')
       .doc(context.params.UserKey)
@@ -688,6 +688,24 @@ exports.NotiBellInviteToJoinCompany = functions.firestore
         UserNotificationCompanyName: snapshot.data().CompanyInvitationName,
         UserNotificationCompanyKey: snapshot.data().CompanyInvitationCompanyKey
       });
+
+    const GetUserInfoEmail = await admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(context.params.UserKey)
+      .get();
+
+    const UserInfoEmail = GetUserInfoEmail.data().UserInfoEmail;
+
+    const SendNotiEmail = await SendEmail(
+      InviteToJoinCompanyTemplate(
+        UserInfoEmail,
+        `You have invitation from ${snapshot.data().CompanyInvitationName} company`,
+        `<strong>You have invitation from ${snapshot.data().CompanyInvitationName} company</strong>`
+      )
+    );
+
+    return Promise.all([SendNotiBell, SendNotiEmail]);
   });
 
 exports.NotiBellRequestToJoinCompany = functions.firestore
@@ -1009,6 +1027,16 @@ const InviteIntoShipmentTemplate = (To, Text, Html) => {
     to: To,
     from: 'noreply@yterminal.com',
     subject: 'Yterminal - Invite Into Shipment',
+    text: Text,
+    html: Html
+  };
+};
+
+const InviteToJoinCompanyTemplate = (To, Text, Html) => {
+  return {
+    to: To,
+    from: 'noreply@yterminal.com',
+    subject: 'Yterminal - Invite To Join Company',
     text: Text,
     html: Html
   };
