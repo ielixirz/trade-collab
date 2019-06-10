@@ -41,35 +41,33 @@ class DefaultLayout extends Component {
 
   render() {
     return (
-      <div className="app">
-        <AppHeader fixed style={{ marginBottom: '50px' }}>
+      <div className="app" style={{ width: '1280px', height: '720px', margin: 'auto' }}>
+        <AppHeader fixed style={{ width: '1280px', marginBottom: '50px' }}>
           <Suspense fallback={this.loading()}>
             <DefaultHeader history={this.props.history} onLogout={e => this.signOut(e)} />
           </Suspense>
         </AppHeader>
-        <div className="app-body" style={{ padding: 10 }}>
+        <div className="app-body" style={{ width: '1280px', padding: 10 }}>
           <main className="main">
             <Container fluid>
               <Suspense fallback={this.loading()}>
                 <Switch>
-                  {routes.map((route, idx) =>
-                    route.component ? (
-                      <Route
-                        key={idx}
-                        path={route.path}
-                        exact={route.exact}
-                        name={route.name}
-                        render={props => {
-                          console.log(props);
-                          return route.validation(
-                            route.isProfileRequired,
-                            this.props,
-                            <route.component {...props} />
-                          );
-                        }}
-                      />
-                    ) : null
-                  )}
+                  {routes.map((route, idx) => (route.component ? (
+                    <Route
+                      key={idx}
+                      path={route.path}
+                      exact={route.exact}
+                      name={route.name}
+                      render={(props) => {
+                        console.log(props);
+                        return route.validation(
+                          route.isProfileRequired,
+                          this.props,
+                          <route.component {...props} />,
+                        );
+                      }}
+                    />
+                  ) : null))}
                 </Switch>
               </Suspense>
             </Container>
@@ -85,19 +83,19 @@ class DefaultLayout extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { authReducer, profileReducer } = state;
   const profile = _.find(
     profileReducer.ProfileList,
-    item => item.id === profileReducer.ProfileDetail.id
+    item => item.id === profileReducer.ProfileDetail.id,
   );
   return {
     auth: authReducer.user,
-    currentProfile: profile
+    currentProfile: profile,
   };
 };
 
 export default connect(
   mapStateToProps,
-  { getUserInfoDetail, getProlfileList }
+  { getUserInfoDetail, getProlfileList },
 )(DefaultLayout);

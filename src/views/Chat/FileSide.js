@@ -70,7 +70,11 @@ const FileSide = (props) => {
               <span style={styles.boxColor}>
                 <i className="fa fa-file" />
               </span>
-              <span style={styles.title}>Shared Files</span>
+              <span style={styles.title}>
+                Shared Files (
+                {props.chatFile === undefined ? '0' : props.chatFile.length}
+)
+              </span>
             </Col>
             <Col xs="1" style={{ padding: 0, top: '5px' }}>
               <i

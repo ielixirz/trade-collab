@@ -26,7 +26,8 @@ import {
   DropdownItem,
   DropdownMenu,
   UncontrolledDropdown,
-  UncontrolledCollapse
+  UncontrolledCollapse,
+  ModalFooter
 } from 'reactstrap';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -313,7 +314,7 @@ class Shipment extends Component {
     const { role, bound, method, type } = this.state.input;
     console.log(this.props.user);
     return (
-      <div>
+      <div className="shipment-table-main-container">
         <Modal isOpen={this.state.modal} toggle={this.modal} className="create-shipment">
           <ModalHeader toggle={this.modal}>
             <h2>Create New Shipment</h2>
@@ -342,7 +343,7 @@ class Shipment extends Component {
               </div>
             ) : null}
             <div>
-              <span className="left">
+              <span className="left" style={{ fontWeight: 'bold' }}>
                 {role > 2
                   ? 'Is this an inbound Shipment or an Outbound Shipment'
                   : 'Are you Exporting or Importing (Select One)'}
@@ -359,9 +360,7 @@ class Shipment extends Component {
                         onClick={() => {
                           this.setRole(3);
                         }}
-                        style={{
-                          fontWeight: role === 3 ? 'bold' : 'normal'
-                        }}
+                        className="create-shipment-dropdown-item-role"
                       >
                         Freight Forwarder
                       </DropdownItem>
@@ -370,9 +369,7 @@ class Shipment extends Component {
                         onClick={() => {
                           this.setRole(4);
                         }}
-                        style={{
-                          fontWeight: role === 4 ? 'bold' : 'normal'
-                        }}
+                        className="create-shipment-dropdown-item-role"
                       >
                         Custom Broker
                       </DropdownItem>
@@ -384,9 +381,7 @@ class Shipment extends Component {
                         onClick={() => {
                           this.setRole(1);
                         }}
-                        style={{
-                          fontWeight: role === 1 ? 'bold' : 'normal'
-                        }}
+                        className="create-shipment-dropdown-item-role"
                       >
                         Importer
                       </DropdownItem>
@@ -395,9 +390,7 @@ class Shipment extends Component {
                         onClick={() => {
                           this.setRole(2);
                         }}
-                        style={{
-                          fontWeight: role === 2 ? 'bold' : 'normal'
-                        }}
+                        className="create-shipment-dropdown-item-role"
                       >
                         Exporter
                       </DropdownItem>
@@ -409,10 +402,11 @@ class Shipment extends Component {
             <br />
             <Form>
               {role > 2 ? (
-                <Row form>
-                  <Col md={3}>
+                <Row form style={{ marginTop: '7px' }}>
+                  <Col md={3} style={{ marginRight: '10px' }}>
                     <Button
                       color="yterminal"
+                      className="create-shipment-role-btn"
                       onClick={() => {
                         this.setBound(1);
                       }}
@@ -421,9 +415,10 @@ class Shipment extends Component {
                       Inbound
                     </Button>
                   </Col>
-                  <Col md={2}>
+                  <Col md={3}>
                     <Button
                       color="yterminal"
+                      className="create-shipment-role-btn"
                       onClick={() => {
                         this.setBound(2);
                       }}
@@ -434,10 +429,11 @@ class Shipment extends Component {
                   </Col>
                 </Row>
               ) : (
-                <Row form>
-                  <Col md={3}>
+                <Row form style={{ marginTop: '7px' }}>
+                  <Col md={3} style={{ marginRight: '10px' }}>
                     <Button
                       color="yterminal"
+                      className="create-shipment-role-btn"
                       onClick={() => {
                         this.setRole(2);
                       }}
@@ -446,9 +442,11 @@ class Shipment extends Component {
                       Exporting
                     </Button>
                   </Col>
-                  <Col md={2}>
+                  <Col md={3}>
                     <Button
                       color="yterminal"
+                      className="create-shipment-role-btn"
+                      style={{ width: '100%' }}
                       onClick={() => {
                         this.setRole(1);
                       }}
@@ -461,7 +459,7 @@ class Shipment extends Component {
               )}
               <br />
               <FormGroup row>
-                <Label for="From" sm={2}>
+                <Label for="From" sm={2} className="create-shipment-field-title">
                   From
                 </Label>
                 <Col sm={10}>
@@ -472,12 +470,13 @@ class Shipment extends Component {
                     onChange={this.writeText}
                     value={this.props.user.email}
                     readonly
+                    disabled
                   />
                 </Col>
               </FormGroup>
 
               <FormGroup row>
-                <Label for="To" sm={2}>
+                <Label for="To" sm={2} className="create-shipment-field-title">
                   To
                 </Label>
                 <Col sm={10}>
@@ -491,7 +490,7 @@ class Shipment extends Component {
                 </Col>
               </FormGroup>
               <FormGroup row>
-                <Label for="Product" sm={2}>
+                <Label for="Product" sm={2} className="create-shipment-field-title">
                   Product
                 </Label>
                 <Col sm={10}>
@@ -504,9 +503,11 @@ class Shipment extends Component {
                   />
                 </Col>
               </FormGroup>
+              {/* 
+              // TO BE REMOVE //
               <FormGroup row>
-                <Label for="Ref" sm={2}>
-                  Ref
+                <Label for="Ref" sm={2} className="create-shipment-field-title">
+                  Ref#
                 </Label>
                 <Col sm={10}>
                   <Input
@@ -517,7 +518,7 @@ class Shipment extends Component {
                     value={this.state.input.ref}
                   />
                 </Col>
-              </FormGroup>
+              </FormGroup> */}
               <Row className="show-grid">
                 <Col md={3} />
                 <Col md={6}>
@@ -528,9 +529,13 @@ class Shipment extends Component {
                 <Col md={3} />
               </Row>
 
-              <UncontrolledCollapse toggler="#toggler">
-                <Row form>
-                  <Col md={2} />
+              <UncontrolledCollapse toggler="#toggler" style={{ marginLeft: '20px' }}>
+                <Row form style={{ marginTop: '15px' }}>
+                  <Label for="freight-method" sm={4} className="create-shipment-field-title">
+                    Freight Method
+                  </Label>
+                </Row>
+                <Row>
                   <Col md="auto">
                     <Button
                       color="yterminal"
@@ -585,30 +590,28 @@ class Shipment extends Component {
                 </Row>
                 <br />
                 <FormGroup row>
-                  <Label for="Ref" sm={4}>
+                  <Label for="Ref" sm={4} className="create-shipment-field-title">
                     Shipment Type
                   </Label>
-                  <Col sm={6}>
+                  <Col sm={3}>
                     <Button
                       color="yterminal"
                       onClick={() => {
                         this.setType(1);
                       }}
-                      style={{
-                        marginRight: '5px'
-                      }}
+                      className="create-shipment-role-btn"
                       disabled={type === 1}
                     >
                       LCL
-                    </Button>{' '}
+                    </Button>
+                  </Col>
+                  <Col sm={3}>
                     <Button
                       color="yterminal"
                       onClick={() => {
                         this.setType(2);
                       }}
-                      style={{
-                        marginRight: '5px'
-                      }}
+                      className="create-shipment-role-btn"
                       disabled={type === 2}
                     >
                       FCL
@@ -618,24 +621,17 @@ class Shipment extends Component {
               </UncontrolledCollapse>
             </Form>
           </ModalBody>
-          <Row
-            style={{
-              marginBottom: '50px'
-            }}
-          >
-            <Col md={4} />
-            <Col md="6">
-              <Button
-                color="success"
-                onClick={() => {
-                  this.createShipment();
-                }}
-              >
-                Create
-              </Button>{' '}
-            </Col>
-            <Col md={3} />
-          </Row>
+          <ModalFooter style={{ border: 'none' }}>
+            <Button
+              color="success"
+              onClick={() => {
+                this.createShipment();
+              }}
+              className="create-shipment-create-btn"
+            >
+              Create
+            </Button>
+          </ModalFooter>
         </Modal>
         <Nav className="shipment-navbar">
           <NavItem>
@@ -754,7 +750,7 @@ const mapStateToProps = state => {
   return {
     shipments: state.shipmentReducer.Shipments,
     user: state.authReducer.user,
-    sender: sender
+    sender
   };
 };
 

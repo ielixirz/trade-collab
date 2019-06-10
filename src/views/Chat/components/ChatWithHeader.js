@@ -382,7 +382,6 @@ class ChatWithHeader extends Component {
     } = this.props;
     let lastkey = '';
     const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
-    console.log('isInvited', isInvited);
     let ref = '';
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
     if (isInvited) {
@@ -397,7 +396,7 @@ class ChatWithHeader extends Component {
       ref =
         'No Refferenc                                                                                                                                                                                                                         e';
     }
-    console.log('ref is', ref);
+
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
         <Row

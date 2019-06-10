@@ -26,11 +26,12 @@
 .cardRole {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   transition: 0.3s;
-  width: 30%;
-  height: 100;
+  width: 200px;
+  height: 100px;
   border-radius: 5px;
   padding: 10px;
   margin: 5px;
+  color: #9b9b9b;
 }
 .cardSelect:hover {
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
@@ -69,7 +70,31 @@ h2 {
 }
 
 .cardRole:focus {
-  background: rgb(196, 231, 245);
+  color: black;
+  border-color: #58cadb;
+  background-color: white;
+  box-shadow: none;
+  outline: none;
+}
+
+.cardRole-text {
+  margin: auto;
+  font-weight: bold;
+}
+
+.cardRole-text-span {
+  margin: auto;
+}
+
+.cardRole-pic {
+  margin: auto;
+  padding: auto;
+}
+
+.cardRole-pic-img {
+  height: 45px;
+  margin: auto;
+  margin-bottom: 10px;
 }
 
 p {
