@@ -142,7 +142,7 @@ class Chat extends Component {
         text={text}
         companies={companies}
         typing={onTyping}
-        member={member}
+        members={member}
         uploadModalRef={this.uploadModalRef}
         fileInputRef={this.fileInput}
         ShipmentData={this.state.shipments}
