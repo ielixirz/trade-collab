@@ -31,6 +31,10 @@ class MainRegister extends Component {
     this.setState({ [input]: event.target.value });
   };
 
+  handleEmailChange = (email) => {
+    this.setState({ Email: email });
+  };
+
   handleRegister = () => {
     console.log('state', this.state);
     const { Email, Password } = this.state;
@@ -65,7 +69,12 @@ class MainRegister extends Component {
     switch (step) {
       case 1:
         return (
-          <Register nextStep={this.nextStep} handleChange={this.handleChange} values={values} />
+          <Register
+            nextStep={this.nextStep}
+            handleChange={this.handleChange}
+            handleEmailChange={this.handleEmailChange}
+            values={values}
+          />
         );
       case 2:
         return <SelectRole nextStep={this.nextStep} values={values} />;

@@ -10,6 +10,7 @@ import {
 import './register.css';
 import './checkbox.scss';
 import { RegisterUser } from '../../../service/auth/register';
+import { GetUserInfoFromEmail } from '../../../service/user/user';
 import { isValidEmail, isValidName, isValidPassword } from '../../../utils/validation';
 
 const styles = {
@@ -23,6 +24,7 @@ const Register = (props) => {
     Email: { isInvalid: undefined, msg: '' },
     Password: { isInvalid: undefined, msg: '' },
   });
+  const [isDuplicate, setIsDuplicate] = useState(false);
 
   const validateFields = (values) => {
     let valid = true;
@@ -85,6 +87,15 @@ const Register = (props) => {
 
     setInvalid(i);
     return valid;
+  };
+
+  const handleEmailChange = (email) => {
+    GetUserInfoFromEmail(email).subscribe((data) => {
+      if (data.length === 0) {
+        setIsDuplicate(false);
+      } else setIsDuplicate(true);
+    });
+    props.handleEmailChange(email);
   };
 
   const saveAndContinue = (e) => {
@@ -167,8 +178,15 @@ const Register = (props) => {
 
                   <div style={styles.marginInput}>
                     <Row>
-                      <Col md="9">
+                      <Col md="2">
                         <h4>Email</h4>
+                      </Col>
+                      <Col md="7">
+                        {isDuplicate ? (
+                          <span className="field-error-msg">*Email already register</span>
+                        ) : (
+                          ''
+                        )}
                       </Col>
                       {invalid.Email.isInvalid ? (
                         <Col className="field-error-container">
@@ -184,10 +202,12 @@ const Register = (props) => {
                       name="email"
                       style={{ marginTop: 0 }}
                       placeholder="you@example.com"
-                      onChange={props.handleChange('Email')}
+                      onChange={(e) => {
+                        handleEmailChange(e.target.value);
+                      }}
                       defaultValue={props.values.Email}
                       className="register-form"
-                      invalid={invalid.Email.isInvalid}
+                      invalid={invalid.Email.isInvalid || isDuplicate}
                       valid={invalid.Email.isInvalid === false}
                     />
                   </div>
