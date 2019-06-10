@@ -38,13 +38,17 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
     profileReducer.ProfileList,
     item => item.id === profileReducer.ProfileDetail.id
   );
-  const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}`, false);
+  const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.message`, false);
+  const members = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.members`, false);
   if (room) {
     room.unsubscribe();
+    if (members) {
+      members.unsubscribe();
+    }
   }
   _.set(
     chatroom,
-    `${ShipmentKey}.${ChatRoomKey}`,
+    `${ShipmentKey}.${ChatRoomKey}.message`,
     GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
       next: res => {
         console.log(res);
@@ -54,23 +58,27 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
           id: ChatRoomKey,
           payload: res
         });
-
-        GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
-          next: res => {
-            const members = _.map(res, item => {
-              console.log(item);
-              return {
-                ChatRoomMemberKey: item.id,
-                ...item.data()
-              };
-            });
-            dispatch({
-              type: FETCH_CHAT_MEMBER,
-              id: ChatRoomKey,
-              payload: members
-            });
-          }
-        });
+        _.set(
+          chatroom,
+          `${ShipmentKey}.${ChatRoomKey}.member`,
+          GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
+            next: res => {
+              console.log('Respond', res);
+              const members = _.map(res, item => {
+                console.log(item);
+                return {
+                  ChatRoomMemberKey: item.id,
+                  ...item.data()
+                };
+              });
+              dispatch({
+                type: FETCH_CHAT_MEMBER,
+                id: ChatRoomKey,
+                payload: members
+              });
+            }
+          })
+        );
       },
       error: err => {
         console.log(err);
@@ -115,21 +123,47 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
 };
 export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getState) => {
   const chats = _.get(getState().ChatReducer, `chatroomsMsg.${ChatRoomKey}.chatMsg`, []).length;
-
-  const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}`, false);
+  const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.message`, false);
+  const members = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.members`, false);
   if (room) {
     room.unsubscribe();
+    if (members) {
+      members.unsubscribe();
+    }
   }
   _.set(
     chatroom,
-    `${ShipmentKey}.${ChatRoomKey}`,
+    `${ShipmentKey}.${ChatRoomKey}.message`,
     GetChatMessage(ShipmentKey, ChatRoomKey, chats + 25).subscribe({
       next: res => {
+        console.log(res);
+
         dispatch({
           type: FETCH_CHAT,
           id: ChatRoomKey,
           payload: res
         });
+        _.set(
+          chatroom,
+          `${ShipmentKey}.${ChatRoomKey}.member`,
+          GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
+            next: res => {
+              console.log('Respond', res);
+              const members = _.map(res, item => {
+                console.log(item);
+                return {
+                  ChatRoomMemberKey: item.id,
+                  ...item.data()
+                };
+              });
+              dispatch({
+                type: FETCH_CHAT_MEMBER,
+                id: ChatRoomKey,
+                payload: members
+              });
+            }
+          })
+        );
       },
       error: err => {
         console.log(err);

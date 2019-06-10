@@ -27,7 +27,7 @@ import {
   DropdownMenu,
   UncontrolledDropdown,
   UncontrolledCollapse,
-  ModalFooter,
+  ModalFooter
 } from 'reactstrap';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -37,7 +37,7 @@ import TableShipment from './TableShipment';
 import { fetchShipments, fetchMoreShipments } from '../../actions/shipmentActions';
 import {
   CombineShipmentAndShipmentReference,
-  CreateShipment,
+  CreateShipment
 } from '../../service/shipment/shipment';
 import './Shipment.css';
 import { GetUserCompany } from '../../service/user/user';
@@ -63,12 +63,12 @@ class Shipment extends Component {
         ref: '',
         bound: '',
         method: '',
-        type: '',
+        type: ''
       },
       companies: {},
       modal: false,
       dropdownOpen: false,
-      blocking: false,
+      blocking: false
     };
     this.toggleBlocking = this.toggleBlocking.bind(this);
     this.writeText = this.writeText.bind(this);
@@ -81,7 +81,7 @@ class Shipment extends Component {
 
   modal() {
     this.setState(prevState => ({
-      modal: !prevState.modal,
+      modal: !prevState.modal
     }));
   }
 
@@ -123,6 +123,7 @@ class Shipment extends Component {
     }
     parameter.ShipmentProductName = input.product;
     parameter.ShipmentStatus = 'Planning';
+
     parameter.ShipmentCreatorUserKey = this.props.user.uid;
     if (input.role > 2) {
       if (input.bound === 1) {
@@ -133,105 +134,105 @@ class Shipment extends Component {
     }
     parameter.ShipmentCreateTimestamp = new Date().getTime();
     CreateShipment(parameter).subscribe({
-      next: (res) => {
+      next: res => {
         this.props.fetchShipments(this.state.typeShipment);
-      },
+      }
     });
 
     this.setState(prevState => ({
       modal: !prevState.modal,
-      input: {},
+      input: {}
     }));
   }
 
   dropdown() {
     this.setState(prevState => ({
-      dropdownOpen: !prevState.dropdownOpen,
+      dropdownOpen: !prevState.dropdownOpen
     }));
   }
 
   fetchMoreShipment() {
     this.fetchShipment.unsubscribe();
     this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
-      next: (notification) => {
+      next: notification => {
         CombineShipmentAndShipmentReference(
           this.state.typeShipment,
           '',
           'asc',
           this.props.shipments.length + 10,
-          this.props.user.uid,
+          this.props.user.uid
         ).subscribe({
-          next: (shipment) => {
+          next: shipment => {
             this.props.fetchShipments(shipment, notification);
           },
-          error: (err) => {
+          error: err => {
             console.log(err);
           },
           complete: () => {
             console.log('Hello World');
-          },
+          }
         });
-      },
+      }
     });
   }
 
   fetchShipmentReload() {
     this.fetchShipment.unsubscribe();
     this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
-      next: (notification) => {
+      next: notification => {
         CombineShipmentAndShipmentReference(
           this.state.typeShipment,
           '',
           'asc',
           this.props.shipments.length + 10,
-          this.props.user.uid,
+          this.props.user.uid
         ).subscribe({
-          next: (shipment) => {
+          next: shipment => {
             this.props.fetchShipments(shipment, notification);
           },
-          error: (err) => {
+          error: err => {
             console.log(err);
           },
           complete: () => {
             console.log('Hello World');
-          },
+          }
         });
-      },
+      }
     });
   }
 
   componentDidMount() {
     this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
-      next: (notification) => {
+      next: notification => {
         CombineShipmentAndShipmentReference(
           this.state.typeShipment,
           '',
           'asc',
           20,
-          this.props.user.uid,
+          this.props.user.uid
         ).subscribe({
-          next: (shipment) => {
+          next: shipment => {
             this.props.fetchShipments(shipment, notification);
           },
-          error: (err) => {
+          error: err => {
             console.log(err);
           },
           complete: () => {
             console.log('Hello World');
-          },
+          }
         });
-      },
+      }
     });
 
     GetUserCompany(this.props.user.uid).subscribe({
-      next: (res) => {
+      next: res => {
         console.log('Fetched Company is', res);
         this.setState({
           companies: {
-            ...res,
-          },
+            ...res
+          }
         });
-      },
+      }
     });
   }
 
@@ -247,7 +248,7 @@ class Shipment extends Component {
   toggle(tab) {
     if (this.state.activeTab !== tab) {
       this.setState({
-        activeTab: tab,
+        activeTab: tab
       });
     }
   }
@@ -256,8 +257,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        role,
-      },
+        role
+      }
     });
   }
 
@@ -265,8 +266,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        bound,
-      },
+        bound
+      }
     });
   }
 
@@ -274,8 +275,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        method,
-      },
+        method
+      }
     });
   }
 
@@ -283,8 +284,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        type,
-      },
+        type
+      }
     });
   }
 
@@ -294,25 +295,23 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        [name]: value,
-      },
+        [name]: value
+      }
     });
   }
 
-  handleChange = (selectedOption) => {
+  handleChange = selectedOption => {
     console.log(selectedOption);
     this.setState({
       input: {
         ...this.state.input,
-        role: selectedOption.value,
-      },
+        role: selectedOption.value
+      }
     });
   };
 
   render() {
-    const {
-      role, bound, method, type,
-    } = this.state.input;
+    const { role, bound, method, type } = this.state.input;
     console.log(this.props.user);
     return (
       <div className="shipment-table-main-container">
@@ -544,33 +543,31 @@ class Shipment extends Component {
                         this.setMethod(1);
                       }}
                       style={{
-                        marginRight: '5px',
+                        marginRight: '5px'
                       }}
                       disabled={method === 1}
                     >
                       Ocean Freight
-                    </Button>
-                    {' '}
+                    </Button>{' '}
                     <Button
                       color="yterminal"
                       onClick={() => {
                         this.setMethod(2);
                       }}
                       style={{
-                        marginRight: '5px',
+                        marginRight: '5px'
                       }}
                       disabled={method === 2}
                     >
                       Show Both
-                    </Button>
-                    {' '}
+                    </Button>{' '}
                     <Button
                       color="yterminal"
                       onClick={() => {
                         this.setMethod(3);
                       }}
                       style={{
-                        marginRight: '5px',
+                        marginRight: '5px'
                       }}
                       disabled={method === 3}
                     >
@@ -582,7 +579,7 @@ class Shipment extends Component {
                         this.setMethod(4);
                       }}
                       style={{
-                        marginRight: '5px',
+                        marginRight: '5px'
                       }}
                       disabled={method === 4}
                     >
@@ -646,9 +643,7 @@ class Shipment extends Component {
                 this.fetchShipmentReload();
               }}
             >
-              <span style={styles.title}>Alert</span>
-              {' '}
-              <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Alert</span> <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -660,9 +655,7 @@ class Shipment extends Component {
                 this.fetchShipmentReload();
               }}
             >
-              <span style={styles.title}>Plan</span>
-              {' '}
-              <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Plan</span> <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -674,9 +667,7 @@ class Shipment extends Component {
                 this.fetchShipmentReload();
               }}
             >
-              <span style={styles.title}>Active</span>
-              {' '}
-              <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Active</span> <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -688,9 +679,7 @@ class Shipment extends Component {
                 this.fetchShipmentReload();
               }}
             >
-              <span style={styles.title}>Complete</span>
-              {' '}
-              <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Complete</span> <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -702,9 +691,7 @@ class Shipment extends Component {
                 this.fetchShipmentReload();
               }}
             >
-              <i className="icon-close" />
-              {' '}
-              <span style={styles.title}>Cancel</span>
+              <i className="icon-close" /> <span style={styles.title}>Cancel</span>
             </NavLink>
           </NavItem>
           <Col>
@@ -743,33 +730,31 @@ const styles = {
   title: {
     fontSize: 16,
     color: '#707070',
-    cursor: 'pointer',
+    cursor: 'pointer'
   },
   lineTab: {
     color: '#EAEAEA',
     opacity: 0.8,
-    marginLeft: 20,
-  },
+    marginLeft: 20
+  }
 };
 
-const mapStateToProps = (state) => {
-  const {
-    ChatReducer, authReducer, profileReducer, companyReducer,
-  } = state;
+const mapStateToProps = state => {
+  const { ChatReducer, authReducer, profileReducer, companyReducer } = state;
 
   const sender = _.find(
     profileReducer.ProfileList,
-    item => item.id === profileReducer.ProfileDetail.id,
+    item => item.id === profileReducer.ProfileDetail.id
   );
 
   return {
     shipments: state.shipmentReducer.Shipments,
     user: state.authReducer.user,
-    sender,
+    sender
   };
 };
 
 export default connect(
   mapStateToProps,
-  { fetchShipments, fetchMoreShipments },
+  { fetchShipments, fetchMoreShipments }
 )(Shipment);

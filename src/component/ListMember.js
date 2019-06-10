@@ -60,17 +60,16 @@ export default class ListMember extends React.Component {
                   onClick={e => {
                     e.preventDefault();
 
-                    let result = LeaveChatRoomMember(
+                    LeaveChatRoomMember(
                       this.props.ShipmentKey,
                       this.props.ChatRoomKey,
                       member.ChatRoomMemberKey
                     ).subscribe({
-                      next: res => {
-                        result.unsubscribe();
+                      next: res => {},
+                      error: res => {
+                        console.error(res);
                       },
-                      complete: res => {
-                        result.unsubscribe();
-                      }
+                      complete: res => {}
                     });
                   }}
                 >
