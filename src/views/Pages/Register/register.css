@@ -82,3 +82,8 @@ input[type='password']:focus {
   top: 7px;
   left: 20px;
 }
+
+.register-step2-header {
+  text-align: center;
+  margin: 25px 25px 25px 25px;
+}
