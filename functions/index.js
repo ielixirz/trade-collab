@@ -688,14 +688,24 @@ exports.NotiBellAndEmailInviteToJoinCompany = functions.firestore
         UserNotificationCompanyName: snapshot.data().CompanyInvitationName,
         UserNotificationCompanyKey: snapshot.data().CompanyInvitationCompanyKey
       });
-    
-    const GetUserInfoEmail = await admin.firestore().collection('UserInfo').doc(context.params.UserKey).get()
 
-    const UserInfoEmail = GetUserInfoEmail.data().UserInfoEmail
-    
-    const SendNotiEmail = await SendEmail()
-    
-    return
+    const GetUserInfoEmail = await admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(context.params.UserKey)
+      .get();
+
+    const UserInfoEmail = GetUserInfoEmail.data().UserInfoEmail;
+
+    const SendNotiEmail = await SendEmail(
+      InviteToJoinCompanyTemplate(
+        UserInfoEmail,
+        `You have invitation from ${snapshot.data().CompanyInvitationName} company`,
+        `<strong>You have invitation from ${snapshot.data().CompanyInvitationName} company</strong>`
+      )
+    );
+
+    return Promise.all([SendNotiBell, SendNotiEmail]);
   });
 
 exports.NotiBellRequestToJoinCompany = functions.firestore
