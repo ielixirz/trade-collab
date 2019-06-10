@@ -981,25 +981,29 @@ exports.LeaveCompany = functions.firestore
 
 exports.AddEmailProfileInUserPersonalizeWhenCreateProfile = functions.firestore
   .document('UserInfo/{UserKey}/Profile/{ProfileKey}')
-  .onWrite(async (change, context) => {
-    const oldValue = change.before.data();
-    const newValue = change.after.data();
+  .onCreate(async (snapshot, context) => {
+    const GetUserEmail = await admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(context.params.UserKey)
+      .get();
+    const UserEmail = GetUserEmail.data().UserInfoEmail;
 
-    const ProfileEmail = newValue.ProfileEmail;
-
-    const AddProfileEmailAction = admin
+    const AddUserEmailAction = await admin
       .firestore()
       .collection('UserPersonalize')
       .doc(context.params.ProfileKey)
-      .set({ ProfileEmail: ProfileEmail }, { merge: true });
+      .set({ UserEmail: UserEmail }, { merge: true });
 
-    if (!oldValue && newValue.ProfileEmail) {
-      return AddProfileEmailAction;
-    }
+    // if (!oldValue && newValue.ProfileEmail) {
+    //   return AddProfileEmailAction;
+    // }
 
-    if (oldValue.ProfileEmail !== newValue.ProfileEmail) {
-      return AddProfileEmailAction;
-    }
+    // if (oldValue.ProfileEmail !== newValue.ProfileEmail) {
+    //   return AddProfileEmailAction;
+    // }
+
+    return AddUserEmailAction;
   });
 
 const TestMessage = () => {
