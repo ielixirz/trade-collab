@@ -309,6 +309,22 @@ class Shipment extends Component {
     });
   };
 
+  validateCreateShipment() {
+    const checkRole = +this.state.input.role;
+    const checkBound = +this.state.input.bound;
+
+    if (checkRole === 1 || checkRole === 2) {
+      return true;
+    }
+    if (checkRole === 3 || checkRole === 4) {
+      if (checkBound === '' || checkBound === 0) {
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
   render() {
     const {
       role, bound, method, type,
@@ -469,7 +485,7 @@ class Shipment extends Component {
                     name="from"
                     id="from"
                     onChange={this.writeText}
-                    value={this.props.user.email}
+                    value={`${this.props.user.email} (You)`}
                     readonly
                     disabled
                   />
@@ -504,7 +520,7 @@ class Shipment extends Component {
                   />
                 </Col>
               </FormGroup>
-              {/* 
+              {/*
               // TO BE REMOVE //
               <FormGroup row>
                 <Label for="Ref" sm={2} className="create-shipment-field-title">
@@ -631,6 +647,7 @@ class Shipment extends Component {
                 this.createShipment();
               }}
               className="create-shipment-create-btn"
+              disabled={!this.validateCreateShipment()}
             >
               Create
             </Button>
