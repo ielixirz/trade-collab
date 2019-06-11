@@ -258,6 +258,13 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
     return companyList;
   };
 
+  const validateInvite = () => {
+    if (company === '' || invitedEmails.length === 0) {
+      return false;
+    }
+    return true;
+  };
+
   useImperativeHandle(ref, () => ({
     triggerInviteToCompany(propinvitedEmails, propCompany) {
       if (propinvitedEmails.length === 0) {
@@ -326,6 +333,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
             style={{ margin: 'auto' }}
             color="primary"
             onClick={nextStep}
+            disabled={!validateInvite()}
           >
             Invite
           </Button>
