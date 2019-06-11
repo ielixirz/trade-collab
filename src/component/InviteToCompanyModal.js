@@ -6,7 +6,14 @@ import React, {
   useState, forwardRef, useImperativeHandle, useEffect,
 } from 'react';
 import {
-  Label, Button, Modal, ModalBody, ModalFooter, ModalHeader, Input,
+  Label,
+  Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Input,
+  Alert,
 } from 'reactstrap';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -31,17 +38,19 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
   const [updatePosition, setUpdatePosition] = useState({});
   const [company, setCompany] = useState('');
   const [availableCompany, setAvailableCompany] = useState([]);
+  const [isValidInvite, setIsValidInvite] = useState(undefined);
 
   const clear = () => {
     setExistingInvited([]);
     setNonExistingInvited([]);
     setUpdateRole({});
     setUpdatePosition({});
+    setIsValidInvite(undefined);
   };
 
   useEffect(() => {
-    clear();
-  }, [invitedEmails]);
+    // clear();
+  }, [invitedEmails, isValidInvite]);
 
   const handleInputPositionChange = (event, email) => {
     const temp = updatePosition;
@@ -220,29 +229,6 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
     fetchInvitedUserDetail([...invitedEmails], company.key);
   };
 
-  const invite = () => {
-    const inviteDataList = [];
-    const role = updateRole;
-    const position = updatePosition;
-    const invites = existingInvited.concat(nonExistingInvited);
-    invites.forEach((item) => {
-      // eslint-disable-next-line prefer-destructuring
-      const email = item.email;
-      const inviteData = {
-        Email: email,
-        Role: role[email],
-        Position: position[email],
-      };
-      inviteDataList.push(inviteData);
-    });
-    CreateCompanyMultipleInvitation(inviteDataList, company.key).subscribe(() => {});
-    if (props.clearInput !== undefined) {
-      props.clearInput();
-    }
-    setinvitedEmails([]);
-    toggle();
-  };
-
   const mapCompanyForDropdown = (companyData) => {
     const availableCompanies = companyData[0];
     const companyList = [];
@@ -265,8 +251,46 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
     return true;
   };
 
+  const validateRoleSelection = (inviteData) => {
+    let isValid = true;
+    inviteData.forEach((item) => {
+      // eslint-disable-next-line prefer-destructuring
+      if (item.Role === undefined) {
+        isValid = false;
+      }
+    });
+    setIsValidInvite(isValid);
+    return isValid;
+  };
+
+  const invite = () => {
+    const inviteDataList = [];
+    const role = updateRole;
+    const position = updatePosition;
+    const invites = existingInvited.concat(nonExistingInvited);
+    invites.forEach((item) => {
+      // eslint-disable-next-line prefer-destructuring
+      const email = item.email;
+      const inviteData = {
+        Email: email,
+        Role: role[email],
+        Position: position[email],
+      };
+      inviteDataList.push(inviteData);
+    });
+    if (validateRoleSelection(inviteDataList)) {
+      CreateCompanyMultipleInvitation(inviteDataList, company.key).subscribe(() => {});
+      if (props.clearInput !== undefined) {
+        props.clearInput();
+      }
+      setinvitedEmails([]);
+      toggle();
+    }
+  };
+
   useImperativeHandle(ref, () => ({
     triggerInviteToCompany(propinvitedEmails, propCompany) {
+      clear();
       if (propinvitedEmails.length === 0) {
         setCurrentStep(1);
         setAvailableCompany(mapCompanyForDropdown(propCompany));
@@ -325,7 +349,16 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
           </b>
         </h2>
       </ModalHeader>
-      <ModalBody>{currentStep === 1 ? renderStepOneBody() : renderStepTwoBody()}</ModalBody>
+      <ModalBody>
+        {currentStep === 1 ? renderStepOneBody() : renderStepTwoBody()}
+        {currentStep === 2 && isValidInvite === false ? (
+          <Alert color="warning" style={{ margin: 0 }}>
+            Role must be select for all invitation.
+          </Alert>
+        ) : (
+          ''
+        )}
+      </ModalBody>
       <ModalFooter style={{ border: 'none' }}>
         {currentStep === 1 ? (
           <Button
