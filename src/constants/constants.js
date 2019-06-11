@@ -6,6 +6,10 @@ export const selectTab = 'selectTab';
 export const closedTab = 'closedTab';
 export const addTab = 'addTab';
 
+//Notification
+
+export const FETCH_NOTIFICATION = 'FETCH_NOTIFICATION';
+
 // Shipment
 export const FETCH_SHIPMENT = 'FETCH_SHIPMENT';
 export const FETCH_SHIPMENT_LIST = 'FETCH_SHIPMENT_LIST';

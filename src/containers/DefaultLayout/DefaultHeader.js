@@ -25,6 +25,7 @@ import sygnet from '../../assets/img/brand/sygnet.svg';
 import { logout } from '../../actions/loginActions';
 import { clearProfile } from '../../actions/profileActions';
 import './style.css';
+import { fetchUserNotification } from '../../actions/userActions';
 
 const propTypes = {
   children: PropTypes.node
@@ -41,6 +42,11 @@ class DefaultHeader extends Component {
   redirect = () => {
     this.props.history.replace('/login');
   };
+  componentDidMount() {
+    if (this.props.user) {
+      this.props.fetchUserNotification(this.props.user.uid);
+    }
+  }
 
   render() {
     const notification = [
@@ -224,5 +230,5 @@ const styles = {
 };
 export default connect(
   mapStateToProps,
-  { logout, clearProfile }
+  { logout, clearProfile, fetchUserNotification }
 )(DefaultHeader);
