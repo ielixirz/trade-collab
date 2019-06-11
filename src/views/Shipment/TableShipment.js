@@ -273,7 +273,6 @@ class TableShipment extends React.Component {
         console.log(err);
       },
       complete: () => {
-        console.log('Updated');
         this.forceUpdate();
       }
     });
@@ -299,18 +298,8 @@ class TableShipment extends React.Component {
   renderRefComponent(index, ref, shipmentKey, ShipmentMember) {
     const { user, companies } = this.props;
     const refs = [];
-    console.log('this shipments ref', ref);
     _.forEach(companies, item => {
       _.forEach(ref, refitem => {
-        if (shipmentKey === '5MvYnwSeAhtlA5EfqUaJ') {
-          console.log(
-            'isSameKey',
-            shipmentKey,
-            item.CompanyKey,
-            refitem.ShipmentReferenceCompanyKey
-          );
-        }
-
         if (item.CompanyKey === refitem.ShipmentReferenceCompanyKey) {
           refs.push(refitem);
         }
@@ -369,7 +358,6 @@ class TableShipment extends React.Component {
                             refItem
                           ).subscribe({
                             complete: res => {
-                              console.log(res);
                               update.unsubscribe();
                             }
                           });
@@ -420,8 +408,6 @@ class TableShipment extends React.Component {
                       onKeyPress={_.debounce(
                         event => {
                           if (event.key === 'Enter') {
-                            console.log('is Submitting ', this.state.submiting);
-
                             if (
                               _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) ===
                               false
@@ -451,7 +437,6 @@ class TableShipment extends React.Component {
                                 }
                               });
                             } else {
-                              console.log('update', this.state.input.newRef);
                               if (_.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0) {
                                 UpdateShipmentReference(
                                   shipmentKey,
@@ -550,13 +535,10 @@ class TableShipment extends React.Component {
     let data = [];
     let columns = [];
     let input = [];
-    console.log(_.size(this.props.input));
-    console.log('Props', this.props);
     if (_.size(this.props.input) === 0) {
       return '';
     }
     // _.orderBy(myArr, [columnName], ['asc'])
-    console.log('Pin', this.state.pinned);
 
     const filtered = _.map(this.props.input, shipment => {
       let output = {
@@ -574,7 +556,6 @@ class TableShipment extends React.Component {
       return output;
     });
     const collection = _.orderBy(filtered, ['PIN'], ['desc']);
-    console.log('collection', collection);
     input = _.map(collection, (item, index) => {
       const etd = _.get(item, 'ShipperETDDate', 0);
       const eta = _.get(item, 'ConsigneeETAPortDate', 0);
