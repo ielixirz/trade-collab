@@ -470,6 +470,8 @@ exports.ManageShipmentMember = functions.firestore
           });
           UserPersonalizeProfileActionList.push(SetFirstJoinAction);
 
+          // Send Email InviteIntoShipment
+
           if (ProfileEmail) {
             await SendEmail(
               InviteIntoShipmentTemplate(
@@ -479,6 +481,27 @@ exports.ManageShipmentMember = functions.firestore
               )
             );
           }
+
+          // End Send Email InviteIntoShipment
+
+          // Noti-SystemGen InviteIntoShipment
+
+          await admin
+            .firestore()
+            .collection('Shipment')
+            .doc(context.params.ShipmentKey)
+            .collection('ChatRoom')
+            .doc(context.params.ChatRoomKey)
+            .collection('ChatRoomMessage')
+            .add({
+              ChatRoomMessageContext: `${newValue.ChatRoomMemberFirstName} ${
+                newValue.ChatRoomMemberSurName
+              } (${ChatRoomMemberEmail}) joined`,
+              ChatRoomMessageType: 'System',
+              ChatRoomMessageTimestamp: admin.firestore.FieldValue.serverTimestamp
+            });
+
+          // End Noti-SystemGen InviteIntoShipment
         }
       });
     }
