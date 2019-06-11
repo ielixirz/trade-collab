@@ -470,6 +470,8 @@ exports.ManageShipmentMember = functions.firestore
           });
           UserPersonalizeProfileActionList.push(SetFirstJoinAction);
 
+          // Send Email InviteIntoShipment
+
           if (ProfileEmail) {
             await SendEmail(
               InviteIntoShipmentTemplate(
@@ -479,6 +481,8 @@ exports.ManageShipmentMember = functions.firestore
               )
             );
           }
+
+          // End Send Email InviteIntoShipment
         }
       });
     }
