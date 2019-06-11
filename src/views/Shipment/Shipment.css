@@ -30,8 +30,8 @@ img {
   border-color: #c8ced3;
   opacity: 0.5;
 }
-.btn.disabled,
-.btn:disabled {
+.create-shipment-role-btn.btn.disabled,
+.create-shipment-role-btn.btn:disabled {
   color: #23282c;
   background-color: #80d2de0d;
   border-color: #58cadb;

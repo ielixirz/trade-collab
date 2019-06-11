@@ -167,7 +167,7 @@ const CompanyPanel = (props) => {
     return filterMembers;
   };
 
-  const fetchMember = (companyKey) => {
+  const fetchMember = (companyKey, companyRoles) => {
     setBlocking(true);
     combineLatest([
       GetCompanyInvitation(companyKey).pipe(
@@ -209,7 +209,7 @@ const CompanyPanel = (props) => {
               text={member.UserMemberRoleName}
               turnType="dropdown"
               data={{
-                options: initRoleList,
+                options: companyRoles,
                 onChangeFn: input => updateMember(companyKey, member.key, { UserMemberRoleName: input.value.role }),
               }}
             />
@@ -258,22 +258,24 @@ const CompanyPanel = (props) => {
   };
 
   const responseToRequest = (keys, status) => {
-    UpdateCompanyRequestStatus(
-      keys.cKey,
-      keys.rKey,
-      status,
-      updateRole[keys.uKey] === undefined ? '-' : updateRole[keys.uKey],
-      'rolePermissionCode',
-      updatePosition[keys.uKey] === undefined ? '-' : updatePosition[keys.uKey],
-    );
-    UpdateUserRequestStatus(keys.uKey, keys.rKey, status);
-    setAcceptedRequest({
-      updateKey: keys,
-      status,
-    });
+    if (updateRole[keys.uKey] !== undefined) {
+      UpdateCompanyRequestStatus(
+        keys.cKey,
+        keys.rKey,
+        status,
+        updateRole[keys.uKey],
+        'rolePermissionCode',
+        updatePosition[keys.uKey] === undefined ? '-' : updatePosition[keys.uKey],
+      );
+      UpdateUserRequestStatus(keys.uKey, keys.rKey, status);
+      setAcceptedRequest({
+        updateKey: keys,
+        status,
+      });
+    }
   };
 
-  const fetchIncomingRequest = (companyKey) => {
+  const fetchIncomingRequest = (companyKey, companyRoles) => {
     GetCompanyRequest(companyKey)
       .pipe(map(docs => docs.map(d => d.data())))
       .subscribe((results) => {
@@ -294,10 +296,10 @@ const CompanyPanel = (props) => {
               <Select
                 name="company"
                 id="company-invite"
-                options={initRoleList}
+                options={companyRoles}
                 className="basic-multi-select"
                 classNamePrefix="select"
-                placeholder="Choose Role"
+                placeholder="Please select role"
                 onChange={input => handleRoleInputChange(input, item.UserRequestUserKey)}
               />
             ),
@@ -341,10 +343,11 @@ const CompanyPanel = (props) => {
           },
           label: matrix.CompanyUserAccessibilityRoleName,
         }));
-        setRoleList(initRoles.concat(roles));
+        const companyRoles = initRoles.concat(roles);
+        setRoleList(companyRoles);
+        fetchIncomingRequest(props.match.params.key, companyRoles);
+        fetchMember(props.match.params.key, companyRoles);
       });
-    fetchIncomingRequest(props.match.params.key);
-    fetchMember(props.match.params.key);
   }, [acceptedRequest]);
 
   const toggleEdit = () => {
