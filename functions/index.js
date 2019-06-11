@@ -979,27 +979,40 @@ exports.LeaveCompany = functions.firestore
 //     UserMemberCompanyStandingStatus (string)
 //     UserMemberJoinedTimestamp (timestamp)
 
-exports.AddEmailProfileInUserPersonalizeWhenCreateProfile = functions.firestore
+exports.AddProfileDataInUserPersonalizeWhenCreateProfile = functions.firestore
   .document('UserInfo/{UserKey}/Profile/{ProfileKey}')
-  .onWrite(async (change, context) => {
-    const oldValue = change.before.data();
-    const newValue = change.after.data();
+  .onCreate(async (snapshot, context) => {
+    const GetUserEmail = await admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(context.params.UserKey)
+      .get();
+    const UserEmail = GetUserEmail.data().UserInfoEmail;
+    const ProfileFirstname = snapshot.data().ProfileFirstname;
+    const ProfileSurname = snapshot.data().ProfileSurname;
 
-    const ProfileEmail = newValue.ProfileEmail;
-
-    const AddProfileEmailAction = admin
+    const AddUserEmailAction = await admin
       .firestore()
       .collection('UserPersonalize')
       .doc(context.params.ProfileKey)
-      .set({ ProfileEmail: ProfileEmail }, { merge: true });
+      .set(
+        {
+          UserEmail: UserEmail,
+          ProfileFirstname: ProfileFirstname,
+          ProfileSurname: ProfileSurname
+        },
+        { merge: true }
+      );
 
-    if (!oldValue && newValue.ProfileEmail) {
-      return AddProfileEmailAction;
-    }
+    // if (!oldValue && newValue.ProfileEmail) {
+    //   return AddProfileEmailAction;
+    // }
 
-    if (oldValue.ProfileEmail !== newValue.ProfileEmail) {
-      return AddProfileEmailAction;
-    }
+    // if (oldValue.ProfileEmail !== newValue.ProfileEmail) {
+    //   return AddProfileEmailAction;
+    // }
+
+    return AddUserEmailAction;
   });
 
 const TestMessage = () => {
@@ -1060,25 +1073,54 @@ exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
     .where('ShipmentChatCount', '>', 0)
     .get();
 
+  const ShipmentChatCountProfileList = GetShipmentChatCount.docs.map(Item => ({
+    ...Item.data(),
+    ProfileKey: Item.id
+  }));
+
+  const GroupProfileByUserEmail = _.groupBy(ShipmentChatCountProfileList, 'UserEmail');
+
   const UnreadSendEmailList = [];
 
-  GetShipmentChatCount.docs.forEach(Item => {
-    const ProfileEmail = Item.data().ProfileEmail;
-    const ShipmentChatCount = Item.data().ShipmentChatCount;
+  for (const key in GroupProfileByUserEmail) {
+    if (GroupProfileByUserEmail.hasOwnProperty(key)) {
+      const element = GroupProfileByUserEmail[key];
+      const UserShipmentChatCountList = element.map(Item => Item.ShipmentChatCount);
+      const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
-    if (ProfileEmail) {
-      const SendEmailService = SendEmail(
-        UnreadMessageTemplate(
-          ProfileEmail,
-          `You have ${ShipmentChatCount} unread message`,
-          `<strong>You have ${ShipmentChatCount} unread message</strong>`
-        )
+      const UserAllUnreadCount = UserShipmentChatCountList.reduce(reducer);
+
+      //console.log(UserAllUnreadCount);
+      let CreateEmailText = `${UserAllUnreadCount} Unread messages`;
+      let CreateEmailHtml = `<h2>${UserAllUnreadCount} Unread messages</h2><br>`;
+
+      const MapTextWithProfileUnread = element.map(
+        Item =>
+          `${Item.ProfileFirstname} ${Item.ProfileSurname} has ${
+            Item.ShipmentChatCount
+          } unread messages`
       );
-      UnreadSendEmailList.push(SendEmailService);
+
+      const MapHtmlWithProfileUnread = element.map(
+        Item =>
+          `<p><strong>${Item.ProfileFirstname} ${Item.ProfileSurname}</strong> has ${
+            Item.ShipmentChatCount
+          } unread messages</p>`
+      );
+
+      const ProfileUnreadMergeText = MapTextWithProfileUnread.join();
+      const ProfileUnreadMergeHtml = MapHtmlWithProfileUnread.join('<br>');
+
+      const FinalText = CreateEmailText + ProfileUnreadMergeText;
+      const FinalHtml = CreateEmailHtml + ProfileUnreadMergeHtml;
+
+      const SendEmailAction = SendEmail(UnreadMessageTemplate(key, FinalText, FinalHtml));
+
+      UnreadSendEmailList.push(SendEmailAction);
     }
-  });
+  }
 
   return Promise.all(UnreadSendEmailList).then(_ => {
-    return res.status(200).send('All Email Sended !');
+    return res.status(200).send(JSON.stringify(GroupProfileByUserEmail));
   });
 });
