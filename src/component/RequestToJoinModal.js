@@ -110,6 +110,13 @@ const RequestToJoinModal = forwardRef((props, ref) => {
     },
   }));
 
+  const validateRequest = () => {
+    if (selectedIndex === null) {
+      return false;
+    }
+    return true;
+  };
+
   return (
     <Modal isOpen={modal} toggle={toggle} className="upload-modal">
       <ModalHeader toggle={toggle} style={{ border: 'none' }}>
@@ -204,6 +211,7 @@ const RequestToJoinModal = forwardRef((props, ref) => {
           className="profile-btn create"
           style={{ margin: 'auto' }}
           onClick={sendRequest}
+          disabled={!validateRequest()}
         >
           Send Request
         </Button>
