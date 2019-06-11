@@ -96,6 +96,13 @@ img {
   background-color: white;
 }
 
+.create-shipment-create-btn.disabled {
+  color: #848484;
+  background-color: #ffffff0d;
+  border-color: #cccccc;
+  opacity: 1;
+}
+
 .recent_heading {
   float: left;
   width: 40%;
