@@ -6,6 +6,7 @@ import FileReducer from './FileReducer';
 import shipmentReducer from './shipmentReducer';
 import profileReducer from './profileReducer';
 import companyReducer from './companyReducer';
+import notiReducer from './notiReducer';
 import userReducer from './userReducer';
 
 export default combineReducers({
@@ -16,5 +17,6 @@ export default combineReducers({
   shipmentReducer,
   profileReducer,
   userReducer,
+  notiReducer,
   companyReducer
 });
