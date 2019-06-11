@@ -14,9 +14,7 @@ const CreateCompanyModal = forwardRef((props, ref) => {
   const [isExtend, setExtend] = useState(false);
   const [company, setCompany] = useState({});
 
-  useEffect(() => {
-    setExtend(false);
-  }, []);
+  useEffect(() => {});
 
   const toggle = () => {
     setModal(!modal);
@@ -27,7 +25,7 @@ const CreateCompanyModal = forwardRef((props, ref) => {
   };
 
   const handleCompanyInputChange = (event) => {
-    const createCompany = company;
+    const createCompany = { ...company };
     const inputValue = event.target.value;
     const inputName = event.target.id;
 
@@ -65,9 +63,17 @@ const CreateCompanyModal = forwardRef((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     triggerCreateCompany() {
+      setExtend(false);
       toggle();
     },
   }));
+
+  const validate = () => {
+    if (company.CompanyName === undefined || company.CompanyName === '') {
+      return false;
+    }
+    return true;
+  };
 
   return (
     <Modal isOpen={modal} toggle={toggle} className="upload-modal">
@@ -137,6 +143,7 @@ const CreateCompanyModal = forwardRef((props, ref) => {
           style={{ margin: 'auto' }}
           color="primary"
           onClick={create}
+          disabled={!validate()}
         >
           Create Company
         </Button>
