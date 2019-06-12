@@ -54,14 +54,15 @@ class DefaultHeader extends Component {
   render() {
     // eslint-disable-next-line
     const { children, ...attributes } = this.props;
-    console.log('props', this.props);
-    console.log('notifications===>', this.props.notifications);
+
     const notifications = this.props.notifications;
     let notification = _.map(notifications, (item, index) => {
       return notificationTitleHelper(item, index);
     });
-
-    console.log('notification===>', notification);
+    console.log(
+      'notifications===>',
+      _.filter(notifications, item => item.UserNotificationReadStatus === false)
+    );
     return (
       <React.Fragment>
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
@@ -98,7 +99,10 @@ class DefaultHeader extends Component {
                 <NavLink to="#" className="nav-link">
                   <i className="icon-bell" />
                   <Badge pill color="danger">
-                    5
+                    {
+                      _.filter(notifications, item => item.UserNotificationReadStatus === false)
+                        .length
+                    }
                   </Badge>
                 </NavLink>
               </NavItem>
