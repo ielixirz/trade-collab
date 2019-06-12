@@ -2,7 +2,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 
-import NotificationItem from '../component/notificationItem';
+import NotificationComponent from '../component/NotificationComponent';
 
 const LABEL = {
   id: 'id'
@@ -14,16 +14,17 @@ export const notificationTitleHelper = (item, index) => {
   switch (item.UserNotificationType) {
     case 'AcceptedIntoCompany':
       return (
-        <NotificationItem
+        <NotificationComponent
           index={index}
           item={item}
           text={`You has been accepted to join company ${item.UserNotificationCompanyName}`}
           t={t}
         />
       );
+
     case 'ChangeOfRoleWithInCompany':
       return (
-        <NotificationItem
+        <NotificationComponent
           index={index}
           item={item}
           text={`You has role has been changed from ${item.UserNotificationOldRole} to ${
@@ -35,7 +36,7 @@ export const notificationTitleHelper = (item, index) => {
       );
     case 'InviteToJoinCompany':
       return (
-        <NotificationItem
+        <NotificationComponent
           index={index}
           item={item}
           text={`You has been invited to company ${item.UserNotificationCompanyName}`}
@@ -44,7 +45,7 @@ export const notificationTitleHelper = (item, index) => {
       );
     case 'RequestToJoinCompany':
       return (
-        <NotificationItem
+        <NotificationComponent
           index={index}
           item={item}
           text={`${item.UserNotificationFirstname} has has request to join your Company `}

@@ -9,7 +9,9 @@ import { notificationTitleHelper } from '../../utils/tool';
 class Alert extends Component {
   render() {
     const { notifications: noti } = this.props;
-    const notification = _.map(noti, (item, index) => notificationTitleHelper(item, index));
+    const notification = _.map(noti, (item, index) => ( <div className="container">
+      {notificationTitleHelper(item, index)}
+    </div>));
     return (
       <div
         className="animated fadeIn"

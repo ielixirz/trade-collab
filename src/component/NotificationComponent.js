@@ -1,14 +1,14 @@
 import { DropdownItem } from 'reactstrap';
 import React from 'react';
+import { SetUserNotificationRead } from '../service/user/user';
 
-export default ({
-  index, item, t, text,
-}) => (
+export default ({ index, item, t, text }) => (
   <DropdownItem
     key={`notification${index}`}
     className={item.UserNotificationReadStatus ? '' : 'highlight'}
     onClick={() => {
       console.log('you has been click', item.id);
+      SetUserNotificationRead(item.UserNotificationUserInfoKey, item.id);
       window.location.href = '#/network';
     }}
   >
