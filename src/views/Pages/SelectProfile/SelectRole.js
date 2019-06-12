@@ -22,6 +22,7 @@ const SelectRole = (props) => {
   };
 
   const saveAndContinue = (e) => {
+    e.stopPropagation();
     e.preventDefault();
     if (isRoleSelect) {
       props.nextStep(role);
@@ -50,9 +51,6 @@ const SelectRole = (props) => {
                     onClick={() => {
                       setSelectRole('Importer');
                     }}
-                    onBlur={() => {
-                      unSelectRole();
-                    }}
                   >
                     <Row className="cardRole-pic">
                       <img
@@ -70,9 +68,6 @@ const SelectRole = (props) => {
                     type="submit"
                     onClick={() => {
                       setSelectRole('Exporter');
-                    }}
-                    onBlur={() => {
-                      unSelectRole();
                     }}
                   >
                     <Row className="cardRole-pic">
@@ -92,9 +87,6 @@ const SelectRole = (props) => {
                     onClick={() => {
                       setSelectRole('Freight Forwarder');
                     }}
-                    onBlur={() => {
-                      unSelectRole();
-                    }}
                   >
                     <Row className="cardRole-pic">
                       <img
@@ -112,9 +104,6 @@ const SelectRole = (props) => {
                     type="submit"
                     onClick={() => {
                       setSelectRole('Custom Broker');
-                    }}
-                    onBlur={() => {
-                      unSelectRole();
                     }}
                   >
                     <Row className="cardRole-pic">
@@ -137,7 +126,7 @@ const SelectRole = (props) => {
                 <div style={{ paddingBottom: 20 }}>
                   <div className="col-sm-12 text-center">
                     <Button
-                      className="button button1"
+                      className="button register-next-button1"
                       type="submit"
                       onClick={saveAndContinue}
                       disabled={!isRoleSelect}
