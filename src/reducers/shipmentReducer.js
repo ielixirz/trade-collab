@@ -11,6 +11,11 @@ const INITIAL_STATE = {
   ShipmentRefs: {},
   notification: {}
 };
+type Props = {
+  Shipments: Object,
+  ShipmentRefs: Object,
+  notification: Object
+};
 
 export default function reducer(state = INITIAL_STATE, action) {
   switch (action.type) {
@@ -29,6 +34,7 @@ export default function reducer(state = INITIAL_STATE, action) {
         ...state,
         ShipmentRefs: action.payload
       };
+
 
     case UPDATE_SHIPMENT_REF:
       return {

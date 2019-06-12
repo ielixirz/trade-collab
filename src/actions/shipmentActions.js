@@ -31,7 +31,7 @@ export const fetchShipments = (ShipmentData, notification) => (dispatch, getStat
     payload: notification
   });
 
-  let shipments = [];
+  let shipments = {};
   _.forEach(ShipmentData, (item, refs) => {
     shipments[item.ShipmentID] = {
       uid: item.ShipmentID,

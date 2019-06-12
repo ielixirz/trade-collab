@@ -379,8 +379,11 @@ class ChatWithHeader extends Component {
     const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
     let ref = '';
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
-    if (isInvited) {
-      if (_.get(ship, 'ShipmentReferenceList', []).length > 0) {
+    console.log(ship, 'ship???');
+
+    if (!_.isEmpty(isInvited)) {
+      console.log('Find shipmetn REF >>>>>', _.get(ship, 'ShipmentReferenceList', []));
+      if (_.size(ship.ShipmentReferenceList) > 0) {
         ref = _.find(
           ship.ShipmentReferenceList,
           item => item.ShipmentReferenceCompanyKey === isInvited.ChatRoomMemberCompanyKey
