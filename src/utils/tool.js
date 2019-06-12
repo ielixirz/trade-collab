@@ -13,13 +13,44 @@ export const notificationTitleHelper = (item, index) => {
 
   switch (item.UserNotificationType) {
     case 'AcceptedIntoCompany':
-      return <NotificationItem index={index} item={item} text={item.UserNotificationType} t={t} />;
+      return (
+        <NotificationItem
+          index={index}
+          item={item}
+          text={`You has been accepted to join company ${item.UserNotificationCompanyName}`}
+          t={t}
+        />
+      );
     case 'ChangeOfRoleWithInCompany':
-      return <NotificationItem index={index} item={item} text={item.UserNotificationType} t={t} />;
+      return (
+        <NotificationItem
+          index={index}
+          item={item}
+          text={`You has role has been changed from ${item.UserNotificationOldRole} to ${
+            item.UserNotificationNewRole
+          }`}
+          s
+          t={t}
+        />
+      );
     case 'InviteToJoinCompany':
-      return <NotificationItem index={index} item={item} text={item.UserNotificationType} t={t} />;
+      return (
+        <NotificationItem
+          index={index}
+          item={item}
+          text={`You has been invited to company ${item.UserNotificationCompanyName}`}
+          t={t}
+        />
+      );
     case 'RequestToJoinCompany':
-      return <NotificationItem index={index} item={item} text={item.UserNotificationType} t={t} />;
+      return (
+        <NotificationItem
+          index={index}
+          item={item}
+          text={`${item.UserNotificationFirstname} has has request to join your Company `}
+          t={t}
+        />
+      );
   }
 };
 export const createDataTable = input => {

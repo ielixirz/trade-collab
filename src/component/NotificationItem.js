@@ -8,6 +8,7 @@ export default ({ index, item, t, text }) => {
       className={item.UserNotificationReadStatus ? '' : 'highlight'}
       onClick={() => {
         console.log('you has been click', item.id);
+        window.location.href = '#/network';
       }}
     >
       <div>
@@ -25,7 +26,9 @@ export default ({ index, item, t, text }) => {
             </small>
           </div>
 
-          <div className="small text-muted text-truncate">{text}</div>
+          <div className="small text-muted text-truncate">
+            <p>{text}</p>
+          </div>
         </div>
       </div>
     </DropdownItem>
