@@ -2,7 +2,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 
-import NotificationItem from '../component/NotificationItem';
+import NotificationItem from '../component/notificationItem';
 
 const LABEL = {
   id: 'id'

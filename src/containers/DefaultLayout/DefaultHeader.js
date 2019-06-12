@@ -132,9 +132,7 @@ class DefaultHeader extends Component {
                   </div>
                 </span>
               </DropdownItem>
-              {notification.map(item => {
-                return item;
-              })}
+              {notification.map(item => item)}
               <DropdownItem className="text-center">
                 <Link to="/notification">See All</Link>
               </DropdownItem>
