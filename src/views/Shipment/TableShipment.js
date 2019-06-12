@@ -54,6 +54,12 @@ import { GetUserCompany } from '../../service/user/user';
 const SHIPMENT_STATUS_OPTIONS = [
   {
     value: {
+      status: 'ALL',
+    },
+    label: 'ALL',
+  },
+  {
+    value: {
       status: 'In Transit',
     },
     label: 'In Transit',
