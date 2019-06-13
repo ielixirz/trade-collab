@@ -1,3 +1,5 @@
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/prop-types */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable filenames/match-regex */
@@ -15,6 +17,7 @@ import {
   Input,
   Label,
   Row,
+  Alert,
 } from 'reactstrap';
 import './login.css';
 import { connect } from 'react-redux';
@@ -22,8 +25,22 @@ import { typinglogin, login } from '../../../actions/loginActions';
 import ForgotPass from '../ForgotPass/ForgotPass';
 
 class Login extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isError: false,
+      errorMsg: '',
+    };
+  }
+
+  displayError = (error) => {
+    this.setState({
+      isError: true,
+      errorMsg: error.message,
+    });
+  };
+
   render() {
-    console.log('props is', this.props);
     const { email, password } = this.props.loginForm;
 
     return (
@@ -38,6 +55,17 @@ class Login extends Component {
                       <div className="login-header">
                         <h1>Log In</h1>
                       </div>
+                      {this.state.isError ? (
+                        <Row style={{ margin: 'auto', marginBottom: '15px' }}>
+                          <Alert style={{ margin: 'auto' }} color="danger">
+                            {this.state.errorMsg}
+                            {' '}
+!
+                          </Alert>
+                        </Row>
+                      ) : (
+                        ''
+                      )}
                       <Row>
                         <Col xs="12">
                           <FormGroup>
@@ -112,7 +140,7 @@ class Login extends Component {
                             width: '300px',
                           }}
                           onClick={() => {
-                            this.props.login(this.props.loginForm);
+                            this.props.login(this.props.loginForm, this.displayError);
                           }}
                           className="px-4"
                         >
