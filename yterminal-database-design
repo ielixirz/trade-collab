@@ -127,6 +127,7 @@
             >InvitationKey
                 CompanyInvitationReference (reference)
                 CompanyInvitationCompanyKey (string)
+                CompanyInvitationCompanyName (string)
                 CompanyInvitationName (string)
                 CompanyInvitationEmail (string)
                 CompanyInvitationPosition (string)
