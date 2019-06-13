@@ -41,13 +41,16 @@ class Login extends Component {
                       <Row>
                         <Col xs="12">
                           <FormGroup>
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email">
+                              <b>Email</b>
+                            </Label>
                             <Input
                               type="email"
                               id="email"
                               value={email}
                               onChange={this.props.typinglogin}
                               required
+                              style={{ marginTop: 0 }}
                             />
                           </FormGroup>
                         </Col>
@@ -55,7 +58,9 @@ class Login extends Component {
                       <Row>
                         <Col xs="12">
                           <FormGroup>
-                            <Label htmlFor="password">Password </Label>
+                            <Label htmlFor="password">
+                              <b>Password</b>
+                            </Label>
                             <Input
                               type="password"
                               value={password}
@@ -63,7 +68,10 @@ class Login extends Component {
                               onChange={this.props.typinglogin}
                               required
                             />
-                            <div className="text-center text-md-right">
+                            <div
+                              className="text-center text-md-right"
+                              style={{ marginTop: '10px' }}
+                            >
                               <ForgotPass>
                                 <p style={{ color: 'red' }}>Forgot Password</p>
                               </ForgotPass>
@@ -72,15 +80,24 @@ class Login extends Component {
                         </Col>
                       </Row>
                       <div
-                        style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          justifyContent: 'center',
+                          marginTop: '20px',
+                        }}
                       >
-                        <p>Don't have an account?</p>
+                        <p>
+                          <b>Don't have an account?</b>
+                        </p>
                         <Link
                           className="cool-link"
                           to="register"
-                          style={{ color: 'rgb(158, 193, 247)' }}
+                          style={{ color: '#367FEE', marginLeft: '10px' }}
                         >
-                          Sign Up here!
+                          <p>
+                            <b>Sign Up here!</b>
+                          </p>
                         </Link>
                       </div>
                       <br />
@@ -92,6 +109,7 @@ class Login extends Component {
                             fontWeight: 'bold',
                             marginLeft: 20,
                             marginRight: 20,
+                            width: '300px',
                           }}
                           onClick={() => {
                             this.props.login(this.props.loginForm);
