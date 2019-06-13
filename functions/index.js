@@ -759,7 +759,8 @@ exports.NotiBellRequestToJoinCompany = functions.firestore
           UserNotificationUserInfoKey: snapshot.data().UserRequestUserKey,
           UserNotificationFirstname: snapshot.data().UserRequestFristname,
           UserNotificationSurname: snapshot.data().UserRequestSurname,
-          UserNotificationCompanyKey: context.params.CompanyKey
+          UserNotificationCompanyKey: context.params.CompanyKey,
+          UserNotificationCompanyName: snapshot.data().UserRequestCompanyName
         });
 
       RequestToJoinServiceList.push(RequestToJoinAction);
