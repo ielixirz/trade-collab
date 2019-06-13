@@ -861,6 +861,14 @@ exports.NotiBellChangeOfRoleWithInCompany = functions.firestore
         .collection('CompanyMember')
         .get();
 
+      const GetCompanyName = await admin
+        .firestore()
+        .collection('Company')
+        .doc(context.params.CompanyKey)
+        .get();
+
+      const CompanyName = GetCompanyName.data().CompanyName;
+
       const CompanyMemberKeyList = GetCompanyMember.docs.map(
         CompanyMemberItem => CompanyMemberItem.id
       );
@@ -881,7 +889,8 @@ exports.NotiBellChangeOfRoleWithInCompany = functions.firestore
             UserNotificationUserInfoEmail: newValue.UserMemberEmail,
             UserNotificationNewRole: newValue.UserMemberRoleName,
             UserNotificationOldRole: oldValue.UserMemberRoleName,
-            UserNotificationCompanyKey: context.params.CompanyKey
+            UserNotificationCompanyKey: context.params.CompanyKey,
+            UserNotificationCompanyName: CompanyName
           });
 
         ChangeOfRoleWithInCompanyServiceList.push(RequestToJoinAction);
