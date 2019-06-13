@@ -34,7 +34,6 @@ export default class MultiSelectTextInput extends Component {
   };
 
   handleKeyDown = (event) => {
-    console.log(event.key);
     const { inputValue, value } = this.state;
     if (!inputValue) return;
     // eslint-disable-next-line default-case

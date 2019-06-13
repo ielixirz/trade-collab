@@ -30,11 +30,11 @@ img {
   border-color: #c8ced3;
   opacity: 0.5;
 }
-.btn.disabled,
-.btn:disabled {
+.create-shipment-role-btn.btn.disabled,
+.create-shipment-role-btn.btn:disabled {
   color: #23282c;
-  background-color: #ffffff;
-  border-color: #16a085;
+  background-color: #80d2de0d;
+  border-color: #58cadb;
   opacity: 1;
 }
 .inbox_msg {
@@ -45,11 +45,64 @@ img {
 .top_spac {
   margin: 20px 0 0;
 }
+
+.shipment-table-main-container {
+  font-size: 0.8vw;
+}
+
 .create-shipment > .modal-content {
-  width: 650px;
+  width: 700px;
   padding-right: 5px;
   padding-left: 5px;
+  right: 100px;
 }
+
+.create-shipment-role-btn {
+  width: 100%;
+}
+
+.create-shipment-role-btn.disabled {
+  font-weight: bold;
+}
+
+.create-shipment-dropdown-item-role {
+  font-weight: normal;
+}
+
+.create-shipment-dropdown-item-role:hover {
+  font-weight: bold;
+  background-color: #80d2de0d;
+}
+
+.create-shipment-field-title {
+  font-weight: bold;
+}
+
+.create-shipment-create-btn {
+  font-size: 1vw;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  width: 40%;
+  margin: auto;
+  color: white;
+  border-color: #16a085;
+  background-color: #16a085;
+  border: 2px solid;
+}
+
+.create-shipment-create-btn:hover {
+  color: #16a085;
+  border-color: #16a085;
+  background-color: white;
+}
+
+.create-shipment-create-btn.disabled {
+  color: #848484;
+  background-color: #ffffff0d;
+  border-color: #cccccc;
+  opacity: 1;
+}
+
 .recent_heading {
   float: left;
   width: 40%;
@@ -182,36 +235,9 @@ input {
 .yterminalRef {
   width: 400px;
 }
-.mesgs {
-  float: left;
-  padding: 30px 15px 0 25px;
-  width: 100%;
-}
 
-.outgoing_msg {
-  overflow: hidden;
-  margin: 26px 0 26px;
-}
-.sent_msg {
-  float: right;
-  width: 46%;
-}
-.input_msg_write input {
-  background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
-  border: medium none;
-  color: #4c4c4c;
-  font-size: 15px;
-  min-height: 48px;
-  width: 100%;
-}
 .user-name {
   font-weight: bolder;
-}
-.type_msg {
-  border: 1px solid #c4c4c4;
-  position: relative;
-  margin-bottom: 10px;
-  padding: 5px;
 }
 
 td {
@@ -312,12 +338,10 @@ tbody > tr:hover {
 .table.shipment-table > thead > tr > th {
   color: #9b9b9b;
   border-top: none;
-  font-size: medium;
 }
 
 .table.shipment-table > tbody > tr {
   background-color: white;
-  font-size: large;
 }
 
 .table.shipment-table > tbody > tr > td {

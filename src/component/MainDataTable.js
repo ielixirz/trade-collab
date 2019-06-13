@@ -4,7 +4,11 @@ import React from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
 
 const MainDataTable = ({
+  id,
   data,
+  filterKeyword,
+  isFilter,
+  filter,
   column,
   cssClass,
   isBorder,
@@ -15,10 +19,11 @@ const MainDataTable = ({
 }) => (
   <BootstrapTable
     {...toolkitbaseProps}
+    id={id}
     wrapperClasses={wraperClass}
     classes={cssClass}
     keyField="id"
-    data={data}
+    data={isFilter ? filter(filterKeyword, data) : data}
     columns={column}
     bordered={isBorder}
     rowEvents={rowEvents}

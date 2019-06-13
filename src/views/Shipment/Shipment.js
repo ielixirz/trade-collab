@@ -26,7 +26,8 @@ import {
   DropdownItem,
   DropdownMenu,
   UncontrolledDropdown,
-  UncontrolledCollapse
+  UncontrolledCollapse,
+  ModalFooter
 } from 'reactstrap';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -34,16 +35,23 @@ import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 import TableShipment from './TableShipment';
 import { fetchShipments, fetchMoreShipments } from '../../actions/shipmentActions';
-import { CreateShipment } from '../../service/shipment/shipment';
+import {
+  CombineShipmentAndShipmentReference,
+  CreateShipment
+} from '../../service/shipment/shipment';
 import './Shipment.css';
+import { GetUserCompany } from '../../service/user/user';
+import { GetShipmentTotalCount } from '../../service/personalize/personalize';
+import _ from 'lodash';
 
 class Shipment extends Component {
   constructor(props) {
     super(props);
-
+    this.fetchMoreShipment = this.fetchMoreShipment.bind(this);
     this.toggle = this.toggle.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.dropdown = this.dropdown.bind(this);
+    this.fetchShipment = {};
     this.state = {
       activeTab: '1',
       typeShipment: '',
@@ -57,6 +65,7 @@ class Shipment extends Component {
         method: '',
         type: ''
       },
+      companies: {},
       modal: false,
       dropdownOpen: false,
       blocking: false
@@ -66,8 +75,8 @@ class Shipment extends Component {
     this.modal = this.modal.bind(this);
   }
 
-  toggleBlocking() {
-    this.setState({ blocking: !this.state.blocking });
+  toggleBlocking(block) {
+    this.setState({ blocking: block });
   }
 
   modal() {
@@ -113,6 +122,8 @@ class Shipment extends Component {
         break;
     }
     parameter.ShipmentProductName = input.product;
+    parameter.ShipmentStatus = 'Planning';
+
     parameter.ShipmentCreatorUserKey = this.props.user.uid;
     if (input.role > 2) {
       if (input.bound === 1) {
@@ -124,7 +135,7 @@ class Shipment extends Component {
     parameter.ShipmentCreateTimestamp = new Date().getTime();
     CreateShipment(parameter).subscribe({
       next: res => {
-        this.props.fetchShipments(this.state.typeShipment, this.toggleBlocking);
+        this.props.fetchShipments(this.state.typeShipment);
       }
     });
 
@@ -140,13 +151,97 @@ class Shipment extends Component {
     }));
   }
 
+  fetchMoreShipment() {
+    this.fetchShipment.unsubscribe();
+    this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
+      next: notification => {
+        CombineShipmentAndShipmentReference(
+          this.state.typeShipment,
+          '',
+          'asc',
+          this.props.shipments.length + 10,
+          this.props.user.uid
+        ).subscribe({
+          next: shipment => {
+            this.props.fetchShipments(shipment, notification);
+          },
+          error: err => {
+            console.log(err);
+          },
+          complete: () => {
+            console.log('Hello World');
+          }
+        });
+      }
+    });
+  }
+
+  fetchShipmentReload() {
+    this.fetchShipment.unsubscribe();
+    this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
+      next: notification => {
+        CombineShipmentAndShipmentReference(
+          this.state.typeShipment,
+          '',
+          'asc',
+          this.props.shipments.length + 10,
+          this.props.user.uid
+        ).subscribe({
+          next: shipment => {
+            this.props.fetchShipments(shipment, notification);
+          },
+          error: err => {
+            console.log(err);
+          },
+          complete: () => {
+            console.log('Hello World');
+          }
+        });
+      }
+    });
+  }
+
   componentDidMount() {
-    this.props.fetchShipments(this.state.typeShipment, this.toggleBlocking);
+    this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
+      next: notification => {
+        CombineShipmentAndShipmentReference(
+          this.state.typeShipment,
+          '',
+          'asc',
+          20,
+          this.props.user.uid
+        ).subscribe({
+          next: shipment => {
+            this.props.fetchShipments(shipment, notification);
+          },
+          error: err => {
+            console.log(err);
+          },
+          complete: () => {
+            console.log('Hello World');
+          }
+        });
+      }
+    });
+
+    GetUserCompany(this.props.user.uid).subscribe({
+      next: res => {
+        console.log('Fetched Company is', res);
+        this.setState({
+          companies: {
+            ...res
+          }
+        });
+      }
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
+    console.log('has Update State', this.state);
     if (prevState.activeTab !== this.state.activeTab) {
-      this.props.fetchShipments(this.state.typeShipment, this.toggleBlocking);
+      console.log('reFetch');
+
+      this.props.fetchShipments(this.state.typeShipment);
     }
   }
 
@@ -215,11 +310,27 @@ class Shipment extends Component {
     });
   };
 
+  validateCreateShipment() {
+    const checkRole = +this.state.input.role;
+    const checkBound = +this.state.input.bound;
+
+    if (checkRole === 1 || checkRole === 2) {
+      return true;
+    }
+    if (checkRole === 3 || checkRole === 4) {
+      if (checkBound === '' || checkBound === 0) {
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
   render() {
     const { role, bound, method, type } = this.state.input;
     console.log(this.props.user);
     return (
-      <div>
+      <div className="shipment-table-main-container">
         <Modal isOpen={this.state.modal} toggle={this.modal} className="create-shipment">
           <ModalHeader toggle={this.modal}>
             <h2>Create New Shipment</h2>
@@ -248,7 +359,7 @@ class Shipment extends Component {
               </div>
             ) : null}
             <div>
-              <span className="left">
+              <span className="left" style={{ fontWeight: 'bold' }}>
                 {role > 2
                   ? 'Is this an inbound Shipment or an Outbound Shipment'
                   : 'Are you Exporting or Importing (Select One)'}
@@ -265,9 +376,7 @@ class Shipment extends Component {
                         onClick={() => {
                           this.setRole(3);
                         }}
-                        style={{
-                          fontWeight: role === 3 ? 'bold' : 'normal'
-                        }}
+                        className="create-shipment-dropdown-item-role"
                       >
                         Freight Forwarder
                       </DropdownItem>
@@ -276,9 +385,7 @@ class Shipment extends Component {
                         onClick={() => {
                           this.setRole(4);
                         }}
-                        style={{
-                          fontWeight: role === 4 ? 'bold' : 'normal'
-                        }}
+                        className="create-shipment-dropdown-item-role"
                       >
                         Custom Broker
                       </DropdownItem>
@@ -290,9 +397,7 @@ class Shipment extends Component {
                         onClick={() => {
                           this.setRole(1);
                         }}
-                        style={{
-                          fontWeight: role === 1 ? 'bold' : 'normal'
-                        }}
+                        className="create-shipment-dropdown-item-role"
                       >
                         Importer
                       </DropdownItem>
@@ -301,9 +406,7 @@ class Shipment extends Component {
                         onClick={() => {
                           this.setRole(2);
                         }}
-                        style={{
-                          fontWeight: role === 2 ? 'bold' : 'normal'
-                        }}
+                        className="create-shipment-dropdown-item-role"
                       >
                         Exporter
                       </DropdownItem>
@@ -315,10 +418,11 @@ class Shipment extends Component {
             <br />
             <Form>
               {role > 2 ? (
-                <Row form>
-                  <Col md={3}>
+                <Row form style={{ marginTop: '7px' }}>
+                  <Col md={3} style={{ marginRight: '10px' }}>
                     <Button
                       color="yterminal"
+                      className="create-shipment-role-btn"
                       onClick={() => {
                         this.setBound(1);
                       }}
@@ -327,9 +431,10 @@ class Shipment extends Component {
                       Inbound
                     </Button>
                   </Col>
-                  <Col md={2}>
+                  <Col md={3}>
                     <Button
                       color="yterminal"
+                      className="create-shipment-role-btn"
                       onClick={() => {
                         this.setBound(2);
                       }}
@@ -340,10 +445,11 @@ class Shipment extends Component {
                   </Col>
                 </Row>
               ) : (
-                <Row form>
-                  <Col md={3}>
+                <Row form style={{ marginTop: '7px' }}>
+                  <Col md={3} style={{ marginRight: '10px' }}>
                     <Button
                       color="yterminal"
+                      className="create-shipment-role-btn"
                       onClick={() => {
                         this.setRole(2);
                       }}
@@ -352,9 +458,11 @@ class Shipment extends Component {
                       Exporting
                     </Button>
                   </Col>
-                  <Col md={2}>
+                  <Col md={3}>
                     <Button
                       color="yterminal"
+                      className="create-shipment-role-btn"
+                      style={{ width: '100%' }}
                       onClick={() => {
                         this.setRole(1);
                       }}
@@ -367,7 +475,7 @@ class Shipment extends Component {
               )}
               <br />
               <FormGroup row>
-                <Label for="From" sm={2}>
+                <Label for="From" sm={2} className="create-shipment-field-title">
                   From
                 </Label>
                 <Col sm={10}>
@@ -376,14 +484,15 @@ class Shipment extends Component {
                     name="from"
                     id="from"
                     onChange={this.writeText}
-                    value={this.props.user.email}
+                    value={`${this.props.user.email} (You)`}
                     readonly
+                    disabled
                   />
                 </Col>
               </FormGroup>
 
               <FormGroup row>
-                <Label for="To" sm={2}>
+                <Label for="To" sm={2} className="create-shipment-field-title">
                   To
                 </Label>
                 <Col sm={10}>
@@ -397,7 +506,7 @@ class Shipment extends Component {
                 </Col>
               </FormGroup>
               <FormGroup row>
-                <Label for="Product" sm={2}>
+                <Label for="Product" sm={2} className="create-shipment-field-title">
                   Product
                 </Label>
                 <Col sm={10}>
@@ -410,9 +519,11 @@ class Shipment extends Component {
                   />
                 </Col>
               </FormGroup>
+              {/*
+              // TO BE REMOVE //
               <FormGroup row>
-                <Label for="Ref" sm={2}>
-                  Ref
+                <Label for="Ref" sm={2} className="create-shipment-field-title">
+                  Ref#
                 </Label>
                 <Col sm={10}>
                   <Input
@@ -423,7 +534,7 @@ class Shipment extends Component {
                     value={this.state.input.ref}
                   />
                 </Col>
-              </FormGroup>
+              </FormGroup> */}
               <Row className="show-grid">
                 <Col md={3} />
                 <Col md={6}>
@@ -434,9 +545,13 @@ class Shipment extends Component {
                 <Col md={3} />
               </Row>
 
-              <UncontrolledCollapse toggler="#toggler">
-                <Row form>
-                  <Col md={2} />
+              <UncontrolledCollapse toggler="#toggler" style={{ marginLeft: '20px' }}>
+                <Row form style={{ marginTop: '15px' }}>
+                  <Label for="freight-method" sm={4} className="create-shipment-field-title">
+                    Freight Method
+                  </Label>
+                </Row>
+                <Row>
                   <Col md="auto">
                     <Button
                       color="yterminal"
@@ -491,30 +606,28 @@ class Shipment extends Component {
                 </Row>
                 <br />
                 <FormGroup row>
-                  <Label for="Ref" sm={4}>
+                  <Label for="Ref" sm={4} className="create-shipment-field-title">
                     Shipment Type
                   </Label>
-                  <Col sm={6}>
+                  <Col sm={3}>
                     <Button
                       color="yterminal"
                       onClick={() => {
                         this.setType(1);
                       }}
-                      style={{
-                        marginRight: '5px'
-                      }}
+                      className="create-shipment-role-btn"
                       disabled={type === 1}
                     >
                       LCL
-                    </Button>{' '}
+                    </Button>
+                  </Col>
+                  <Col sm={3}>
                     <Button
                       color="yterminal"
                       onClick={() => {
                         this.setType(2);
                       }}
-                      style={{
-                        marginRight: '5px'
-                      }}
+                      className="create-shipment-role-btn"
                       disabled={type === 2}
                     >
                       FCL
@@ -524,32 +637,27 @@ class Shipment extends Component {
               </UncontrolledCollapse>
             </Form>
           </ModalBody>
-          <Row
-            style={{
-              marginBottom: '50px'
-            }}
-          >
-            <Col md={4} />
-            <Col md="6">
-              <Button
-                color="success"
-                onClick={() => {
-                  this.createShipment();
-                }}
-              >
-                Create
-              </Button>{' '}
-            </Col>
-            <Col md={3} />
-          </Row>
+          <ModalFooter style={{ border: 'none' }}>
+            <Button
+              color="success"
+              onClick={() => {
+                this.createShipment();
+              }}
+              className="create-shipment-create-btn"
+              disabled={!this.validateCreateShipment()}
+            >
+              Create
+            </Button>
+          </ModalFooter>
         </Modal>
         <Nav className="shipment-navbar">
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.activeTab === '1' })}
+              className={classnames({ active: this.state.typeShipment === '' })}
               onClick={() => {
                 this.toggle('1');
                 this.setState({ typeShipment: '' });
+                this.fetchShipmentReload();
               }}
             >
               <span style={styles.title}>Alert</span> <span style={styles.lineTab}>|</span>
@@ -557,10 +665,11 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.activeTab === '2' })}
+              className={classnames({ active: this.state.typeShipment === 'Planning' })}
               onClick={() => {
-                this.toggle('2');
+                this.toggle('1');
                 this.setState({ typeShipment: 'Planning' });
+                this.fetchShipmentReload();
               }}
             >
               <span style={styles.title}>Plan</span> <span style={styles.lineTab}>|</span>
@@ -568,10 +677,11 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.activeTab === '3' })}
+              className={classnames({ active: this.state.typeShipment === 'active' })}
               onClick={() => {
-                this.toggle('3');
+                this.toggle('1');
                 this.setState({ typeShipment: 'active' });
+                this.fetchShipmentReload();
               }}
             >
               <span style={styles.title}>Active</span> <span style={styles.lineTab}>|</span>
@@ -579,10 +689,11 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.activeTab === '4' })}
+              className={classnames({ active: this.state.typeShipment === 'Delivered' })}
               onClick={() => {
-                this.toggle('4');
+                this.toggle('1');
                 this.setState({ typeShipment: 'Delivered' });
+                this.fetchShipmentReload();
               }}
             >
               <span style={styles.title}>Complete</span> <span style={styles.lineTab}>|</span>
@@ -590,10 +701,11 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.activeTab === '5' })}
+              className={classnames({ active: this.state.typeShipment === 'Cancelled' })}
               onClick={() => {
-                this.toggle('5');
+                this.toggle('1');
                 this.setState({ typeShipment: 'Cancelled' });
+                this.fetchShipmentReload();
               }}
             >
               <i className="icon-close" /> <span style={styles.title}>Cancel</span>
@@ -616,52 +728,13 @@ class Shipment extends Component {
               <Col sm="12">
                 <BlockUi tag="div" blocking={this.state.blocking} style={{ height: '100%' }}>
                   <TableShipment
-                    input={this.props.shipments}
+                    companies={this.state.companies}
+                    input={{ ...this.props.shipments }}
                     typeShipment={this.state.typeShipment}
                     toggleBlock={this.toggleBlocking}
+                    fetchMoreShipment={this.fetchMoreShipment}
                   />
                 </BlockUi>
-              </Col>
-            </Row>
-          </TabPane>
-          <TabPane tabId="2">
-            <Row>
-              <Col sm="12">
-                {' '}
-                <TableShipment
-                  input={this.props.shipments}
-                  typeShipment={this.state.typeShipment}
-                />
-              </Col>
-            </Row>
-          </TabPane>
-          <TabPane tabId="3">
-            <Row>
-              <Col sm="12">
-                <TableShipment
-                  input={this.props.shipments}
-                  typeShipment={this.state.typeShipment}
-                />
-              </Col>
-            </Row>
-          </TabPane>
-          <TabPane tabId="4">
-            <Row>
-              <Col sm="12">
-                <TableShipment
-                  input={this.props.shipments}
-                  typeShipment={this.state.typeShipment}
-                />
-              </Col>
-            </Row>
-          </TabPane>
-          <TabPane tabId="5">
-            <Row>
-              <Col sm="12">
-                <TableShipment
-                  input={this.props.shipments}
-                  typeShipment={this.state.typeShipment}
-                />
               </Col>
             </Row>
           </TabPane>
@@ -683,10 +756,20 @@ const styles = {
   }
 };
 
-const mapStateToProps = state => ({
-  shipments: state.shipmentReducer.Shipments,
-  user: state.authReducer.user
-});
+const mapStateToProps = state => {
+  const { ChatReducer, authReducer, profileReducer, companyReducer } = state;
+
+  const sender = _.find(
+    profileReducer.ProfileList,
+    item => item.id === profileReducer.ProfileDetail.id
+  );
+
+  return {
+    shipments: state.shipmentReducer.Shipments,
+    user: state.authReducer.user,
+    sender
+  };
+};
 
 export default connect(
   mapStateToProps,

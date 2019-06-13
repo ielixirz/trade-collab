@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { FETCH_USER_DETAIL } from '../constants/constants';
-import { GetUserInfoDetail } from '../service/user/user';
+import { FETCH_NOTIFICATION, FETCH_USER_DETAIL } from '../constants/constants';
+import { GetUserInfoDetail, GetUserNotificationList } from '../service/user/user';
 
 // eslint-disable-next-line import/prefer-default-export
 export const getUserInfoDetail = userInfoKey => dispatch => {
@@ -32,5 +32,19 @@ export const getUserInfoDetail = userInfoKey => dispatch => {
       alert(err.message);
     },
     complete: () => {}
+  });
+};
+export const fetchUserNotification = userInfoKey => dispatch => {
+  GetUserNotificationList(userInfoKey).subscribe({
+    next: res => {
+      let notifications = _.map(res, item => ({
+        id: item.id,
+        ...item.data()
+      }));
+      dispatch({
+        type: FETCH_NOTIFICATION,
+        payload: notifications
+      });
+    }
   });
 };

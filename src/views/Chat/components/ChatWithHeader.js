@@ -1,12 +1,11 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable filenames/match-regex */
 import _ from 'lodash';
 import React, { Component } from 'react';
-import {
-  Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input,
-} from 'reactstrap';
+import { Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
 import Select from 'react-select';
 import MemberModal from '../../../component/MemberModal';
 import MemberInviteModal from '../../../component/MemberInviteModal';
@@ -18,7 +17,7 @@ import PreMessage from './PreMessage';
 import {
   GetChatRoomMemberList,
   UpdateChatRoomMember,
-  UpdateChatRoomMessageReader,
+  UpdateChatRoomMessageReader
 } from '../../../service/chat/chat';
 import { GetCompanyMember } from '../../../service/company/company';
 import { CreateChatMultipleInvitation } from '../../../service/join/invite';
@@ -29,7 +28,7 @@ import { GetUserCompany } from '../../../service/user/user';
 
 const AVAILABLE_ROLES = {
   Importer: 'Exporter',
-  Exporter: 'Importer',
+  Exporter: 'Importer'
 };
 
 class ChatWithHeader extends Component {
@@ -40,12 +39,14 @@ class ChatWithHeader extends Component {
       company: '',
       email: '',
       companies: [],
+      members: []
     };
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log(prevProps, 'prevProps');
     console.log(this.props, 'props');
+    console.log(this.state, 'state');
     if (prevProps.chatMsg.length !== this.props.chatMsg.length) {
       const objDiv = document.getElementById('chathistory');
       objDiv.scrollTop = objDiv.scrollHeight;
@@ -54,12 +55,14 @@ class ChatWithHeader extends Component {
 
   componentDidMount() {
     GetUserCompany(this.props.user.uid).subscribe({
-      next: (res) => {
+      next: res => {
         this.setState({
-          companies: res,
+          companies: res
         });
-      },
+      }
     });
+    console.log('This.props', this.props);
+    const { ShipmentKey, ChatRoomKey } = this.props;
   }
 
   UpdateReader(ShipmentKey, ChatRoomKey, sender, data) {
@@ -70,218 +73,208 @@ class ChatWithHeader extends Component {
   }
 
   handleAssignCompany(e, role, userRole) {
-    console.log(this.props);
-    const { companies, ShipmentKey, ChatRoomKey } = this.props;
+    const { ShipmentKey, ChatRoomKey, members } = this.props;
+    const { companies } = this.state;
     const pickedCompany = _.find(companies, item => item.CompanyKey === e.value);
+    if (pickedCompany) {
+      const getCompany = GetCompanyMember(e.value).subscribe({
+        next: res => {
+          const CompanyMember = _.map(res, item => ({
+            ...item.data()
+          }));
+          const inviteRole = userRole;
+          console.log('CompanyMember', CompanyMember);
+          console.log('members', members);
+          const inviteMember = [];
+          _.forEach(CompanyMember, memberItem => {
+            const chatMember = _.find(
+              members,
+              item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail
+            );
 
-    GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
-      next: (res) => {
-        const member = _.map(res, (item) => {
-          console.log(item);
-          return {
-            ChatRoomMemberKey: item.id,
-            ...item.data(),
-          };
-        });
-        if (pickedCompany) {
-          const getCompany = GetCompanyMember(e.value).subscribe({
-            next: (res) => {
-              const CompanyMember = _.map(res, item => ({
-                ...item.data(),
-              }));
-              const inviteRole = userRole;
-              console.log('CompanyMember', CompanyMember);
-              const inviteMember = [];
-              _.forEach(CompanyMember, (memberItem) => {
-                const chatMember = _.find(
-                  member,
-                  item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail,
-                );
-
-                if (chatMember) {
-                  const result = UpdateChatRoomMember(
-                    ShipmentKey,
-                    ChatRoomKey,
-                    chatMember.ChatRoomMemberKey,
-                    {
-                      ...chatMember,
-                      ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                      ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
-                    },
-                  );
-                  console.log(result);
-                } else {
-                  // Email: "punjasin@gmail.com"
-                  // Image: undefined
-                  // Role: (2) ["Custom Broker Outbound", "Forwarder Outbound"]
-
-                  inviteMember.push({
-                    Email: memberItem.UserMemberEmail,
-                    Image: '',
-                    Role: inviteRole,
-                    ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                    ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
-                  });
-                }
-              });
-              console.log('inviteMember', inviteMember);
-              const invite = CreateChatMultipleInvitation(
-                inviteMember,
+            if (chatMember) {
+              const result = UpdateChatRoomMember(
                 ShipmentKey,
                 ChatRoomKey,
-              ).subscribe({
-                next: (res) => {
-                  console.log(res);
-                  invite.unsubscribe();
-                },
+                chatMember.ChatRoomMemberKey,
+                {
+                  ...chatMember,
+                  ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+                }
+              );
+              console.log(result);
+            } else {
+              inviteMember.push({
+                Email: memberItem.UserMemberEmail,
+                Image: '',
+                Role: inviteRole,
+                ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
               });
-              getCompany.unsubscribe();
-            },
+            }
           });
+          console.log('inviteMember', inviteMember);
+          const invite = CreateChatMultipleInvitation(
+            inviteMember,
+            ShipmentKey,
+            ChatRoomKey
+          ).subscribe({
+            next: res => {
+              console.log(res);
+              invite.unsubscribe();
+              this.props.fetchMoreMessage(ChatRoomKey, ShipmentKey);
+            }
+          });
+          getCompany.unsubscribe();
         }
-      },
-    });
+      });
+    }
   }
 
   renderAssignCompany(ChatRoomType, hasInvite = false) {
     const {
-      ChatRoomData, user, ShipmentData, ShipmentKey, ChatRoomKey,
+      ChatRoomData,
+      user,
+      ShipmentData,
+      ShipmentKey,
+      ChatRoomKey,
+      members: member
     } = this.props;
+    console.log('Chat Room member', member);
 
-    const isHaveRole = _.get(ShipmentData, `ShipmentMember.${user.uid}`, {});
+    const isHaveRole = _.find(member, item => item.ChatRoomMemberUserKey === user.uid);
+    // const isHaveRole = _.get(ShipmentData, `ShipmentMember.${user.uid}`, {});
     const companies = this.state.companies;
 
     let options = [];
     options = _.map(companies, item => ({
       value: item.CompanyKey,
-      label: item.CompanyName,
+      label: item.CompanyName
     }));
-    if (_.size(isHaveRole.ShipmentMemberRole) > 0) {
-      if (_.isEmpty(isHaveRole.ShipmentMemberCompanyName)) {
-        if (ShipmentData.ShipmentCreatorUserKey === user.uid) {
-          return (
-            <div
-              style={{
-                backgroundColor: 'rgba(242, 175, 41, 0.3)',
-                height: 'auto',
-                padding: '10px',
-                borderRadius: '5px',
-                zIndex: '100',
-              }}
-            >
-              <p
+    if (isHaveRole) {
+      if (_.size(isHaveRole.ChatRoomMemberRole) > 0) {
+        if (_.isEmpty(isHaveRole.ChatRoomMemberCompanyName)) {
+          if (ShipmentData.ShipmentCreatorUserKey === user.uid) {
+            console.log('is Creators', ShipmentData.ShipmentCreatorUserKey === user.uid);
+            return (
+              <div
                 style={{
-                  fontWeight: 700,
-                  color: '#000000',
+                  backgroundColor: 'rgba(242, 175, 41, 0.3)',
+                  height: 'auto',
+                  padding: '10px',
+                  borderRadius: '5px',
+                  zIndex: '100'
                 }}
               >
-                You have assigned your self as an
-                {' '}
-                {_.join(isHaveRole.ShipmentMemberRole, ',')}
-                {' '}
-for
-                this shipment
-              </p>
-              <p>Select a company, to inform your team about this shipment</p>
-
-              <Row>
-                <Col xs={6}>
-                  <Select
-                    onChange={(e) => {
-                      this.setState({ company: e });
-                    }}
-                    name="company"
-                    options={options}
-                    value={this.state.company}
-                  />
-                </Col>
-                <Col xs={2}>
-                  <Button
-                    className="invite-btn"
-                    style={{
-                      marginLeft: '2rem',
-                      marginRight: '1rem',
-                      color: 'white',
-                      backgroundColor: '#16A085',
-                    }}
-                    onClick={() => {
-                      this.handleAssignCompany(
-                        this.state.company,
-                        ChatRoomType,
-                        isHaveRole.ShipmentMemberRole,
-                      );
-                    }}
-                  >
-                    Confirm
-                  </Button>
-                </Col>
-              </Row>
-            </div>
-          );
-        }
-        return (
-          <div
-            style={{
-              backgroundColor: 'rgba(242, 175, 41, 0.3)',
-              height: 'auto',
-              padding: '10px',
-              borderRadius: '5px',
-              zIndex: '100',
-            }}
-          >
-            <p
-              style={{
-                fontWeight: 700,
-                color: '#000000',
-              }}
-            >
-              {user.email}
-              {' '}
-has been invited as
-              {_.join(isHaveRole.ShipmentMemberRole, ',')}
-              {' '}
-for this shipment
-            </p>
-            <p>Select a company, to inform your team about this shipment</p>
-
-            <Row>
-              <Col xs={6}>
-                <Select
-                  onChange={(e) => {
-                    this.setState({ company: e });
-                  }}
-                  name="company"
-                  options={options}
-                  value={this.state.company}
-                />
-              </Col>
-              <Col xs={2}>
-                <Button
-                  className="invite-btn"
+                <p
                   style={{
-                    marginLeft: '2rem',
-                    marginRight: '1rem',
-                    color: 'white',
-                    backgroundColor: '#16A085',
-                  }}
-                  onClick={() => {
-                    this.handleAssignCompany(
-                      this.state.company,
-                      ChatRoomType,
-                      isHaveRole.ShipmentMemberRole,
-                    );
+                    fontWeight: 700,
+                    color: '#000000'
                   }}
                 >
-                  Confirm
-                </Button>
-              </Col>
-            </Row>
-          </div>
-        );
+                  You have assigned your self as an {_.join(isHaveRole.ChatRoomMemberRole, ',')} for
+                  this shipment
+                </p>
+                <p>Select a company, to inform your team about this shipment</p>
+
+                <Row>
+                  <Col xs={6}>
+                    <Select
+                      onChange={e => {
+                        this.setState({ company: e });
+                      }}
+                      name="company"
+                      options={options}
+                      value={this.state.company}
+                    />
+                  </Col>
+                  <Col xs={2}>
+                    <Button
+                      className="invite-btn"
+                      style={{
+                        marginLeft: '2rem',
+                        marginRight: '1rem',
+                        color: 'white',
+                        backgroundColor: '#16A085'
+                      }}
+                      onClick={() => {
+                        this.handleAssignCompany(
+                          this.state.company,
+                          ChatRoomType,
+                          isHaveRole.ChatRoomMemberRole
+                        );
+                      }}
+                    >
+                      Confirm
+                    </Button>
+                  </Col>
+                </Row>
+              </div>
+            );
+          } else {
+            console.log('Not Creator');
+            return (
+              <div
+                style={{
+                  backgroundColor: 'rgba(242, 175, 41, 0.3)',
+                  height: 'auto',
+                  padding: '10px',
+                  borderRadius: '5px',
+                  zIndex: '100'
+                }}
+              >
+                <p
+                  style={{
+                    fontWeight: 700,
+                    color: '#000000'
+                  }}
+                >
+                  {user.email} has been invited as
+                  {_.join(isHaveRole.ChatRoomMemberRole, ',')} for this shipment
+                </p>
+                <p>Select a company, to inform your team about this shipment</p>
+
+                <Row>
+                  <Col xs={6}>
+                    <Select
+                      onChange={e => {
+                        this.setState({ company: e });
+                      }}
+                      name="company"
+                      options={options}
+                      value={this.state.company}
+                    />
+                  </Col>
+                  <Col xs={2}>
+                    <Button
+                      className="invite-btn"
+                      style={{
+                        marginLeft: '2rem',
+                        marginRight: '1rem',
+                        color: 'white',
+                        backgroundColor: '#16A085'
+                      }}
+                      onClick={() => {
+                        this.handleAssignCompany(
+                          this.state.company,
+                          ChatRoomType,
+                          isHaveRole.ShipmentMemberRole
+                        );
+                      }}
+                    >
+                      Confirm
+                    </Button>
+                  </Col>
+                </Row>
+              </div>
+            );
+          }
+        }
       }
     }
 
-    if (_.size(ChatRoomData.ChatRoomMemberList) < 2) {
+    if (_.size(member) < 2) {
       return (
         <div
           style={{
@@ -289,20 +282,16 @@ for this shipment
             height: 'auto',
             padding: '10px',
             borderRadius: '5px',
-            zIndex: '100',
+            zIndex: '100'
           }}
         >
           <p
             style={{
               fontWeight: 700,
-              color: '#000000',
+              color: '#000000'
             }}
           >
-            Input your
-            {' '}
-            {ChatRoomType}
-            {' '}
-e-mail address only for this shipment
+            Input your {ChatRoomType} e-mail address only for this shipment
           </p>
 
           <Row>
@@ -320,7 +309,7 @@ e-mail address only for this shipment
                   marginLeft: '2rem',
                   marginRight: '1rem',
                   color: 'white',
-                  backgroundColor: '#16A085',
+                  backgroundColor: '#16A085'
                 }}
                 onClick={() => {
                   const inviteMember = [];
@@ -331,18 +320,18 @@ e-mail address only for this shipment
                     Image: '',
                     Role: role,
                     ChatRoomMemberCompanyName: '',
-                    ChatRoomMemberCompanyKey: '',
+                    ChatRoomMemberCompanyKey: ''
                   });
                   console.log(inviteMember);
                   const invite = CreateChatMultipleInvitation(
                     inviteMember,
                     ShipmentKey,
-                    ChatRoomKey,
+                    ChatRoomKey
                   ).subscribe({
-                    next: (res) => {
+                    next: res => {
                       console.log(res);
                       invite.unsubscribe();
-                    },
+                    }
                   });
                 }}
               >
@@ -369,7 +358,7 @@ e-mail address only for this shipment
       sender,
       ShipmentKey,
       ShipmentData = {},
-      member,
+      members: member,
       ChatRoomKey,
       ChatRoomFileLink,
       ChatRoomMember,
@@ -384,22 +373,26 @@ e-mail address only for this shipment
       onDragOver,
       onDragLeave,
       onFileDrop,
-      shipments,
+      shipments
     } = this.props;
     let lastkey = '';
     const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
     let ref = '';
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
-    if (isInvited) {
-      if (ship.ShipmentReferenceList.length > 0) {
+    console.log(ship, 'ship???');
+
+    if (!_.isEmpty(isInvited)) {
+      console.log('Find shipmetn REF >>>>>', _.get(ship, 'ShipmentReferenceList', []));
+      if (_.size(ship.ShipmentReferenceList) > 0) {
         ref = _.find(
           ship.ShipmentReferenceList,
-          item => item.ShipmentReferenceCompanyKey === isInvited.ChatRoomMemberCompanyKey,
+          item => item.ShipmentReferenceCompanyKey === isInvited.ChatRoomMemberCompanyKey
         );
         console.log(ref, 'reffff');
       }
     } else {
-      ref = 'No Refferenc                                                                                                                                                                                                                         e';
+      ref =
+        'No Refferenc                                                                                                                                                                                                                         e';
     }
 
     return (
@@ -407,7 +400,7 @@ e-mail address only for this shipment
         <Row
           style={{
             backgroundColor: 'white',
-            borderBottom: '1px solid #707070',
+            borderBottom: '1px solid #707070'
           }}
         >
           <Breadcrumb className="chat-toolbar">
@@ -447,9 +440,9 @@ e-mail address only for this shipment
                       ChatRoomMessageReaderProfileImageUrl: _.get(
                         sender,
                         'UserInfoProfileImageLink',
-                        '',
+                        ''
                       ),
-                      ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
+                      ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
                     });
                   }
                   lastkey = chatMsg[chatMsg.length - 1].id;
@@ -465,18 +458,18 @@ e-mail address only for this shipment
                     fetchMoreMessage(ChatRoomKey, ShipmentKey);
                   }
                 }}
-                ref={(el) => {
+                ref={el => {
                   this.msgChatRef = el;
                 }}
               >
                 {_.get(this.props.ShipmentData, 'ShipmentCreatorUserKey', false) === user.uid
                   ? this.renderAssignCompany(this.props.ShipmentData.ShipmentCreatorType)
                   : isInvited
-                    ? this.renderAssignCompany(
+                  ? this.renderAssignCompany(
                       isInvited.ChatRoomMemberRole[0],
-                      _.get(isInvited, 'ChatRoomMemberCompanyKey', false),
+                      _.get(isInvited, 'ChatRoomMemberCompanyKey', false)
                     )
-                    : ''}
+                  : ''}
                 {chatMsg.map((msg, i) => {
                   const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = 'sender';
@@ -497,7 +490,7 @@ e-mail address only for this shipment
                       prev: chatMsg[i - 1],
                       isLast: chatMsg.length - 1 === i,
                       hasFile: true,
-                      files: msgJson.files,
+                      files: msgJson.files
                     };
                   } else {
                     message = {
@@ -508,7 +501,7 @@ e-mail address only for this shipment
                       readers: msg.ChatRoomMessageReader,
                       prev: chatMsg[i - 1],
                       isLast: chatMsg.length - 1 === i,
-                      hasFile: false,
+                      hasFile: false
                     };
                   }
 
@@ -533,11 +526,12 @@ e-mail address only for this shipment
                       id="file"
                       ref={fileInputRef}
                       style={{ display: 'none' }}
-                      onChange={event => uploadModalRef.current.triggerUploading(
-                        event.target.files,
-                        ShipmentKey,
-                        ChatRoomKey,
-                      )
+                      onChange={event =>
+                        uploadModalRef.current.triggerUploading(
+                          event.target.files,
+                          ShipmentKey,
+                          ChatRoomKey
+                        )
                       }
                     />
                   </InputGroupAddon>
@@ -553,15 +547,15 @@ e-mail address only for this shipment
                             ChatRoomMessageReaderProfileImageUrl: _.get(
                               sender,
                               'UserInfoProfileImageLink',
-                              '',
+                              ''
                             ),
-                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
+                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
                           });
                         }
                         lastkey = chatMsg[chatMsg.length - 1].id;
                       }
                     }}
-                    onChange={(e) => {
+                    onChange={e => {
                       // (ShipmentKey, ChatRoomKey, ProfileKey, Data)
                       // ChatRoomMessageKeyList *(Static document name) (Create for util)
                       // ChatRoomMessageKeyList (Array<string>)
@@ -586,16 +580,16 @@ e-mail address only for this shipment
                             ChatRoomMessageReaderProfileImageUrl: _.get(
                               sender,
                               'UserInfoProfileImageLink',
-                              '',
+                              ''
                             ),
-                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
+                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
                           });
                         }
                         lastkey = chatMsg[chatMsg.length - 1].id;
                       }
                       typing(e);
                     }}
-                    onKeyPress={(event) => {
+                    onKeyPress={event => {
                       if (event.key === 'Enter') {
                         if (text !== '') {
                           sendMessage(ChatRoomKey, ShipmentKey, text);
@@ -631,7 +625,11 @@ e-mail address only for this shipment
               shipmentKey={ShipmentKey}
               chatroomKey={ChatRoomKey}
             />
-            <ShipmentSide shipmentKey={ShipmentKey} chatroomKey={ChatRoomKey} />
+            <ShipmentSide
+              mainData={this.props.ShipmentData}
+              shipmentKey={ShipmentKey}
+              chatroomKey={ChatRoomKey}
+            />
           </Col>
         </Row>
       </div>

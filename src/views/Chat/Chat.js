@@ -129,6 +129,7 @@ class Chat extends Component {
     const ChatRoomMember = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomMember`, []);
     const ChatRoomData = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomData`, []);
     const member = _.get(chatrooms, `[${ChatRoomKey}].member`, []);
+    console.log('ChatRoomMember', _.get(chatrooms, `[${ChatRoomKey}]`, {}));
 
     return (
       <ChatWithHeader
@@ -141,7 +142,7 @@ class Chat extends Component {
         text={text}
         companies={companies}
         typing={onTyping}
-        member={member}
+        members={member}
         uploadModalRef={this.uploadModalRef}
         fileInputRef={this.fileInput}
         ShipmentData={this.state.shipments}
@@ -417,17 +418,18 @@ class Chat extends Component {
 }
 
 const mapStateToProps = state => {
-  const { ChatReducer, authReducer, profileReducer, companyReducer } = state;
+  const { ChatReducer, authReducer, profileReducer, companyReducer, shipmentReducer } = state;
 
   const sender = _.find(
     profileReducer.ProfileList,
     item => item.id === profileReducer.ProfileDetail.id
   );
+
   return {
     ChatReducer,
     user: authReducer.user,
     sender,
-    shipments: state.shipmentReducer.Shipments,
+    shipments: shipmentReducer.Shipments,
     companies: companyReducer.UserCompany
   };
 };

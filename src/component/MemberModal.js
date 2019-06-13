@@ -12,24 +12,24 @@ import {
   InputGroupAddon,
   Input,
   Row,
-  Col
+  Col,
 } from 'reactstrap';
 import './MemberModal.css';
-import MemberInChat from './MemberInChat';
 import * as _ from 'lodash';
+import MemberInChat from './MemberInChat';
 
 class MemberModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      modal: false
+      modal: false,
     };
   }
 
   toggle = () => {
     console.log('toggle');
     this.setState(prevState => ({
-      modal: !prevState.modal
+      modal: !prevState.modal,
     }));
   };
 
@@ -41,29 +41,27 @@ class MemberModal extends React.Component {
 
   render() {
     const { count, list: member } = this.props;
-    let shipmentMember = [];
+    const shipmentMember = [];
     console.log(this.props);
-    _.forEach(member, item => {
+    _.forEach(member, (item) => {
       if (item.ChatRoomMemberCompanyName === '') {
-        if (_.isEmpty(shipmentMember['Individual'])) {
-          shipmentMember['Individual'] = [];
-          shipmentMember['Individual'].push(item);
+        if (_.isEmpty(shipmentMember.Individual)) {
+          shipmentMember.Individual = [];
+          shipmentMember.Individual.push(item);
         } else {
-          shipmentMember['Individual'].push(item);
+          shipmentMember.Individual.push(item);
         }
+      } else if (_.isEmpty(shipmentMember[item.ChatRoomMemberCompanyName])) {
+        shipmentMember[item.ChatRoomMemberCompanyName] = [];
+        shipmentMember[item.ChatRoomMemberCompanyName].push(item);
       } else {
-        if (_.isEmpty(shipmentMember[item.ChatRoomMemberCompanyName])) {
-          shipmentMember[item.ChatRoomMemberCompanyName] = [];
-          shipmentMember[item.ChatRoomMemberCompanyName].push(item);
-        } else {
-          shipmentMember[item.ChatRoomMemberCompanyName].push(item);
-        }
+        shipmentMember[item.ChatRoomMemberCompanyName].push(item);
       }
     });
-    let props = this.props;
+    const props = this.props;
     return (
       <div>
-        <Button color="link" onClick={this.toggle}>
+        <Button className="btn-see-chatmember" onClick={this.toggle}>
           <i style={{ marginRight: '0.5rem' }} className="fa  fa-users fa-lg" />
           {count}
         </Button>
@@ -101,9 +99,9 @@ class MemberModal extends React.Component {
               </Col>
             </Row>
             <hr />
-            {Object.keys(shipmentMember).map(function(key, index) {
-              return <MemberInChat title={key} member={shipmentMember[key]} {...props} />;
-            })}
+            {Object.keys(shipmentMember).map((key, index) => (
+              <MemberInChat title={key} member={shipmentMember[key]} {...props} />
+            ))}
           </ModalBody>
         </Modal>
       </div>

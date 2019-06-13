@@ -5,9 +5,7 @@ import React, { Component, useContext, useReducer } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import {
-  Collapse, CardBody, Card, Row, Col,
-} from 'reactstrap';
+import { Collapse, CardBody, Card, Row, Col } from 'reactstrap';
 import ShipmentListContext from '../../context/ShipmentContext';
 
 import shipmentReducer from '../../reducers/shipmentReducer';
@@ -19,24 +17,24 @@ const styles = {
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#707070',
+    color: '#707070'
   },
   arrow: {
     fontSize: 20,
     marginLeft: 5,
-    color: '#707070',
+    color: '#707070'
   },
   status: {
-    color: '#367FEE',
+    color: '#367FEE'
   },
   card: {
     marginBottom: '0.2rem',
     marginTop: '0.2rem',
-    marginRight: '0.2rem',
-  },
+    marginRight: '0.2rem'
+  }
 };
 
-const ShipmentData = ({ shipmentKey, chatroomKey, userKey }) => {
+const ShipmentData = ({ shipmentKey, chatroomKey, userKey, mainData }) => {
   const initialState = useContext(ShipmentListContext);
 
   const [state, dispatch] = useReducer(shipmentReducer, initialState);
@@ -48,6 +46,7 @@ const ShipmentData = ({ shipmentKey, chatroomKey, userKey }) => {
         shipmentKey,
         chatroomKey,
         userKey,
+        mainData
       }}
     >
       <ShipmentList />
@@ -59,7 +58,7 @@ class ShipmentSide extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      collapse: false,
+      collapse: false
     };
     this.triggerCollapse = this.triggerCollapse.bind(this);
   }
@@ -72,7 +71,6 @@ class ShipmentSide extends Component {
   }
 
   render() {
-    console.log('ShipmentSideProps', this.props);
     return (
       <div>
         <Card onClick={this.triggerCollapse} style={styles.card}>
@@ -83,9 +81,12 @@ class ShipmentSide extends Component {
                   <i className="fa fa-cube" />
                 </span>
                 <span style={styles.title}>
-                  Shipment Update :
-                  {' '}
-                  <span style={styles.status}>In Transit</span>
+                  Shipment Update :{' '}
+                  <span style={styles.status}>
+                    {this.props.mainData.ShipmentStatus === undefined
+                      ? '-'
+                      : this.props.mainData.ShipmentStatus}
+                  </span>
                 </span>
               </Col>
               <Col xs="2" className="text-right">
@@ -105,6 +106,7 @@ class ShipmentSide extends Component {
                 shipmentKey={this.props.shipmentKey}
                 chatroomKey={this.props.chatroomKey}
                 userKey={this.props.auth.uid}
+                mainData={this.props.mainData}
               />
             </Collapse>
           </CardBody>
@@ -114,16 +116,16 @@ class ShipmentSide extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   const { authReducer, userReducer, profileReducer } = state;
   const profile = _.find(
     profileReducer.ProfileList,
-    item => item.id === profileReducer.ProfileDetail.id,
+    item => item.id === profileReducer.ProfileDetail.id
   );
   return {
     auth: authReducer.user,
     user: userReducer.UserInfo,
-    currentProfile: profile,
+    currentProfile: profile
   };
 };
 

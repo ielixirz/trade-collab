@@ -1,10 +1,59 @@
 /* eslint-disable import/prefer-default-export */
 import _ from 'lodash';
+import React, { Component } from 'react';
+
+import NotificationComponent from '../component/NotificationComponent';
 
 const LABEL = {
   id: 'id'
 };
+export const notificationTitleHelper = (item, index) => {
+  console.log('notification===>item', item);
+  const t = new Date(item.UserNotificationTimestamp.seconds * 1000);
 
+  switch (item.UserNotificationType) {
+    case 'AcceptedIntoCompany':
+      return (
+        <NotificationComponent
+          index={index}
+          item={item}
+          text={`You has been accepted to join company ${item.UserNotificationCompanyName}`}
+          t={t}
+        />
+      );
+
+    case 'ChangeOfRoleWithInCompany':
+      return (
+        <NotificationComponent
+          index={index}
+          item={item}
+          text={`You has role has been changed from ${item.UserNotificationOldRole} to ${
+            item.UserNotificationNewRole
+          }`}
+          s
+          t={t}
+        />
+      );
+    case 'InviteToJoinCompany':
+      return (
+        <NotificationComponent
+          index={index}
+          item={item}
+          text={`You has been invited to company ${item.UserNotificationCompanyName}`}
+          t={t}
+        />
+      );
+    case 'RequestToJoinCompany':
+      return (
+        <NotificationComponent
+          index={index}
+          item={item}
+          text={`${item.UserNotificationFirstname} has has request to join your Company `}
+          t={t}
+        />
+      );
+  }
+};
 export const createDataTable = input => {
   const data = _.map(input, (item, index) => ({
     id: _.get(item, 'id', index) + 1,

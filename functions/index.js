@@ -5,6 +5,8 @@ const firebase = require('firebase');
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 
+const sgMail = require('@sendgrid/mail');
+
 var serviceAccount = require('./yterminal-b0906-firebase-adminsdk-65p2b-1b8bfd2c44.json');
 
 admin.initializeApp({
@@ -450,6 +452,8 @@ exports.ManageShipmentMember = functions.firestore
         const GetFirstJoin = await TriggerFirstJoin.get();
         let FirstJoinStatus = GetFirstJoin[context.params.ShipmentKey];
 
+        const ProfileEmail = GetFirstJoin.data().ProfileEmail;
+
         // if (GetFirstJoin.data() !== undefined) {
         //   FirstJoinStatus = GetFirstJoin.data().ShipmentFristJoin;
         // }
@@ -465,6 +469,39 @@ exports.ManageShipmentMember = functions.firestore
             merge: true
           });
           UserPersonalizeProfileActionList.push(SetFirstJoinAction);
+
+          // Send Email InviteIntoShipment
+
+          if (ProfileEmail) {
+            await SendEmail(
+              InviteIntoShipmentTemplate(
+                ProfileEmail,
+                `You have new invitation into shipment `,
+                `<strong>You have new invitation into shipment</strong>`
+              )
+            );
+          }
+
+          // End Send Email InviteIntoShipment
+
+          // Noti-SystemGen InviteIntoShipment
+
+          await admin
+            .firestore()
+            .collection('Shipment')
+            .doc(context.params.ShipmentKey)
+            .collection('ChatRoom')
+            .doc(context.params.ChatRoomKey)
+            .collection('ChatRoomMessage')
+            .add({
+              ChatRoomMessageContext: `${newValue.ChatRoomMemberFirstName} ${
+                newValue.ChatRoomMemberSurName
+              } (${ChatRoomMemberEmail}) joined`,
+              ChatRoomMessageType: 'System',
+              ChatRoomMessageTimestamp: admin.firestore.FieldValue.serverTimestamp
+            });
+
+          // End Noti-SystemGen InviteIntoShipment
         }
       });
     }
@@ -629,11 +666,11 @@ exports.ShipmentAllCount = functions.firestore
         .firestore()
         .collection('UserPersonalize')
         .doc(context.params.ProfileKey)
-        .set({ ShipmentTotalCount: Payload }, { merge: true });
+        .set({ ShipmentTotalCount: Payload, ShipmentChatCount: SunChatCount }, { merge: true });
     }
   });
 
-exports.CopyMasterDataETAETD = functions.firestore
+exports.CopyInsideMasterDataToShipment = functions.firestore
   .document('Shipment/{ShipmentKey}/ShipmentShareData/{ShipmentShareDataKey}')
   .onWrite(async (change, context) => {
     const oldValue = change.before.data();
@@ -647,6 +684,8 @@ exports.CopyMasterDataETAETD = functions.firestore
           .doc(context.params.ShipmentKey)
           .set(
             {
+              ShipperPort: newValue.ShipperPort,
+              ConsigneePort: newValue.ConsigneePort,
               ShipperETDDate: newValue.ShipperETDDate,
               ConsigneeETAPortDate: newValue.ConsigneeETAPortDate
             },
@@ -656,10 +695,10 @@ exports.CopyMasterDataETAETD = functions.firestore
     }
   });
 
-exports.NotiBellInviteToJoinCompany = functions.firestore
+exports.NotiBellAndEmailInviteToJoinCompany = functions.firestore
   .document('UserInfo/{UserKey}/UserInvitation/{UserInvitationKey}')
   .onCreate(async (snapshot, context) => {
-    return admin
+    const SendNotiBell = await admin
       .firestore()
       .collection('UserInfo')
       .doc(context.params.UserKey)
@@ -672,6 +711,24 @@ exports.NotiBellInviteToJoinCompany = functions.firestore
         UserNotificationCompanyName: snapshot.data().CompanyInvitationName,
         UserNotificationCompanyKey: snapshot.data().CompanyInvitationCompanyKey
       });
+
+    const GetUserInfoEmail = await admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(context.params.UserKey)
+      .get();
+
+    const UserInfoEmail = GetUserInfoEmail.data().UserInfoEmail;
+
+    const SendNotiEmail = await SendEmail(
+      InviteToJoinCompanyTemplate(
+        UserInfoEmail,
+        `You have invitation from ${snapshot.data().CompanyInvitationName} company`,
+        `<strong>You have invitation from ${snapshot.data().CompanyInvitationName} company</strong>`
+      )
+    );
+
+    return Promise.all([SendNotiBell, SendNotiEmail]);
   });
 
 exports.NotiBellRequestToJoinCompany = functions.firestore
@@ -787,3 +844,306 @@ exports.NotiBellAcceptedIntoCompany = functions.firestore
       return Promise.all(AcceptedIntoCompanyServiceList);
     }
   });
+
+exports.NotiBellChangeOfRoleWithInCompany = functions.firestore
+  .document('Company/{CompanyKey}/CompanyMember/{CompanyMemberKey}')
+  .onUpdate(async (change, context) => {
+    const oldValue = change.before.data();
+    const newValue = change.after.data();
+
+    if (newValue.UserMemberRoleName !== oldValue.UserMemberRoleName) {
+      const GetCompanyMember = await admin
+        .firestore()
+        .collection('Company')
+        .doc(context.params.CompanyKey)
+        .collection('CompanyMember')
+        .get();
+
+      const CompanyMemberKeyList = GetCompanyMember.docs.map(
+        CompanyMemberItem => CompanyMemberItem.id
+      );
+
+      const ChangeOfRoleWithInCompanyServiceList = [];
+
+      CompanyMemberKeyList.forEach(async Item => {
+        const RequestToJoinAction = await admin
+          .firestore()
+          .collection('UserInfo')
+          .doc(Item)
+          .collection('UserNotification')
+          .add({
+            UserNotificationReadStatus: false,
+            UserNotificationType: 'ChangeOfRoleWithInCompany',
+            UserNotificationTimestamp: admin.firestore.FieldValue.serverTimestamp(),
+            UserNotificationUserInfoKey: change.after.id,
+            UserNotificationUserInfoEmail: newValue.UserMemberEmail,
+            UserNotificationNewRole: newValue.UserMemberRoleName,
+            UserNotificationOldRole: oldValue.UserMemberRoleName,
+            UserNotificationCompanyKey: context.params.CompanyKey
+          });
+
+        ChangeOfRoleWithInCompanyServiceList.push(RequestToJoinAction);
+      });
+
+      return Promise.all(ChangeOfRoleWithInCompanyServiceList);
+    }
+  });
+
+exports.LeaveCompany = functions.firestore
+  .document('Company/{CompanyKey}/CompanyMember/{CompanyMemberKey}')
+  .onDelete(async (snapshot, context) => {
+    const UserKey = snapshot.id;
+
+    // UserCompany
+
+    const GetUserCompany = await admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(UserKey)
+      .collection('UserCompany')
+      .where(
+        'UserCompanyReference',
+        '==',
+        admin
+          .firestore()
+          .collection('Company')
+          .doc(context.params.CompanyKey)
+      )
+      .get();
+
+    const UserCompanyDeleteServiceList = [];
+
+    GetUserCompany.docs.forEach(async Item => {
+      const DeleteUserCompany = await admin
+        .firestore()
+        .doc(Item.ref.path)
+        .delete();
+      UserCompanyDeleteServiceList.push(DeleteUserCompany);
+    });
+
+    // ShipmentMember
+
+    const GetShipmentOfShipmentMemberOnThisCompany = await admin
+      .firestore()
+      .collection('Shipment')
+      .where(`ShipmentMember.${UserKey}.ShipmentMemberCompanyKey`, '==', context.params.CompanyKey)
+      .get();
+
+    const ShipmentMemberDeleteList = [];
+
+    GetShipmentOfShipmentMemberOnThisCompany.forEach(async Item => {
+      const DeleteShipmentMemberPayload = { ShipmentMember: {} };
+
+      DeleteShipmentMemberPayload['ShipmentMember'][UserKey] = {
+        ShipmentMemberCompanyName: admin.firestore.FieldValue.delete(),
+        ShipmentMemberCompanyKey: admin.firestore.FieldValue.delete()
+      };
+
+      const ShipmentMember = await admin
+        .firestore()
+        .doc(Item.ref.path)
+        .update(DeleteShipmentMemberPayload);
+
+      ShipmentMemberDeleteList.push(ShipmentMember);
+    });
+
+    // ChatRoomMember
+
+    const GetChatRoomMemberCollectionGroup = await admin
+      .firestore()
+      .collectionGroup('ChatRoomMember')
+      .where('ChatRoomMemberUserKey', '==', UserKey)
+      .where('ChatRoomMemberCompanyKey', '==', context.params.CompanyKey)
+      .get();
+
+    const DeleteCompanyInChatRoomMemberServiceList = [];
+
+    GetChatRoomMemberCollectionGroup.docs.forEach(async Item => {
+      const DeleteCompanyInChatRoomMember = await admin
+        .firestore()
+        .doc(Item.ref.path)
+        .update({
+          ChatRoomMemberCompanyName: admin.firestore.FieldValue.delete(),
+          ChatRoomMemberCompanyKey: admin.firestore.FieldValue.delete()
+        });
+      DeleteCompanyInChatRoomMemberServiceList.push(DeleteCompanyInChatRoomMember);
+    });
+
+    // ShipmentReference ?
+
+    return Promise.all([
+      UserCompanyDeleteServiceList,
+      ShipmentMemberDeleteList,
+      DeleteCompanyInChatRoomMemberServiceList
+    ]);
+  });
+
+// +UserNotification
+//   >UserNotificationKey
+//       UserNotificationReadStatus (bool)
+//       UserNotificationType (string)
+//       UserNotificationTimestamp (timestamp)
+//       UserNotificationImageURL (string)
+//       UserNotificationFirstname (string)
+//       UserNotificationSurname (string)
+//       UserNotificationUserInfoKey (string)
+//       UserNotificationCompanyName (string)
+//       UserNotificationCompanyKey (string)
+//       UserNotificationRedirectPage (string)
+//       UserNotificationShipmentKey (string)
+//       UserNotificationChatroonKey (string)
+
+// +CompanyMember (Array<object>)
+//   >UserKey
+//     UserMemberEmail (string)
+//     UserMemberPosition (string)
+//     UserMemberRoleName (string)
+//     UserMatrixRolePermissionCode (string) (Binary number)
+//     UserMemberCompanyStandingStatus (string)
+//     UserMemberJoinedTimestamp (timestamp)
+
+exports.AddProfileDataInUserPersonalizeWhenCreateProfile = functions.firestore
+  .document('UserInfo/{UserKey}/Profile/{ProfileKey}')
+  .onCreate(async (snapshot, context) => {
+    const GetUserEmail = await admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(context.params.UserKey)
+      .get();
+    const UserEmail = GetUserEmail.data().UserInfoEmail;
+    const ProfileFirstname = snapshot.data().ProfileFirstname;
+    const ProfileSurname = snapshot.data().ProfileSurname;
+
+    const AddUserEmailAction = await admin
+      .firestore()
+      .collection('UserPersonalize')
+      .doc(context.params.ProfileKey)
+      .set(
+        {
+          UserEmail: UserEmail,
+          ProfileFirstname: ProfileFirstname,
+          ProfileSurname: ProfileSurname
+        },
+        { merge: true }
+      );
+
+    // if (!oldValue && newValue.ProfileEmail) {
+    //   return AddProfileEmailAction;
+    // }
+
+    // if (oldValue.ProfileEmail !== newValue.ProfileEmail) {
+    //   return AddProfileEmailAction;
+    // }
+
+    return AddUserEmailAction;
+  });
+
+const TestMessage = () => {
+  return {
+    to: 'holy-wisdom@hotmail.com',
+    from: 'test@example.com',
+    subject: 'Sending with Twilio SendGrid is Fun',
+    text: 'and easy to do anywhere, even with Node.js',
+    html: '<strong>and easy to do anywhere, even with Node.js</strong>'
+  };
+};
+
+const UnreadMessageTemplate = (To, Text, Html) => {
+  return {
+    to: To,
+    from: 'noreply@yterminal.com',
+    subject: 'Yterminal - Unread your message',
+    text: Text,
+    html: Html
+  };
+};
+
+const InviteIntoShipmentTemplate = (To, Text, Html) => {
+  return {
+    to: To,
+    from: 'noreply@yterminal.com',
+    subject: 'Yterminal - Invite Into Shipment',
+    text: Text,
+    html: Html
+  };
+};
+
+const InviteToJoinCompanyTemplate = (To, Text, Html) => {
+  return {
+    to: To,
+    from: 'noreply@yterminal.com',
+    subject: 'Yterminal - Invite To Join Company',
+    text: Text,
+    html: Html
+  };
+};
+
+const SendEmail = async TemplateMessage => {
+  sgMail.setApiKey('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');
+  return await sgMail.send(TemplateMessage);
+};
+
+exports.TestSendEmail = functions.https.onRequest(async (req, res) => {
+  return SendEmail(TestMessage()).then(r => {
+    return res.status(200).send('Email Sended');
+  });
+});
+
+exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
+  const GetShipmentChatCount = await admin
+    .firestore()
+    .collection('UserPersonalize')
+    .where('ShipmentChatCount', '>', 0)
+    .get();
+
+  const ShipmentChatCountProfileList = GetShipmentChatCount.docs.map(Item => ({
+    ...Item.data(),
+    ProfileKey: Item.id
+  }));
+
+  const GroupProfileByUserEmail = _.groupBy(ShipmentChatCountProfileList, 'UserEmail');
+
+  const UnreadSendEmailList = [];
+
+  for (const key in GroupProfileByUserEmail) {
+    if (GroupProfileByUserEmail.hasOwnProperty(key)) {
+      const element = GroupProfileByUserEmail[key];
+      const UserShipmentChatCountList = element.map(Item => Item.ShipmentChatCount);
+      const reducer = (accumulator, currentValue) => accumulator + currentValue;
+
+      const UserAllUnreadCount = UserShipmentChatCountList.reduce(reducer);
+
+      //console.log(UserAllUnreadCount);
+      let CreateEmailText = `${UserAllUnreadCount} Unread messages`;
+      let CreateEmailHtml = `<h2>${UserAllUnreadCount} Unread messages</h2><br>`;
+
+      const MapTextWithProfileUnread = element.map(
+        Item =>
+          `${Item.ProfileFirstname} ${Item.ProfileSurname} has ${
+            Item.ShipmentChatCount
+          } unread messages`
+      );
+
+      const MapHtmlWithProfileUnread = element.map(
+        Item =>
+          `<p><strong>${Item.ProfileFirstname} ${Item.ProfileSurname}</strong> has ${
+            Item.ShipmentChatCount
+          } unread messages</p>`
+      );
+
+      const ProfileUnreadMergeText = MapTextWithProfileUnread.join();
+      const ProfileUnreadMergeHtml = MapHtmlWithProfileUnread.join('<br>');
+
+      const FinalText = CreateEmailText + ProfileUnreadMergeText;
+      const FinalHtml = CreateEmailHtml + ProfileUnreadMergeHtml;
+
+      const SendEmailAction = SendEmail(UnreadMessageTemplate(key, FinalText, FinalHtml));
+
+      UnreadSendEmailList.push(SendEmailAction);
+    }
+  }
+
+  return Promise.all(UnreadSendEmailList).then(_ => {
+    return res.status(200).send(JSON.stringify(GroupProfileByUserEmail));
+  });
+});

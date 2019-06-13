@@ -6,7 +6,14 @@ import React, {
   useState, forwardRef, useImperativeHandle, useEffect,
 } from 'react';
 import {
-  Label, Button, Modal, ModalBody, ModalFooter, ModalHeader, Input,
+  Label,
+  Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Input,
+  Alert,
 } from 'reactstrap';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -17,41 +24,9 @@ import MainDataTable from './MainDataTable';
 
 import { inviteToCompanyColumns } from '../constants/network';
 import { GetUserInfoFromEmail } from '../service/user/user';
+import { GetCompanyUserAccessibility } from '../service/company/company';
 import { GetProlfileList } from '../service/user/profile';
 import { CreateCompanyMultipleInvitation } from '../service/join/invite';
-
-const mockRoleList = [
-  {
-    value: {
-      role: 'Owner',
-    },
-    label: 'Owner',
-  },
-  {
-    value: {
-      role: 'Executive',
-    },
-    label: 'Executive',
-  },
-  {
-    value: {
-      role: 'Senior',
-    },
-    label: 'Senior',
-  },
-  {
-    value: {
-      role: 'Staff',
-    },
-    label: 'Staff',
-  },
-  {
-    value: {
-      role: 'Basic',
-    },
-    label: 'Basic',
-  },
-];
 
 const InviteToCompanyModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
@@ -63,17 +38,19 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
   const [updatePosition, setUpdatePosition] = useState({});
   const [company, setCompany] = useState('');
   const [availableCompany, setAvailableCompany] = useState([]);
+  const [isValidInvite, setIsValidInvite] = useState(undefined);
 
   const clear = () => {
     setExistingInvited([]);
     setNonExistingInvited([]);
     setUpdateRole({});
     setUpdatePosition({});
+    setIsValidInvite(undefined);
   };
 
   useEffect(() => {
-    clear();
-  }, [invitedEmails]);
+    // clear();
+  }, [invitedEmails, isValidInvite]);
 
   const handleInputPositionChange = (event, email) => {
     const temp = updatePosition;
@@ -106,7 +83,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
     setNonExistingInvited(tempNonExist);
   };
 
-  const fetchInvitedUserDetail = (emails) => {
+  const fetchInvitedUserDetail = (emails, companyKey) => {
     const userObs = [];
     emails.forEach((email) => {
       userObs.push(
@@ -127,109 +104,120 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
       );
     });
 
-    combineLatest(userObs).subscribe((results1) => {
-      const profileObs = [];
-      const inviteNotExistEntities = [];
-      const inviteExistEntities = [];
-      let n = 0;
-      results1.forEach((result) => {
-        if (result.isFound) {
-          const data = result.docs[0].data();
-          const userKey = result.docs[0].id;
-          profileObs.push(
-            GetProlfileList(userKey).pipe(
-              map(docs => docs.map((d) => {
-                const profile = d.data();
-                profile.email = data.UserInfoEmail;
-                profile.key = userKey;
-                return profile;
-              })),
-            ),
-          );
-        } else {
-          const index = n;
-          const inviteEntity = {
-            key: null,
-            name: '- (Not yet app user)',
-            email: result.email,
-            position: (
-              <Input
-                type="text"
-                id={`position#n${index}`}
-                placeholder="Position"
-                onChange={event => handleInputPositionChange(event, result.email)}
-              />
-            ),
-            role: (
-              <Select
-                onChange={input => handleRoleInputChange(input, result.email)}
-                name="company"
-                id={`company-invite#n${n}`}
-                options={mockRoleList}
-                className="basic-multi-select"
-                classNamePrefix="select"
-                placeholder="Choose Role"
-              />
-            ),
-            // remove: (
-            //   <i
-            //     className="cui-trash icons"
-            //     role="button"
-            //     style={{ cursor: 'pointer' }}
-            //     onClick={removeInvite(result.email)}
-            //     onKeyDown={null}
-            //     tabIndex="-1"
-            //   />
-            // ),
-          };
-          inviteNotExistEntities.push(inviteEntity);
-          n += 1;
-        }
-      });
-      setNonExistingInvited(inviteNotExistEntities);
-      combineLatest(profileObs).subscribe((results2) => {
-        results2.forEach((result, index) => {
-          // TO-DO get first profile for now
-          const firstProfile = result.pop();
-          const inviteEntity = {
-            key: firstProfile.key,
-            name: `${firstProfile.ProfileFirstname} ${firstProfile.ProfileSurname}`,
-            email: firstProfile.email,
-            position: (
-              <Input
-                type="text"
-                id={`position#e${index}`}
-                placeholder="Position"
-                onChange={event => handleInputPositionChange(event, firstProfile.email)}
-              />
-            ),
-            role: (
-              <Select
-                onChange={input => handleRoleInputChange(input, firstProfile.email)}
-                name="company"
-                id={`company-invite#e${index}`}
-                options={mockRoleList}
-                className="basic-multi-select"
-                classNamePrefix="select"
-                placeholder="Choose Role"
-              />
-            ),
-            // remove: (
-            //   <i
-            //     className="cui-trash icons"
-            //     role="button"
-            //     style={{ cursor: 'pointer' }}
-            //     onClick={() => removeInvite(firstProfile.email)}
-            //     onKeyDown={null}
-            //     tabIndex="-1"
-            //   />
-            // ),
-          };
-          inviteExistEntities.push(inviteEntity);
+    GetCompanyUserAccessibility(companyKey)
+      .pipe(map(docs => docs.map(d => d.data())))
+      .subscribe((userMatrix) => {
+        const roles = userMatrix.map(matrix => ({
+          value: {
+            role: matrix.CompanyUserAccessibilityRoleName,
+          },
+          label: matrix.CompanyUserAccessibilityRoleName,
+        }));
+
+        combineLatest(userObs).subscribe((results1) => {
+          const profileObs = [];
+          const inviteNotExistEntities = [];
+          const inviteExistEntities = [];
+          let n = 0;
+          results1.forEach((result) => {
+            if (result.isFound) {
+              const data = result.docs[0].data();
+              const userKey = result.docs[0].id;
+              profileObs.push(
+                GetProlfileList(userKey).pipe(
+                  map(docs => docs.map((d) => {
+                    const profile = d.data();
+                    profile.email = data.UserInfoEmail;
+                    profile.key = userKey;
+                    return profile;
+                  })),
+                ),
+              );
+            } else {
+              const index = n;
+              const inviteEntity = {
+                key: null,
+                name: '- (Not yet app user)',
+                email: result.email,
+                position: (
+                  <Input
+                    type="text"
+                    id={`position#n${index}`}
+                    placeholder="Position"
+                    onChange={event => handleInputPositionChange(event, result.email)}
+                  />
+                ),
+                role: (
+                  <Select
+                    onChange={input => handleRoleInputChange(input, result.email)}
+                    name="company"
+                    id={`company-invite#n${n}`}
+                    options={roles}
+                    className="basic-multi-select"
+                    classNamePrefix="select"
+                    placeholder="Choose Role"
+                  />
+                ),
+                // remove: (
+                //   <i
+                //     className="cui-trash icons"
+                //     role="button"
+                //     style={{ cursor: 'pointer' }}
+                //     onClick={removeInvite(result.email)}
+                //     onKeyDown={null}
+                //     tabIndex="-1"
+                //   />
+                // ),
+              };
+              inviteNotExistEntities.push(inviteEntity);
+              n += 1;
+            }
+          });
+          setNonExistingInvited(inviteNotExistEntities);
+          combineLatest(profileObs).subscribe((results2) => {
+            results2.forEach((result, index) => {
+              // TO-DO get first profile for now
+              const firstProfile = result.pop();
+              const inviteEntity = {
+                key: firstProfile.key,
+                name: `${firstProfile.ProfileFirstname} ${firstProfile.ProfileSurname}`,
+                email: firstProfile.email,
+                position: (
+                  <Input
+                    type="text"
+                    id={`position#e${index}`}
+                    placeholder="Position"
+                    onChange={event => handleInputPositionChange(event, firstProfile.email)}
+                  />
+                ),
+                role: (
+                  <Select
+                    onChange={input => handleRoleInputChange(input, firstProfile.email)}
+                    name="company"
+                    id={`company-invite#e${index}`}
+                    options={roles}
+                    className="basic-multi-select"
+                    classNamePrefix="select"
+                    placeholder="Choose Role"
+                  />
+                ),
+                // remove: (
+                //   <i
+                //     className="cui-trash icons"
+                //     role="button"
+                //     style={{ cursor: 'pointer' }}
+                //     onClick={() => removeInvite(firstProfile.email)}
+                //     onKeyDown={null}
+                //     tabIndex="-1"
+                //   />
+                // ),
+              };
+              inviteExistEntities.push(inviteEntity);
+            });
+            setExistingInvited(inviteExistEntities);
+          });
         });
-        setExistingInvited(inviteExistEntities);
       });
-    });
   };
 
   const toggle = () => {
@@ -238,30 +226,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
 
   const nextStep = () => {
     setCurrentStep(currentStep + 1);
-    fetchInvitedUserDetail([...invitedEmails]);
-  };
-
-  const invite = () => {
-    const inviteDataList = [];
-    const role = updateRole;
-    const position = updatePosition;
-    const invites = existingInvited.concat(nonExistingInvited);
-    invites.forEach((item) => {
-      // eslint-disable-next-line prefer-destructuring
-      const email = item.email;
-      const inviteData = {
-        Email: email,
-        Role: role[email],
-        Position: position[email],
-      };
-      inviteDataList.push(inviteData);
-    });
-    CreateCompanyMultipleInvitation(inviteDataList, company.key).subscribe(() => {});
-    if (props.clearInput !== undefined) {
-      props.clearInput();
-    }
-    setinvitedEmails([]);
-    toggle();
+    fetchInvitedUserDetail([...invitedEmails], company.key);
   };
 
   const mapCompanyForDropdown = (companyData) => {
@@ -279,15 +244,60 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
     return companyList;
   };
 
+  const validateInvite = () => {
+    if (company === '' || invitedEmails.length === 0) {
+      return false;
+    }
+    return true;
+  };
+
+  const validateRoleSelection = (inviteData) => {
+    let isValid = true;
+    inviteData.forEach((item) => {
+      // eslint-disable-next-line prefer-destructuring
+      if (item.Role === undefined) {
+        isValid = false;
+      }
+    });
+    setIsValidInvite(isValid);
+    return isValid;
+  };
+
+  const invite = () => {
+    const inviteDataList = [];
+    const role = updateRole;
+    const position = updatePosition;
+    const invites = existingInvited.concat(nonExistingInvited);
+    invites.forEach((item) => {
+      // eslint-disable-next-line prefer-destructuring
+      const email = item.email;
+      const inviteData = {
+        Email: email,
+        Role: role[email],
+        Position: position[email],
+      };
+      inviteDataList.push(inviteData);
+    });
+    if (validateRoleSelection(inviteDataList)) {
+      CreateCompanyMultipleInvitation(inviteDataList, company.key).subscribe(() => {});
+      if (props.clearInput !== undefined) {
+        props.clearInput();
+      }
+      setinvitedEmails([]);
+      toggle();
+    }
+  };
+
   useImperativeHandle(ref, () => ({
     triggerInviteToCompany(propinvitedEmails, propCompany) {
+      clear();
       if (propinvitedEmails.length === 0) {
         setCurrentStep(1);
         setAvailableCompany(mapCompanyForDropdown(propCompany));
       } else {
         setinvitedEmails(propinvitedEmails);
-        fetchInvitedUserDetail(propinvitedEmails);
         setCompany(propCompany);
+        fetchInvitedUserDetail(propinvitedEmails, propCompany.key);
         setCurrentStep(2);
       }
       toggle();
@@ -339,7 +349,16 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
           </b>
         </h2>
       </ModalHeader>
-      <ModalBody>{currentStep === 1 ? renderStepOneBody() : renderStepTwoBody()}</ModalBody>
+      <ModalBody>
+        {currentStep === 1 ? renderStepOneBody() : renderStepTwoBody()}
+        {currentStep === 2 && isValidInvite === false ? (
+          <Alert color="warning" style={{ margin: 0 }}>
+            Role must be select for all invitation.
+          </Alert>
+        ) : (
+          ''
+        )}
+      </ModalBody>
       <ModalFooter style={{ border: 'none' }}>
         {currentStep === 1 ? (
           <Button
@@ -347,6 +366,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
             style={{ margin: 'auto' }}
             color="primary"
             onClick={nextStep}
+            disabled={!validateInvite()}
           >
             Invite
           </Button>

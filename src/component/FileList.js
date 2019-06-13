@@ -38,6 +38,13 @@ const FileList = ({
     window.open(url, '_blank');
   };
 
+  const downloadFile = (url) => {
+    const xhr = new XMLHttpRequest();
+    xhr.responseType = 'blob';
+    xhr.open('GET', url);
+    xhr.send();
+  };
+
   const fileListDateStyle = {
     position: 'absolute',
     top: 0,
@@ -64,6 +71,7 @@ const FileList = ({
               onMouseOver={() => onFileHover(index)}
               onFocus={() => null}
               onMouseLeave={() => onFileLeave()}
+              onDoubleClick={() => openFile(s.FileUrl)}
             >
               {hoveringFile === index || selectedFile.indexOf(index) !== -1 ? (
                 <Col xs="1" style={{ left: '20px' }}>

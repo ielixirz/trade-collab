@@ -7,9 +7,14 @@ import {
 } from '../constants/constants';
 
 const INITIAL_STATE = {
-  Shipments: [],
+  Shipments: {},
   ShipmentRefs: {},
   notification: {}
+};
+type Props = {
+  Shipments: Object,
+  ShipmentRefs: Object,
+  notification: Object
 };
 
 export default function reducer(state = INITIAL_STATE, action) {
@@ -30,6 +35,7 @@ export default function reducer(state = INITIAL_STATE, action) {
         ShipmentRefs: action.payload
       };
 
+
     case UPDATE_SHIPMENT_REF:
       return {
         ...state,
@@ -41,11 +47,17 @@ export default function reducer(state = INITIAL_STATE, action) {
     case EDIT_SHIPMENT_REF:
       return {
         ...state,
-        ShipmentRefs: {
-          ...state.ShipmentRefs,
+        Shipments: {
+          ...state.Shipments,
           [action.id]: {
-            ...state.ShipmentRefs[action.id],
-            [action.refKey]: action.payload
+            ...state.Shipments[action.id],
+            ShipmentReferenceList: {
+              ...state.Shipments[action.id].ShipmentReferenceList,
+              [action.refKey]: {
+                ...state.Shipments[action.id].ShipmentReferenceList[action.refKey],
+                ...action.payload
+              }
+            }
           }
         }
       };

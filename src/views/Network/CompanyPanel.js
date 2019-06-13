@@ -2,7 +2,7 @@
 /* eslint-disable filenames/match-regex */
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
-import { combineLatest, zip } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import _ from 'lodash';
 import BlockUi from 'react-block-ui';
@@ -27,6 +27,7 @@ import {
   GetCompanyMember,
   IsCompanyMember,
   UpdateCompanyMember,
+  GetCompanyUserAccessibility,
 } from '../../service/company/company';
 import { GetProlfileList } from '../../service/user/profile';
 
@@ -52,36 +53,12 @@ const mockCompany = {
   website: 'www.website.com',
 };
 
-const mockRoleList = [
+const initRoleList = [
   {
     value: {
-      role: 'Owner',
+      role: 'ALL',
     },
-    label: 'Owner',
-  },
-  {
-    value: {
-      role: 'Executive',
-    },
-    label: 'Executive',
-  },
-  {
-    value: {
-      role: 'Senior',
-    },
-    label: 'Senior',
-  },
-  {
-    value: {
-      role: 'Staff',
-    },
-    label: 'Staff',
-  },
-  {
-    value: {
-      role: 'Basic',
-    },
-    label: 'Basic',
+    label: 'ALL',
   },
 ];
 
@@ -143,6 +120,8 @@ const CompanyPanel = (props) => {
   const [isEdit, setIsEdit] = useState(false);
   const [incomingRequest, setIncomingRequest] = useState([]);
   const [memberList, setMemberList] = useState([]);
+  const [roleList, setRoleList] = useState(initRoleList);
+  const [filterRole, setFilterRole] = useState(undefined);
   const [updateRole, setUpdateRole] = useState({});
   const [updatePosition, setUpdatePosition] = useState({});
   const [acceptedRequest, setAcceptedRequest] = useState(undefined);
@@ -175,7 +154,20 @@ const CompanyPanel = (props) => {
     });
   };
 
-  const fetchMember = (companyKey) => {
+  const filterMemberRole = (role, member) => {
+    let filterMembers = member;
+    if (role !== 'ALL') {
+      filterMembers = member.filter((m) => {
+        if (m.role.props === undefined) {
+          return m.role === role;
+        }
+        return m.role.props.text === role;
+      });
+    }
+    return filterMembers;
+  };
+
+  const fetchMember = (companyKey, companyRoles) => {
     setBlocking(true);
     combineLatest([
       GetCompanyInvitation(companyKey).pipe(
@@ -217,7 +209,7 @@ const CompanyPanel = (props) => {
               text={member.UserMemberRoleName}
               turnType="dropdown"
               data={{
-                options: mockRoleList,
+                options: companyRoles,
                 onChangeFn: input => updateMember(companyKey, member.key, { UserMemberRoleName: input.value.role }),
               }}
             />
@@ -266,22 +258,24 @@ const CompanyPanel = (props) => {
   };
 
   const responseToRequest = (keys, status) => {
-    UpdateCompanyRequestStatus(
-      keys.cKey,
-      keys.rKey,
-      status,
-      updateRole[keys.uKey] === undefined ? '-' : updateRole[keys.uKey],
-      'rolePermissionCode',
-      updatePosition[keys.uKey] === undefined ? '-' : updatePosition[keys.uKey],
-    );
-    UpdateUserRequestStatus(keys.uKey, keys.rKey, status);
-    setAcceptedRequest({
-      updateKey: keys,
-      status,
-    });
+    if (updateRole[keys.uKey] !== undefined) {
+      UpdateCompanyRequestStatus(
+        keys.cKey,
+        keys.rKey,
+        status,
+        updateRole[keys.uKey],
+        'rolePermissionCode',
+        updatePosition[keys.uKey] === undefined ? '-' : updatePosition[keys.uKey],
+      );
+      UpdateUserRequestStatus(keys.uKey, keys.rKey, status);
+      setAcceptedRequest({
+        updateKey: keys,
+        status,
+      });
+    }
   };
 
-  const fetchIncomingRequest = (companyKey) => {
+  const fetchIncomingRequest = (companyKey, companyRoles) => {
     GetCompanyRequest(companyKey)
       .pipe(map(docs => docs.map(d => d.data())))
       .subscribe((results) => {
@@ -302,10 +296,10 @@ const CompanyPanel = (props) => {
               <Select
                 name="company"
                 id="company-invite"
-                options={mockRoleList}
+                options={companyRoles}
                 className="basic-multi-select"
                 classNamePrefix="select"
-                placeholder="Choose Role"
+                placeholder="Please select role"
                 onChange={input => handleRoleInputChange(input, item.UserRequestUserKey)}
               />
             ),
@@ -339,8 +333,21 @@ const CompanyPanel = (props) => {
         console.log('TO DO LOG');
       },
     });
-    fetchIncomingRequest(props.match.params.key);
-    fetchMember(props.match.params.key);
+    GetCompanyUserAccessibility(props.match.params.key)
+      .pipe(map(docs => docs.map(d => d.data())))
+      .subscribe((userMatrix) => {
+        const initRoles = [...roleList];
+        const roles = userMatrix.map(matrix => ({
+          value: {
+            role: matrix.CompanyUserAccessibilityRoleName,
+          },
+          label: matrix.CompanyUserAccessibilityRoleName,
+        }));
+        const companyRoles = initRoles.concat(roles);
+        setRoleList(companyRoles);
+        fetchIncomingRequest(props.match.params.key, companyRoles);
+        fetchMember(props.match.params.key, companyRoles);
+      });
   }, [acceptedRequest]);
 
   const toggleEdit = () => {
@@ -547,7 +554,7 @@ const CompanyPanel = (props) => {
             )}
           </Row>
         </div>
-        {isMember ? (
+        {isMember && incomingRequest.length > 0 ? (
           <div className="incoming-request-container">
             <div className="company-table-label">
               <Row>
@@ -561,7 +568,7 @@ Incoming Request (
             <MainDataTable
               data={incomingRequest}
               column={incomingRequestColumns}
-              cssClass="company-table"
+              cssClass="company-table incoming"
               wraperClass="company-table-wraper"
               isBorder={false}
             />
@@ -570,52 +577,53 @@ Incoming Request (
           ''
         )}
         {isMember ? (
-          <div className="company-member-container">
-            <ToolkitProvider keyField="name" data={memberList} columns={memberDataColumns} search>
-              {toolKitProps => (
-                <div>
-                  <div className="company-table-label">
-                    <Row>
-                      <Col xs={7} style={{ paddingLeft: 0 }}>
-                        <h4>
+          <ToolkitProvider keyField="name" data={memberList} columns={memberDataColumns} search>
+            {toolKitProps => (
+              <div className="company-member-container">
+                <div className="company-table-label">
+                  <Row>
+                    <Col xs={7} style={{ paddingLeft: 0 }}>
+                      <h4>
 Members (
-                          {memberList.length}
+                        {memberList.length}
 )
-                        </h4>
-                      </Col>
-                      <Col xs={3} style={{ paddingRight: 0 }}>
-                        <SearchBar
-                          placeholder="&#xF002; Typing"
-                          style={{ width: '210%' }}
-                          {...toolKitProps.searchProps}
-                        />
-                      </Col>
-                      <Col xs={2} style={{ paddingLeft: 0 }}>
-                        <Select
-                          name="colors"
-                          id="role-filter"
-                          className="basic-multi-select role-filter-select"
-                          classNamePrefix="select"
-                          placeholder="Filter Role"
-                          options={mockRoleList}
-                          {...toolKitProps.searchProps}
-                        />
-                      </Col>
-                    </Row>
-                  </div>
-                  <MainDataTable
-                    toolkitbaseProps={{ ...toolKitProps.baseProps }}
-                    data={memberList}
-                    column={memberDataColumns}
-                    cssClass="company-table member"
-                    wraperClass="company-table-wraper"
-                    isBorder={false}
-                    toolkit="search"
-                  />
+                      </h4>
+                    </Col>
+                    <Col xs={3} style={{ paddingRight: 0 }}>
+                      <SearchBar
+                        placeholder="&#xF002; Typing"
+                        style={{ width: '150%' }}
+                        {...toolKitProps.searchProps}
+                      />
+                    </Col>
+                    <Col xs={2} style={{ paddingLeft: 0 }}>
+                      <Select
+                        name="colors"
+                        id="role-filter"
+                        className="basic-multi-select role-filter-select"
+                        classNamePrefix="select"
+                        placeholder="Filter Role"
+                        options={roleList}
+                        onChange={event => setFilterRole(event.value.role)}
+                      />
+                    </Col>
+                  </Row>
                 </div>
-              )}
-            </ToolkitProvider>
-          </div>
+                <MainDataTable
+                  toolkitbaseProps={{ ...toolKitProps.baseProps }}
+                  data={memberList}
+                  filter={filterMemberRole}
+                  filterKeyword={filterRole}
+                  isFilter={filterRole !== undefined}
+                  column={memberDataColumns}
+                  cssClass="company-table member"
+                  wraperClass="company-table-wraper"
+                  isBorder={false}
+                  toolkit="search"
+                />
+              </div>
+            )}
+          </ToolkitProvider>
         ) : (
           ''
         )}
