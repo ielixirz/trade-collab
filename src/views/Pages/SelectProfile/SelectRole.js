@@ -126,7 +126,7 @@ const SelectRole = (props) => {
                 <div style={{ paddingBottom: 20 }}>
                   <div className="col-sm-12 text-center">
                     <Button
-                      className="button register-next-button1"
+                      className="register-next-button register-next-button1"
                       type="submit"
                       onClick={saveAndContinue}
                       disabled={!isRoleSelect}
