@@ -137,7 +137,9 @@ class DefaultHeader extends Component {
                       }}
                       onClick={() => {
                         _.forEach(notifications, item => {
-                          SetUserNotificationRead(item.UserNotificationUserInfoKey, item.id);
+                          if (item.UserNotificationReadStatus === false) {
+                            SetUserNotificationRead(item.UserNotificationUserInfoKey, item.id);
+                          }
                         });
                       }}
                     >

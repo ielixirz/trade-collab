@@ -135,7 +135,7 @@ class Shipment extends Component {
     parameter.ShipmentCreateTimestamp = new Date().getTime();
     CreateShipment(parameter).subscribe({
       next: res => {
-        this.props.fetchShipments(this.state.typeShipment);
+        this.fetchShipmentReload();
       }
     });
 
@@ -159,7 +159,7 @@ class Shipment extends Component {
           this.state.typeShipment,
           '',
           'asc',
-          this.props.shipments.length + 10,
+          _.size(this.props.shipments) + 10,
           this.props.user.uid
         ).subscribe({
           next: shipment => {
@@ -184,7 +184,7 @@ class Shipment extends Component {
           this.state.typeShipment,
           '',
           'asc',
-          this.props.shipments.length + 10,
+          _.size(this.props.shipments) + 10,
           this.props.user.uid
         ).subscribe({
           next: shipment => {
