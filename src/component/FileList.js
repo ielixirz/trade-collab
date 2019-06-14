@@ -57,6 +57,7 @@ const FileList = ({
   const fileListGroupStyle = {
     height: '30vh',
     overflow: 'scroll',
+    fontSize: '0.9em',
   };
 
   return (
@@ -92,7 +93,7 @@ const FileList = ({
               <Col style={{ cursor: 'pointer' }} xs="9" className="text-left">
                 {s.FileName}
               </Col>
-              <Col xs="2" style={{ left: '30px' }}>
+              <Col xs="2" style={{ left: '10px' }}>
                 <ThreeDotDropdown
                   options={[
                     {
