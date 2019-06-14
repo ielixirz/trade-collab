@@ -279,7 +279,9 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
       inviteDataList.push(inviteData);
     });
     if (validateRoleSelection(inviteDataList)) {
-      CreateCompanyMultipleInvitation(inviteDataList, company.key).subscribe(() => {});
+      CreateCompanyMultipleInvitation(inviteDataList, company.key, company.companyName).subscribe(
+        () => {},
+      );
       if (props.clearInput !== undefined) {
         props.clearInput();
       }
