@@ -693,6 +693,21 @@ exports.CopyInsideMasterDataToShipment = functions.firestore
           );
       }
     }
+
+    if (oldValue.ShipmentDetailProduct !== newValue.ShipmentDetailProduct) {
+      if (change.after.id === 'DefaultTemplate') {
+        return admin
+          .firestore()
+          .collection('Shipment')
+          .doc(context.params.ShipmentKey)
+          .set(
+            {
+              ShipmentDetailProduct: newValue.ShipmentDetailProduct
+            },
+            { merge: true }
+          );
+      }
+    }
   });
 
 exports.NotiBellAndEmailInviteToJoinCompany = functions.firestore
@@ -1158,3 +1173,25 @@ exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
     return res.status(200).send(JSON.stringify(GroupProfileByUserEmail));
   });
 });
+
+exports.CopyShipmentDetailProductToMasterData = functions.firestore
+  .document('Shipment/{ShipmentKey}')
+  .onWrite(async (change, context) => {
+    const oldValue = change.before.data();
+    const newValue = change.after.data();
+
+    if (newValue.ShipmentDetailProduct) {
+      return await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ShipmentShareData')
+        .doc('DefaultTemplate')
+        .set(
+          {
+            ShipmentDetailProduct: newValue.ShipmentDetailProduct
+          },
+          { merge: true }
+        );
+    }
+  });
