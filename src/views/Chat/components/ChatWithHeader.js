@@ -415,7 +415,7 @@ class ChatWithHeader extends Component {
             <Button className="btn-chat-label">|</Button>
             <Button className="btn-chat-label">
               Ref#
-              {ref.ShipmentReferenceID}
+              {_.get(ref, 'ShipmentReferenceID', '')}
             </Button>
           </Breadcrumb>
         </Row>

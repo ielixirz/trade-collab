@@ -29,6 +29,7 @@ import './style.css';
 import { fetchUserNotification } from '../../actions/userActions';
 import { notificationTitleHelper } from '../../utils/tool';
 import notiReducer from '../../reducers/notiReducer';
+import { SetUserNotificationRead } from '../../service/user/user';
 
 const propTypes = {
   children: PropTypes.node
@@ -108,7 +109,13 @@ class DefaultHeader extends Component {
               </NavItem>
             </DropdownToggle>
             <DropdownMenu right className="notification" style={{ right: 'auto' }}>
-              <DropdownItem header tag="div">
+              <DropdownItem
+                header
+                style={{
+                  backgroundColor: '#277C83'
+                }}
+                tag="div"
+              >
                 <span
                   style={{
                     fontWeight: 'bold',
@@ -127,6 +134,11 @@ class DefaultHeader extends Component {
                     <span
                       style={{
                         cursor: 'pointer'
+                      }}
+                      onClick={() => {
+                        _.forEach(notifications, item => {
+                          SetUserNotificationRead(item.UserNotificationUserInfoKey, item.id);
+                        });
                       }}
                     >
                       Mark Read All
