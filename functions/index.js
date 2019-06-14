@@ -693,6 +693,21 @@ exports.CopyInsideMasterDataToShipment = functions.firestore
           );
       }
     }
+
+    if (oldValue.ShipmentDetailProduct !== newValue.ShipmentDetailProduct) {
+      if (change.after.id === 'DefaultTemplate') {
+        return admin
+          .firestore()
+          .collection('Shipment')
+          .doc(context.params.ShipmentKey)
+          .set(
+            {
+              ShipmentDetailProduct: newValue.ShipmentDetailProduct
+            },
+            { merge: true }
+          );
+      }
+    }
   });
 
 exports.NotiBellAndEmailInviteToJoinCompany = functions.firestore

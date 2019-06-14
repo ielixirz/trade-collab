@@ -4,7 +4,7 @@
         ShipmentSourceLocation (string)
         ShipmentBuyerCompanyName (string)
         ShipmentDestinationLocation (string)
-        ShipmentProductName (string)
+        ShipmentDetailProduct (string)
         ShipmentETD (timestamp)
         ShipmentETAPort (timestamp)
         ShipmentETAWarehouse (timestamp)
