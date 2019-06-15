@@ -14,12 +14,12 @@ const styles = {
   button: {},
   boxColor: { fontSize: 20, color: 'gold', marginRight: 7 },
   title: {
-    fontSize: 20,
+    fontSize: '1.2em',
     fontWeight: 'bold',
     color: '#707070',
   },
   arrow: {
-    fontSize: 20,
+    fontSize: '1.2em',
     marginLeft: 5,
     color: '#707070',
   },

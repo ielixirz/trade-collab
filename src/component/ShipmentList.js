@@ -16,6 +16,7 @@ import { GetDiffDay } from '../utils/date';
 const shipmentListGroupStyle = {
   height: '65vh',
   overflow: 'scroll',
+  fontSize: '0.9em',
 };
 
 const ShipmentList = () => {
@@ -51,7 +52,11 @@ const ShipmentList = () => {
                 <Col>
                   <Button
                     className="master-detail-btn edit"
-                    onClick={() => masterDetailModalRef.current.triggerMasterDetail(data, mainData.ShipmentStatus)}
+                    onClick={() => masterDetailModalRef.current.triggerMasterDetail(
+                      data,
+                      mainData.ShipmentStatus,
+                    )
+                      }
                   >
                     <i className="cui-pencil icons" style={{ marginRight: '0.5rem' }} />
                       Edit
