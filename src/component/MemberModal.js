@@ -62,7 +62,22 @@ class MemberModal extends React.Component {
     return (
       <div>
         <Button className="btn-see-chatmember" onClick={this.toggle}>
-          <i style={{ marginRight: '0.5rem' }} className="fa  fa-users fa-lg" />
+          {/* <i style={{ marginRight: '0.5rem' }} className="fa  fa-users fa-lg" /> */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14.4"
+            height="12"
+            viewBox="0 0 14.4 12"
+            style={{ marginRight: '0.5rem', paddingBottom: '0.75px' }}
+          >
+            <path
+              id="Combined-Shape"
+              d="M10.8,13.4a.6.6,0,0,1-1.2,0V12.2a1.8,1.8,0,0,0-1.8-1.8H3a1.8,1.8,0,0,0-1.8,1.8v1.2a.6.6,0,0,1-1.2,0V12.2a3,3,0,0,1,3-3H7.8a3,3,0,0,1,3,3ZM5.4,8a3,3,0,1,1,3-3A3,3,0,0,1,5.4,8Zm9,5.4a.6.6,0,0,1-1.2,0V12.2a1.8,1.8,0,0,0-1.35-1.741.6.6,0,1,1,.3-1.162,3,3,0,0,1,2.25,2.9ZM9.451,3.259a.6.6,0,1,1,.3-1.163,3,3,0,0,1,0,5.813.6.6,0,1,1-.3-1.163,1.8,1.8,0,0,0,0-3.487ZM5.4,6.8A1.8,1.8,0,1,0,3.6,5,1.8,1.8,0,0,0,5.4,6.8Z"
+              transform="translate(0 -2)"
+              fill="#6a6a6a"
+            />
+          </svg>
+
           {count}
         </Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
