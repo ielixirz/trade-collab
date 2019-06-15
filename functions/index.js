@@ -287,13 +287,17 @@ exports.OnCreateShipment = functions.firestore
 
       delete MasterDataDefaultTemplateData.ShipmentDetailProduct;
 
+      console.log(MasterDataDefaultTemplateData);
+
       const CreateShipmentShareData = await admin
         .firestore()
         .collection('Shipment')
         .doc(context.params.ShipmentKey)
         .collection('ShipmentShareData')
         .doc('DefaultTemplate')
-        .set(MasterDataDefaultTemplateData);
+        .set(MasterDataDefaultTemplateData, {
+          merge: true
+        });
 
       const AddShipmentShareList = await admin
         .firestore()
