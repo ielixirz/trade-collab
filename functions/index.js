@@ -328,15 +328,6 @@ exports.OnCreateShipment = functions.firestore
         .get();
       const UserEmail = GetUserInfo.data().UserInfoEmail;
 
-      // ChatRoomMemberUserKey (string)
-      //                   ChatRoomMemberFirstName (string)
-      //                   ChatRoomMemberSurName (string)
-      //                   ChatRoomMemberEmail (string)
-      //                   ChatRoomMemberImageUrl (string)
-      //                   ChatRoomMemberRole (array <string>)
-      //                   ChatRoomMemberCompanyName (string)
-      //                   ChatRoomMemberCompanyKey (string)
-
       PayloadObject[ShipmentMemberUserKey] = {};
 
       PayloadObject[ShipmentMemberUserKey]['ShipmentMemberEmail'] = UserEmail;
@@ -802,21 +793,6 @@ exports.CopyInsideMasterDataToShipment = functions.firestore
           );
       }
     }
-
-    // if (oldValue.ShipmentDetailProduct !== newValue.ShipmentDetailProduct) {
-    //   if (change.after.id === 'DefaultTemplate') {
-    //     return admin
-    //       .firestore()
-    //       .collection('Shipment')
-    //       .doc(context.params.ShipmentKey)
-    //       .set(
-    //         {
-    //           ShipmentDetailProduct: newValue.ShipmentDetailProduct
-    //         },
-    //         { merge: true }
-    //       );
-    //   }
-    // }
   });
 
 exports.NotiBellAndEmailInviteToJoinCompany = functions.firestore
@@ -921,30 +897,6 @@ exports.NotiBellAcceptedIntoCompany = functions.firestore
         .collection('UserInfo')
         .doc(context.params.UserKey)
         .get();
-
-      // +UserNotification
-      //   >UserNotificationKey
-      //       UserNotificationReadStatus (bool)
-      //       UserNotificationType (string)
-      //       UserNotificationTimestamp (timestamp)
-      //       UserNotificationImageURL (string)
-      //       UserNotificationFirstname (string)
-      //       UserNotificationSurname (string)
-      //       UserNotificationUserInfoKey (string)
-      //       UserNotificationCompanyName (string)
-      //       UserNotificationCompanyKey (string)
-      //       UserNotificationRedirectPage (string)
-      //       UserNotificationShipmentKey (string)
-      //       UserNotificationChatroonKey (string)
-
-      //           CompanyInvitationReference (reference)
-      //           CompanyInvitationCompanyKey (string)
-      //           CompanyInvitationName (string)
-      //           CompanyInvitationEmail (string)
-      //           CompanyInvitationPosition (string)
-      //           CompanyInvitationRole (string)
-      //           CompanyInvitationTimestamp (timestamp)
-      //           CompanyInvitationStatus (string) ('Reject','Approve','Pending')
 
       const AcceptedIntoCompanyServiceList = [];
 
@@ -1112,30 +1064,6 @@ exports.LeaveCompany = functions.firestore
       DeleteCompanyInChatRoomMemberServiceList
     ]);
   });
-
-// +UserNotification
-//   >UserNotificationKey
-//       UserNotificationReadStatus (bool)
-//       UserNotificationType (string)
-//       UserNotificationTimestamp (timestamp)
-//       UserNotificationImageURL (string)
-//       UserNotificationFirstname (string)
-//       UserNotificationSurname (string)
-//       UserNotificationUserInfoKey (string)
-//       UserNotificationCompanyName (string)
-//       UserNotificationCompanyKey (string)
-//       UserNotificationRedirectPage (string)
-//       UserNotificationShipmentKey (string)
-//       UserNotificationChatroonKey (string)
-
-// +CompanyMember (Array<object>)
-//   >UserKey
-//     UserMemberEmail (string)
-//     UserMemberPosition (string)
-//     UserMemberRoleName (string)
-//     UserMatrixRolePermissionCode (string) (Binary number)
-//     UserMemberCompanyStandingStatus (string)
-//     UserMemberJoinedTimestamp (timestamp)
 
 exports.AddProfileDataInUserPersonalizeWhenCreateProfile = functions.firestore
   .document('UserInfo/{UserKey}/Profile/{ProfileKey}')
