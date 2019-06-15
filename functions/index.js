@@ -232,8 +232,6 @@ exports.CreateChatRoomMessageKeyList = functions.firestore
             admin.firestore.FieldValue.increment(1)
           );
 
-          console.log(CountPayload);
-
           // CountPayload[context.params.ChatRoomKey] = 0;
 
           const SetCount = admin
@@ -286,8 +284,6 @@ exports.OnCreateShipment = functions.firestore
       const MasterDataDefaultTemplateData = GetMasterDataDefaultTemplate.data();
 
       delete MasterDataDefaultTemplateData.ShipmentDetailProduct;
-
-      console.log(MasterDataDefaultTemplateData);
 
       const CreateShipmentShareData = await admin
         .firestore()
@@ -494,8 +490,6 @@ exports.ManageShipmentMember = functions.firestore
         // if (GetFirstJoin.data() !== undefined) {
         //   FirstJoinStatus = GetFirstJoin.data().ShipmentFristJoin;
         // }
-
-        // console.log(FirstJoinStatus);
 
         const FirstJoinPayloadObject = { ShipmentFristJoin: {} };
 
@@ -1176,7 +1170,6 @@ exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
 
       const UserAllUnreadCount = UserShipmentChatCountList.reduce(reducer);
 
-      //console.log(UserAllUnreadCount);
       let CreateEmailText = `${UserAllUnreadCount} Unread messages`;
       let CreateEmailHtml = `<h2>${UserAllUnreadCount} Unread messages</h2><br>`;
 
