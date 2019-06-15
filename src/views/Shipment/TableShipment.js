@@ -579,7 +579,7 @@ class TableShipment extends React.Component {
           )}
         </Row>
         <Row style={{ margin: 'auto', fontSize: '0.8em' }}>
-          {port === undefined || port === '' ? '-' : <b>{port}</b>}
+          {port === undefined || port === '' ? 'Port is not defined' : <b>{port}</b>}
         </Row>
       </React.Fragment>
     );
