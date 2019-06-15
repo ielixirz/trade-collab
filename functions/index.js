@@ -322,6 +322,15 @@ exports.OnCreateShipment = functions.firestore
         .get();
       const UserEmail = GetUserInfo.data().UserInfoEmail;
 
+      // ChatRoomMemberUserKey (string)
+      //                   ChatRoomMemberFirstName (string)
+      //                   ChatRoomMemberSurName (string)
+      //                   ChatRoomMemberEmail (string)
+      //                   ChatRoomMemberImageUrl (string)
+      //                   ChatRoomMemberRole (array <string>)
+      //                   ChatRoomMemberCompanyName (string)
+      //                   ChatRoomMemberCompanyKey (string)
+
       PayloadObject[ShipmentMemberUserKey] = {};
 
       PayloadObject[ShipmentMemberUserKey]['ShipmentMemberEmail'] = UserEmail;
@@ -343,11 +352,42 @@ exports.OnCreateShipment = functions.firestore
         );
 
       // End AutoAddOwnerShipmemtMemberWhenCreateShipment
+
+      // AutoCreateChatRoom
+
+      const AddChatRoom = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ChatRoom')
+        .add({
+          ChatRoomName: ShipmetMemberRole,
+          ChatRoomType: ShipmetMemberRole,
+          ChatRoomShareDataList: ['DefaultTemplate']
+        });
+
+      const ChatRoomID = AddChatRoom.id;
+
+      const AddChatRoomMember = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ChatRoom')
+        .doc(ChatRoomID)
+        .collection('ChatRoomMember')
+        .add({
+          ChatRoomMemberUserKey: ShipmentMemberUserKey,
+          ChatRoomMemberEmail: UserEmail,
+          ChatRoomMemberRole: [ShipmetMemberRole]
+        });
+
       return Promise.all([
         CreateShipmentShareData,
         AddShipmentShareList,
         AddShipmentMember,
-        AddShipmentMemberList
+        AddShipmentMemberList,
+        AddChatRoom,
+        AddChatRoomMember
       ]);
     } catch (error) {
       return error;
