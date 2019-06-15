@@ -532,20 +532,20 @@ exports.ManageShipmentMember = functions.firestore
 
           // Noti-SystemGen InviteIntoShipment
 
-          await admin
-            .firestore()
-            .collection('Shipment')
-            .doc(context.params.ShipmentKey)
-            .collection('ChatRoom')
-            .doc(context.params.ChatRoomKey)
-            .collection('ChatRoomMessage')
-            .add({
-              ChatRoomMessageContext: `${newValue.ChatRoomMemberFirstName} ${
-                newValue.ChatRoomMemberSurName
-              } (${ChatRoomMemberEmail}) joined`,
-              ChatRoomMessageType: 'System',
-              ChatRoomMessageTimestamp: admin.firestore.FieldValue.serverTimestamp
-            });
+          // await admin
+          //   .firestore()
+          //   .collection('Shipment')
+          //   .doc(context.params.ShipmentKey)
+          //   .collection('ChatRoom')
+          //   .doc(context.params.ChatRoomKey)
+          //   .collection('ChatRoomMessage')
+          //   .add({
+          //     ChatRoomMessageContext: `${newValue.ChatRoomMemberFirstName} ${
+          //       newValue.ChatRoomMemberSurName
+          //     } (${ChatRoomMemberEmail}) joined`,
+          //     ChatRoomMessageType: 'System',
+          //     ChatRoomMessageTimestamp: admin.firestore.FieldValue.serverTimestamp
+          //   });
 
           // End Noti-SystemGen InviteIntoShipment
         }
