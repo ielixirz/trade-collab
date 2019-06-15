@@ -9,6 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import '../MemberModal.css';
+import MemberInviteList from './MemberInviteList';
 
 const AVAILABLE_ROLES = {
   Importer: ['Importer', 'Exporter', 'Forwarder Inbound', 'Custom Broker Inbound'],
@@ -48,9 +49,18 @@ class MemberRoleModal extends React.Component {
   };
 
   getRoleBaseOnUserType = () => {
-    const { user } = this.props;
+    const { user, usersRole } = this.props;
     const { UserInfoAccountType } = user;
-    return _.get(AVAILABLE_ROLES, UserInfoAccountType, DEFAULT_ROLE);
+    console.log('usersRole', usersRole);
+    let outputRole = [];
+    _.forEach(usersRole.ChatRoomMemberRole, item => {
+      let role = _.get(AVAILABLE_ROLES, item, DEFAULT_ROLE);
+      _.forEach(role, itemrole => {
+        outputRole.push(itemrole);
+      });
+    });
+
+    return _.union(outputRole);
   };
 
   renderCloseButton = () => (

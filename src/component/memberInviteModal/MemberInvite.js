@@ -7,6 +7,7 @@ import _ from 'lodash';
 import React from 'react';
 import MemberRoleModal from './MemberRoleModal';
 import './styles.scss';
+import MemberInviteList from './MemberInviteList';
 
 class MemberInvite extends React.Component {
   onSelectRole = role => {
@@ -39,7 +40,11 @@ class MemberInvite extends React.Component {
         </div>
         <div className="profile-content">{Email}</div>
         <div className="profile-assign-role">
-          <MemberRoleModal roleCollection={existRoles} onSelectRole={this.onSelectRole} />
+          <MemberRoleModal
+            roleCollection={existRoles}
+            onSelectRole={this.onSelectRole}
+            usersRole={this.props.usersRole}
+          />
         </div>
         <div className="profile-delete">
           {isSelected ? (

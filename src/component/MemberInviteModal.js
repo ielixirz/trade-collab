@@ -91,14 +91,6 @@ class MemberInviteModal extends React.Component {
     _.forEach(invitationCollection, item => {
       _.forEach(member, memberItem => {
         if (memberItem.ChatRoomMemberEmail === item.Email) {
-          UpdateChatRoomMember(ShipmentKey, ChatRoomKey, memberItem.ChatRoomMemberKey, {
-            ...memberItem,
-            ChatRoomMemberRole: item.Role
-          }).subscribe({
-            next: res => {
-              console.log(res);
-            }
-          });
           input = _.filter(input, email => email.Email !== memberItem.ChatRoomMemberEmail);
         }
       });
@@ -151,6 +143,7 @@ class MemberInviteModal extends React.Component {
               invitationCollection={invitationCollection}
               shouldInvite={this.shouldInvite}
               isInvited={this.isInvited}
+              usersRole={this.props.usersRole}
             />
             {invitationCollection.length > 0 ? (
               <Button

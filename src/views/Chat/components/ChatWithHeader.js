@@ -408,6 +408,7 @@ class ChatWithHeader extends Component {
               ShipmentKey={ShipmentKey}
               ChatRoomKey={ChatRoomKey}
               member={member}
+              usersRole={isInvited}
             />
             <Button className="btn-chat-label">|</Button>
             <MemberModal {...this.props} count={member.length} list={member} />
