@@ -285,6 +285,8 @@ exports.OnCreateShipment = functions.firestore
 
       const MasterDataDefaultTemplateData = GetMasterDataDefaultTemplate.data();
 
+      delete MasterDataDefaultTemplateData.ShipmentDetailProduct;
+
       const CreateShipmentShareData = await admin
         .firestore()
         .collection('Shipment')
