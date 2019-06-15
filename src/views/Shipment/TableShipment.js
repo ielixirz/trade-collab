@@ -566,6 +566,21 @@ class TableShipment extends React.Component {
     );
   }
 
+  renderCompanyAndPort(company, port) {
+    return (
+      <React.Fragment>
+        <Row style={{ margin: 'auto' }}>
+          {company === undefined ? (
+            <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>Company Unassigned</span>
+          ) : (
+            <b>{company}</b>
+          )}
+        </Row>
+        <Row style={{ margin: 'auto', fontSize: '0.8em' }}>{port === undefined ? '-' : <b>{port}</b>}</Row>
+      </React.Fragment>
+    );
+  }
+
   render() {
     let data = [];
     let columns = [];
@@ -604,8 +619,16 @@ class TableShipment extends React.Component {
             item.ShipmentID,
             item.ShipmentMember,
           ),
-          Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
-          Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
+          // Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
+          // Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
+          Seller: this.renderCompanyAndPort(
+            _.get(item, 'ShipmentSellerCompanyName', undefined),
+            _.get(item, 'ShipperPort', undefined),
+          ),
+          Buyer: this.renderCompanyAndPort(
+            _.get(item, 'ShipmentBuyerCompanyName', undefined),
+            _.get(item, 'ConsigneePort', undefined),
+          ),
           Product: _.get(item, 'ShipmentProductName', ''),
           ETD: (
             <ShipmentInlineDate
@@ -639,8 +662,14 @@ class TableShipment extends React.Component {
 
           item.ShipmentMember,
         ),
-        Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
-        Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
+        Seller: this.renderCompanyAndPort(
+          _.get(item, 'ShipmentSellerCompanyName', undefined),
+          _.get(item, 'ShipperPort', undefined),
+        ),
+        Buyer: this.renderCompanyAndPort(
+          _.get(item, 'ShipmentBuyerCompanyName', undefined),
+          _.get(item, 'ConsigneePort', undefined),
+        ),
         Product: _.get(item, 'ShipmentProductName', ''),
         ETD: etd === null ? 'Not Available' : moment(etd.seconds * 1000).format('DD MMM YYYY'),
         ETA: eta === null ? 'Not Available' : moment(eta.seconds * 1000).format('DD MMM YYYY'),
