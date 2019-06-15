@@ -514,27 +514,27 @@ exports.ManageShipmentMember = functions.firestore
           }
 
           // End Send Email InviteIntoShipment
-
-          // Noti-SystemGen InviteIntoShipment
-
-          // await admin
-          //   .firestore()
-          //   .collection('Shipment')
-          //   .doc(context.params.ShipmentKey)
-          //   .collection('ChatRoom')
-          //   .doc(context.params.ChatRoomKey)
-          //   .collection('ChatRoomMessage')
-          //   .add({
-          //     ChatRoomMessageContext: `${newValue.ChatRoomMemberFirstName} ${
-          //       newValue.ChatRoomMemberSurName
-          //     } (${ChatRoomMemberEmail}) joined`,
-          //     ChatRoomMessageType: 'System',
-          //     ChatRoomMessageTimestamp: admin.firestore.FieldValue.serverTimestamp
-          //   });
-
-          // End Noti-SystemGen InviteIntoShipment
         }
       }); // End forEach
+
+      // Noti-SystemGen InviteIntoShipment
+
+      const CreateSystemGenInviteIntoShipment = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ChatRoom')
+        .doc(context.params.ChatRoomKey)
+        .collection('ChatRoomMessage')
+        .add({
+          ChatRoomMessageContext: `${newValue.ChatRoomMemberFirstName} ${
+            newValue.ChatRoomMemberSurName
+          } (${newValue.ChatRoomMemberEmail}) joined`,
+          ChatRoomMessageType: 'System',
+          ChatRoomMessageTimestamp: admin.firestore.FieldValue.serverTimestamp
+        });
+
+      // End Noti-SystemGen InviteIntoShipment
     }
 
     // End NotiCount First join shipment
@@ -643,7 +643,8 @@ exports.ManageShipmentMember = functions.firestore
         UserPersonalizeProfileActionList,
         AddShipmentMember,
         AddShipmentMemberList,
-        SetCompanyName
+        SetCompanyName,
+        CreateSystemGenInviteIntoShipment
       ]);
     } else if (oldValue && !newValue) {
       PayloadObject[oldValue['ChatRoomMemberUserKey']] = null;
