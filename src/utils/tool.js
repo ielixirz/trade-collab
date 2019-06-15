@@ -118,12 +118,12 @@ export const createDataTable = (input) => {
         dataField: item,
         sort: false,
         style: {
-          width: '20%',
+          width: '15%',
         },
         headerAlign: 'center',
         align: 'center',
         headerStyle: {
-          width: '20%',
+          width: '15%',
         },
       };
     }
@@ -150,6 +150,20 @@ export const createDataTable = (input) => {
         headerAlign: 'left',
         align: 'left',
         sort: true,
+      };
+    }
+    if (item === 'Status') {
+      return {
+        text: _.get(LABEL, item, item),
+        dataField: item,
+        style: {
+          width: '15%',
+        },
+        headerAlign: 'center',
+        align: 'center',
+        headerStyle: {
+          width: '15%',
+        },
       };
     }
     return {
