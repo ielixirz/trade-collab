@@ -549,7 +549,7 @@ exports.ManageShipmentMember = functions.firestore
 
           // End Noti-SystemGen InviteIntoShipment
         }
-      });
+      }); // End forEach
     }
 
     // End NotiCount First join shipment
@@ -593,10 +593,69 @@ exports.ManageShipmentMember = functions.firestore
           { merge: true }
         );
 
+      // Set Buyer Seller
+
+      let SetCompanyName = [];
+
+      if (newValue.ChatRoomMemberRole === 'Exporter' && newValue.ChatRoomMemberCompanyName) {
+        const SetCompanyNameAtShipment = await admin
+          .firestore()
+          .collection('Shipment')
+          .doc(context.params.ShipmentKey)
+          .set(
+            {
+              ShipmentSellerCompanyName: newValue.ChatRoomMemberCompanyName
+            },
+            { merge: true }
+          );
+        const SetCompanyNameAtShipmentShareData = await admin
+          .firestore()
+          .collection('Shipment')
+          .doc(context.params.ShipmentKey)
+          .collection('ShipmentShareData')
+          .doc('DefaultTemplate')
+          .set(
+            {
+              ShipperCompanyName: newValue.ChatRoomMemberCompanyName
+            },
+            { merge: true }
+          );
+
+        SetCompanyName = [SetCompanyNameAtShipment, SetCompanyNameAtShipmentShareData];
+      } else if (newValue.ChatRoomMemberRole === 'Importer' && newValue.ChatRoomMemberCompanyName) {
+        const SetCompanyNameAtShipment = await admin
+          .firestore()
+          .collection('Shipment')
+          .doc(context.params.ShipmentKey)
+          .set(
+            {
+              ShipmentBuyerCompanyName: newValue.ChatRoomMemberCompanyName
+            },
+            { merge: true }
+          );
+        const SetCompanyNameAtShipmentShareData = await admin
+          .firestore()
+          .collection('Shipment')
+          .doc(context.params.ShipmentKey)
+          .collection('ShipmentShareData')
+          .doc('DefaultTemplate')
+          .set(
+            {
+              ConsigneeCompanyName: newValue.ChatRoomMemberCompanyName
+            },
+            { merge: true }
+          );
+
+        SetCompanyName = [SetCompanyNameAtShipment, SetCompanyNameAtShipmentShareData];
+      }
+
+      // End Set Buyer Seller
+
       return Promise.all([
         UserPersonalizeProfileActionList,
         AddShipmentMember,
-        AddShipmentMemberList
+        AddShipmentMemberList,
+        SetCompanyName
       ]);
     } else if (oldValue && !newValue) {
       PayloadObject[oldValue['ChatRoomMemberUserKey']] = null;
