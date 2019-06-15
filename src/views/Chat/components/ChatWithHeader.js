@@ -383,7 +383,7 @@ class ChatWithHeader extends Component {
 
     if (!_.isEmpty(isInvited)) {
       console.log('Find shipmetn REF >>>>>', _.get(ship, 'ShipmentReferenceList', []));
-      if (_.size(ship.ShipmentReferenceList) > 0) {
+      if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
         ref = _.find(
           ship.ShipmentReferenceList,
           item => item.ShipmentReferenceCompanyKey === isInvited.ChatRoomMemberCompanyKey
