@@ -687,27 +687,28 @@ exports.CopyInsideMasterDataToShipment = functions.firestore
               ShipperPort: newValue.ShipperPort,
               ConsigneePort: newValue.ConsigneePort,
               ShipperETDDate: newValue.ShipperETDDate,
-              ConsigneeETAPortDate: newValue.ConsigneeETAPortDate
+              ConsigneeETAPortDate: newValue.ConsigneeETAPortDate,
+              ShipmentProductName: newValue.ShipmentDetailProduct
             },
             { merge: true }
           );
       }
     }
 
-    if (oldValue.ShipmentDetailProduct !== newValue.ShipmentDetailProduct) {
-      if (change.after.id === 'DefaultTemplate') {
-        return admin
-          .firestore()
-          .collection('Shipment')
-          .doc(context.params.ShipmentKey)
-          .set(
-            {
-              ShipmentDetailProduct: newValue.ShipmentDetailProduct
-            },
-            { merge: true }
-          );
-      }
-    }
+    // if (oldValue.ShipmentDetailProduct !== newValue.ShipmentDetailProduct) {
+    //   if (change.after.id === 'DefaultTemplate') {
+    //     return admin
+    //       .firestore()
+    //       .collection('Shipment')
+    //       .doc(context.params.ShipmentKey)
+    //       .set(
+    //         {
+    //           ShipmentDetailProduct: newValue.ShipmentDetailProduct
+    //         },
+    //         { merge: true }
+    //       );
+    //   }
+    // }
   });
 
 exports.NotiBellAndEmailInviteToJoinCompany = functions.firestore
