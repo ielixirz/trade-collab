@@ -597,7 +597,7 @@ exports.ManageShipmentMember = functions.firestore
 
       let SetCompanyName = [];
 
-      if (newValue.ChatRoomMemberRole === 'Exporter' && newValue.ChatRoomMemberCompanyName) {
+      if (newValue.ChatRoomMemberRole.includes('Exporter') && newValue.ChatRoomMemberCompanyName) {
         const SetCompanyNameAtShipment = await admin
           .firestore()
           .collection('Shipment')
@@ -622,7 +622,10 @@ exports.ManageShipmentMember = functions.firestore
           );
 
         SetCompanyName = [SetCompanyNameAtShipment, SetCompanyNameAtShipmentShareData];
-      } else if (newValue.ChatRoomMemberRole === 'Importer' && newValue.ChatRoomMemberCompanyName) {
+      } else if (
+        newValue.ChatRoomMemberRole.includes('Importer') &&
+        newValue.ChatRoomMemberCompanyName
+      ) {
         const SetCompanyNameAtShipment = await admin
           .firestore()
           .collection('Shipment')
