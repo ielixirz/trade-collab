@@ -570,13 +570,17 @@ class TableShipment extends React.Component {
     return (
       <React.Fragment>
         <Row style={{ margin: 'auto' }}>
-          {company === undefined ? (
-            <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>Company Unassigned</span>
+          {company === undefined || company === '' ? (
+            <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>
+              Company Unassigned
+            </span>
           ) : (
             <b>{company}</b>
           )}
         </Row>
-        <Row style={{ margin: 'auto', fontSize: '0.8em' }}>{port === undefined ? '-' : <b>{port}</b>}</Row>
+        <Row style={{ margin: 'auto', fontSize: '0.8em' }}>
+          {port === undefined || port === '' ? '-' : <b>{port}</b>}
+        </Row>
       </React.Fragment>
     );
   }
