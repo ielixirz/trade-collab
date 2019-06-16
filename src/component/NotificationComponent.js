@@ -2,9 +2,7 @@ import { DropdownItem } from 'reactstrap';
 import React from 'react';
 import { SetUserNotificationRead } from '../service/user/user';
 
-export default ({
-  index, item, user, t, text,
-}) => (
+export default ({ index, item, user, t, text }) => (
   <DropdownItem
     key={`notification${index}`}
     className={item.UserNotificationReadStatus ? '' : 'highlight'}
@@ -23,9 +21,7 @@ export default ({
         </div>
         <div>
           <small className="text-muted" />
-          <small className="text-muted float-right mt-1">
-            {t.toDateString() === new Date().toDateString() ? 'Today' : t.toDateString()}
-          </small>
+          <small className="text-muted float-right mt-1">{t.toLocaleString()}</small>
         </div>
 
         <div className="small text-muted text-truncate">
