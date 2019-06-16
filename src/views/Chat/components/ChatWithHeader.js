@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/anchor-is-valid */
@@ -405,7 +406,7 @@ e-mail address only for this shipment
         console.log(ref, 'reffff');
       }
     } else {
-      ref = 'No Refferenc                                                                                                                                                                                                                         e';
+      ref = 'loading';
     }
 
     return (
@@ -428,8 +429,12 @@ e-mail address only for this shipment
 
             <Button className="btn-chat-label">|</Button>
             <Button className="btn-chat-label">
-              {_.get(ref, 'ShipmentReferenceID', '') === '' ? (
+              {ref === 'loading' ? (
                 <TextLoading />
+              ) : _.get(ref, 'ShipmentReferenceID', '') === '' ? (
+                <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>
+                  Ref is not defined
+                </span>
               ) : (
                 `Ref#${_.get(ref, 'ShipmentReferenceID', '')}`
               )}
