@@ -32,7 +32,7 @@ class DefaultLayout extends Component {
     }
   }
 
-  loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>;
+  loading = () => <div className="animated fadeIn pt-1 text-center" />;
 
   signOut(e) {
     e.preventDefault();

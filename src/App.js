@@ -12,7 +12,7 @@ import { configureStore } from './utils/configureStore';
 
 import './App.scss';
 
-const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
+const loading = () => <div className="animated fadeIn pt-3 text-center" />;
 export const { store, persistor } = configureStore();
 // Containers
 const DefaultLayout = Loadable({

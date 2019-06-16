@@ -16,6 +16,7 @@ import {
 } from 'reactstrap';
 import './MemberModal.css';
 import * as _ from 'lodash';
+import TextLoading from './svg/TextLoading';
 import MemberInChat from './MemberInChat';
 
 class MemberModal extends React.Component {
@@ -78,7 +79,7 @@ class MemberModal extends React.Component {
             />
           </svg>
 
-          {count}
+          {count === 0 ? <TextLoading /> : count}
         </Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
           <ModalHeader toggle={this.toggle} close={this.renderCloseButton()}>
