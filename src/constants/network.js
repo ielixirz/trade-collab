@@ -4,7 +4,7 @@ import React from 'react';
 export const profileColumns = [
   {
     dataField: 'company',
-    text: 'Company Name: (ID)',
+    text: 'Company Name',
     style: {
       width: '30%',
     },
