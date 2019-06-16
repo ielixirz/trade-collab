@@ -12,7 +12,7 @@ import {
   InputGroupAddon,
   Input,
   Row,
-  Col,
+  Col
 } from 'reactstrap';
 import './MemberModal.css';
 import * as _ from 'lodash';
@@ -23,14 +23,14 @@ class MemberModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      modal: false,
+      modal: false
     };
   }
 
   toggle = () => {
     console.log('toggle');
     this.setState(prevState => ({
-      modal: !prevState.modal,
+      modal: !prevState.modal
     }));
   };
 
@@ -42,10 +42,11 @@ class MemberModal extends React.Component {
 
   render() {
     const { count, list: member } = this.props;
+    console.log('Member Modal', member);
     const shipmentMember = [];
     console.log(this.props);
-    _.forEach(member, (item) => {
-      if (item.ChatRoomMemberCompanyName === '') {
+    _.forEach(member, item => {
+      if (_.isEmpty(item.ChatRoomMemberCompanyName)) {
         if (_.isEmpty(shipmentMember.Individual)) {
           shipmentMember.Individual = [];
           shipmentMember.Individual.push(item);
