@@ -224,9 +224,23 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
     setModal(!modal);
   };
 
+  const validateInvite = () => {
+    if (company === '' || invitedEmails.length === 0) {
+      return false;
+    }
+    if (invitedEmails.value) {
+      if (invitedEmails.value.length === 0) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   const nextStep = () => {
-    setCurrentStep(currentStep + 1);
-    fetchInvitedUserDetail([...invitedEmails], company.key);
+    if (validateInvite()) {
+      setCurrentStep(currentStep + 1);
+      fetchInvitedUserDetail([...invitedEmails], company.key);
+    }
   };
 
   const mapCompanyForDropdown = (companyData) => {
@@ -242,13 +256,6 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
       });
     });
     return companyList;
-  };
-
-  const validateInvite = () => {
-    if (company === '' || invitedEmails.length === 0) {
-      return false;
-    }
-    return true;
   };
 
   const validateRoleSelection = (inviteData) => {
