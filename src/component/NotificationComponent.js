@@ -23,7 +23,9 @@ export default ({ index, item, user, t, text }) => (
         <div>
           <small className="text-muted" />
           <small className="text-muted float-right mt-1">
-            {moment(t).format('DD/MM/YY')}
+            {t.toDateString() === new Date().toDateString()
+              ? 'Today'
+              : moment(t).format('DD/MM/YY')}
             <br />
             {moment(t).format('hh:mm a')}
           </small>
