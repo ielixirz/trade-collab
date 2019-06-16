@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/destructuring-assignment */
@@ -34,6 +35,7 @@ import {
 } from 'reactstrap';
 import ShipmentInlineDate from './components/ShipmentInlineDate';
 import MainDataTable from '../../component/MainDataTable';
+import TableLoading from '../../component/svg/TableLoading';
 
 import { NoteShipment } from './NoteShipment';
 import { AlertShipment } from './AlertShipment';
@@ -338,7 +340,13 @@ class TableShipment extends React.Component {
       return (
         <div>
           <p id={`popover${index}`} className="text-yterminal">
-            {refs.length > 0 ? refs[0].ShipmentReferenceID : 'Input your Ref#!'}
+            {refs.length > 0 ? (
+              refs[0].ShipmentReferenceID
+            ) : _.isEmpty(companies) ? (
+              <TableLoading />
+            ) : (
+              'Input your Ref#!'
+            )}
           </p>
           <UncontrolledPopover
             trigger="legacy"
