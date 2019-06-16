@@ -925,7 +925,7 @@ exports.NotiBellAcceptedIntoCompany = functions.firestore
             UserNotificationUserInfoKey: context.params.UserKey,
             UserNotificationUserEmail: GetUserInfo.data().UserInfoEmail,
             UserNotificationCompanyKey: context.params.CompanyKey,
-            UserNotificationCompanyName: newValue.CompanyInvitationCompanyName
+            UserNotificationCompanyName: newValue.CompanyInvitationName
           });
 
         AcceptedIntoCompanyServiceList.push(RequestToJoinAction);
