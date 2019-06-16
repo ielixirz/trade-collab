@@ -252,7 +252,7 @@ img {
 }
 
 .msg_history {
-  height: 80%;
+  height: 85%;
   overflow: auto;
   padding-right: 10px;
   display: flex;
