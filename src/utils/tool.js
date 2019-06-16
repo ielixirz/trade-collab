@@ -8,7 +8,6 @@ const LABEL = {
   id: 'id'
 };
 export const notificationTitleHelper = (item, index) => {
-  console.log('notification===>item', item);
   const t = new Date(item.UserNotificationTimestamp.seconds * 1000);
 
   switch (item.UserNotificationType) {
