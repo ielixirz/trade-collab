@@ -12,22 +12,25 @@ const ChatCreateRoom = ({
 }) => (
   <Card>
     <CardBody>
-      <Row>
-        <Col xs={4} />
-        <Col xs={4} className="text-lg-center">
-          Inform Other Party about this shipments
+      <Row style={{ marginTop: '30px' }}>
+        <Col xs={3} />
+        <Col xs={6} className="text-lg-center">
+          <h2 style={{ fontSize: '1.5em' }}>
+            <b>Inform other party about this shipments</b>
+          </h2>
         </Col>
-        <Col xs={4} />
+        <Col xs={3} />
       </Row>
       <Row
         style={{
-          marginTop: '100px',
-          marginBottom: '100px',
+          marginTop: '50px',
+          marginBottom: '50px',
         }}
       >
         <Col />
         <Col className="text-lg-center">
           <Button
+            className="create-chat-button"
             style={{
               width: '250px',
             }}
@@ -43,6 +46,7 @@ const ChatCreateRoom = ({
         </Col>
         <Col className="text-lg-center">
           <Button
+            className="create-chat-button"
             style={{
               width: '250px',
             }}
@@ -60,13 +64,14 @@ const ChatCreateRoom = ({
       </Row>
       <Row
         style={{
-          marginTop: '100px',
-          marginBottom: '100px',
+          marginTop: '50px',
+          marginBottom: '50px',
         }}
       >
         <Col />
         <Col className="text-lg-center">
           <Button
+            className="create-chat-button"
             color="chatcreate"
             size="lg"
             style={{
@@ -82,6 +87,7 @@ const ChatCreateRoom = ({
         </Col>
         <Col className="text-lg-center">
           <Button
+            className="create-chat-button"
             color="chatcreate"
             size="lg"
             style={{
@@ -97,23 +103,24 @@ const ChatCreateRoom = ({
         </Col>
         <Col />
       </Row>
-      <Row>
+      <Row style={{ marginBottom: '50px' }}>
         <Col />
         <Col md="auto">
-          <a href="#" id="toggler">
+          <a href="#" id="toggler" style={{ color: '#16A085' }}>
             {' '}
-            Non of the above? - See Other Parties
+            <b>Non of the above? - See Other Parties</b>
           </a>
         </Col>
         <Col />
       </Row>
       <Row>
         <Col />
-        <Col md="auto">
+        <Col>
           <UncontrolledCollapse toggler="#toggler">
-            <Row>
+            <Row className="create-chat-others-row">
               <Col>
                 <Button
+                  className="create-chat-button"
                   color="chatcreate"
                   size="lg"
                   style={{
@@ -129,8 +136,9 @@ const ChatCreateRoom = ({
               </Col>
             </Row>
             <br />
-            <Row>
+            <Row className="create-chat-others-row">
               <Button
+                className="create-chat-button"
                 color="chatcreate"
                 size="lg"
                 style={{
@@ -145,6 +153,7 @@ const ChatCreateRoom = ({
                 Exporter
               </Button>
               <Button
+                className="create-chat-button"
                 color="chatcreate"
                 size="lg"
                 style={{
@@ -160,8 +169,9 @@ const ChatCreateRoom = ({
             </Row>
             <br />
             {' '}
-            <Row>
+            <Row className="create-chat-others-row">
               <Button
+                className="create-chat-button"
                 color="chatcreate"
                 size="lg"
                 style={{
@@ -176,6 +186,7 @@ const ChatCreateRoom = ({
                 Outbound Forwarder
               </Button>
               <Button
+                className="create-chat-button"
                 color="chatcreate"
                 size="lg"
                 style={{
@@ -191,8 +202,9 @@ const ChatCreateRoom = ({
             </Row>
             <br />
             {' '}
-            <Row>
+            <Row className="create-chat-others-row">
               <Button
+                className="create-chat-button"
                 color="chatcreate"
                 size="lg"
                 style={{
@@ -207,6 +219,7 @@ const ChatCreateRoom = ({
                 Outbound Custom Broker
               </Button>
               <Button
+                className="create-chat-button"
                 color="chatcreate"
                 size="lg"
                 style={{
@@ -222,8 +235,9 @@ const ChatCreateRoom = ({
             </Row>
             <br />
             {' '}
-            <Row>
+            <Row className="create-chat-others-row">
               <Button
+                className="create-chat-button"
                 color="chatcreate"
                 size="lg"
                 style={{
@@ -238,6 +252,7 @@ const ChatCreateRoom = ({
                 Outbound Trucking
               </Button>
               <Button
+                className="create-chat-button"
                 color="chatcreate"
                 size="lg"
                 style={{
@@ -253,8 +268,9 @@ const ChatCreateRoom = ({
             </Row>
             <br />
             {' '}
-            <Row>
+            <Row className="create-chat-others-row">
               <Button
+                className="create-chat-button"
                 color="chatcreate"
                 size="lg"
                 style={{
@@ -269,6 +285,7 @@ const ChatCreateRoom = ({
                 Exporter Warehouse
               </Button>
               <Button
+                className="create-chat-button"
                 color="chatcreate"
                 size="lg"
                 style={{
