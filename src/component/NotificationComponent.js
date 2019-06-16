@@ -1,6 +1,7 @@
 import { DropdownItem } from 'reactstrap';
 import React from 'react';
 import { SetUserNotificationRead } from '../service/user/user';
+import moment from 'moment';
 
 export default ({ index, item, user, t, text }) => (
   <DropdownItem
@@ -21,7 +22,7 @@ export default ({ index, item, user, t, text }) => (
         </div>
         <div>
           <small className="text-muted" />
-          <small className="text-muted float-right mt-1">{t.toLocaleString()}</small>
+          <small className="text-muted float-right mt-1">{moment(t).format('hh:mm a')}</small>
         </div>
 
         <div className="small text-muted text-truncate">
@@ -31,3 +32,4 @@ export default ({ index, item, user, t, text }) => (
     </div>
   </DropdownItem>
 );
+//
