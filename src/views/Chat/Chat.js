@@ -407,7 +407,7 @@ class Chat extends Component {
         <TabContent>
           {activeTab.length !== 0
             ? this.renderChat(activeTab[0].ChatRoomKey, activeTab[0].ShipmentKey)
-            : 'Loading Shipment Chatroom'}
+            : ''}
         </TabContent>
       </div>
     );
