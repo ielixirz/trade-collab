@@ -46,6 +46,7 @@ class DefaultHeader extends Component {
   redirect = () => {
     this.props.history.replace('/login');
   };
+
   componentDidMount() {
     if (this.props.user) {
       this.props.fetchUserNotification(this.props.user.uid);
@@ -56,14 +57,19 @@ class DefaultHeader extends Component {
     // eslint-disable-next-line
     const { children, ...attributes } = this.props;
 
-    const notifications = this.props.notifications;
-    let notification = _.map(notifications, (item, index) => {
-      return notificationTitleHelper(item, index);
-    });
-    console.log(
-      'notifications===>',
-      _.filter(notifications, item => item.UserNotificationReadStatus === false)
+    let notifications = this.props.notifications;
+    notifications = _.orderBy(
+      notifications,
+      item => {
+        return new Date(item.UserNotificationTimestamp.seconds * 1000);
+      },
+      'desc'
     );
+
+    const notification = _.map(notifications, (item, index) =>
+      notificationTitleHelper(item, index, this.props.user.uid)
+    );
+    console.log('notifications===>', notifications);
     return (
       <React.Fragment>
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
@@ -138,7 +144,7 @@ class DefaultHeader extends Component {
                       onClick={() => {
                         _.forEach(notifications, item => {
                           if (item.UserNotificationReadStatus === false) {
-                            SetUserNotificationRead(item.UserNotificationUserInfoKey, item.id);
+                            SetUserNotificationRead(this.props.user.uid, item.id);
                           }
                         });
                       }}

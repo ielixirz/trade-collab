@@ -1,14 +1,15 @@
 import { DropdownItem } from 'reactstrap';
 import React from 'react';
 import { SetUserNotificationRead } from '../service/user/user';
+import moment from 'moment';
 
-export default ({ index, item, t, text }) => (
+export default ({ index, item, user, t, text }) => (
   <DropdownItem
     key={`notification${index}`}
     className={item.UserNotificationReadStatus ? '' : 'highlight'}
     onClick={() => {
       console.log('you has been click', item.id);
-      SetUserNotificationRead(item.UserNotificationUserInfoKey, item.id);
+      SetUserNotificationRead(user, item.id);
       window.location.href = '#/network';
     }}
   >
@@ -20,9 +21,13 @@ export default ({ index, item, t, text }) => (
           </div>
         </div>
         <div>
-          <small className="text-muted"> </small>
+          <small className="text-muted" />
           <small className="text-muted float-right mt-1">
-            {t.toDateString() === new Date().toDateString() ? 'Today' : t.toDateString()}
+            {t.toDateString() === new Date().toDateString()
+              ? 'Today'
+              : moment(t).format('DD/MM/YY')}
+            <br />
+            {moment(t).format('hh:mm a')}
           </small>
         </div>
 

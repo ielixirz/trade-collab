@@ -7,7 +7,7 @@ import NotificationComponent from '../component/NotificationComponent';
 const LABEL = {
   id: 'id'
 };
-export const notificationTitleHelper = (item, index) => {
+export const notificationTitleHelper = (item, index, userKey) => {
   const t = new Date(item.UserNotificationTimestamp.seconds * 1000);
 
   switch (item.UserNotificationType) {
@@ -16,6 +16,7 @@ export const notificationTitleHelper = (item, index) => {
         <NotificationComponent
           index={index}
           item={item}
+          user={userKey}
           text={`You has been accepted to join company ${item.UserNotificationCompanyName}`}
           t={t}
         />
@@ -26,9 +27,12 @@ export const notificationTitleHelper = (item, index) => {
         <NotificationComponent
           index={index}
           item={item}
-          text={`You has role in ${item.UserNotificationCompanyName} has been changed from ${
-            item.UserNotificationOldRole
-          } to ${item.UserNotificationNewRole}`}
+          user={userKey}
+          text={`${item.UserNotificationUserInfoEmail} role in ${
+            item.UserNotificationCompanyName
+          } has been changed from ${item.UserNotificationOldRole} to ${
+            item.UserNotificationNewRole
+          }`}
           s
           t={t}
         />
@@ -38,6 +42,7 @@ export const notificationTitleHelper = (item, index) => {
         <NotificationComponent
           index={index}
           item={item}
+          user={userKey}
           text={`You has been invited to company ${item.UserNotificationCompanyName}`}
           t={t}
         />
@@ -47,6 +52,7 @@ export const notificationTitleHelper = (item, index) => {
         <NotificationComponent
           index={index}
           item={item}
+          user={userKey}
           text={`${item.UserNotificationFirstname} has has request to join your Company ${
             item.UserNotificationCompanyName
           } `}
