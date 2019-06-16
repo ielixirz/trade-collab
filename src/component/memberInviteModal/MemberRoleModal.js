@@ -7,14 +7,21 @@
 import _ from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  Button, Modal, ModalHeader, ModalBody,
-} from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import '../MemberModal.css';
+import MemberInviteList from './MemberInviteList';
 
 const AVAILABLE_ROLES = {
-  Importer: ['Custom Broker Inbound', 'Forwarder Inbound'],
-  Exporter: ['Custom Broker Outbound', 'Forwarder Outbound'],
+  Importer: ['Importer', 'Exporter', 'Forwarder Inbound', 'Custom Broker Inbound'],
+  Exporter: ['Importer', 'Exporter', 'Custom Broker Outbound', 'Forwarder Outbound'],
+  'Forwarder Outbound': ['Exporter', 'Custom Broker Outbound', 'Forwarder Inbound'],
+  'Custom Broker Outbound': ['Importer', 'Custom Broker Inbound'],
+  'Forwarder Inbound': [
+    'Importer',
+    'Forwarder Outbound',
+    'Forwarder Inbound',
+    'Custom Broker Inbound'
+  ]
 };
 const DEFAULT_ROLE = ['None'];
 
@@ -22,17 +29,17 @@ class MemberRoleModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      modal: false,
+      modal: false
     };
   }
 
   toggle = () => {
     this.setState(prevState => ({
-      modal: !prevState.modal,
+      modal: !prevState.modal
     }));
   };
 
-  getRoleInitial = (role) => {
+  getRoleInitial = role => {
     const splited = role.split(' ');
     const { length } = splited;
     if (length > 1) {
@@ -42,9 +49,18 @@ class MemberRoleModal extends React.Component {
   };
 
   getRoleBaseOnUserType = () => {
-    const { user } = this.props;
+    const { user, usersRole } = this.props;
     const { UserInfoAccountType } = user;
-    return _.get(AVAILABLE_ROLES, UserInfoAccountType, DEFAULT_ROLE);
+    console.log('usersRole', usersRole);
+    let outputRole = [];
+    _.forEach(usersRole.ChatRoomMemberRole, item => {
+      let role = _.get(AVAILABLE_ROLES, item, DEFAULT_ROLE);
+      _.forEach(role, itemrole => {
+        outputRole.push(itemrole);
+      });
+    });
+
+    return _.union(outputRole);
   };
 
   renderCloseButton = () => (
@@ -53,7 +69,7 @@ class MemberRoleModal extends React.Component {
     </button>
   );
 
-  renderRole = (role) => {
+  renderRole = role => {
     const { roleCollection, onSelectRole } = this.props;
     return (
       <div key={role} className="member-role-content" onClick={() => onSelectRole(role)}>

@@ -232,8 +232,6 @@ exports.CreateChatRoomMessageKeyList = functions.firestore
             admin.firestore.FieldValue.increment(1)
           );
 
-          console.log(CountPayload);
-
           // CountPayload[context.params.ChatRoomKey] = 0;
 
           const SetCount = admin
@@ -285,13 +283,17 @@ exports.OnCreateShipment = functions.firestore
 
       const MasterDataDefaultTemplateData = GetMasterDataDefaultTemplate.data();
 
+      delete MasterDataDefaultTemplateData.ShipmentDetailProduct;
+
       const CreateShipmentShareData = await admin
         .firestore()
         .collection('Shipment')
         .doc(context.params.ShipmentKey)
         .collection('ShipmentShareData')
         .doc('DefaultTemplate')
-        .set(MasterDataDefaultTemplateData);
+        .set(MasterDataDefaultTemplateData, {
+          merge: true
+        });
 
       const AddShipmentShareList = await admin
         .firestore()
@@ -343,11 +345,42 @@ exports.OnCreateShipment = functions.firestore
         );
 
       // End AutoAddOwnerShipmemtMemberWhenCreateShipment
+
+      // AutoCreateChatRoom
+
+      const AddChatRoom = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ChatRoom')
+        .add({
+          ChatRoomName: ShipmetMemberRole,
+          ChatRoomType: ShipmetMemberRole,
+          ChatRoomShareDataList: ['DefaultTemplate']
+        });
+
+      const ChatRoomID = AddChatRoom.id;
+
+      const AddChatRoomMember = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ChatRoom')
+        .doc(ChatRoomID)
+        .collection('ChatRoomMember')
+        .add({
+          ChatRoomMemberUserKey: ShipmentMemberUserKey,
+          ChatRoomMemberEmail: UserEmail,
+          ChatRoomMemberRole: [ShipmetMemberRole]
+        });
+
       return Promise.all([
         CreateShipmentShareData,
         AddShipmentShareList,
         AddShipmentMember,
-        AddShipmentMemberList
+        AddShipmentMemberList,
+        AddChatRoom,
+        AddChatRoomMember
       ]);
     } catch (error) {
       return error;
@@ -378,6 +411,8 @@ exports.ManageShipmentMember = functions.firestore
     const newValue = change.after.data();
 
     const UserKey = newValue.ChatRoomMemberUserKey;
+
+    const UserEmail = newValue.ChatRoomMemberEmail;
 
     const GetUserProfileList = await admin
       .firestore()
@@ -441,6 +476,8 @@ exports.ManageShipmentMember = functions.firestore
     // NotiCount First join shipment
 
     const UserPersonalizeProfileActionList = [];
+    let CreateSystemGenInviteIntoShipment;
+    let SendEmailInviteIntoShipment;
 
     if (!oldValue && newValue) {
       ProfileKeyList.forEach(async Item => {
@@ -458,8 +495,6 @@ exports.ManageShipmentMember = functions.firestore
         //   FirstJoinStatus = GetFirstJoin.data().ShipmentFristJoin;
         // }
 
-        // console.log(FirstJoinStatus);
-
         const FirstJoinPayloadObject = { ShipmentFristJoin: {} };
 
         FirstJoinPayloadObject['ShipmentFristJoin'][context.params.ShipmentKey] = true;
@@ -469,41 +504,39 @@ exports.ManageShipmentMember = functions.firestore
             merge: true
           });
           UserPersonalizeProfileActionList.push(SetFirstJoinAction);
-
-          // Send Email InviteIntoShipment
-
-          if (ProfileEmail) {
-            await SendEmail(
-              InviteIntoShipmentTemplate(
-                ProfileEmail,
-                `You have new invitation into shipment `,
-                `<strong>You have new invitation into shipment</strong>`
-              )
-            );
-          }
-
-          // End Send Email InviteIntoShipment
-
-          // Noti-SystemGen InviteIntoShipment
-
-          await admin
-            .firestore()
-            .collection('Shipment')
-            .doc(context.params.ShipmentKey)
-            .collection('ChatRoom')
-            .doc(context.params.ChatRoomKey)
-            .collection('ChatRoomMessage')
-            .add({
-              ChatRoomMessageContext: `${newValue.ChatRoomMemberFirstName} ${
-                newValue.ChatRoomMemberSurName
-              } (${ChatRoomMemberEmail}) joined`,
-              ChatRoomMessageType: 'System',
-              ChatRoomMessageTimestamp: admin.firestore.FieldValue.serverTimestamp
-            });
-
-          // End Noti-SystemGen InviteIntoShipment
         }
-      });
+      }); // End forEach
+
+      // Send Email InviteIntoShipment
+
+      SendEmailInviteIntoShipment = await SendEmail(
+        InviteIntoShipmentTemplate(
+          UserEmail,
+          `You have new invitation into shipment `,
+          `<strong>You have new invitation into shipment</strong>`
+        )
+      );
+
+      // End Send Email InviteIntoShipment
+
+      // Noti-SystemGen InviteIntoShipment
+
+      CreateSystemGenInviteIntoShipment = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ChatRoom')
+        .doc(context.params.ChatRoomKey)
+        .collection('ChatRoomMessage')
+        .add({
+          ChatRoomMessageContext: `${newValue.ChatRoomMemberFirstName} ${
+            newValue.ChatRoomMemberSurName
+          } (${newValue.ChatRoomMemberEmail}) joined`,
+          ChatRoomMessageType: 'System',
+          ChatRoomMessageTimestamp: admin.firestore.FieldValue.serverTimestamp
+        });
+
+      // End Noti-SystemGen InviteIntoShipment
     }
 
     // End NotiCount First join shipment
@@ -547,10 +580,74 @@ exports.ManageShipmentMember = functions.firestore
           { merge: true }
         );
 
+      // Set Buyer Seller
+
+      let SetCompanyName = [];
+
+      if (newValue.ChatRoomMemberRole.includes('Exporter') && newValue.ChatRoomMemberCompanyName) {
+        const SetCompanyNameAtShipment = await admin
+          .firestore()
+          .collection('Shipment')
+          .doc(context.params.ShipmentKey)
+          .set(
+            {
+              ShipmentSellerCompanyName: newValue.ChatRoomMemberCompanyName
+            },
+            { merge: true }
+          );
+        const SetCompanyNameAtShipmentShareData = await admin
+          .firestore()
+          .collection('Shipment')
+          .doc(context.params.ShipmentKey)
+          .collection('ShipmentShareData')
+          .doc('DefaultTemplate')
+          .set(
+            {
+              ShipperCompanyName: newValue.ChatRoomMemberCompanyName
+            },
+            { merge: true }
+          );
+
+        SetCompanyName = [SetCompanyNameAtShipment, SetCompanyNameAtShipmentShareData];
+      } else if (
+        newValue.ChatRoomMemberRole.includes('Importer') &&
+        newValue.ChatRoomMemberCompanyName
+      ) {
+        const SetCompanyNameAtShipment = await admin
+          .firestore()
+          .collection('Shipment')
+          .doc(context.params.ShipmentKey)
+          .set(
+            {
+              ShipmentBuyerCompanyName: newValue.ChatRoomMemberCompanyName
+            },
+            { merge: true }
+          );
+        const SetCompanyNameAtShipmentShareData = await admin
+          .firestore()
+          .collection('Shipment')
+          .doc(context.params.ShipmentKey)
+          .collection('ShipmentShareData')
+          .doc('DefaultTemplate')
+          .set(
+            {
+              ConsigneeCompanyName: newValue.ChatRoomMemberCompanyName
+            },
+            { merge: true }
+          );
+
+        SetCompanyName = [SetCompanyNameAtShipment, SetCompanyNameAtShipmentShareData];
+      }
+
+      // End Set Buyer Seller
+
       return Promise.all([
         UserPersonalizeProfileActionList,
         AddShipmentMember,
-        AddShipmentMemberList
+        AddShipmentMemberList,
+        SetCompanyName,
+        CreateSystemGenInviteIntoShipment,
+        SendEmailInviteIntoShipment
       ]);
     } else if (oldValue && !newValue) {
       PayloadObject[oldValue['ChatRoomMemberUserKey']] = null;
@@ -687,7 +784,8 @@ exports.CopyInsideMasterDataToShipment = functions.firestore
               ShipperPort: newValue.ShipperPort,
               ConsigneePort: newValue.ConsigneePort,
               ShipperETDDate: newValue.ShipperETDDate,
-              ConsigneeETAPortDate: newValue.ConsigneeETAPortDate
+              ConsigneeETAPortDate: newValue.ConsigneeETAPortDate,
+              ShipmentProductName: newValue.ShipmentDetailProduct
             },
             { merge: true }
           );
@@ -759,7 +857,8 @@ exports.NotiBellRequestToJoinCompany = functions.firestore
           UserNotificationUserInfoKey: snapshot.data().UserRequestUserKey,
           UserNotificationFirstname: snapshot.data().UserRequestFristname,
           UserNotificationSurname: snapshot.data().UserRequestSurname,
-          UserNotificationCompanyKey: context.params.CompanyKey
+          UserNotificationCompanyKey: context.params.CompanyKey,
+          UserNotificationCompanyName: snapshot.data().UserRequestCompanyName
         });
 
       RequestToJoinServiceList.push(RequestToJoinAction);
@@ -797,30 +896,6 @@ exports.NotiBellAcceptedIntoCompany = functions.firestore
         .doc(context.params.UserKey)
         .get();
 
-      // +UserNotification
-      //   >UserNotificationKey
-      //       UserNotificationReadStatus (bool)
-      //       UserNotificationType (string)
-      //       UserNotificationTimestamp (timestamp)
-      //       UserNotificationImageURL (string)
-      //       UserNotificationFirstname (string)
-      //       UserNotificationSurname (string)
-      //       UserNotificationUserInfoKey (string)
-      //       UserNotificationCompanyName (string)
-      //       UserNotificationCompanyKey (string)
-      //       UserNotificationRedirectPage (string)
-      //       UserNotificationShipmentKey (string)
-      //       UserNotificationChatroonKey (string)
-
-      //           CompanyInvitationReference (reference)
-      //           CompanyInvitationCompanyKey (string)
-      //           CompanyInvitationName (string)
-      //           CompanyInvitationEmail (string)
-      //           CompanyInvitationPosition (string)
-      //           CompanyInvitationRole (string)
-      //           CompanyInvitationTimestamp (timestamp)
-      //           CompanyInvitationStatus (string) ('Reject','Approve','Pending')
-
       const AcceptedIntoCompanyServiceList = [];
 
       CompanyMemberKeyList.forEach(async Item => {
@@ -835,7 +910,8 @@ exports.NotiBellAcceptedIntoCompany = functions.firestore
             UserNotificationTimestamp: admin.firestore.FieldValue.serverTimestamp(),
             UserNotificationUserInfoKey: context.params.UserKey,
             UserNotificationUserEmail: GetUserInfo.data().UserInfoEmail,
-            UserNotificationCompanyKey: context.params.CompanyKey
+            UserNotificationCompanyKey: context.params.CompanyKey,
+            UserNotificationCompanyName: newValue.CompanyInvitationCompanyKey
           });
 
         AcceptedIntoCompanyServiceList.push(RequestToJoinAction);
@@ -859,6 +935,14 @@ exports.NotiBellChangeOfRoleWithInCompany = functions.firestore
         .collection('CompanyMember')
         .get();
 
+      const GetCompanyName = await admin
+        .firestore()
+        .collection('Company')
+        .doc(context.params.CompanyKey)
+        .get();
+
+      const CompanyName = GetCompanyName.data().CompanyName;
+
       const CompanyMemberKeyList = GetCompanyMember.docs.map(
         CompanyMemberItem => CompanyMemberItem.id
       );
@@ -879,7 +963,8 @@ exports.NotiBellChangeOfRoleWithInCompany = functions.firestore
             UserNotificationUserInfoEmail: newValue.UserMemberEmail,
             UserNotificationNewRole: newValue.UserMemberRoleName,
             UserNotificationOldRole: oldValue.UserMemberRoleName,
-            UserNotificationCompanyKey: context.params.CompanyKey
+            UserNotificationCompanyKey: context.params.CompanyKey,
+            UserNotificationCompanyName: CompanyName
           });
 
         ChangeOfRoleWithInCompanyServiceList.push(RequestToJoinAction);
@@ -977,30 +1062,6 @@ exports.LeaveCompany = functions.firestore
       DeleteCompanyInChatRoomMemberServiceList
     ]);
   });
-
-// +UserNotification
-//   >UserNotificationKey
-//       UserNotificationReadStatus (bool)
-//       UserNotificationType (string)
-//       UserNotificationTimestamp (timestamp)
-//       UserNotificationImageURL (string)
-//       UserNotificationFirstname (string)
-//       UserNotificationSurname (string)
-//       UserNotificationUserInfoKey (string)
-//       UserNotificationCompanyName (string)
-//       UserNotificationCompanyKey (string)
-//       UserNotificationRedirectPage (string)
-//       UserNotificationShipmentKey (string)
-//       UserNotificationChatroonKey (string)
-
-// +CompanyMember (Array<object>)
-//   >UserKey
-//     UserMemberEmail (string)
-//     UserMemberPosition (string)
-//     UserMemberRoleName (string)
-//     UserMatrixRolePermissionCode (string) (Binary number)
-//     UserMemberCompanyStandingStatus (string)
-//     UserMemberJoinedTimestamp (timestamp)
 
 exports.AddProfileDataInUserPersonalizeWhenCreateProfile = functions.firestore
   .document('UserInfo/{UserKey}/Profile/{ProfileKey}')
@@ -1113,7 +1174,6 @@ exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
 
       const UserAllUnreadCount = UserShipmentChatCountList.reduce(reducer);
 
-      //console.log(UserAllUnreadCount);
       let CreateEmailText = `${UserAllUnreadCount} Unread messages`;
       let CreateEmailHtml = `<h2>${UserAllUnreadCount} Unread messages</h2><br>`;
 

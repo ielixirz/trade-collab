@@ -47,6 +47,8 @@ import './Chat.css';
 import './MasterDetail.css';
 import { GetShipmentDetail } from '../../service/shipment/shipment';
 import { GetShipmentNotificationCount } from '../../service/personalize/personalize';
+import { GetUserCompany } from '../../service/user/user';
+import { fetchCompany } from '../../actions/companyAction';
 
 class Chat extends Component {
   constructor(props) {
@@ -129,7 +131,6 @@ class Chat extends Component {
     const ChatRoomMember = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomMember`, []);
     const ChatRoomData = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomData`, []);
     const member = _.get(chatrooms, `[${ChatRoomKey}].member`, []);
-    console.log('ChatRoomMember', _.get(chatrooms, `[${ChatRoomKey}]`, {}));
 
     return (
       <ChatWithHeader
@@ -278,7 +279,6 @@ class Chat extends Component {
     });
     GetShipmentDetail(params.shipmentkey).subscribe({
       next: res => {
-        console.log(res.data());
         this.setState({
           shipments: {
             ...res.data()
@@ -288,7 +288,6 @@ class Chat extends Component {
     });
     GetShipmentNotificationCount(this.props.sender.id, params.shipmentkey).subscribe({
       next: res => {
-        console.log('GetShipmentNotificationCount', res.data());
         this.setState({
           chatAlert: res.data()
         });
@@ -302,7 +301,14 @@ class Chat extends Component {
       });
     });
     _.forEach(tabs, tab => {
+      console.log('fetch', tab);
       this.props.fetchChatMessage(tab.ChatRoomKey, tab.ShipmentKey);
+    });
+    GetUserCompany(this.props.user.uid).subscribe({
+      next: res => {
+        console.log('Fetched Company is', res);
+        this.props.fetchCompany(res);
+      }
     });
   }
 
@@ -394,7 +400,6 @@ class Chat extends Component {
         member: item.member
       });
     });
-    console.log(tabs);
     tabs = _.sortBy(tabs, 'position');
     const activeTab = tabs.filter(tab => tab.active === true);
     return (
@@ -410,7 +415,7 @@ class Chat extends Component {
         <TabContent>
           {activeTab.length !== 0
             ? this.renderChat(activeTab[0].ChatRoomKey, activeTab[0].ShipmentKey)
-            : 'Loading Shipment Chatroom'}
+            : ''}
         </TabContent>
       </div>
     );
@@ -443,6 +448,7 @@ export default connect(
     onSendMessage: sendMessage,
     moveTab,
     selectTab,
-    getChatRoomList
+    getChatRoomList,
+    fetchCompany
   }
 )(Chat);

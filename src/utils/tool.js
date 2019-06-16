@@ -8,7 +8,6 @@ const LABEL = {
   id: 'id'
 };
 export const notificationTitleHelper = (item, index) => {
-  console.log('notification===>item', item);
   const t = new Date(item.UserNotificationTimestamp.seconds * 1000);
 
   switch (item.UserNotificationType) {
@@ -27,9 +26,9 @@ export const notificationTitleHelper = (item, index) => {
         <NotificationComponent
           index={index}
           item={item}
-          text={`You has role has been changed from ${item.UserNotificationOldRole} to ${
-            item.UserNotificationNewRole
-          }`}
+          text={`You has role in ${item.UserNotificationCompanyName} has been changed from ${
+            item.UserNotificationOldRole
+          } to ${item.UserNotificationNewRole}`}
           s
           t={t}
         />
@@ -48,7 +47,9 @@ export const notificationTitleHelper = (item, index) => {
         <NotificationComponent
           index={index}
           item={item}
-          text={`${item.UserNotificationFirstname} has has request to join your Company `}
+          text={`${item.UserNotificationFirstname} has has request to join your Company ${
+            item.UserNotificationCompanyName
+          } `}
           t={t}
         />
       );
@@ -118,12 +119,12 @@ export const createDataTable = input => {
         dataField: item,
         sort: false,
         style: {
-          width: '20%'
+          width: '15%'
         },
         headerAlign: 'center',
         align: 'center',
         headerStyle: {
-          width: '20%'
+          width: '15%'
         }
       };
     }
@@ -141,6 +142,29 @@ export const createDataTable = input => {
         dataField: item,
         sort: true,
         hidden: true
+      };
+    }
+    if (item === 'Buyer' || item === 'Seller') {
+      return {
+        text: _.get(LABEL, item, item),
+        dataField: item,
+        headerAlign: 'left',
+        align: 'left',
+        sort: true
+      };
+    }
+    if (item === 'Status') {
+      return {
+        text: _.get(LABEL, item, item),
+        dataField: item,
+        style: {
+          width: '15%'
+        },
+        headerAlign: 'center',
+        align: 'center',
+        headerStyle: {
+          width: '15%'
+        }
       };
     }
     return {

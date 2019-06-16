@@ -207,6 +207,7 @@ export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
       member: item.member
     };
   });
+
   dispatch({ type: MOVE_TAB, payload: originalReducer });
 };
 
@@ -244,6 +245,56 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
       position: index,
       member: item.member
     };
+    const { ChatRoomKey, ShipmentKey } = item;
+    const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.message`, false);
+    const members = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.members`, false);
+    if (room) {
+      room.unsubscribe();
+      if (members) {
+        members.unsubscribe();
+      }
+    }
+    _.set(
+      chatroom,
+      `${ShipmentKey}.${ChatRoomKey}.message`,
+      GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
+        next: res => {
+          console.log(res);
+
+          dispatch({
+            type: FETCH_CHAT,
+            id: ChatRoomKey,
+            payload: res
+          });
+          _.set(
+            chatroom,
+            `${ShipmentKey}.${ChatRoomKey}.member`,
+            GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
+              next: res => {
+                console.log('Respond', res);
+                const members = _.map(res, item => {
+                  console.log(item);
+                  return {
+                    ChatRoomMemberKey: item.id,
+                    ...item.data()
+                  };
+                });
+                dispatch({
+                  type: FETCH_CHAT_MEMBER,
+                  id: ChatRoomKey,
+                  payload: members
+                });
+              }
+            })
+          );
+        },
+        error: err => {
+          console.log(err);
+          alert(err.message);
+        },
+        complete: () => {}
+      })
+    );
   });
   dispatch({ type: MOVE_TAB, payload: originalReducer });
 };
@@ -388,6 +439,57 @@ export const getChatRoomList = (shipmentKey, uid) => dispatch => {
           ChatRoomData: c.ChatRoomData,
           position: index
         };
+
+        const { ChatRoomKey, ShipmentKey } = c;
+        const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.message`, false);
+        const members = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.members`, false);
+        if (room) {
+          room.unsubscribe();
+          if (members) {
+            members.unsubscribe();
+          }
+        }
+        _.set(
+          chatroom,
+          `${ShipmentKey}.${ChatRoomKey}.message`,
+          GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
+            next: res => {
+              console.log(res);
+
+              dispatch({
+                type: FETCH_CHAT,
+                id: ChatRoomKey,
+                payload: res
+              });
+              _.set(
+                chatroom,
+                `${ShipmentKey}.${ChatRoomKey}.member`,
+                GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
+                  next: res => {
+                    console.log('Respond', res);
+                    const members = _.map(res, item => {
+                      console.log(item);
+                      return {
+                        ChatRoomMemberKey: item.id,
+                        ...item.data()
+                      };
+                    });
+                    dispatch({
+                      type: FETCH_CHAT_MEMBER,
+                      id: ChatRoomKey,
+                      payload: members
+                    });
+                  }
+                })
+              );
+            },
+            error: err => {
+              console.log(err);
+              alert(err.message);
+            },
+            complete: () => {}
+          })
+        );
       });
 
       originalReducer.custom = {

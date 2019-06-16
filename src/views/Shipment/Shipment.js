@@ -39,10 +39,12 @@ import {
   CombineShipmentAndShipmentReference,
   CreateShipment
 } from '../../service/shipment/shipment';
+import { UpdateMasterData } from '../../service/masterdata/masterdata';
 import './Shipment.css';
 import { GetUserCompany } from '../../service/user/user';
 import { GetShipmentTotalCount } from '../../service/personalize/personalize';
 import _ from 'lodash';
+import { fetchCompany } from '../../actions/companyAction';
 
 class Shipment extends Component {
   constructor(props) {
@@ -134,8 +136,11 @@ class Shipment extends Component {
     }
     parameter.ShipmentCreateTimestamp = new Date().getTime();
     CreateShipment(parameter).subscribe({
-      next: res => {
-        this.props.fetchShipments(this.state.typeShipment);
+      next: createdShipment => {
+        this.fetchShipmentReload();
+        UpdateMasterData(createdShipment.id, 'DefaultTemplate', {
+          ShipmentDetailProduct: parameter.ShipmentProductName
+        }).subscribe(() => {});
       }
     });
 
@@ -159,7 +164,7 @@ class Shipment extends Component {
           this.state.typeShipment,
           '',
           'asc',
-          this.props.shipments.length + 10,
+          _.size(this.props.shipments) + 10,
           this.props.user.uid
         ).subscribe({
           next: shipment => {
@@ -184,7 +189,7 @@ class Shipment extends Component {
           this.state.typeShipment,
           '',
           'asc',
-          this.props.shipments.length + 10,
+          _.size(this.props.shipments) + 10,
           this.props.user.uid
         ).subscribe({
           next: shipment => {
@@ -212,6 +217,7 @@ class Shipment extends Component {
           this.props.user.uid
         ).subscribe({
           next: shipment => {
+            console.log('SHIPMENTS', shipment);
             this.props.fetchShipments(shipment, notification);
           },
           error: err => {
@@ -227,11 +233,7 @@ class Shipment extends Component {
     GetUserCompany(this.props.user.uid).subscribe({
       next: res => {
         console.log('Fetched Company is', res);
-        this.setState({
-          companies: {
-            ...res
-          }
-        });
+        this.props.fetchCompany(res);
       }
     });
   }
@@ -728,7 +730,7 @@ class Shipment extends Component {
               <Col sm="12">
                 <BlockUi tag="div" blocking={this.state.blocking} style={{ height: '100%' }}>
                   <TableShipment
-                    companies={this.state.companies}
+                    companies={this.props.companies}
                     input={{ ...this.props.shipments }}
                     typeShipment={this.state.typeShipment}
                     toggleBlock={this.toggleBlocking}
@@ -767,11 +769,12 @@ const mapStateToProps = state => {
   return {
     shipments: state.shipmentReducer.Shipments,
     user: state.authReducer.user,
-    sender
+    sender,
+    companies: companyReducer.UserCompany
   };
 };
 
 export default connect(
   mapStateToProps,
-  { fetchShipments, fetchMoreShipments }
+  { fetchShipments, fetchMoreShipments, fetchCompany }
 )(Shipment);

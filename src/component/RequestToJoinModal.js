@@ -59,6 +59,7 @@ const RequestToJoinModal = forwardRef((props, ref) => {
           UserRequestKey: usrReqKey,
           UserRequestUserKey: userKey,
           UserRequestCompanyKey: selectedCompany.id,
+          UserRequestCompanyName: selectedCompany.data.CompanyName,
           UserRequestFristname: props.profile.ProfileFirstname,
           UserRequestSurname: props.profile.ProfileSurname,
           UserRequestEmail: props.profile.ProfileEmail,

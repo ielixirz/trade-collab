@@ -12,24 +12,25 @@ import {
   InputGroupAddon,
   Input,
   Row,
-  Col,
+  Col
 } from 'reactstrap';
 import './MemberModal.css';
 import * as _ from 'lodash';
+import TextLoading from './svg/TextLoading';
 import MemberInChat from './MemberInChat';
 
 class MemberModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      modal: false,
+      modal: false
     };
   }
 
   toggle = () => {
     console.log('toggle');
     this.setState(prevState => ({
-      modal: !prevState.modal,
+      modal: !prevState.modal
     }));
   };
 
@@ -41,10 +42,11 @@ class MemberModal extends React.Component {
 
   render() {
     const { count, list: member } = this.props;
+    console.log('Member Modal', member);
     const shipmentMember = [];
     console.log(this.props);
-    _.forEach(member, (item) => {
-      if (item.ChatRoomMemberCompanyName === '') {
+    _.forEach(member, item => {
+      if (_.isEmpty(item.ChatRoomMemberCompanyName)) {
         if (_.isEmpty(shipmentMember.Individual)) {
           shipmentMember.Individual = [];
           shipmentMember.Individual.push(item);
@@ -62,8 +64,23 @@ class MemberModal extends React.Component {
     return (
       <div>
         <Button className="btn-see-chatmember" onClick={this.toggle}>
-          <i style={{ marginRight: '0.5rem' }} className="fa  fa-users fa-lg" />
-          {count}
+          {/* <i style={{ marginRight: '0.5rem' }} className="fa  fa-users fa-lg" /> */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14.4"
+            height="12"
+            viewBox="0 0 14.4 12"
+            style={{ marginRight: '0.5rem', paddingBottom: '0.75px' }}
+          >
+            <path
+              id="Combined-Shape"
+              d="M10.8,13.4a.6.6,0,0,1-1.2,0V12.2a1.8,1.8,0,0,0-1.8-1.8H3a1.8,1.8,0,0,0-1.8,1.8v1.2a.6.6,0,0,1-1.2,0V12.2a3,3,0,0,1,3-3H7.8a3,3,0,0,1,3,3ZM5.4,8a3,3,0,1,1,3-3A3,3,0,0,1,5.4,8Zm9,5.4a.6.6,0,0,1-1.2,0V12.2a1.8,1.8,0,0,0-1.35-1.741.6.6,0,1,1,.3-1.162,3,3,0,0,1,2.25,2.9ZM9.451,3.259a.6.6,0,1,1,.3-1.163,3,3,0,0,1,0,5.813.6.6,0,1,1-.3-1.163,1.8,1.8,0,0,0,0-3.487ZM5.4,6.8A1.8,1.8,0,1,0,3.6,5,1.8,1.8,0,0,0,5.4,6.8Z"
+              transform="translate(0 -2)"
+              fill="#6a6a6a"
+            />
+          </svg>
+
+          {count === 0 ? <TextLoading /> : count}
         </Button>
         <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
           <ModalHeader toggle={this.toggle} close={this.renderCloseButton()}>

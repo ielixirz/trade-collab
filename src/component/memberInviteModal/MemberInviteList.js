@@ -26,6 +26,7 @@ class MemberInviteList extends React.Component {
         existRoles={existRoles}
         shouldInvite={shouldInvite}
         isSelected={this.exist(profile.Email)}
+        usersRole={this.props.usersRole}
       />
     );
   };

@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/anchor-is-valid */
@@ -10,6 +11,7 @@ import Select from 'react-select';
 import MemberModal from '../../../component/MemberModal';
 import MemberInviteModal from '../../../component/MemberInviteModal';
 import UploadModal from '../../../component/UploadModal';
+import TextLoading from '../../../component/svg/TextLoading';
 import FileSide from '../FileSide';
 import ShipmentSide from '../ShipmentSide';
 import ChatMessage from './ChatMessage';
@@ -54,13 +56,6 @@ class ChatWithHeader extends Component {
   }
 
   componentDidMount() {
-    GetUserCompany(this.props.user.uid).subscribe({
-      next: res => {
-        this.setState({
-          companies: res
-        });
-      }
-    });
     console.log('This.props', this.props);
     const { ShipmentKey, ChatRoomKey } = this.props;
   }
@@ -74,7 +69,7 @@ class ChatWithHeader extends Component {
 
   handleAssignCompany(e, role, userRole) {
     const { ShipmentKey, ChatRoomKey, members } = this.props;
-    const { companies } = this.state;
+    const { companies } = this.props;
     const pickedCompany = _.find(companies, item => item.CompanyKey === e.value);
     if (pickedCompany) {
       const getCompany = GetCompanyMember(e.value).subscribe({
@@ -145,7 +140,7 @@ class ChatWithHeader extends Component {
 
     const isHaveRole = _.find(member, item => item.ChatRoomMemberUserKey === user.uid);
     // const isHaveRole = _.get(ShipmentData, `ShipmentMember.${user.uid}`, {});
-    const companies = this.state.companies;
+    const companies = this.props.companies;
 
     let options = [];
     options = _.map(companies, item => ({
@@ -212,64 +207,63 @@ class ChatWithHeader extends Component {
                 </Row>
               </div>
             );
-          } else {
-            console.log('Not Creator');
-            return (
-              <div
+          }
+          console.log('Not Creator');
+          return (
+            <div
+              style={{
+                backgroundColor: 'rgba(242, 175, 41, 0.3)',
+                height: 'auto',
+                padding: '10px',
+                borderRadius: '5px',
+                zIndex: '100'
+              }}
+            >
+              <p
                 style={{
-                  backgroundColor: 'rgba(242, 175, 41, 0.3)',
-                  height: 'auto',
-                  padding: '10px',
-                  borderRadius: '5px',
-                  zIndex: '100'
+                  fontWeight: 700,
+                  color: '#000000'
                 }}
               >
-                <p
-                  style={{
-                    fontWeight: 700,
-                    color: '#000000'
-                  }}
-                >
-                  {user.email} has been invited as
-                  {_.join(isHaveRole.ChatRoomMemberRole, ',')} for this shipment
-                </p>
-                <p>Select a company, to inform your team about this shipment</p>
+                {user.email} has been invited as
+                {_.join(isHaveRole.ChatRoomMemberRole, ',')} for this shipment
+              </p>
+              <p>Select a company, to inform your team about this shipment</p>
 
-                <Row>
-                  <Col xs={6}>
-                    <Select
-                      onChange={e => {
-                        this.setState({ company: e });
-                      }}
-                      name="company"
-                      options={options}
-                      value={this.state.company}
-                    />
-                  </Col>
-                  <Col xs={2}>
-                    <Button
-                      className="invite-btn"
-                      style={{
-                        marginLeft: '2rem',
-                        marginRight: '1rem',
-                        color: 'white',
-                        backgroundColor: '#16A085'
-                      }}
-                      onClick={() => {
-                        this.handleAssignCompany(
-                          this.state.company,
-                          ChatRoomType,
-                          isHaveRole.ShipmentMemberRole
-                        );
-                      }}
-                    >
-                      Confirm
-                    </Button>
-                  </Col>
-                </Row>
-              </div>
-            );
-          }
+              <Row>
+                <Col xs={6}>
+                  <Select
+                    onChange={e => {
+                      this.setState({ company: e });
+                    }}
+                    name="company"
+                    options={options}
+                    value={this.state.company}
+                  />
+                </Col>
+                <Col xs={2}>
+                  <Button
+                    className="invite-btn"
+                    style={{
+                      marginLeft: '2rem',
+                      marginRight: '1rem',
+                      color: 'white',
+                      backgroundColor: '#16A085'
+                    }}
+                    onClick={() => {
+                      this.handleAssignCompany(
+                        this.state.company,
+                        ChatRoomType,
+                        isHaveRole.ShipmentMemberRole
+                      );
+                    }}
+                  >
+                    Confirm
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          );
         }
       }
     }
@@ -383,7 +377,7 @@ class ChatWithHeader extends Component {
 
     if (!_.isEmpty(isInvited)) {
       console.log('Find shipmetn REF >>>>>', _.get(ship, 'ShipmentReferenceList', []));
-      if (_.size(ship.ShipmentReferenceList) > 0) {
+      if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
         ref = _.find(
           ship.ShipmentReferenceList,
           item => item.ShipmentReferenceCompanyKey === isInvited.ChatRoomMemberCompanyKey
@@ -391,8 +385,7 @@ class ChatWithHeader extends Component {
         console.log(ref, 'reffff');
       }
     } else {
-      ref =
-        'No Refferenc                                                                                                                                                                                                                         e';
+      ref = 'loading';
     }
 
     return (
@@ -408,14 +401,22 @@ class ChatWithHeader extends Component {
               ShipmentKey={ShipmentKey}
               ChatRoomKey={ChatRoomKey}
               member={member}
+              usersRole={isInvited}
             />
             <Button className="btn-chat-label">|</Button>
             <MemberModal {...this.props} count={member.length} list={member} />
 
             <Button className="btn-chat-label">|</Button>
             <Button className="btn-chat-label">
-              Ref#
-              {ref.ShipmentReferenceID}
+              {ref === 'loading' ? (
+                <TextLoading />
+              ) : _.get(ref, 'ShipmentReferenceID', '') === '' ? (
+                <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>
+                  Ref is not defined
+                </span>
+              ) : (
+                `Ref#${_.get(ref, 'ShipmentReferenceID', '')}`
+              )}
             </Button>
           </Breadcrumb>
         </Row>
