@@ -361,7 +361,6 @@ class TableShipment extends React.Component {
     });
 
     combineLatest(updateObs).subscribe(() => {
-      this.props.fetchShipments();
       this.props.toggleBlock(false);
     });
     if (updateObs.length === 0) {
