@@ -412,6 +412,8 @@ exports.ManageShipmentMember = functions.firestore
 
     const UserKey = newValue.ChatRoomMemberUserKey;
 
+    const UserEmail = newValue.ChatRoomMemberEmail;
+
     const GetUserProfileList = await admin
       .firestore()
       .collection('UserInfo')
@@ -474,6 +476,8 @@ exports.ManageShipmentMember = functions.firestore
     // NotiCount First join shipment
 
     const UserPersonalizeProfileActionList = [];
+    let CreateSystemGenInviteIntoShipment;
+    let SendEmailInviteIntoShipment;
 
     if (!oldValue && newValue) {
       ProfileKeyList.forEach(async Item => {
@@ -500,26 +504,24 @@ exports.ManageShipmentMember = functions.firestore
             merge: true
           });
           UserPersonalizeProfileActionList.push(SetFirstJoinAction);
-
-          // Send Email InviteIntoShipment
-
-          if (ProfileEmail) {
-            await SendEmail(
-              InviteIntoShipmentTemplate(
-                ProfileEmail,
-                `You have new invitation into shipment `,
-                `<strong>You have new invitation into shipment</strong>`
-              )
-            );
-          }
-
-          // End Send Email InviteIntoShipment
         }
       }); // End forEach
 
+      // Send Email InviteIntoShipment
+
+      SendEmailInviteIntoShipment = await SendEmail(
+        InviteIntoShipmentTemplate(
+          UserEmail,
+          `You have new invitation into shipment `,
+          `<strong>You have new invitation into shipment</strong>`
+        )
+      );
+
+      // End Send Email InviteIntoShipment
+
       // Noti-SystemGen InviteIntoShipment
 
-      const CreateSystemGenInviteIntoShipment = await admin
+      CreateSystemGenInviteIntoShipment = await admin
         .firestore()
         .collection('Shipment')
         .doc(context.params.ShipmentKey)
@@ -644,7 +646,8 @@ exports.ManageShipmentMember = functions.firestore
         AddShipmentMember,
         AddShipmentMemberList,
         SetCompanyName,
-        CreateSystemGenInviteIntoShipment
+        CreateSystemGenInviteIntoShipment,
+        SendEmailInviteIntoShipment
       ]);
     } else if (oldValue && !newValue) {
       PayloadObject[oldValue['ChatRoomMemberUserKey']] = null;
