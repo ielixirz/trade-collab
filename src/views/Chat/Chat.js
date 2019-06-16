@@ -47,6 +47,8 @@ import './Chat.css';
 import './MasterDetail.css';
 import { GetShipmentDetail } from '../../service/shipment/shipment';
 import { GetShipmentNotificationCount } from '../../service/personalize/personalize';
+import { GetUserCompany } from '../../service/user/user';
+import { fetchCompany } from '../../actions/companyAction';
 
 class Chat extends Component {
   constructor(props) {
@@ -302,6 +304,12 @@ class Chat extends Component {
       console.log('fetch', tab);
       this.props.fetchChatMessage(tab.ChatRoomKey, tab.ShipmentKey);
     });
+    GetUserCompany(this.props.user.uid).subscribe({
+      next: res => {
+        console.log('Fetched Company is', res);
+        this.props.fetchCompany(res);
+      }
+    });
   }
 
   movetab(dragIndex, hoverIndex) {
@@ -440,6 +448,7 @@ export default connect(
     onSendMessage: sendMessage,
     moveTab,
     selectTab,
-    getChatRoomList
+    getChatRoomList,
+    fetchCompany
   }
 )(Chat);
