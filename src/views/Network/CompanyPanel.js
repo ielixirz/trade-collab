@@ -299,7 +299,7 @@ const CompanyPanel = (props) => {
                 options={companyRoles}
                 className="basic-multi-select"
                 classNamePrefix="select"
-                placeholder="Please select role"
+                placeholder="Role"
                 onChange={input => handleRoleInputChange(input, item.UserRequestUserKey)}
               />
             ),
