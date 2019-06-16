@@ -217,6 +217,7 @@ class Shipment extends Component {
           this.props.user.uid
         ).subscribe({
           next: shipment => {
+            console.log('SHIPMENTS', shipment);
             this.props.fetchShipments(shipment, notification);
           },
           error: err => {

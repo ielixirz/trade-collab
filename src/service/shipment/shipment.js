@@ -2,6 +2,7 @@ import { collection, doc } from 'rxfire/firestore';
 import { from, combineLatest, merge } from 'rxjs';
 import { take, concatMap, map, tap, mergeMap, toArray } from 'rxjs/operators';
 import { FirebaseApp } from '../firebase';
+import _ from 'lodash';
 
 const ShipmentRefPath = () => FirebaseApp.firestore().collection('Shipment');
 
@@ -163,15 +164,16 @@ export const CombineShipmentAndShipmentReference = (
   );
 
   return combineLatest(ShipmentListSource, ShipmentReferenceListSource).pipe(
-    map(CombineResult =>
-      CombineResult[0].map((Item, Index) => {
+    map(CombineResult => {
+      console.log('fetch REF', CombineResult[0], CombineResult[1]);
+      return CombineResult[0].map((Item, Index) => {
         const ShipmentData = Item.data();
         const ShipmentID = Item.id;
-        const ShipmentReferenceList = CombineResult[1][Index];
+        const ShipmentReferenceList = _.reverse(CombineResult[1])[Index];
 
         return { ...ShipmentData, ShipmentID, ShipmentReferenceList };
-      })
-    )
+      });
+    })
   );
 };
 
