@@ -423,6 +423,8 @@ exports.ManageShipmentMember = functions.firestore
 
     const ProfileKeyList = GetUserProfileList.docs.map(ProfileItem => ProfileItem.id);
 
+    // const FirstProfile = GetUserProfileList.docs[0].data();
+
     // ChatRoomMemberList
 
     if (!oldValue && newValue) {
@@ -436,6 +438,18 @@ exports.ManageShipmentMember = functions.firestore
           { ChatRoomMemberList: admin.firestore.FieldValue.arrayUnion(UserKey) },
           { merge: true }
         );
+
+      // await admin
+      //   .firestore()
+      //   .collection('Shipment')
+      //   .doc(context.params.ShipmentKey)
+      //   .collection('ChatRoom')
+      //   .doc(context.params.ChatRoomKey)
+      //   .set(
+      //     { ChatRoomMemberList: admin.firestore.FieldValue.arrayUnion(UserKey) },
+      //     { merge: true }
+      //   );
+      // FirstProfile;
     }
 
     const DeleteNotiCountServiceList = [];
@@ -911,7 +925,7 @@ exports.NotiBellAcceptedIntoCompany = functions.firestore
             UserNotificationUserInfoKey: context.params.UserKey,
             UserNotificationUserEmail: GetUserInfo.data().UserInfoEmail,
             UserNotificationCompanyKey: context.params.CompanyKey,
-            UserNotificationCompanyName: newValue.CompanyInvitationCompanyKey
+            UserNotificationCompanyName: newValue.CompanyInvitationName
           });
 
         AcceptedIntoCompanyServiceList.push(RequestToJoinAction);

@@ -55,7 +55,8 @@
 .profile-company-status-btn {
   font-size: medium;
   font-weight: bold;
-  width: 6rem;
+  width: 4.5rem;
+  font-size: 0.7em;
   background-color: white;
   border: 2px solid;
 }
