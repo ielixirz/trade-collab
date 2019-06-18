@@ -3,13 +3,14 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable filenames/match-regex */
 import React from 'react';
+import { Card, CardBody, Row, Col, Button, UncontrolledCollapse, Input } from 'reactstrap';
+import _ from 'lodash';
 import {
-  Card, CardBody, Row, Col, Button, UncontrolledCollapse,
-} from 'reactstrap';
+  CreateShipmentReference,
+  UpdateShipmentReference
+} from '../../../service/shipment/shipment';
 
-const ChatCreateRoom = ({
-  createChatRoom, param, fetchChatMessage, user,
-}) => (
+const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
   <Card>
     <CardBody>
       <Row style={{ marginTop: '30px' }}>
@@ -24,7 +25,7 @@ const ChatCreateRoom = ({
       <Row
         style={{
           marginTop: '50px',
-          marginBottom: '50px',
+          marginBottom: '50px'
         }}
       >
         <Col />
@@ -32,14 +33,21 @@ const ChatCreateRoom = ({
           <Button
             className="create-chat-button"
             style={{
-              width: '250px',
+              width: '250px'
             }}
             color="chatcreate"
             size="lg"
             active
-            onClick={() => {
-              createChatRoom(fetchChatMessage, param, 'Inbound Custom Broker', user);
-            }}
+            onClick={_.debounce(
+              event => {
+                createChatRoom(fetchChatMessage, param, 'Inbound Custom Broker', user);
+              },
+              2000,
+              {
+                leading: true,
+                trailing: false
+              }
+            )}
           >
             Inbound Custom Broker
           </Button>
@@ -48,14 +56,21 @@ const ChatCreateRoom = ({
           <Button
             className="create-chat-button"
             style={{
-              width: '250px',
+              width: '250px'
             }}
             color="chatcreate"
             size="lg"
             active
-            onClick={() => {
-              createChatRoom(fetchChatMessage, param, 'Inbound Forwarder', user);
-            }}
+            onClick={_.debounce(
+              event => {
+                createChatRoom(fetchChatMessage, param, 'Inbound Forwarder', user);
+              },
+              2000,
+              {
+                leading: true,
+                trailing: false
+              }
+            )}
           >
             Inbound Forwarder
           </Button>
@@ -65,7 +80,7 @@ const ChatCreateRoom = ({
       <Row
         style={{
           marginTop: '50px',
-          marginBottom: '50px',
+          marginBottom: '50px'
         }}
       >
         <Col />
@@ -75,12 +90,19 @@ const ChatCreateRoom = ({
             color="chatcreate"
             size="lg"
             style={{
-              width: '250px',
+              width: '250px'
             }}
             active
-            onClick={() => {
-              createChatRoom(fetchChatMessage, param, 'Importer', user);
-            }}
+            onClick={_.debounce(
+              event => {
+                createChatRoom(fetchChatMessage, param, 'Importer', user);
+              },
+              2000,
+              {
+                leading: true,
+                trailing: false
+              }
+            )}
           >
             Importer
           </Button>
@@ -91,12 +113,19 @@ const ChatCreateRoom = ({
             color="chatcreate"
             size="lg"
             style={{
-              width: '250px',
+              width: '250px'
             }}
             active
-            onClick={() => {
-              createChatRoom(fetchChatMessage, param, 'Outbound Forwarder', user);
-            }}
+            onClick={_.debounce(
+              event => {
+                createChatRoom(fetchChatMessage, param, 'Outbound Forwarder', user);
+              },
+              2000,
+              {
+                leading: true,
+                trailing: false
+              }
+            )}
           >
             Outbound Forwarder
           </Button>
@@ -124,12 +153,19 @@ const ChatCreateRoom = ({
                   color="chatcreate"
                   size="lg"
                   style={{
-                    width: '600px',
+                    width: '600px'
                   }}
                   active
-                  onClick={() => {
-                    createChatRoom(fetchChatMessage, param, 'Blank Chat', user);
-                  }}
+                  onClick={_.debounce(
+                    event => {
+                      createChatRoom(fetchChatMessage, param, 'Blank Chat', user);
+                    },
+                    2000,
+                    {
+                      leading: true,
+                      trailing: false
+                    }
+                  )}
                 >
                   Blank Chat
                 </Button>
@@ -143,12 +179,19 @@ const ChatCreateRoom = ({
                 size="lg"
                 style={{
                   width: '200px',
-                  marginRight: '200px',
+                  marginRight: '200px'
                 }}
                 active
-                onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Exporter', user);
-                }}
+                onClick={_.debounce(
+                  event => {
+                    createChatRoom(fetchChatMessage, param, 'Exporter', user);
+                  },
+                  2000,
+                  {
+                    leading: true,
+                    trailing: false
+                  }
+                )}
               >
                 Exporter
               </Button>
@@ -157,18 +200,24 @@ const ChatCreateRoom = ({
                 color="chatcreate"
                 size="lg"
                 style={{
-                  width: '200px',
+                  width: '200px'
                 }}
                 active
-                onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Importer', user);
-                }}
+                onClick={_.debounce(
+                  event => {
+                    createChatRoom(fetchChatMessage, param, 'Importer', user);
+                  },
+                  2000,
+                  {
+                    leading: true,
+                    trailing: false
+                  }
+                )}
               >
                 Importer
               </Button>
             </Row>
-            <br />
-            {' '}
+            <br />{' '}
             <Row className="create-chat-others-row">
               <Button
                 className="create-chat-button"
@@ -176,12 +225,19 @@ const ChatCreateRoom = ({
                 size="lg"
                 style={{
                   width: '200px',
-                  marginRight: '200px',
+                  marginRight: '200px'
                 }}
                 active
-                onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Outbound Forwarder', user);
-                }}
+                onClick={_.debounce(
+                  event => {
+                    createChatRoom(fetchChatMessage, param, 'Outbound Forwarder', user);
+                  },
+                  2000,
+                  {
+                    leading: true,
+                    trailing: false
+                  }
+                )}
               >
                 Outbound Forwarder
               </Button>
@@ -190,18 +246,24 @@ const ChatCreateRoom = ({
                 color="chatcreate"
                 size="lg"
                 style={{
-                  width: '200px',
+                  width: '200px'
                 }}
                 active
-                onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Inbound Forwarder', user);
-                }}
+                onClick={_.debounce(
+                  event => {
+                    createChatRoom(fetchChatMessage, param, 'Inbound Forwarder', user);
+                  },
+                  2000,
+                  {
+                    leading: true,
+                    trailing: false
+                  }
+                )}
               >
                 Inbound Forwarder
               </Button>
             </Row>
-            <br />
-            {' '}
+            <br />{' '}
             <Row className="create-chat-others-row">
               <Button
                 className="create-chat-button"
@@ -209,12 +271,19 @@ const ChatCreateRoom = ({
                 size="lg"
                 style={{
                   width: '200px',
-                  marginRight: '200px',
+                  marginRight: '200px'
                 }}
                 active
-                onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Outbound Custom Broker', user);
-                }}
+                onClick={_.debounce(
+                  event => {
+                    createChatRoom(fetchChatMessage, param, 'Outbound Custom Broker', user);
+                  },
+                  2000,
+                  {
+                    leading: true,
+                    trailing: false
+                  }
+                )}
               >
                 Outbound Custom Broker
               </Button>
@@ -223,18 +292,24 @@ const ChatCreateRoom = ({
                 color="chatcreate"
                 size="lg"
                 style={{
-                  width: '200px',
+                  width: '200px'
                 }}
                 active
-                onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Inbound Custom Broker', user);
-                }}
+                onClick={_.debounce(
+                  event => {
+                    createChatRoom(fetchChatMessage, param, 'Inbound Custom Broker', user);
+                  },
+                  2000,
+                  {
+                    leading: true,
+                    trailing: false
+                  }
+                )}
               >
                 Inbound Custom Broker
               </Button>
             </Row>
-            <br />
-            {' '}
+            <br />{' '}
             <Row className="create-chat-others-row">
               <Button
                 className="create-chat-button"
@@ -242,11 +317,18 @@ const ChatCreateRoom = ({
                 size="lg"
                 style={{
                   width: '200px',
-                  marginRight: '200px',
+                  marginRight: '200px'
                 }}
-                onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Outbound Trucking', user);
-                }}
+                onClick={_.debounce(
+                  event => {
+                    createChatRoom(fetchChatMessage, param, 'Outbound Trucking', user);
+                  },
+                  2000,
+                  {
+                    leading: true,
+                    trailing: false
+                  }
+                )}
                 active
               >
                 Outbound Trucking
@@ -256,18 +338,24 @@ const ChatCreateRoom = ({
                 color="chatcreate"
                 size="lg"
                 style={{
-                  width: '200px',
+                  width: '200px'
                 }}
                 active
-                onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Inbound Trucking', user);
-                }}
+                onClick={_.debounce(
+                  event => {
+                    createChatRoom(fetchChatMessage, param, 'Inbound Trucking', user);
+                  },
+                  2000,
+                  {
+                    leading: true,
+                    trailing: false
+                  }
+                )}
               >
                 Inbound Trucking
               </Button>
             </Row>
-            <br />
-            {' '}
+            <br />{' '}
             <Row className="create-chat-others-row">
               <Button
                 className="create-chat-button"
@@ -275,12 +363,19 @@ const ChatCreateRoom = ({
                 size="lg"
                 style={{
                   width: '200px',
-                  marginRight: '200px',
+                  marginRight: '200px'
                 }}
                 active
-                onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Exporter Warehouse', user);
-                }}
+                onClick={_.debounce(
+                  event => {
+                    createChatRoom(fetchChatMessage, param, 'Exporter Warehouse', user);
+                  },
+                  2000,
+                  {
+                    leading: true,
+                    trailing: false
+                  }
+                )}
               >
                 Exporter Warehouse
               </Button>
@@ -289,12 +384,19 @@ const ChatCreateRoom = ({
                 color="chatcreate"
                 size="lg"
                 style={{
-                  width: '200px',
+                  width: '200px'
                 }}
                 active
-                onClick={() => {
-                  createChatRoom(fetchChatMessage, param, 'Importer Warehouse', user);
-                }}
+                onClick={_.debounce(
+                  event => {
+                    createChatRoom(fetchChatMessage, param, 'Importer Warehouse', user);
+                  },
+                  2000,
+                  {
+                    leading: true,
+                    trailing: false
+                  }
+                )}
               >
                 Importer Warehouse
               </Button>
