@@ -9,3 +9,30 @@
 @import '~simple-line-icons/css/simple-line-icons.css';
 // Import Main styles for this application
 @import './scss/style.scss';
+
+/* Customize website's scrollbar like Mac OS
+Not supports in Firefox and IE */
+
+/* total width */
+::-webkit-scrollbar {
+  background-color: #fff;
+  width: 6px;
+}
+
+/* background of the scrollbar except button or resizer */
+::-webkit-scrollbar-track {
+  background-color: #fff;
+  display: none;
+}
+
+/* scrollbar itself */
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  border: 2px solid #fff;
+}
+
+/* set button(top and bottom of the scrollbar) */
+::-webkit-scrollbar-button {
+  display: none;
+}

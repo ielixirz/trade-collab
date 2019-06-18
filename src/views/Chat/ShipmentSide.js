@@ -78,8 +78,8 @@ class ShipmentSide extends Component {
     return (
       <div>
         <Card onClick={this.triggerCollapse} style={styles.card}>
-          <CardBody>
-            <Row>
+          <CardBody style={{ paddingRight: 10 }}>
+            <Row style={{ marginBottom: '10px', paddingRight: 15 }}>
               <Col xs="10" className="text-left">
                 <span style={styles.boxColor}>
                   <i className="fa fa-cube" />
