@@ -608,8 +608,10 @@ class ChatWithHeader extends Component {
                     <Button
                       color="default1"
                       onClick={() => {
-                        sendMessage(ChatRoomKey, ShipmentKey, text);
-                        scrollChatToBottom();
+                        if (text !== '') {
+                          sendMessage(ChatRoomKey, ShipmentKey, text);
+                          scrollChatToBottom();
+                        }
                       }}
                     >
                       {' '}
