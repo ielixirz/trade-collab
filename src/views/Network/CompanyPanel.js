@@ -346,7 +346,7 @@ const CompanyPanel = (props) => {
         const companyRoles = initRoles.concat(roles);
         setRoleList(companyRoles);
         fetchIncomingRequest(props.match.params.key, roles);
-        fetchMember(props.match.params.key, companyRoles);
+        fetchMember(props.match.params.key, roles);
       });
   }, [acceptedRequest]);
 
