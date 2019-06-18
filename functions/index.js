@@ -547,7 +547,7 @@ exports.ManageShipmentMember = functions.firestore
             newValue.ChatRoomMemberSurName
           } (${newValue.ChatRoomMemberEmail}) joined`,
           ChatRoomMessageType: 'System',
-          ChatRoomMessageTimestamp: admin.firestore.FieldValue.serverTimestamp
+          ChatRoomMessageTimestamp: admin.firestore.FieldValue.serverTimestamp()
         });
 
       // End Noti-SystemGen InviteIntoShipment
@@ -1129,7 +1129,57 @@ const UnreadMessageTemplate = (To, Text, Html) => {
     from: 'noreply@yterminal.com',
     subject: 'Yterminal - Unread your message',
     text: Text,
-    html: Html
+    html: `<!DOCTYPE html>
+    <head>
+        <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    </head>
+    <style>
+      body {
+        background-color:white;
+        font-family: 'Roboto', sans-serif;
+        justify-content: center; 
+      }
+      .container {
+        width: 800px;
+        height: 600px;
+        background-color: rgba(214, 214, 214, 0.3);
+        padding: 0px 0px 0px 16px;
+        justify-content: center; 
+        margin: auto;
+        position: relative;
+      }
+      .logo {
+        padding: 16px 0px 0px 0px;
+      }
+      .highlighttext {
+        color: rgba(22, 160, 133, 1);
+      }
+      .redirectbutton {
+        background-color: rgba(255, 90 , 95, 1);
+        width: 400px;
+        height: 50px;
+        color: white;
+        border-radius: 5px;
+        font-size: 1rem;
+        position: absolute;
+        left: 25%;
+        
+      }
+    </style>
+    <body>
+      <div class="container">
+          <div class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="172" height="29" viewBox="0 0 172 29">
+              <g id="Rectangle_4102" data-name="Rectangle 4102" fill="#fff" stroke="#707070" stroke-width="1">
+                <rect width="172" height="29" stroke="none"/>
+                <rect x="0.5" y="0.5" width="171" height="28" fill="none"/>
+              </g>
+            </svg>
+          </div>
+          ${Html}
+      </div>
+    </body>
+  </html>`
   };
 };
 
@@ -1189,7 +1239,7 @@ exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
       const UserAllUnreadCount = UserShipmentChatCountList.reduce(reducer);
 
       let CreateEmailText = `${UserAllUnreadCount} Unread messages`;
-      let CreateEmailHtml = `<h2>${UserAllUnreadCount} Unread messages</h2><br>`;
+      let CreateEmailHtml = `<h3>${UserAllUnreadCount} Unread messages</h3>`;
 
       const MapTextWithProfileUnread = element.map(
         Item =>
@@ -1200,16 +1250,18 @@ exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
 
       const MapHtmlWithProfileUnread = element.map(
         Item =>
-          `<p><strong>${Item.ProfileFirstname} ${Item.ProfileSurname}</strong> has ${
-            Item.ShipmentChatCount
-          } unread messages</p>`
+          `<p class="profile-unread"> <span class="highlighttext">${Item.ProfileFirstname} ${
+            Item.ProfileSurname
+          }</span> has ${Item.ShipmentChatCount} Unread Message </p>`
       );
 
+      const ButtonRedirect = `<button class="redirectbutton" onclick="window.location.href ='https://yterminal-b0906.firebaseapp.com/#/shipment';" >View Messages</button>`;
+
       const ProfileUnreadMergeText = MapTextWithProfileUnread.join();
-      const ProfileUnreadMergeHtml = MapHtmlWithProfileUnread.join('<br>');
+      const ProfileUnreadMergeHtml = MapHtmlWithProfileUnread.join('');
 
       const FinalText = CreateEmailText + ProfileUnreadMergeText;
-      const FinalHtml = CreateEmailHtml + ProfileUnreadMergeHtml;
+      const FinalHtml = CreateEmailHtml + ProfileUnreadMergeHtml + ButtonRedirect;
 
       const SendEmailAction = SendEmail(UnreadMessageTemplate(key, FinalText, FinalHtml));
 
