@@ -63,7 +63,7 @@ class NewProfileModal extends React.Component {
     );
     return (
       <div>
-        <div role="button" tabIndex={0} onClick={this.toggle}>
+        <div role="button" tabIndex={0} onClick={this.toggle} className="add-profile-modal-link">
           {children}
         </div>
         <Modal isOpen={modal} toggle={this.toggle}>

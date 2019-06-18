@@ -84,8 +84,8 @@ class SelectProfile extends Component {
                   {this.renderProfiles()}
                   <div style={{ textAlign: 'center' }}>
                     <NewProfileModal>
-                      <p style={{ color: '#16a085' }}>
-                        <b>Add New User</b>
+                      <p style={{ color: '#16a085' }} className="add-profile-link">
+                        Add New User
                       </p>
                     </NewProfileModal>
                     <p style={{ color: '#16a085' }}>

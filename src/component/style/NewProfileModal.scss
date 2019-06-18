@@ -13,3 +13,9 @@
     background-color: white;
   }
 }
+
+.add-profile-modal-link {
+  &:focus {
+    outline: none;
+  }
+}

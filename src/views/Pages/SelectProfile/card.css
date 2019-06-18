@@ -100,3 +100,11 @@ h2 {
 p {
   cursor: pointer;
 }
+
+.add-profile-link {
+  font-weight: bold;
+}
+
+.add-profile-link:focus {
+  outline: none;
+}
