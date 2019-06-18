@@ -513,7 +513,9 @@ const CompanyPanel = (props) => {
                     onChange={handleCompanyInputChange}
                   />
                 ) : (
-                  <p>{company.CompanyAboutUs}</p>
+                  <div style={{ height: '50px', width: '50%', wordBreak: 'break-all' }}>
+                    <p>{company.CompanyAboutUs === undefined ? '-' : company.CompanyAboutUs}</p>
+                  </div>
                 )}
               </Row>
               <Row style={{ paddingTop: '2rem' }}>
