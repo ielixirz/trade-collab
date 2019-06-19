@@ -237,7 +237,12 @@ tbody tr {
 .setting-table-wraper {
   margin: 5rem;
   margin-top: 2rem;
-  overflow: scroll;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.setting-table-wraper::-webkit-scrollbar {
+  background-color: rgb(247, 247, 247);
 }
 
 .table.company-table > tbody {

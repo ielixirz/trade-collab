@@ -217,6 +217,7 @@ const CompanyPanel = (props) => {
           status: renderMemberStatus(member.UserMemberCompanyStandingStatus),
           button: (
             <ThreeDotDropdown
+              disable={member.key === props.auth.uid}
               options={[
                 {
                   text: 'Deactivate',
@@ -346,7 +347,7 @@ const CompanyPanel = (props) => {
         const companyRoles = initRoles.concat(roles);
         setRoleList(companyRoles);
         fetchIncomingRequest(props.match.params.key, roles);
-        fetchMember(props.match.params.key, companyRoles);
+        fetchMember(props.match.params.key, roles);
       });
   }, [acceptedRequest]);
 
@@ -414,6 +415,8 @@ const CompanyPanel = (props) => {
     setinvitedEmails([]);
     inviteInput.current.handleClear();
   };
+
+  const lockInviteInput = () => inviteInput.current.handleLockInLastInput();
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
@@ -513,7 +516,9 @@ const CompanyPanel = (props) => {
                     onChange={handleCompanyInputChange}
                   />
                 ) : (
-                  <p>{company.CompanyAboutUs}</p>
+                  <div style={{ height: '50px', width: '50%', wordBreak: 'break-all' }}>
+                    <p>{company.CompanyAboutUs === undefined ? '-' : company.CompanyAboutUs}</p>
+                  </div>
                 )}
               </Row>
               <Row style={{ paddingTop: '2rem' }}>
@@ -537,8 +542,13 @@ const CompanyPanel = (props) => {
                     className="company-invite-btn"
                     // eslint-disable-next-line max-len
                     onClick={() => {
-                      if (invitedEmails.length > 0) {
-                        inviteToCompanyModalRef.current.triggerInviteToCompany(invitedEmails, {
+                      let invites = invitedEmails;
+                      const lastInvite = lockInviteInput();
+                      if (lastInvite !== undefined) {
+                        invites = invitedEmails.concat(lastInvite);
+                      }
+                      if (invites.length > 0) {
+                        inviteToCompanyModalRef.current.triggerInviteToCompany(invites, {
                           companyName: company.CompanyName,
                           key: props.match.params.key,
                         });

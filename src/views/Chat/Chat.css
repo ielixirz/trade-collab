@@ -259,6 +259,22 @@ img {
   flex-direction: column;
 }
 
+.msg_history-cover-bar {
+  position: absolute;
+  background: #fff;
+  height: 100%;
+  top: 0;
+  right: 20px;
+  width: 0.4em;
+  -webkit-transition: all 0.5s;
+  opacity: 1;
+}
+
+.msg_history:hover .msg_history-cover-bar {
+  opacity: 0;
+  -webkit-transition: all 0.5s;
+}
+
 .btn-chatcreate {
   color: #23282c;
   background-color: #ffffff;

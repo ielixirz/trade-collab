@@ -64,8 +64,8 @@ const FileSide = (props) => {
   return (
     <div>
       <Card onClick={triggerCollapse} style={styles.card}>
-        <CardBody>
-          <Row style={{ marginBottom: '10px' }}>
+        <CardBody style={{ paddingRight: 10 }}>
+          <Row style={{ marginBottom: '10px', paddingRight: 20 }}>
             <Col xs="10" className="text-left">
               <span style={styles.boxColor}>
                 <i className="fa fa-file" />
