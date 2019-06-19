@@ -62,15 +62,15 @@ const TurnAbleTextLabel = ({ text, turnType, data }) => {
   }, [isTurn]);
 
   return (
-    <span>
+    <div style={{ height: 25 }}>
       {isTurn ? (
         <span>{turnComponent}</span>
       ) : (
-        <span role="button" onClick={turn} onKeyDown={null} tabIndex="-1">
+        <div style={{ height: '100%' }} role="button" onClick={turn} onKeyDown={null} tabIndex="-1">
           {text}
-        </span>
+        </div>
       )}
-    </span>
+    </div>
   );
 };
 
