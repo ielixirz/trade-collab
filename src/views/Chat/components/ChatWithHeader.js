@@ -625,8 +625,10 @@ e-mail address only for this shipment
                     <Button
                       color="default1"
                       onClick={() => {
-                        sendMessage(ChatRoomKey, ShipmentKey, text);
-                        scrollChatToBottom();
+                        if (text !== '') {
+                          sendMessage(ChatRoomKey, ShipmentKey, text);
+                          scrollChatToBottom();
+                        }
                       }}
                     >
                       {' '}
