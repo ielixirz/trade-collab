@@ -456,6 +456,55 @@ exports.AddFirstNameSurNameFirstProfileToChatRoomMember = functions.firestore
     return AddFirstNameSurNameFirstProfileToChatRoomMemberAction;
   });
 
+exports.AddShipmentMember = functions.firestore
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
+  .onWrite(async (change, context) => {
+    const oldValue = change.before.data();
+    const newValue = change.after.data();
+
+    let PayloadObject = {};
+
+    if (newValue) {
+      const SnapshotDataObject = newValue;
+      const ShipmentMemberUserKey = SnapshotDataObject['ChatRoomMemberUserKey'];
+
+      PayloadObject[ShipmentMemberUserKey] = {};
+
+      if (SnapshotDataObject['ChatRoomMemberEmail'])
+        PayloadObject[ShipmentMemberUserKey]['ShipmentMemberEmail'] =
+          SnapshotDataObject['ChatRoomMemberEmail'];
+
+      if (SnapshotDataObject['ChatRoomMemberRole'])
+        PayloadObject[ShipmentMemberUserKey]['ShipmentMemberRole'] =
+          SnapshotDataObject['ChatRoomMemberRole'];
+
+      if (SnapshotDataObject['ChatRoomMemberCompanyName'])
+        PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyName'] =
+          SnapshotDataObject['ChatRoomMemberCompanyName'];
+
+      if (SnapshotDataObject['ChatRoomMemberCompanyKey'])
+        PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyKey'] =
+          SnapshotDataObject['ChatRoomMemberCompanyKey'];
+
+      const AddShipmentMember = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .set({ ShipmentMember: PayloadObject }, { merge: true });
+
+      const AddShipmentMemberList = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .set(
+          { ShipmentMemberList: admin.firestore.FieldValue.arrayUnion(ShipmentMemberUserKey) },
+          { merge: true }
+        );
+
+      return Promise.all([AddShipmentMember, AddShipmentMemberList]);
+    }
+  });
+
 exports.ManageShipmentMember = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onWrite(async (change, context) => {
@@ -493,22 +542,21 @@ exports.ManageShipmentMember = functions.firestore
       //     { ChatRoomMemberList: admin.firestore.FieldValue.arrayUnion(UserKey) },
       //     { merge: true }
       //   );
-
-      await admin
-        .firestore()
-        .collection('Shipment')
-        .doc(context.params.ShipmentKey)
-        .collection('ChatRoom')
-        .doc(context.params.ChatRoomKey)
-        .collection('ChatRoomMember')
-        .doc(context.params.ChatRoomMemberKey)
-        .set(
-          {
-            ChatRoomMemberFirstnameFirstProfile: FirstnameFirstProfile,
-            ChatRoomMemberSurnameFirstProfile: SurnameFirstProfile
-          },
-          { merge: true }
-        );
+      // await admin
+      //   .firestore()
+      //   .collection('Shipment')
+      //   .doc(context.params.ShipmentKey)
+      //   .collection('ChatRoom')
+      //   .doc(context.params.ChatRoomKey)
+      //   .collection('ChatRoomMember')
+      //   .doc(context.params.ChatRoomMemberKey)
+      //   .set(
+      //     {
+      //       ChatRoomMemberFirstnameFirstProfile: FirstnameFirstProfile,
+      //       ChatRoomMemberSurnameFirstProfile: SurnameFirstProfile
+      //     },
+      //     { merge: true }
+      //   );
     }
 
     const DeleteNotiCountServiceList = [];
