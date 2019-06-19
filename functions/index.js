@@ -420,6 +420,42 @@ exports.AddChatRoomMemberList = functions.firestore
     return AddChatRoomMemberListAction;
   });
 
+exports.AddFirstNameSurNameFirstProfileToChatRoomMember = functions.firestore
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
+  .onCreate(async (snapshot, context) => {
+    const UserKey = snapshot.ChatRoomMemberUserKey;
+
+    const GetUserProfileList = await admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(UserKey)
+      .collection('Profile')
+      .get();
+
+    const FirstProfile = GetUserProfileList.docs[0].data();
+
+    const FirstnameFirstProfile = FirstProfile.ProfileFirstname;
+    const SurnameFirstProfile = FirstProfile.ProfileSurname;
+
+    const AddFirstNameSurNameFirstProfileToChatRoomMemberAction = await admin
+      .firestore()
+      .collection('Shipment')
+      .doc(context.params.ShipmentKey)
+      .collection('ChatRoom')
+      .doc(context.params.ChatRoomKey)
+      .collection('ChatRoomMember')
+      .doc(context.params.ChatRoomMemberKey)
+      .set(
+        {
+          ChatRoomMemberFirstnameFirstProfile: FirstnameFirstProfile,
+          ChatRoomMemberSurnameFirstProfile: SurnameFirstProfile
+        },
+        { merge: true }
+      );
+
+    return AddFirstNameSurNameFirstProfileToChatRoomMemberAction;
+  });
+
 exports.ManageShipmentMember = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onWrite(async (change, context) => {
@@ -447,16 +483,16 @@ exports.ManageShipmentMember = functions.firestore
     // ChatRoomMemberList
 
     if (!oldValue && newValue) {
-      await admin
-        .firestore()
-        .collection('Shipment')
-        .doc(context.params.ShipmentKey)
-        .collection('ChatRoom')
-        .doc(context.params.ChatRoomKey)
-        .set(
-          { ChatRoomMemberList: admin.firestore.FieldValue.arrayUnion(UserKey) },
-          { merge: true }
-        );
+      // await admin
+      //   .firestore()
+      //   .collection('Shipment')
+      //   .doc(context.params.ShipmentKey)
+      //   .collection('ChatRoom')
+      //   .doc(context.params.ChatRoomKey)
+      //   .set(
+      //     { ChatRoomMemberList: admin.firestore.FieldValue.arrayUnion(UserKey) },
+      //     { merge: true }
+      //   );
 
       await admin
         .firestore()
