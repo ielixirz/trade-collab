@@ -590,8 +590,6 @@ exports.AddNotiCountFirstJoin = functions.firestore
       const GetFirstJoin = await TriggerFirstJoin.get();
       let FirstJoinStatus = GetFirstJoin[context.params.ShipmentKey];
 
-      const ProfileEmail = GetFirstJoin.data().ProfileEmail;
-
       const FirstJoinPayloadObject = { ShipmentFristJoin: {} };
 
       FirstJoinPayloadObject['ShipmentFristJoin'][context.params.ShipmentKey] = true;
@@ -605,6 +603,65 @@ exports.AddNotiCountFirstJoin = functions.firestore
     }); // End forEach
 
     return Promise.all(UserPersonalizeProfileActionList)
+})
+
+exports.DeleteNotiCount  = functions.firestore
+.document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
+  .onDelete(async (change, context) => {
+    const oldValue = change.before.data();
+    const newValue = change.after.data();
+
+    const UserKey = oldValue.ChatRoomMemberUserKey
+
+    const GetUserProfileList = await admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(UserKey)
+      .collection('Profile')
+      .get();
+
+    const ProfileKeyList = GetUserProfileList.docs.map(ProfileItem => ProfileItem.id);
+
+    const GetOtherChatRoomMember = await admin.firestore().collection('Shipment').doc(context.params.ShipmentKey).collection('ChatRoom').get()
+
+    let isExistOtherChatRoomMember
+
+    const DeleteNotiCountServiceList = [];
+
+    await GetOtherChatRoomMember.docs.forEach( async (Item) => {
+      const isMember = await admin.firestore().doc(Item.ref.path).collection('ChatRoomMember').where('ChatRoomMemberUserKey','==',UserKey).get()
+
+      if (isMember.size > 0) {
+        isExistOtherChatRoomMember = true
+      }
+    })
+
+    const CheckOtherChatRoomMember = async () => {
+      if (isExistOtherChatRoomMember !== true) {
+
+        ProfileKeyList.forEach(async Item => {
+          const DeletePayload = {};
+          DeletePayload[context.params.ChatRoomKey] = admin.firestore.FieldValue.delete();
+  
+          const DeleteNotiCount = await admin
+            .firestore()
+            .collection('UserPersonalize')
+            .doc(Item)
+            .collection('ShipmentNotificationCount')
+            .doc(context.params.ShipmentKey)
+            .update(DeletePayload);
+  
+          DeleteNotiCountServiceList.push(DeleteNotiCount);
+        });
+  
+        return Promise.resolve(DeleteNotiCount)
+      }
+      else {
+        return Promise.resolve(null)
+      }
+    }
+
+    return CheckOtherChatRoomMember
 })
 
 exports.ManageShipmentMember = functions.firestore
