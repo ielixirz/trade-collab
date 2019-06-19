@@ -654,7 +654,7 @@ exports.DeleteNotiCount  = functions.firestore
           DeleteNotiCountServiceList.push(DeleteNotiCount);
         });
   
-        return Promise.resolve(DeleteNotiCount)
+        return Promise.resolve(DeleteNotiCountServiceList)
       }
       else {
         return Promise.resolve(null)
@@ -735,20 +735,20 @@ exports.ManageShipmentMember = functions.firestore
 
       // Delete Noti-Count
 
-      ProfileKeyList.forEach(async Item => {
-        const DeletePayload = {};
-        DeletePayload[context.params.ChatRoomKey] = admin.firestore.FieldValue.delete();
+      // ProfileKeyList.forEach(async Item => {
+      //   const DeletePayload = {};
+      //   DeletePayload[context.params.ChatRoomKey] = admin.firestore.FieldValue.delete();
 
-        const DeleteNotiCount = await admin
-          .firestore()
-          .collection('UserPersonalize')
-          .doc(Item)
-          .collection('ShipmentNotificationCount')
-          .doc(context.params.ShipmentKey)
-          .update(DeletePayload);
+      //   const DeleteNotiCount = await admin
+      //     .firestore()
+      //     .collection('UserPersonalize')
+      //     .doc(Item)
+      //     .collection('ShipmentNotificationCount')
+      //     .doc(context.params.ShipmentKey)
+      //     .update(DeletePayload);
 
-        DeleteNotiCountServiceList.push(DeleteNotiCount);
-      });
+      //   DeleteNotiCountServiceList.push(DeleteNotiCount);
+      // });
     }
 
     // End ChatRoomMemberList
