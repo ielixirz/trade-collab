@@ -6,7 +6,7 @@ import {
 } from 'reactstrap';
 import _ from 'lodash';
 
-const ThreeDotDropdown = ({ options }) => {
+const ThreeDotDropdown = ({ options, disable }) => {
   const [open, setOpen] = useState(false);
 
   const toggle = (e) => {
@@ -23,7 +23,9 @@ const ThreeDotDropdown = ({ options }) => {
         {_.map(options, option => (option.function === undefined ? (
           <DropdownItem>{option.text}</DropdownItem>
         ) : (
-          <DropdownItem onClick={option.function}>{option.text}</DropdownItem>
+          <DropdownItem disabled={disable} onClick={option.function}>
+            {option.text}
+          </DropdownItem>
         )))}
       </DropdownMenu>
     </Dropdown>

@@ -217,6 +217,7 @@ const CompanyPanel = (props) => {
           status: renderMemberStatus(member.UserMemberCompanyStandingStatus),
           button: (
             <ThreeDotDropdown
+              disable={member.key === props.auth.uid}
               options={[
                 {
                   text: 'Deactivate',
