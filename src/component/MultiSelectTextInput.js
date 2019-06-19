@@ -26,11 +26,13 @@ export default class MultiSelectTextInput extends Component {
 
   handleChange = (value) => {
     this.setState({ value });
-    this.props.getValue({ value });
+    this.props.getValue([...value]);
   };
 
   handleInputChange = (inputValue) => {
-    this.setState({ inputValue });
+    if (inputValue !== '') {
+      this.setState({ inputValue });
+    }
   };
 
   handleKeyDown = (event) => {
@@ -60,6 +62,22 @@ export default class MultiSelectTextInput extends Component {
       value: [],
     });
   };
+
+  handleLockInLastInput() {
+    const { inputValue, value } = this.state;
+    if (!inputValue) return;
+    this.setState(
+      {
+        inputValue: '',
+        value: [...value, createOption(inputValue)],
+      },
+      () => {
+        this.props.getValue([...value, createOption(inputValue)]);
+      },
+    );
+    // eslint-disable-next-line consistent-return
+    return createOption(inputValue);
+  }
 
   render() {
     const { inputValue, value, placeholder } = this.state;

@@ -415,6 +415,8 @@ const CompanyPanel = (props) => {
     inviteInput.current.handleClear();
   };
 
+  const lockInviteInput = () => inviteInput.current.handleLockInLastInput();
+
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <BlockUi tag="div" blocking={blocking} style={{ height: '100%' }}>
@@ -539,8 +541,13 @@ const CompanyPanel = (props) => {
                     className="company-invite-btn"
                     // eslint-disable-next-line max-len
                     onClick={() => {
-                      if (invitedEmails.length > 0) {
-                        inviteToCompanyModalRef.current.triggerInviteToCompany(invitedEmails, {
+                      let invites = invitedEmails;
+                      const lastInvite = lockInviteInput();
+                      if (lastInvite !== undefined) {
+                        invites = invitedEmails.concat(lastInvite);
+                      }
+                      if (invites.length > 0) {
+                        inviteToCompanyModalRef.current.triggerInviteToCompany(invites, {
                           companyName: company.CompanyName,
                           key: props.match.params.key,
                         });
