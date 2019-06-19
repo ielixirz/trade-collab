@@ -57,6 +57,7 @@ const FileList = ({
   const fileListGroupStyle = {
     height: '30vh',
     overflow: 'scroll',
+    overflowX: 'hidden',
     fontSize: '0.9em',
   };
 

@@ -23,6 +23,14 @@ import './login.css';
 import { connect } from 'react-redux';
 import { typinglogin, login } from '../../../actions/loginActions';
 import ForgotPass from '../ForgotPass/ForgotPass';
+import {
+  INVALID_EMAIL,
+  ACCOUNT_NOT_FOUND,
+  INVALID_PASSWORD,
+  INVALID_EMAIL_CODE,
+  ACCOUNT_NOT_FOUND_CODE,
+  INVALID_PASSWORD_CODE,
+} from '../../../constants/auth';
 
 class Login extends Component {
   constructor(props) {
@@ -34,9 +42,23 @@ class Login extends Component {
   }
 
   displayError = (error) => {
+    let errorMessage = 'Unknown Error Occur.';
+    switch (error.code) {
+      case INVALID_EMAIL_CODE:
+        errorMessage = INVALID_EMAIL;
+        break;
+      case INVALID_PASSWORD_CODE:
+        errorMessage = INVALID_PASSWORD;
+        break;
+      case ACCOUNT_NOT_FOUND_CODE:
+        errorMessage = ACCOUNT_NOT_FOUND;
+        break;
+      default:
+        break;
+    }
     this.setState({
       isError: true,
-      errorMsg: error.message,
+      errorMsg: errorMessage,
     });
   };
 

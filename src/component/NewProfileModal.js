@@ -4,9 +4,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import {
+  Modal, ModalHeader, ModalBody, Input, Button,
+} from 'reactstrap';
 import './MemberModal.css';
 import { CreateProfile } from '../service/user/profile';
+import './style/NewProfileModal.scss';
 
 class NewProfileModal extends React.Component {
   static propTypes = {
@@ -60,15 +63,15 @@ class NewProfileModal extends React.Component {
     );
     return (
       <div>
-        <div role="button" tabIndex={0} onClick={this.toggle}>
+        <div role="button" tabIndex={0} onClick={this.toggle} className="add-profile-modal-link">
           {children}
         </div>
         <Modal isOpen={modal} toggle={this.toggle}>
-          <ModalHeader toggle={this.toggle} close={closeBtn} />
+          <ModalHeader toggle={this.toggle} close={closeBtn} style={{ border: 0 }} />
           <ModalBody>
             <div style={{ paddingLeft: 70, paddingRight: 70, paddingBottom: 40 }}>
               <h2 style={{ textAlign: 'center', margin: 0 }}>Add New Profile!</h2>
-              <div className="text-center">
+              <div className="text-center" style={{ marginTop: '20px' }}>
                 <img
                   src="//placehold.it/140"
                   style={{
@@ -84,13 +87,13 @@ class NewProfileModal extends React.Component {
               <div>
                 <i
                   className="icons cui-pencil"
-                  style={{ position: 'absolute', right: 310, top: 180 }}
+                  style={{ position: 'absolute', right: 180, top: 210 }}
                 />
               </div>
               <form>
-                <div>
-                  <h4>Firstname</h4>
-                  <input
+                <div style={{ marginTop: '20px' }}>
+                  <span style={{ fontSize: '1em', fontWeight: 'bold' }}>Name</span>
+                  <Input
                     type="text"
                     id="Firstname"
                     name="fname"
@@ -101,9 +104,9 @@ class NewProfileModal extends React.Component {
                   />
                 </div>
 
-                <div>
-                  <h4>Surname</h4>
-                  <input
+                <div style={{ marginTop: '15px' }}>
+                  <span style={{ fontSize: '1em', fontWeight: 'bold' }}>Surname</span>
+                  <Input
                     type="text"
                     id="Surname"
                     name="sname"
@@ -114,11 +117,13 @@ class NewProfileModal extends React.Component {
                   />
                 </div>
               </form>
-              <p style={{ color: '#16A085' }}>Edit profile setting</p>
+              <p style={{ color: '#16A085', marginTop: 20 }}>
+                <b>Edit profile setting</b>
+              </p>
               <div className="col-sm-12 text-center">
-                <button className="button button1" type="submit" onClick={this.submit}>
-                  <span style={{ color: '#fff' }}>Create Profile</span>
-                </button>
+                <Button className="create-profile-btn" type="submit" onClick={this.submit}>
+                  <span>Create Profile</span>
+                </Button>
               </div>
             </div>
           </ModalBody>
