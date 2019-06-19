@@ -564,6 +564,49 @@ exports.DeleteShipmentMember = functions.firestore
     return CheckOtherChatRoomMember
 })
 
+exports.AddNotiCountFirstJoin = functions.firestore
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
+  .onCreate( async (snapshot, context) => {
+
+    const UserKey = snapshot.ChatRoomMemberUserKey;
+    
+    const UserPersonalizeProfileActionList = [];
+
+    const GetUserProfileList = await admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(UserKey)
+      .collection('Profile')
+      .get();
+
+    const ProfileKeyList = GetUserProfileList.docs.map(ProfileItem => ProfileItem.id);
+
+    ProfileKeyList.forEach(async Item => {
+      const TriggerFirstJoin = admin
+        .firestore()
+        .collection('UserPersonalize')
+        .doc(Item);
+
+      const GetFirstJoin = await TriggerFirstJoin.get();
+      let FirstJoinStatus = GetFirstJoin[context.params.ShipmentKey];
+
+      const ProfileEmail = GetFirstJoin.data().ProfileEmail;
+
+      const FirstJoinPayloadObject = { ShipmentFristJoin: {} };
+
+      FirstJoinPayloadObject['ShipmentFristJoin'][context.params.ShipmentKey] = true;
+
+      if (!GetFirstJoin || FirstJoinStatus === undefined) {
+        const SetFirstJoinAction = await TriggerFirstJoin.set(FirstJoinPayloadObject, {
+          merge: true
+        });
+        UserPersonalizeProfileActionList.push(SetFirstJoinAction);
+      }
+    }); // End forEach
+
+    return Promise.all(UserPersonalizeProfileActionList)
+})
+
 exports.ManageShipmentMember = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onWrite(async (change, context) => {
@@ -622,16 +665,16 @@ exports.ManageShipmentMember = functions.firestore
 
     if (oldValue && !newValue) {
       // Delete ChatRoomMemberKey from ChatRoomMemberList
-      await admin
-        .firestore()
-        .collection('Shipment')
-        .doc(context.params.ShipmentKey)
-        .collection('ChatRoom')
-        .doc(context.params.ChatRoomKey)
-        .set(
-          { ChatRoomMemberList: admin.firestore.FieldValue.arrayRemove(UserKey) },
-          { merge: true }
-        );
+      // await admin
+      //   .firestore()
+      //   .collection('Shipment')
+      //   .doc(context.params.ShipmentKey)
+      //   .collection('ChatRoom')
+      //   .doc(context.params.ChatRoomKey)
+      //   .set(
+      //     { ChatRoomMemberList: admin.firestore.FieldValue.arrayRemove(UserKey) },
+      //     { merge: true }
+      //   );
 
       // Delete Noti-Count
 
