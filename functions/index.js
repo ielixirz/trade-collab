@@ -404,6 +404,22 @@ exports.AddChatRoomShareDataList = functions.firestore
       );
   });
 
+exports.AddChatRoomMemberList = functions.firestore
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
+  .onCreate(async (snapshot, context) => {
+    const UserKey = snapshot.ChatRoomMemberUserKey;
+
+    const AddChatRoomMemberListAction = await admin
+      .firestore()
+      .collection('Shipment')
+      .doc(context.params.ShipmentKey)
+      .collection('ChatRoom')
+      .doc(context.params.ChatRoomKey)
+      .set({ ChatRoomMemberList: admin.firestore.FieldValue.arrayUnion(UserKey) }, { merge: true });
+
+    return AddChatRoomMemberListAction;
+  });
+
 exports.ManageShipmentMember = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onWrite(async (change, context) => {
@@ -423,7 +439,10 @@ exports.ManageShipmentMember = functions.firestore
 
     const ProfileKeyList = GetUserProfileList.docs.map(ProfileItem => ProfileItem.id);
 
-    // const FirstProfile = GetUserProfileList.docs[0].data();
+    const FirstProfile = GetUserProfileList.docs[0].data();
+
+    const FirstnameFirstProfile = FirstProfile.ProfileFirstname;
+    const SurnameFirstProfile = FirstProfile.ProfileSurname;
 
     // ChatRoomMemberList
 
@@ -439,17 +458,21 @@ exports.ManageShipmentMember = functions.firestore
           { merge: true }
         );
 
-      // await admin
-      //   .firestore()
-      //   .collection('Shipment')
-      //   .doc(context.params.ShipmentKey)
-      //   .collection('ChatRoom')
-      //   .doc(context.params.ChatRoomKey)
-      //   .set(
-      //     { ChatRoomMemberList: admin.firestore.FieldValue.arrayUnion(UserKey) },
-      //     { merge: true }
-      //   );
-      // FirstProfile;
+      await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ChatRoom')
+        .doc(context.params.ChatRoomKey)
+        .collection('ChatRoomMember')
+        .doc(context.params.ChatRoomMemberKey)
+        .set(
+          {
+            ChatRoomMemberFirstnameFirstProfile: FirstnameFirstProfile,
+            ChatRoomMemberSurnameFirstProfile: SurnameFirstProfile
+          },
+          { merge: true }
+        );
     }
 
     const DeleteNotiCountServiceList = [];
