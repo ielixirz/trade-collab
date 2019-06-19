@@ -420,6 +420,24 @@ exports.AddChatRoomMemberList = functions.firestore
     return AddChatRoomMemberListAction;
   });
 
+exports.DeleteChatRoomMemberList = functions.firestore
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
+  .onDelete(async (change, context) => { 
+
+  const DeleteChatRoomMemberListAction = await admin
+    .firestore()
+    .collection('Shipment')
+    .doc(context.params.ShipmentKey)
+    .collection('ChatRoom')
+    .doc(context.params.ChatRoomKey)
+    .set(
+      { ChatRoomMemberList: admin.firestore.FieldValue.arrayRemove(UserKey) },
+      { merge: true }
+    );
+
+    return DeleteChatRoomMemberListAction;
+  });
+
 exports.AddFirstNameSurNameFirstProfileToChatRoomMember = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onCreate(async (snapshot, context) => {
@@ -812,35 +830,35 @@ exports.ManageShipmentMember = functions.firestore
         SendEmailInviteIntoShipment
       ]);
     } else if (oldValue && !newValue) {
-      PayloadObject[oldValue['ChatRoomMemberUserKey']] = null;
+    //   PayloadObject[oldValue['ChatRoomMemberUserKey']] = null;
 
-      const SnapshotDataObject = oldValue;
-      const ShipmentMemberUserKey = SnapshotDataObject['ChatRoomMemberUserKey'];
+    //   const SnapshotDataObject = oldValue;
+    //   const ShipmentMemberUserKey = SnapshotDataObject['ChatRoomMemberUserKey'];
 
-      const DeletePayload = {};
+    //   const DeletePayload = {};
 
-      DeletePayload[ShipmentMemberUserKey] = admin.firestore.FieldValue.delete();
+    //   DeletePayload[ShipmentMemberUserKey] = admin.firestore.FieldValue.delete();
 
-      const DeleteShipmentMember = await admin
-        .firestore()
-        .collection('Shipment')
-        .doc(context.params.ShipmentKey)
-        .update(DeletePayload);
+    //   const DeleteShipmentMember = await admin
+    //     .firestore()
+    //     .collection('Shipment')
+    //     .doc(context.params.ShipmentKey)
+    //     .update(DeletePayload);
 
-      const DeleteShipmentMemberList = await admin
-        .firestore()
-        .collection('Shipment')
-        .doc(context.params.ShipmentKey)
-        .update({
-          ShipmentMemberList: admin.firestore.FieldValue.arrayRemove(ShipmentMemberUserKey)
-        });
+    //   const DeleteShipmentMemberList = await admin
+    //     .firestore()
+    //     .collection('Shipment')
+    //     .doc(context.params.ShipmentKey)
+    //     .update({
+    //       ShipmentMemberList: admin.firestore.FieldValue.arrayRemove(ShipmentMemberUserKey)
+    //     });
 
-      return Promise.all([
-        DeleteShipmentMember,
-        DeleteShipmentMemberList,
-        DeleteNotiCountServiceList
-      ]);
-    }
+    //   return Promise.all([
+    //     DeleteShipmentMember,
+    //     DeleteShipmentMemberList,
+    //     DeleteNotiCountServiceList
+    //   ]);
+    // }
   });
 
 exports.CreateDefaultTemplateCompanyUserAccessibility = functions.firestore
