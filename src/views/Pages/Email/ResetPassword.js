@@ -6,7 +6,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Container } from 'reactstrap';
 import ResetPasswordModal from '../../../component/ResetPasswordModal';
-import './ResetPassword.scss';
+import '../../../scss/ResetPassword.scss';
 
 const ResetPassword = (props) => {
   const resetPasswordModalRef = useRef(null);
@@ -22,7 +22,7 @@ const ResetPassword = (props) => {
   return (
     <div className="app flex-row align-items-center">
       <Container>
-        <ResetPasswordModal ref={resetPasswordModalRef} redirect={redirect} />
+        <ResetPasswordModal ref={resetPasswordModalRef} backdrop="static" redirect={redirect} />
       </Container>
     </div>
   );

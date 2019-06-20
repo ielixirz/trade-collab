@@ -37,3 +37,14 @@ Not supports in Firefox and IE */
 ::-webkit-scrollbar-button {
   display: none;
 }
+
+.button-as-link {
+  color: #20a8d8;
+  text-decoration: none;
+  background-color: transparent;
+  cursor: pointer;
+  &:hover {
+    color: #167495;
+    text-decoration: underline;
+  }
+}

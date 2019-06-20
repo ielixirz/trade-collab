@@ -18,7 +18,6 @@ import { isValidPassword } from '../utils/validation';
 
 const ResetPasswordModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
-  const [backdrop] = useState('static');
   const [newPassword, setNewPassword] = useState('');
   const [newConfirmPassword, setNewConfirmPassword] = useState('');
   const [invalid, setInvalid] = useState(undefined);
@@ -66,8 +65,8 @@ const ResetPasswordModal = forwardRef((props, ref) => {
       isOpen={modal}
       toggle={toggle}
       fade={false}
-      backdrop={backdrop}
-      onClosed={() => props.redirect()}
+      backdrop={props.backdrop}
+      onClosed={props.redirect === null ? () => null : () => props.redirect()}
       className="reset-password-modal"
     >
       <ModalHeader toggle={toggle} style={{ border: 'none' }}>
