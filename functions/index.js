@@ -664,6 +664,23 @@ exports.DeleteNotiCount  = functions.firestore
     return CheckOtherChatRoomMember
 })
 
+exports.SendEmailInviteIntoShipment = functions.firestore
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
+  .onCreate(async (snapshot, context) => {
+
+    const UserEmail = snapshot.ChatRoomMemberEmail;
+
+    const SendInviteIntoShipment = await SendEmail(
+      InviteIntoShipmentTemplate(
+        UserEmail,
+        `You have new invitation into shipment `,
+        BodyEmailTemplate()
+      )
+    );
+  
+  return SendInviteIntoShipment
+})
+
 exports.ManageShipmentMember = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onWrite(async (change, context) => {
@@ -760,32 +777,32 @@ exports.ManageShipmentMember = functions.firestore
     let SendEmailInviteIntoShipment;
 
     if (!oldValue && newValue) {
-      ProfileKeyList.forEach(async Item => {
-        const TriggerFirstJoin = admin
-          .firestore()
-          .collection('UserPersonalize')
-          .doc(Item);
+      // ProfileKeyList.forEach(async Item => {
+      //   const TriggerFirstJoin = admin
+      //     .firestore()
+      //     .collection('UserPersonalize')
+      //     .doc(Item);
 
-        const GetFirstJoin = await TriggerFirstJoin.get();
-        let FirstJoinStatus = GetFirstJoin[context.params.ShipmentKey];
+      //   const GetFirstJoin = await TriggerFirstJoin.get();
+      //   let FirstJoinStatus = GetFirstJoin[context.params.ShipmentKey];
 
-        const ProfileEmail = GetFirstJoin.data().ProfileEmail;
+      //   const ProfileEmail = GetFirstJoin.data().ProfileEmail;
 
-        // if (GetFirstJoin.data() !== undefined) {
-        //   FirstJoinStatus = GetFirstJoin.data().ShipmentFristJoin;
-        // }
+      //   // if (GetFirstJoin.data() !== undefined) {
+      //   //   FirstJoinStatus = GetFirstJoin.data().ShipmentFristJoin;
+      //   // }
 
-        const FirstJoinPayloadObject = { ShipmentFristJoin: {} };
+      //   const FirstJoinPayloadObject = { ShipmentFristJoin: {} };
 
-        FirstJoinPayloadObject['ShipmentFristJoin'][context.params.ShipmentKey] = true;
+      //   FirstJoinPayloadObject['ShipmentFristJoin'][context.params.ShipmentKey] = true;
 
-        if (!GetFirstJoin || FirstJoinStatus === undefined) {
-          const SetFirstJoinAction = await TriggerFirstJoin.set(FirstJoinPayloadObject, {
-            merge: true
-          });
-          UserPersonalizeProfileActionList.push(SetFirstJoinAction);
-        }
-      }); // End forEach
+      //   if (!GetFirstJoin || FirstJoinStatus === undefined) {
+      //     const SetFirstJoinAction = await TriggerFirstJoin.set(FirstJoinPayloadObject, {
+      //       merge: true
+      //     });
+      //     UserPersonalizeProfileActionList.push(SetFirstJoinAction);
+      //   }
+      // }); // End forEach
 
       // Send Email InviteIntoShipment
 
