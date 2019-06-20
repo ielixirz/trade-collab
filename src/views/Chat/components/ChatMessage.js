@@ -10,7 +10,7 @@ import moment from 'moment';
 
 const ChatMessage = ({ message, i }) => {
   const {
-    title = 'exporter has been updated',
+    title = 'System Message',
     type = 'sender',
     text = '',
     name = 'Anonymous',
@@ -32,7 +32,8 @@ const ChatMessage = ({ message, i }) => {
   } else {
     isFirstMessageOfTheDay = true;
   }
-  if (type === 'sender' || type === 'system') {
+  console.log('Message', type);
+  if (type === 'sender' || type === 'System') {
     return (
       <div key={i}>
         {isFirstMessageOfTheDay ? (
@@ -52,14 +53,26 @@ const ChatMessage = ({ message, i }) => {
               <Row className="flex-nowrap">
                 <div className="sender">
                   <p>
-                    <span className="user-name">{name}</span> <br />
-                    {type !== 'system' ? (
-                      text
+                    {type !== 'System' ? (
+                      <div>
+                        <span className="user-name">{name}</span> <br />${text}
+                      </div>
                     ) : (
                       <div>
-                        <a color="primary" id={`toggler${i}`} style={{ marginBottom: '1rem' }}>
-                          {title}
-                        </a>
+                        <span className="user-name">
+                          <a
+                            color="primary"
+                            href={'#'}
+                            onClick={e => {
+                              e.preventDefault();
+                            }}
+                            id={`toggler${i}`}
+                            style={{ marginBottom: '1rem' }}
+                          >
+                            {title}
+                          </a>
+                        </span>
+                        <br />
                         <UncontrolledCollapse toggler={`#toggler${i}`}>{text}</UncontrolledCollapse>
                       </div>
                     )}

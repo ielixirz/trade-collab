@@ -45,6 +45,7 @@ import { GetUserCompany } from '../../service/user/user';
 import { GetShipmentTotalCount } from '../../service/personalize/personalize';
 import _ from 'lodash';
 import { fetchCompany } from '../../actions/companyAction';
+import { AddChatRoomMember, CreateChatRoom } from '../../service/chat/chat';
 
 class Shipment extends Component {
   constructor(props) {
@@ -138,9 +139,35 @@ class Shipment extends Component {
     CreateShipment(parameter).subscribe({
       next: createdShipment => {
         this.fetchShipmentReload();
+        let shipmentKey = createdShipment.id;
         UpdateMasterData(createdShipment.id, 'DefaultTemplate', {
           ShipmentDetailProduct: parameter.ShipmentProductName
-        }).subscribe(() => {});
+        }).subscribe(() => {
+          CreateChatRoom(shipmentKey, {
+            ChatRoomType: 'Internal',
+            ChatRoomName: 'Internal'
+          }).subscribe({
+            next: result => {
+              const data = result.path.split('/');
+              let chatkey = result.id;
+              let ChatRoomMember = AddChatRoomMember(shipmentKey, result.id, {
+                ChatRoomMemberUserKey: this.props.user.uid,
+                ChatRoomMemberEmail: this.props.user.email,
+                ChatRoomMemberImageUrl: '',
+                ChatRoomMemberRole: [parameter.ShipmentCreatorType],
+                ChatRoomMemberCompanyName: '',
+                ChatRoomMemberCompanyKey: ''
+              }).subscribe({
+                next: result => {
+                  this.props.history.push(`/chat/${createdShipment.id}`);
+                }
+              });
+            },
+            complete: result => {
+              console.log(result);
+            }
+          });
+        });
       }
     });
 
