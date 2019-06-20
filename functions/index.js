@@ -681,6 +681,43 @@ exports.SendEmailInviteIntoShipment = functions.firestore
   return SendInviteIntoShipment
 })
 
+exports.NotiSystemGenInviteIntoShipment = functions.firestore
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
+  .onCreate( async (snapshot, context) => {
+
+    const UserKey = snapshot.ChatRoomMemberUserKey;
+
+    const GetUserProfileList = await admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(UserKey)
+      .collection('Profile')
+      .get();
+
+    const FirstProfile = GetUserProfileList.docs[0].data();
+
+    const FirstnameFirstProfile = FirstProfile.ProfileFirstname;
+    const SurnameFirstProfile = FirstProfile.ProfileSurname;
+
+    const CreateSystemGenInviteIntoShipment = await admin
+    .firestore()
+    .collection('Shipment')
+    .doc(context.params.ShipmentKey)
+    .collection('ChatRoom')
+    .doc(context.params.ChatRoomKey)
+    .collection('ChatRoomMessage')
+    .add({
+      ChatRoomMessageContext: `${FirstnameFirstProfile} ${
+        SurnameFirstProfile
+      } (${newValue.ChatRoomMemberEmail}) joined`,
+      ChatRoomMessageType: 'System',
+      ChatRoomMessageTimestamp: admin.firestore.FieldValue.serverTimestamp()
+    });
+
+    return CreateSystemGenInviteIntoShipment
+
+  })
+
 exports.ManageShipmentMember = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onWrite(async (change, context) => {
