@@ -718,6 +718,73 @@ exports.NotiSystemGenInviteIntoShipment = functions.firestore
 
   })
 
+exports.SetBuyerSellerShipment = functions.firestore
+  .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
+  .onUpdate( async (change, context) => {
+
+    const oldValue = change.before.data();
+    const newValue = change.after.data();
+
+    const SetCompanyName = []
+
+    if (newValue.ChatRoomMemberRole.includes('Exporter') && newValue.ChatRoomMemberCompanyName) {
+      const SetCompanyNameAtShipment = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .set(
+          {
+            ShipmentSellerCompanyName: newValue.ChatRoomMemberCompanyName
+          },
+          { merge: true }
+        );
+      const SetCompanyNameAtShipmentShareData = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ShipmentShareData')
+        .doc('DefaultTemplate')
+        .set(
+          {
+            ShipperCompanyName: newValue.ChatRoomMemberCompanyName
+          },
+          { merge: true }
+        );
+
+      SetCompanyName = [SetCompanyNameAtShipment, SetCompanyNameAtShipmentShareData];
+    } else if (
+      newValue.ChatRoomMemberRole.includes('Importer') &&
+      newValue.ChatRoomMemberCompanyName
+    ) {
+      const SetCompanyNameAtShipment = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .set(
+          {
+            ShipmentBuyerCompanyName: newValue.ChatRoomMemberCompanyName
+          },
+          { merge: true }
+        );
+      const SetCompanyNameAtShipmentShareData = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ShipmentShareData')
+        .doc('DefaultTemplate')
+        .set(
+          {
+            ConsigneeCompanyName: newValue.ChatRoomMemberCompanyName
+          },
+          { merge: true }
+        );
+
+      SetCompanyName = [SetCompanyNameAtShipment, SetCompanyNameAtShipmentShareData];
+    }
+
+    return Promise.all(SetCompanyName)
+  })
+
 exports.ManageShipmentMember = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onWrite(async (change, context) => {
@@ -843,32 +910,32 @@ exports.ManageShipmentMember = functions.firestore
 
       // Send Email InviteIntoShipment
 
-      SendEmailInviteIntoShipment = await SendEmail(
-        InviteIntoShipmentTemplate(
-          UserEmail,
-          `You have new invitation into shipment `,
-          `<strong>You have new invitation into shipment</strong>`
-        )
-      );
+      // SendEmailInviteIntoShipment = await SendEmail(
+      //   InviteIntoShipmentTemplate(
+      //     UserEmail,
+      //     `You have new invitation into shipment `,
+      //     `<strong>You have new invitation into shipment</strong>`
+      //   )
+      // );
 
       // End Send Email InviteIntoShipment
 
       // Noti-SystemGen InviteIntoShipment
 
-      CreateSystemGenInviteIntoShipment = await admin
-        .firestore()
-        .collection('Shipment')
-        .doc(context.params.ShipmentKey)
-        .collection('ChatRoom')
-        .doc(context.params.ChatRoomKey)
-        .collection('ChatRoomMessage')
-        .add({
-          ChatRoomMessageContext: `${newValue.ChatRoomMemberFirstName} ${
-            newValue.ChatRoomMemberSurName
-          } (${newValue.ChatRoomMemberEmail}) joined`,
-          ChatRoomMessageType: 'System',
-          ChatRoomMessageTimestamp: admin.firestore.FieldValue.serverTimestamp()
-        });
+      // CreateSystemGenInviteIntoShipment = await admin
+      //   .firestore()
+      //   .collection('Shipment')
+      //   .doc(context.params.ShipmentKey)
+      //   .collection('ChatRoom')
+      //   .doc(context.params.ChatRoomKey)
+      //   .collection('ChatRoomMessage')
+      //   .add({
+      //     ChatRoomMessageContext: `${newValue.ChatRoomMemberFirstName} ${
+      //       newValue.ChatRoomMemberSurName
+      //     } (${newValue.ChatRoomMemberEmail}) joined`,
+      //     ChatRoomMessageType: 'System',
+      //     ChatRoomMessageTimestamp: admin.firestore.FieldValue.serverTimestamp()
+      //   });
 
       // End Noti-SystemGen InviteIntoShipment
     }
