@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 // eslint-disable-next-line no-unused-vars
 import { authState, user } from 'rxfire/auth';
 // eslint-disable-next-line no-unused-vars
@@ -55,3 +56,7 @@ export const UpdateEmail = (Email, Password, NewEmail) => LoginWithEmail(Email, 
 );
 
 export const ForgetPassword = NewEmail => from(FirebaseApp.auth().sendPasswordResetEmail(NewEmail));
+
+export const VerifyPasswordResetCode = ActionCode => from(FirebaseApp.auth().verifyPasswordResetCode(ActionCode));
+
+export const ConfirmPasswordReset = (ActionCode, NewPassword) => from(FirebaseApp.auth().confirmPasswordReset(ActionCode, NewPassword));

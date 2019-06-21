@@ -15,6 +15,7 @@ import {
   Alert,
 } from 'reactstrap';
 import { isValidPassword } from '../utils/validation';
+import { ConfirmPasswordReset } from '../service/auth/manageuser';
 
 const ResetPasswordModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
@@ -22,27 +23,35 @@ const ResetPasswordModal = forwardRef((props, ref) => {
   const [newConfirmPassword, setNewConfirmPassword] = useState('');
   const [invalid, setInvalid] = useState(undefined);
   const [msg, setMsg] = useState('');
+  const [email, setEmail] = useState('');
+  const [actionCode, setActionCode] = useState('');
 
   const toggle = () => {
     setModal(!modal);
   };
 
-  const validateInput = () => {
+  const changePassword = () => {
+    ConfirmPasswordReset(actionCode, newPassword)
+      .then((resp) => {
+        console.log(resp);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const validateInput = (callback) => {
     if (newPassword === newConfirmPassword) {
       if (isValidPassword(newPassword)) {
         setInvalid(false);
-      } else {
-        setMsg('Your password is invalid');
-        setInvalid(true);
+        callback();
       }
+      setMsg('Your password is invalid');
+      setInvalid(true);
     } else {
       setMsg('Password and Confirm Password not match');
       setInvalid(true);
     }
-  };
-
-  const changePassword = () => {
-    validateInput();
   };
 
   const handleInputPasswordChange = (event) => {
@@ -55,7 +64,9 @@ const ResetPasswordModal = forwardRef((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     // eslint-disable-next-line no-shadow
-    triggerResetPassword() {
+    triggerResetPassword(email, actionCode) {
+      setEmail(email);
+      setActionCode(actionCode);
       toggle();
     },
   }));
@@ -116,7 +127,7 @@ const ResetPasswordModal = forwardRef((props, ref) => {
           color="primary"
           className="change-password-btn"
           style={{ margin: 'auto' }}
-          onClick={changePassword}
+          onClick={validateInput(changePassword)}
         >
           Change Password
         </Button>
