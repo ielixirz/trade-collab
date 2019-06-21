@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import _ from 'lodash';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
+import '../../scss/ResetPassword.scss';
 
 import {
   Row, Col, DropdownToggle, Dropdown, Button, Input, ButtonGroup,
@@ -17,11 +18,12 @@ import ThreeDotDropdown from '../../component/ThreeDotDropdown';
 import CreateCompanyModal from '../../component/CreateCompanyModal';
 import InviteToCompanyModal from '../../component/InviteToCompanyModal';
 import RequestToJoinModal from '../../component/RequestToJoinModal';
+import ResetPasswordModal from '../../component/ResetPasswordModal';
 
 import { profileColumns } from '../../constants/network';
 
 import { UpdateProfile } from '../../service/user/profile';
-import { GetUserCompany, LeaveCompany } from '../../service/user/user';
+import { GetUserCompany } from '../../service/user/user';
 import { RemoveFromCompany } from '../../service/company/company';
 import { GetUserRequest } from '../../service/join/request';
 import {
@@ -42,7 +44,6 @@ const mockProfile = {
   desc: 'Fruit Exporter from coconut land',
 };
 
-// This function will be move after actual company fetching is complete
 const renderStatus = (status, data, listener) => {
   if (status === 'Invited') {
     return (
@@ -114,6 +115,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
 
   const createCompanyModalRef = useRef(null);
   const inviteToCompanyModalRef = useRef(null);
+  const resetPasswordModalRef = useRef(null);
   const fileInput = useRef(null);
   const requestToJoinModalRef = useRef(null);
 
@@ -350,6 +352,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
             userId={auth.uid}
             profile={currentProfile}
           />
+          <ResetPasswordModal ref={resetPasswordModalRef} backdrop changeMode redirect={null} />
           <input
             type="file"
             id="file"
@@ -449,7 +452,15 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
               <Row style={{ marginTop: '20px' }}>
                 <Col xs={1} />
                 <Col xs={4}>
-                  <a href="/#/network">Reset Password</a>
+                  <span
+                    role="button"
+                    className="button-as-link"
+                    onClick={() => resetPasswordModalRef.current.triggerResetPassword(user.UserInfoEmail)}
+                    onKeyDown={null}
+                    tabIndex="-1"
+                  >
+                    Reset Password
+                  </span>
                 </Col>
               </Row>
             </Col>
