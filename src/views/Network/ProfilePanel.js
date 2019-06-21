@@ -352,7 +352,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
             userId={auth.uid}
             profile={currentProfile}
           />
-          <ResetPasswordModal ref={resetPasswordModalRef} backdrop redirect={null} />
+          <ResetPasswordModal ref={resetPasswordModalRef} backdrop changeMode redirect={null} />
           <input
             type="file"
             id="file"
@@ -455,7 +455,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
                   <span
                     role="button"
                     className="button-as-link"
-                    onClick={() => resetPasswordModalRef.current.triggerResetPassword()}
+                    onClick={() => resetPasswordModalRef.current.triggerResetPassword(user.UserInfoEmail)}
                     onKeyDown={null}
                     tabIndex="-1"
                   >

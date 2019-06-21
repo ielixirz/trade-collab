@@ -1,9 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
 /* as it is component */
-import React, {
-  useState, forwardRef, useImperativeHandle, useEffect,
-} from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import {
   Input,
   Label,
@@ -17,10 +15,11 @@ import {
   Alert,
 } from 'reactstrap';
 import { isValidPassword } from '../utils/validation';
-import { ConfirmPasswordReset } from '../service/auth/manageuser';
+import { ConfirmPasswordReset, UpdatePassword } from '../service/auth/manageuser';
 
 const ResetPasswordModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [newConfirmPassword, setNewConfirmPassword] = useState('');
   const [invalid, setInvalid] = useState(undefined);
@@ -34,13 +33,25 @@ const ResetPasswordModal = forwardRef((props, ref) => {
   };
 
   const changePassword = () => {
-    ConfirmPasswordReset(actionCode, newPassword)
-      .then(() => {
-        setState('DONE');
-      })
-      .catch(() => {
-        setState('ERROR');
-      });
+    if (props.changeMode) {
+      UpdatePassword(email, currentPassword, newPassword).subscribe(
+        () => {
+          setState('DONE');
+        },
+        (err) => {
+          setMsg('Your current password is invalid.');
+          setInvalid(true);
+        },
+      );
+    } else {
+      ConfirmPasswordReset(actionCode, newPassword)
+        .then(() => {
+          setState('DONE');
+        })
+        .catch(() => {
+          setState('ERROR');
+        });
+    }
   };
 
   const validateInput = (callback) => {
@@ -66,16 +77,25 @@ const ResetPasswordModal = forwardRef((props, ref) => {
     setNewConfirmPassword(event.target.value);
   };
 
+  const handleInputCurrentPasswordChange = (event) => {
+    setCurrentPassword(event.target.value);
+  };
+
   useImperativeHandle(ref, () => ({
     // eslint-disable-next-line no-shadow
     triggerResetPassword(email, actionCode, expired) {
-      if (expired) {
-        setState('EXPIRED');
+      if (!props.changeMode) {
+        if (expired) {
+          setState('EXPIRED');
+        } else {
+          setState('VALID');
+          setEmail(email);
+        }
+        setActionCode(actionCode);
       } else {
         setState('VALID');
         setEmail(email);
       }
-      setActionCode(actionCode);
       toggle();
     },
   }));
@@ -101,6 +121,24 @@ const ResetPasswordModal = forwardRef((props, ref) => {
 !
                 </Alert>
               </Row>
+            ) : (
+              ''
+            )}
+            {props.changeMode ? (
+              <React.Fragment>
+                <Label htmlFor="currentPassword">
+                  <b>Current Password</b>
+                </Label>
+                <Input
+                  type="password"
+                  id="currentPassword"
+                  placeholder=""
+                  value={currentPassword}
+                  onChange={handleInputCurrentPasswordChange}
+                  autocomplete="new-password"
+                  style={{ marginBottom: 15 }}
+                />
+              </React.Fragment>
             ) : (
               ''
             )}
@@ -131,7 +169,7 @@ const ResetPasswordModal = forwardRef((props, ref) => {
       case 'DONE':
         return (
           <Container>
-            <Row>
+            <Row style={{ marginBottom: 25 }}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="142"
