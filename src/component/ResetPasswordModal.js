@@ -1,7 +1,9 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
 /* as it is component */
-import React, { useState, forwardRef, useImperativeHandle } from 'react';
+import React, {
+  useState, forwardRef, useImperativeHandle, useEffect,
+} from 'react';
 import {
   Input,
   Label,
@@ -25,6 +27,7 @@ const ResetPasswordModal = forwardRef((props, ref) => {
   const [msg, setMsg] = useState('');
   const [email, setEmail] = useState('');
   const [actionCode, setActionCode] = useState('');
+  const [state, setState] = useState(undefined);
 
   const toggle = () => {
     setModal(!modal);
@@ -32,11 +35,11 @@ const ResetPasswordModal = forwardRef((props, ref) => {
 
   const changePassword = () => {
     ConfirmPasswordReset(actionCode, newPassword)
-      .then((resp) => {
-        console.log(resp);
+      .then(() => {
+        setState('DONE');
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        setState('ERROR');
       });
   };
 
@@ -45,9 +48,10 @@ const ResetPasswordModal = forwardRef((props, ref) => {
       if (isValidPassword(newPassword)) {
         setInvalid(false);
         callback();
+      } else {
+        setMsg('Your password is invalid');
+        setInvalid(true);
       }
-      setMsg('Your password is invalid');
-      setInvalid(true);
     } else {
       setMsg('Password and Confirm Password not match');
       setInvalid(true);
@@ -64,12 +68,123 @@ const ResetPasswordModal = forwardRef((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     // eslint-disable-next-line no-shadow
-    triggerResetPassword(email, actionCode) {
-      setEmail(email);
+    triggerResetPassword(email, actionCode, expired) {
+      if (expired) {
+        setState('EXPIRED');
+      } else {
+        setState('VALID');
+        setEmail(email);
+      }
       setActionCode(actionCode);
       toggle();
     },
   }));
+
+  const renderBody = (currentState) => {
+    switch (currentState) {
+      case 'EXPIRED':
+        return <h4 style={{ textAlign: 'center' }}>Your link already expired.</h4>;
+      case 'ERROR':
+        return (
+          <h4 style={{ textAlign: 'center' }}>
+            An error occured, please try reset your password again.
+          </h4>
+        );
+      case 'VALID':
+        return (
+          <Container style={{ padding: '20px 50px 10px 50px' }}>
+            {invalid ? (
+              <Row style={{ margin: 'auto', marginBottom: '15px' }}>
+                <Alert style={{ margin: 'auto' }} color="danger">
+                  {msg}
+                  {' '}
+!
+                </Alert>
+              </Row>
+            ) : (
+              ''
+            )}
+            <Label htmlFor="newPassword">
+              <b>New Password</b>
+            </Label>
+            <Input
+              type="password"
+              id="newPassword"
+              placeholder=""
+              value={newPassword}
+              onChange={handleInputPasswordChange}
+              autocomplete="new-password"
+            />
+            <Label htmlFor="confirmPassword" style={{ marginTop: 15 }}>
+              <b>Confirm New Password</b>
+            </Label>
+            <Input
+              type="password"
+              id="confirmPassword"
+              placeholder=""
+              value={newConfirmPassword}
+              onChange={handleInputConfirmPasswordChange}
+              autocomplete="new-password"
+            />
+          </Container>
+        );
+      case 'DONE':
+        return (
+          <Container>
+            <Row>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="142"
+                height="142"
+                viewBox="0 0 142 142"
+                style={{ margin: 'auto' }}
+              >
+                <g id="Group_7528" data-name="Group 7528" transform="translate(-437 -214)">
+                  <path
+                    id="Path_4008"
+                    data-name="Path 4008"
+                    d="M71,0A71,71,0,1,1,0,71,71,71,0,0,1,71,0Z"
+                    transform="translate(437 214)"
+                    fill="#16a085"
+                  />
+                  <circle
+                    id="Ellipse_610"
+                    data-name="Ellipse 610"
+                    cx="59"
+                    cy="59"
+                    r="59"
+                    transform="translate(449 226)"
+                    fill="#fff"
+                  />
+                  <g id="Group_7525" data-name="Group 7525" transform="translate(148 1.621)">
+                    <rect
+                      id="Rectangle_4122"
+                      data-name="Rectangle 4122"
+                      width="31"
+                      height="13"
+                      transform="translate(330.349 281.18) rotate(45)"
+                      fill="#16a085"
+                    />
+                    <path
+                      id="Path_4009"
+                      data-name="Path 4009"
+                      d="M0,0,75.876,4.206l.6,10.839L.6,10.839Z"
+                      transform="translate(333.73 305.053) rotate(-45)"
+                      fill="#16a085"
+                    />
+                  </g>
+                </g>
+              </svg>
+            </Row>
+            <h4 style={{ textAlign: 'center' }}>
+              <b>Change Password</b>
+            </h4>
+          </Container>
+        );
+      default:
+        return '';
+    }
+  };
 
   return (
     <Modal
@@ -85,54 +200,22 @@ const ResetPasswordModal = forwardRef((props, ref) => {
           <b>Reset your password:</b>
         </h2>
       </ModalHeader>
-      <ModalBody>
-        <Container style={{ padding: '20px 50px 10px 50px' }}>
-          {invalid ? (
-            <Row style={{ margin: 'auto', marginBottom: '15px' }}>
-              <Alert style={{ margin: 'auto' }} color="danger">
-                {msg}
-                {' '}
-!
-              </Alert>
-            </Row>
-          ) : (
-            ''
-          )}
-          <Label htmlFor="newPassword">
-            <b>New Password</b>
-          </Label>
-          <Input
-            type="password"
-            id="newPassword"
-            placeholder=""
-            value={newPassword}
-            onChange={handleInputPasswordChange}
-            autocomplete="new-password"
-          />
-          <Label htmlFor="confirmPassword" style={{ marginTop: 15 }}>
-            <b>Confirm New Password</b>
-          </Label>
-          <Input
-            type="password"
-            id="confirmPassword"
-            placeholder=""
-            value={newConfirmPassword}
-            onChange={handleInputConfirmPasswordChange}
-            autocomplete="new-password"
-          />
-        </Container>
-      </ModalBody>
-      <ModalFooter style={{ border: 'none' }}>
-        <Button
-          color="primary"
-          className="change-password-btn"
-          style={{ margin: 'auto' }}
-          onClick={validateInput(changePassword)}
-        >
-          Change Password
-        </Button>
-        {' '}
-      </ModalFooter>
+      <ModalBody>{renderBody(state)}</ModalBody>
+      {state !== 'VALID' ? (
+        ''
+      ) : (
+        <ModalFooter style={{ border: 'none' }}>
+          <Button
+            color="primary"
+            className="change-password-btn"
+            style={{ margin: 'auto' }}
+            onClick={() => validateInput(changePassword)}
+          >
+            Change Password
+          </Button>
+          {' '}
+        </ModalFooter>
+      )}
     </Modal>
   );
 });

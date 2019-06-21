@@ -5,6 +5,7 @@
 /* eslint-disable filenames/match-regex */
 import React, { useEffect, useRef } from 'react';
 import { Container } from 'reactstrap';
+import queryString from 'query-string';
 import ResetPasswordModal from '../../../component/ResetPasswordModal';
 import '../../../scss/ResetPassword.scss';
 import { VerifyPasswordResetCode } from '../../../service/auth/manageuser';
@@ -13,13 +14,13 @@ const ResetPassword = (props) => {
   const resetPasswordModalRef = useRef(null);
 
   useEffect(() => {
-    VerifyPasswordResetCode(props.match.params.oobCode)
+    const parsed = queryString.parse(props.location.search);
+    VerifyPasswordResetCode(parsed.oobCode)
       .then((email) => {
-        resetPasswordModalRef.current.triggerResetPassword(email, props.match.params.oobCode);
+        resetPasswordModalRef.current.triggerResetPassword(email, parsed.oobCode, false);
       })
-      .catch((error) => {
-        console.log(error);
-        // TO-DO Redirect to Reset Password Expired.
+      .catch(() => {
+        resetPasswordModalRef.current.triggerResetPassword(null, null, true);
       });
   }, []);
 

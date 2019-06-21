@@ -57,6 +57,6 @@ export const UpdateEmail = (Email, Password, NewEmail) => LoginWithEmail(Email, 
 
 export const ForgetPassword = NewEmail => from(FirebaseApp.auth().sendPasswordResetEmail(NewEmail));
 
-export const VerifyPasswordResetCode = ActionCode => from(FirebaseApp.auth().verifyPasswordResetCode(ActionCode));
+export const VerifyPasswordResetCode = ActionCode => FirebaseApp.auth().verifyPasswordResetCode(ActionCode);
 
-export const ConfirmPasswordReset = (ActionCode, NewPassword) => from(FirebaseApp.auth().confirmPasswordReset(ActionCode, NewPassword));
+export const ConfirmPasswordReset = (ActionCode, NewPassword) => FirebaseApp.auth().confirmPasswordReset(ActionCode, NewPassword);
