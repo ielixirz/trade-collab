@@ -1,28 +1,27 @@
 import { collection, doc } from 'rxfire/firestore';
 import { from, combineLatest, merge } from 'rxjs';
-import { take, concatMap, map, tap, mergeMap, toArray } from 'rxjs/operators';
-import { FirebaseApp } from '../firebase';
+import {
+  take, concatMap, map, tap, mergeMap, toArray,
+} from 'rxjs/operators';
 import _ from 'lodash';
+import { FirebaseApp } from '../firebase';
 
 const ShipmentRefPath = () => FirebaseApp.firestore().collection('Shipment');
 
-const ShipmentFileRefPath = ShipmentKey =>
-  FirebaseApp.firestore()
-    .collection('Shipment')
-    .doc(ShipmentKey)
-    .collection('ShipmentFile');
+const ShipmentFileRefPath = ShipmentKey => FirebaseApp.firestore()
+  .collection('Shipment')
+  .doc(ShipmentKey)
+  .collection('ShipmentFile');
 
-const ShipmentReferenceRefPath = ShipmentKey =>
-  FirebaseApp.firestore()
-    .collection('Shipment')
-    .doc(ShipmentKey)
-    .collection('ShipmentReference');
+const ShipmentReferenceRefPath = ShipmentKey => FirebaseApp.firestore()
+  .collection('Shipment')
+  .doc(ShipmentKey)
+  .collection('ShipmentReference');
 
-const ShipmentMasterDataRefPath = ShipmentKey =>
-  FirebaseApp.firestore()
-    .collection('Shipment')
-    .doc(ShipmentKey)
-    .collection('ShipmentShareData');
+const ShipmentMasterDataRefPath = ShipmentKey => FirebaseApp.firestore()
+  .collection('Shipment')
+  .doc(ShipmentKey)
+  .collection('ShipmentShareData');
 
 /* ex. CreateShipment
   {
@@ -44,19 +43,18 @@ const ShipmentMasterDataRefPath = ShipmentKey =>
 
 export const CreateShipment = Data => from(ShipmentRefPath().add(Data));
 
-export const EditShipment = (ShipmentKey, Data) =>
-  from(
-    ShipmentRefPath()
-      .doc(ShipmentKey)
-      .set(Data, { merge: true })
-  );
+export const EditShipment = (ShipmentKey, Data) => from(
+  ShipmentRefPath()
+    .doc(ShipmentKey)
+    .update(Data),
+);
 
 export const GetShipmentList = (
   QueryStatus,
   QueryFieldName,
   QueryFieldDirection = 'asc',
   LimitNumber = 25,
-  ShipmentMemberUserKey
+  ShipmentMemberUserKey,
 ) => {
   const DefaultQuery = ShipmentRefPath()
     .where('ShipmentMemberList', 'array-contains', ShipmentMemberUserKey)
@@ -66,14 +64,12 @@ export const GetShipmentList = (
     return collection(
       DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection)
         .where('ShipmentStatus', '==', QueryStatus)
-        .limit(LimitNumber)
+        .limit(LimitNumber),
     );
   }
-  if (QueryStatus)
-    return collection(DefaultQuery.where('ShipmentStatus', '==', QueryStatus).limit(LimitNumber));
+  if (QueryStatus) return collection(DefaultQuery.where('ShipmentStatus', '==', QueryStatus).limit(LimitNumber));
   // eslint-disable-next-line max-len
-  if (QueryFieldName)
-    return collection(DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection).limit(LimitNumber));
+  if (QueryFieldName) return collection(DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection).limit(LimitNumber));
   return collection(DefaultQuery.limit(LimitNumber));
 };
 
@@ -90,18 +86,15 @@ export const GetShipmentDetail = ShipmentKey => doc(ShipmentRefPath().doc(Shipme
 */
 
 // eslint-disable-next-line max-len
-export const CreateShipmentFile = (ShipmentKey, Data) =>
-  from(ShipmentFileRefPath(ShipmentKey).add(Data));
+export const CreateShipmentFile = (ShipmentKey, Data) => from(ShipmentFileRefPath(ShipmentKey).add(Data));
 
-export const DeleteShipmetFile = (ShipmentKey, ShipmentFileKey) =>
-  from(
-    ShipmentFileRefPath(ShipmentKey)
-      .doc(ShipmentFileKey)
-      .delete()
-  );
+export const DeleteShipmetFile = (ShipmentKey, ShipmentFileKey) => from(
+  ShipmentFileRefPath(ShipmentKey)
+    .doc(ShipmentFileKey)
+    .delete(),
+);
 
-export const GetShipmentFileList = ShipmentKey =>
-  collection(ShipmentFileRefPath(ShipmentKey).orderBy('FileCreateTimestamp', 'desc'));
+export const GetShipmentFileList = ShipmentKey => collection(ShipmentFileRefPath(ShipmentKey).orderBy('FileCreateTimestamp', 'desc'));
 
 /* Example data CreateShipmentReference
 {
@@ -112,59 +105,54 @@ export const GetShipmentFileList = ShipmentKey =>
 */
 
 // eslint-disable-next-line max-len
-export const CreateShipmentReference = (ShipmentKey, Data) =>
-  from(ShipmentReferenceRefPath(ShipmentKey).add(Data));
+export const CreateShipmentReference = (ShipmentKey, Data) => from(ShipmentReferenceRefPath(ShipmentKey).add(Data));
 
 // eslint-disable-next-line max-len
-export const GetShipmentReferenceList = ShipmentKey =>
-  collection(ShipmentReferenceRefPath(ShipmentKey));
+export const GetShipmentReferenceList = ShipmentKey => collection(ShipmentReferenceRefPath(ShipmentKey));
 
-export const UpdateShipmentReference = (ShipmentKey, ShipmentReferenceKey, Data) =>
-  from(
-    ShipmentReferenceRefPath(ShipmentKey)
-      .doc(ShipmentReferenceKey)
-      .set(Data, { merge: true })
-  );
+export const UpdateShipmentReference = (ShipmentKey, ShipmentReferenceKey, Data) => from(
+  ShipmentReferenceRefPath(ShipmentKey)
+    .doc(ShipmentReferenceKey)
+    .set(Data, { merge: true }),
+);
 
 // eslint-disable-next-line max-len
-export const GetShipmentMasterDataDetail = (ShipmentKey, GroupType) =>
-  doc(ShipmentMasterDataRefPath(ShipmentKey).doc(GroupType)).pipe(take(1));
+export const GetShipmentMasterDataDetail = (ShipmentKey, GroupType) => doc(ShipmentMasterDataRefPath(ShipmentKey).doc(GroupType)).pipe(take(1));
 
-export const UpdateShipmetMasterDataDetail = (ShipmentKey, GroupType, Data) =>
-  from(
-    ShipmentMasterDataRefPath(ShipmentKey)
-      .doc(GroupType)
-      .update(Data)
-  );
+export const UpdateShipmetMasterDataDetail = (ShipmentKey, GroupType, Data) => from(
+  ShipmentMasterDataRefPath(ShipmentKey)
+    .doc(GroupType)
+    .update(Data),
+);
 
 export const CombineShipmentAndShipmentReference = (
   QueryStatus,
   QueryFieldName,
   QueryFieldDirection = 'asc',
   LimitNumber = 25,
-  ShipmentMemberUserKey
+  ShipmentMemberUserKey,
 ) => {
   const ShipmentListSource = GetShipmentList(
     QueryStatus,
     QueryFieldName,
     QueryFieldDirection,
     LimitNumber,
-    ShipmentMemberUserKey
+    ShipmentMemberUserKey,
   );
 
   const ShipmentKeyListSource = ShipmentListSource.pipe(
-    map(ShipmentList => ShipmentList.map(ShipmentItem => ShipmentItem.id))
+    map(ShipmentList => ShipmentList.map(ShipmentItem => ShipmentItem.id)),
   );
 
   const ShipmentReferenceListSource = combineLatest(ShipmentKeyListSource.pipe(take(1))).pipe(
     concatMap(ShipmentKeyList => combineLatest(ShipmentKeyList)),
     concatMap(ShipmentKeyItem => ShipmentKeyItem),
     mergeMap(ShipmentKey => GetShipmentReferenceList(ShipmentKey).pipe(take(1))),
-    toArray()
+    toArray(),
   );
 
   return combineLatest(ShipmentListSource, ShipmentReferenceListSource).pipe(
-    map(CombineResult => {
+    map((CombineResult) => {
       console.log('fetch REF', CombineResult[0], CombineResult[1]);
       return CombineResult[0].map((Item, Index) => {
         const ShipmentData = Item.data();
@@ -173,7 +161,7 @@ export const CombineShipmentAndShipmentReference = (
 
         return { ...ShipmentData, ShipmentID, ShipmentReferenceList };
       });
-    })
+    }),
   );
 };
 
@@ -185,10 +173,9 @@ export const CreateShipmentMember = (ShipmentKey, ShipmentMemberUserKey, Data) =
   return from(
     ShipmentRefPath()
       .doc(ShipmentKey)
-      .set({ ShipmentMember: PayloadObject }, { merge: true })
+      .set({ ShipmentMember: PayloadObject }, { merge: true }),
   );
 };
 
 // eslint-disable-next-line max-len
-export const TestCollectionGroup = ShipmentMemberUserKey =>
-  collection(ShipmentRefPath().where(`ShipmentMember.${ShipmentMemberUserKey}`, '>=', {}));
+export const TestCollectionGroup = ShipmentMemberUserKey => collection(ShipmentRefPath().where(`ShipmentMember.${ShipmentMemberUserKey}`, '>=', {}));
