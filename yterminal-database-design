@@ -85,6 +85,10 @@
                         ChatRoomMemberRole (array <string>)
                         ChatRoomMemberCompanyName (string)
                         ChatRoomMemberCompanyKey (string)
+                        ChatRoomMemberRecruiterUserKey (string)
+                        ChatRoomMemberRecruiterProfileKey (string)
+                        ChatRoomMemberRecruiterProfileFirstName (string)
+                        ChatRoomMemberRecruiterProfileSurName (string)
                 +ChatRoomMessageReader
                     >ChatRoomMessageKeyList *(Static document name) (Create for util)
                         ChatRoomMessageKeyList (Array<string>)

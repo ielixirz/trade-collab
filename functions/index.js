@@ -895,7 +895,13 @@ exports.CopyInsideMasterDataToShipment = functions.firestore
     const oldValue = change.before.data();
     const newValue = change.after.data();
 
-    if (newValue) {
+    if (
+      newValue.ShipperPort &&
+      newValue.ConsigneePort &&
+      newValue.ShipperETDDate &&
+      newValue.ConsigneeETAPortDate &&
+      newValue.ShipmentDetailProduct
+    ) {
       if (change.after.id === 'DefaultTemplate') {
         return admin
           .firestore()
@@ -1032,7 +1038,7 @@ exports.NotiBellAcceptedIntoCompany = functions.firestore
             UserNotificationTimestamp: admin.firestore.FieldValue.serverTimestamp(),
             UserNotificationUserInfoKey: context.params.UserKey,
             UserNotificationUserEmail: GetUserInfo.data().UserInfoEmail,
-            UserNotificationCompanyKey: context.params.CompanyKey,
+            UserNotificationCompanyKey: newValue.CompanyInvitationCompanyKey,
             UserNotificationCompanyName: newValue.CompanyInvitationName
           });
 
@@ -1146,10 +1152,12 @@ exports.LeaveCompany = functions.firestore
         ShipmentMemberCompanyKey: admin.firestore.FieldValue.delete()
       };
 
+      console.log(DeleteShipmentMemberPayload);
+
       const ShipmentMember = await admin
         .firestore()
         .doc(Item.ref.path)
-        .update(DeleteShipmentMemberPayload);
+        .set(DeleteShipmentMemberPayload, { merge: true });
 
       ShipmentMemberDeleteList.push(ShipmentMember);
     });
