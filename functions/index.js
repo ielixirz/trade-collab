@@ -422,7 +422,11 @@ exports.AddChatRoomMemberList = functions.firestore
 
 exports.DeleteChatRoomMemberList = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
-  .onDelete(async (change, context) => {
+  .onDelete(async (snapshot, context) => {
+    const oldValue = snapshot.data();
+
+    const UserKey = oldValue.ChatRoomMemberUserKey;
+
     const DeleteChatRoomMemberListAction = await admin
       .firestore()
       .collection('Shipment')
@@ -524,9 +528,8 @@ exports.AddShipmentMember = functions.firestore
 
 exports.DeleteShipmentMember = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
-  .onDelete(async (change, context) => {
-    const oldValue = change.before.data();
-    const newValue = change.after.data();
+  .onDelete(async (snapshot, context) => {
+    const oldValue = snapshot.data();
 
     const UserKey = oldValue.ChatRoomMemberUserKey;
 
@@ -621,9 +624,8 @@ exports.AddNotiCountFirstJoin = functions.firestore
 
 exports.DeleteNotiCount = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
-  .onDelete(async (change, context) => {
-    const oldValue = change.before.data();
-    const newValue = change.after.data();
+  .onDelete(async (snapshot, context) => {
+    const oldValue = snapshot.data();
 
     const UserKey = oldValue.ChatRoomMemberUserKey;
 
@@ -728,7 +730,7 @@ exports.NotiSystemGenInviteIntoShipment = functions.firestore
       .collection('ChatRoomMessage')
       .add({
         ChatRoomMessageContext: `${FirstnameFirstProfile} ${SurnameFirstProfile} (${
-          snapshot.ChatRoomMemberEmail
+          snapshot.data().ChatRoomMemberEmail
         }) joined`,
         ChatRoomMessageSender: 'InviteIntoShipment',
         ChatRoomMessageType: 'System',
