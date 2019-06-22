@@ -900,7 +900,9 @@ exports.CopyInsideMasterDataToShipment = functions.firestore
       newValue.ConsigneePort &&
       newValue.ShipperETDDate &&
       newValue.ConsigneeETAPortDate &&
-      newValue.ShipmentDetailProduct
+      newValue.ShipmentDetailProduct &&
+      newValue.ShipperCompanyName &&
+      newValue.ConsigneeCompanyName
     ) {
       if (change.after.id === 'DefaultTemplate') {
         return admin
@@ -913,7 +915,9 @@ exports.CopyInsideMasterDataToShipment = functions.firestore
               ConsigneePort: newValue.ConsigneePort,
               ShipperETDDate: newValue.ShipperETDDate,
               ConsigneeETAPortDate: newValue.ConsigneeETAPortDate,
-              ShipmentProductName: newValue.ShipmentDetailProduct
+              ShipmentProductName: newValue.ShipmentDetailProduct,
+              ShipmentSellerCompanyName: newValue.ShipperCompanyName,
+              ShipmentBuyerCompanyName: newValue.ConsigneeCompanyName
             },
             { merge: true }
           );
