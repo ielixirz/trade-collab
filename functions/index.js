@@ -728,8 +728,9 @@ exports.NotiSystemGenInviteIntoShipment = functions.firestore
       .collection('ChatRoomMessage')
       .add({
         ChatRoomMessageContext: `${FirstnameFirstProfile} ${SurnameFirstProfile} (${
-          newValue.ChatRoomMemberEmail
+          snapshot.ChatRoomMemberEmail
         }) joined`,
+        ChatRoomMessageSender: 'InviteIntoShipment',
         ChatRoomMessageType: 'System',
         ChatRoomMessageTimestamp: admin.firestore.FieldValue.serverTimestamp()
       });
