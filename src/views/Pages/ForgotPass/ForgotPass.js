@@ -138,7 +138,7 @@ class ForgotPass extends React.Component {
     );
     return (
       <div>
-        <div role="button" tabIndex={0} onClick={this.toggle}>
+        <div style={{ outline: 'none' }} role="button" tabIndex={0} onClick={this.toggle}>
           {children}
         </div>
         <Modal isOpen={modal} toggle={this.toggle} style={{ paddingLeft: 20 }}>

@@ -123,7 +123,9 @@ class Login extends Component {
                               style={{ marginTop: '10px' }}
                             >
                               <ForgotPass>
-                                <p style={{ color: 'red' }}>Forgot Password</p>
+                                <span style={{ color: 'red', cursor: 'pointer' }}>
+                                  Forgot Password
+                                </span>
                               </ForgotPass>
                             </div>
                           </FormGroup>
