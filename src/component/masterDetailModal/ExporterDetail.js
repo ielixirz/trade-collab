@@ -25,7 +25,6 @@ const ExporterDetail = ({
         placeholder="Example Co., Ltd."
         onChange={inputHandle}
         value={company}
-        disabled
       />
     </Row>
     <Row className="master-detail-data-row">
