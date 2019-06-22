@@ -407,7 +407,7 @@ exports.AddChatRoomShareDataList = functions.firestore
 exports.AddChatRoomMemberList = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onCreate(async (snapshot, context) => {
-    const UserKey = snapshot.ChatRoomMemberUserKey;
+    const UserKey = snapshot.data().ChatRoomMemberUserKey;
 
     const AddChatRoomMemberListAction = await admin
       .firestore()
@@ -440,7 +440,7 @@ exports.DeleteChatRoomMemberList = functions.firestore
 exports.AddFirstNameSurNameFirstProfileToChatRoomMember = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onCreate(async (snapshot, context) => {
-    const UserKey = snapshot.ChatRoomMemberUserKey;
+    const UserKey = snapshot.data().ChatRoomMemberUserKey;
 
     const GetUserProfileList = await admin
       .firestore()
@@ -582,7 +582,7 @@ exports.DeleteShipmentMember = functions.firestore
 exports.AddNotiCountFirstJoin = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onCreate(async (snapshot, context) => {
-    const UserKey = snapshot.ChatRoomMemberUserKey;
+    const UserKey = snapshot.data().ChatRoomMemberUserKey;
 
     const UserPersonalizeProfileActionList = [];
 
@@ -689,7 +689,7 @@ exports.DeleteNotiCount = functions.firestore
 exports.SendEmailInviteIntoShipment = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onCreate(async (snapshot, context) => {
-    const UserEmail = snapshot.ChatRoomMemberEmail;
+    const UserEmail = snapshot.data().ChatRoomMemberEmail;
 
     const SendInviteIntoShipment = await SendEmail(
       InviteIntoShipmentTemplate(
@@ -705,7 +705,7 @@ exports.SendEmailInviteIntoShipment = functions.firestore
 exports.NotiSystemGenInviteIntoShipment = functions.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onCreate(async (snapshot, context) => {
-    const UserKey = snapshot.ChatRoomMemberUserKey;
+    const UserKey = snapshot.data().ChatRoomMemberUserKey;
 
     const GetUserProfileList = await admin
       .firestore()
