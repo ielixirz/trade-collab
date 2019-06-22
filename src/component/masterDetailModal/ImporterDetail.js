@@ -50,23 +50,27 @@ const ImporterDetail = ({
             </Label>
           </Col>
           <Col>
-            <DatePicker id="eta-warehouse" onChange={etaWarehouseHandle} value={etaWarehouse} />
+            <DatePicker
+              id="eta-warehouse"
+              onChange={etaWarehouseHandle}
+              value={etaWarehouse}
+              disabled
+            />
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col xs="4">
             <Input
               type="text"
               id="eta-warehouse-days"
               placeholder="-"
               onChange={inputHandle}
-              value={`+${etaDays} Days `}
-              disabled
+              value={etaDays}
             />
           </Col>
           <Col>
             <Label style={{ marginLeft: '10px', marginTop: '5px' }}>
-              <b>from ETA at Port</b>
+              <b>days from ETA at Port</b>
             </Label>
           </Col>
         </Row>
