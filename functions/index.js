@@ -973,33 +973,26 @@ exports.CopyInsideMasterDataToShipment = functions.firestore
     const oldValue = change.before.data();
     const newValue = change.after.data();
 
-    if (
-      newValue.ShipperPort &&
-      newValue.ConsigneePort &&
-      newValue.ShipperETDDate &&
-      newValue.ConsigneeETAPortDate &&
-      newValue.ShipmentDetailProduct &&
-      newValue.ShipperCompanyName &&
-      newValue.ConsigneeCompanyName
-    ) {
-      if (change.after.id === 'DefaultTemplate') {
-        return admin
-          .firestore()
-          .collection('Shipment')
-          .doc(context.params.ShipmentKey)
-          .set(
-            {
-              ShipperPort: newValue.ShipperPort,
-              ConsigneePort: newValue.ConsigneePort,
-              ShipperETDDate: newValue.ShipperETDDate,
-              ConsigneeETAPortDate: newValue.ConsigneeETAPortDate,
-              ShipmentProductName: newValue.ShipmentDetailProduct,
-              ShipmentSellerCompanyName: newValue.ShipperCompanyName,
-              ShipmentBuyerCompanyName: newValue.ConsigneeCompanyName
-            },
-            { merge: true }
-          );
-      }
+    let PayloadObject = {};
+
+    if (newValue.ShipperPort) PayloadObject['ShipperPort'] = newValue.ShipperPort;
+    if (newValue.ConsigneePort) PayloadObject['ConsigneePort'] = newValue.ConsigneePort;
+    if (newValue.ShipperETDDate) PayloadObject['ShipperETDDate'] = newValue.ShipperETDDate;
+    if (newValue.ConsigneeETAPortDate)
+      PayloadObject['ConsigneeETAPortDate'] = newValue.ConsigneeETAPortDate;
+    if (newValue.ShipmentDetailProduct)
+      PayloadObject['ShipmentProductName'] = newValue.ShipmentDetailProduct;
+    if (newValue.ShipperCompanyName)
+      PayloadObject['ShipmentSellerCompanyName'] = newValue.ShipperCompanyName;
+    if (newValue.ConsigneeCompanyName)
+      PayloadObject['ShipmentBuyerCompanyName'] = newValue.ConsigneeCompanyName;
+
+    if (PayloadObject !== {} && change.after.id === 'DefaultTemplate') {
+      return admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .set(PayloadObject, { merge: true });
     }
   });
 
