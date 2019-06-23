@@ -46,9 +46,6 @@ class ChatWithHeader extends Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log(prevProps, 'prevProps');
-    console.log(this.props, 'props');
-    console.log(this.state, 'state');
     if (prevProps.chatMsg.length !== this.props.chatMsg.length) {
       const objDiv = document.getElementById('chathistory');
       objDiv.scrollTop = objDiv.scrollHeight;
@@ -411,6 +408,7 @@ class ChatWithHeader extends Component {
               ChatRoomKey={ChatRoomKey}
               member={member}
               usersRole={isInvited}
+              sender={this.props.sender}
             />
             <Button className="btn-chat-label">|</Button>
             <MemberModal {...this.props} count={member.length} list={member} />
