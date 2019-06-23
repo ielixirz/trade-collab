@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
 /* as it is component */
@@ -11,7 +12,12 @@ import CopyModal from './CopyModal';
 import EditFileModal from './EditFileModal';
 
 const FileList = ({
-  chatFiles, shipmentKey, chatroomKey, selectFileHandler, selectedFile,
+  chatFiles,
+  shipmentKey,
+  chatroomKey,
+  selectFileHandler,
+  selectedFile,
+  isDeleteMode,
 }) => {
   const [chatFile, setChatFile] = useState(false);
   const [hoveringFile, setHoveringFile] = useState(undefined);
@@ -75,7 +81,11 @@ const FileList = ({
               onMouseLeave={() => onFileLeave()}
               onDoubleClick={() => openFile(s.FileUrl)}
             >
-              {hoveringFile === index || selectedFile.indexOf(index) !== -1 ? (
+              {isDeleteMode ? (
+                <Col xs="1">
+                  <i className="fa fa-file-picture-o" />
+                </Col>
+              ) : hoveringFile === index || selectedFile.indexOf(index) !== -1 ? (
                 <Col xs="1" style={{ left: '20px' }}>
                   <Input
                     className="form-check-input"
