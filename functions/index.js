@@ -760,6 +760,13 @@ exports.SendEmailInviteIntoShipment = functions.firestore
       Content = `<p> <span style="color: rgba(22, 160, 133, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(22, 160, 133, 1);"> a shipment </span> </p>`;
     }
 
+    const ContentDescription = `<br><p> In Yterminal you can see a snapshot of all yourshipments and easily inform
+    your company or your supply chain <span style="color: rgba(22, 160, 133, 1);">(Exporter, Importer, Forwarder,
+    Custom Broker)</span> about the shipment. So everyone is on the same page.
+    Here all your files, communications are organized by shipment. <a><u>Learn more...</u></a> </p>`;
+
+    Content = Content + ContentDescription;
+
     const ButtonRedirect = `<a style="width: 400px;
       font-size:14px;
       font-weight:500;
