@@ -712,7 +712,11 @@ exports.SendEmailInviteIntoShipment = functions.firestore
       RecruiterUserKey
     ].ShipmentMemberCompanyKey;
 
-    if (RecruiterShipmentMemberCompanyKey) {
+    const RecruiterShipmentMemberCompanyName = GetShipmentData.data().ShipmentMember[
+      RecruiterUserKey
+    ].ShipmentMemberCompanyName;
+
+    if (RecruiterShipmentMemberCompanyKey && RecruiterShipmentMemberCompanyName) {
       const GetShipmentReference = await admin
         .firestore()
         .collection('Shipment')
@@ -729,19 +733,47 @@ exports.SendEmailInviteIntoShipment = functions.firestore
     let HeaderText;
     let HeaderHtml;
 
+    let Content;
+
     if (ShipmentReference && ProductName) {
       HeaderText = `Join ${RecruiterProfileFirstName} ${RecruiterProfileSurName} on a shipment ${ShipmentReference} ${ProductName}`;
       HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${RecruiterProfileFirstName} ${RecruiterProfileSurName}</span> on a shipment ${ShipmentReference} ${ProductName}</h2>`;
     } else if (ShipmentReference) {
       HeaderText = `Join ${RecruiterProfileFirstName} ${RecruiterProfileSurName} on a shipment ${ShipmentReference}`;
       HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${RecruiterProfileFirstName} ${RecruiterProfileSurName}</span> on a shipment ${ShipmentReference} </h2>`;
+
+      Content = `<p> <span style="color: rgba(22, 160, 133, 1);"> ${RecruiterShipmentMemberCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(22, 160, 133, 1);"> ${ShipmentReference} </span> </p>`;
     } else {
       HeaderText = `Join ${RecruiterProfileFirstName} ${RecruiterProfileSurName} on a shipment in yterminal`;
       HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${RecruiterProfileFirstName} ${RecruiterProfileSurName}</span> on a shipment in yterminal </h2>`;
+
+      Content = `<p> <span style="color: rgba(22, 160, 133, 1);"> ${RecruiterShipmentMemberCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(22, 160, 133, 1);"> a shipment </span> </p>`;
     }
 
+    if (RecruiterShipmentMemberCompanyName && ShipmentReference && ProductName) {
+      Content = `<p> <span style="color: rgba(22, 160, 133, 1);"> ${RecruiterShipmentMemberCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(22, 160, 133, 1);"> ${ShipmentReference} ${ProductName} </span> </p>`;
+    } else if (ShipmentReference && ProductName) {
+      Content = `<p> <span style="color: rgba(22, 160, 133, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(22, 160, 133, 1);"> ${ShipmentReference} ${ProductName} </span> </p>`;
+    } else if (RecruiterShipmentMemberCompanyName && ShipmentReference) {
+      Content = `<p> <span style="color: rgba(22, 160, 133, 1);"> ${RecruiterShipmentMemberCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(22, 160, 133, 1);"> ${ShipmentReference} </span> </p>`;
+    } else {
+      Content = `<p> <span style="color: rgba(22, 160, 133, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(22, 160, 133, 1);"> a shipment </span> </p>`;
+    }
+
+    const ButtonRedirect = `<a style="width: 400px;
+      font-size:14px;
+      font-weight:500;
+      letter-spacing:0.25px;
+      text-decoration:none;
+      text-transform:none;
+      display:inline-block;
+      border-radius:8px;
+      padding:18px 0;
+      background-color:rgba(255, 90 , 95, 1);
+      color:#ffffff;" class="redirectbutton" href='https://yterminal-b0906.firebaseapp.com/#/shipment'>Join Now</a>`;
+
     const SendInviteIntoShipment = await SendEmail(
-      InviteIntoShipmentTemplate(UserEmail, HeaderText, HeaderHtml)
+      InviteIntoShipmentTemplate(UserEmail, HeaderText, HeaderHtml, Content, ButtonRedirect)
     );
 
     return SendInviteIntoShipment;
