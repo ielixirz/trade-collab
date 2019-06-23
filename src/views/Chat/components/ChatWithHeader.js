@@ -137,8 +137,10 @@ class ChatWithHeader extends Component {
       ChatRoomKey,
       members: member
     } = this.props;
-    console.log('ShipmentData', ShipmentData);
 
+    if (this.props.ChatRoomData.ChatRoomType === 'Internal') {
+      return '';
+    }
     const members = ShipmentData.ShipmentMember;
     const memberData = _.find(members, (item, index) => index === user.uid);
     console.log('Member Data', memberData);
@@ -151,12 +153,12 @@ class ChatWithHeader extends Component {
       value: item.CompanyKey,
       label: item.CompanyName
     }));
-
+    let output = '';
     if (memberData) {
       if (_.size(memberData.ShipmentMemberRole) > 0) {
         if (_.isEmpty(memberData.ShipmentMemberCompanyName)) {
           if (ShipmentData.ShipmentCreatorUserKey === user.uid) {
-            let output = (
+            output = (
               <div
                 style={{
                   backgroundColor: 'rgba(242, 175, 41, 0.3)',
@@ -212,7 +214,7 @@ class ChatWithHeader extends Component {
               </div>
             );
           } else {
-            let output = (
+            output = (
               <div
                 style={{
                   backgroundColor: 'rgba(242, 175, 41, 0.3)',
@@ -272,127 +274,6 @@ class ChatWithHeader extends Component {
       }
     }
 
-    if (isHaveRole) {
-      if (_.size(isHaveRole.ChatRoomMemberRole) > 0) {
-        if (_.isEmpty(isHaveRole.ChatRoomMemberCompanyName)) {
-          if (ShipmentData.ShipmentCreatorUserKey === user.uid) {
-            console.log('is Creators', ShipmentData.ShipmentCreatorUserKey === user.uid);
-            return (
-              <div
-                style={{
-                  backgroundColor: 'rgba(242, 175, 41, 0.3)',
-                  height: 'auto',
-                  padding: '10px',
-                  borderRadius: '5px',
-                  zIndex: '100'
-                }}
-              >
-                <p
-                  style={{
-                    fontWeight: 700,
-                    color: '#000000'
-                  }}
-                >
-                  You have assigned your self as an {_.join(isHaveRole.ChatRoomMemberRole, ',')} for
-                  this shipment
-                </p>
-                <p>Select a company, to inform your team about this shipment</p>
-
-                <Row>
-                  <Col xs={6}>
-                    <Select
-                      onChange={e => {
-                        this.setState({ company: e });
-                      }}
-                      name="company"
-                      options={options}
-                      value={this.state.company}
-                    />
-                  </Col>
-                  <Col xs={2}>
-                    <Button
-                      className="invite-btn"
-                      style={{
-                        marginLeft: '2rem',
-                        marginRight: '1rem',
-                        color: 'white',
-                        backgroundColor: '#16A085'
-                      }}
-                      onClick={() => {
-                        this.handleAssignCompany(
-                          this.state.company,
-                          ChatRoomType,
-                          isHaveRole.ChatRoomMemberRole
-                        );
-                      }}
-                    >
-                      Confirm
-                    </Button>
-                  </Col>
-                </Row>
-              </div>
-            );
-          }
-          console.log('Not Creator');
-          return (
-            <div
-              style={{
-                backgroundColor: 'rgba(242, 175, 41, 0.3)',
-                height: 'auto',
-                padding: '10px',
-                borderRadius: '5px',
-                zIndex: '100'
-              }}
-            >
-              <p
-                style={{
-                  fontWeight: 700,
-                  color: '#000000'
-                }}
-              >
-                {user.email} has been invited as
-                {_.join(isHaveRole.ChatRoomMemberRole, ',')} for this shipment
-              </p>
-              <p>Select a company, to inform your team about this shipment</p>
-
-              <Row>
-                <Col xs={6}>
-                  <Select
-                    onChange={e => {
-                      this.setState({ company: e });
-                    }}
-                    name="company"
-                    options={options}
-                    value={this.state.company}
-                  />
-                </Col>
-                <Col xs={2}>
-                  <Button
-                    className="invite-btn"
-                    style={{
-                      marginLeft: '2rem',
-                      marginRight: '1rem',
-                      color: 'white',
-                      backgroundColor: '#16A085'
-                    }}
-                    onClick={() => {
-                      this.handleAssignCompany(
-                        this.state.company,
-                        ChatRoomType,
-                        isHaveRole.ShipmentMemberRole
-                      );
-                    }}
-                  >
-                    Confirm
-                  </Button>
-                </Col>
-              </Row>
-            </div>
-          );
-        }
-      }
-    }
-
     if (_.size(member) < 2) {
       return (
         <div
@@ -410,7 +291,7 @@ class ChatWithHeader extends Component {
               color: '#000000'
             }}
           >
-            Input your {ChatRoomType} e-mail address only for this shipment
+            Input your {this.props.ChatRoomData.ChatRoomType} e-mail address only for this shipment
           </p>
 
           <Row>
@@ -433,7 +314,7 @@ class ChatWithHeader extends Component {
                 onClick={() => {
                   const inviteMember = [];
                   const role = [];
-                  role.push(ChatRoomType);
+                  role.push(this.props.ChatRoomData.ChatRoomType);
                   inviteMember.push({
                     Email: this.state.email,
                     Image: '',
@@ -462,6 +343,8 @@ class ChatWithHeader extends Component {
           </Row>
         </div>
       );
+    } else {
+      return output;
     }
   }
 
