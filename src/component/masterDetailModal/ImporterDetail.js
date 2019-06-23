@@ -16,6 +16,7 @@ const ImporterDetail = ({
   country,
   etaWarehouse,
   etaPort,
+  etd,
 }) => (
   <React.Fragment>
     <Row className="master-detail-data-row">
@@ -40,7 +41,7 @@ const ImporterDetail = ({
         <Label htmlFor="etd">
           <b>ETA at Port</b>
         </Label>
-        <DatePicker id="eta-port" onChange={etaPortHandle} value={etaPort} />
+        <DatePicker id="eta-port" onChange={etaPortHandle} value={etaPort} minDate={etd} />
       </Col>
       <Col xs="7" style={{ marginLeft: '30px' }}>
         <Row>
