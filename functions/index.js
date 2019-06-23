@@ -1021,12 +1021,34 @@ exports.NotiBellAndEmailInviteToJoinCompany = functions.firestore
 
     const UserInfoEmail = GetUserInfoEmail.data().UserInfoEmail;
 
+    const HeaderText = `Invited to join ${snapshot.data().CompanyInvitationName}`;
+    const HeaderHtml = `<h2>Invited to join ${snapshot.data().CompanyInvitationName}</h2>`;
+
+    let Content = `<p> ${snapshot.data().UserInvitationRecruiterProfileFirstName} ${
+      snapshot.data().UserInvitationRecruiterProfileSurName
+    } has invited you to join ${snapshot.data().CompanyInvitationName} on
+    Yterminal. </p>`;
+
+    const ContentDescription = `<br><p> In Yterminal you can see a snapshot of all yourshipments and easily inform your company or your supply chain <span style="color: rgba(234, 70, 70, 1);">(Exporter, Importer, Forwarder Custom Broker)</span> about the shipment. So everyone is on the same page. Here all your files, communications are organized by shipment. <a><u>Learn more...</u></a> </p>`;
+
+    Content = Content + ContentDescription;
+
+    const ButtonRedirect = `<a style="width: 400px;
+      font-size:14px;
+      font-weight:500;
+      letter-spacing:0.25px;
+      text-decoration:none;
+      text-transform:none;
+      display:inline-block;
+      border-radius:8px;
+      padding:18px 0;
+      background-color:rgba(255, 90 , 95, 1);
+      color:#ffffff;" class="redirectbutton" href='https://yterminal-b0906.firebaseapp.com/#//network/company/${
+        snapshot.data().CompanyInvitationCompanyKey
+      }'>Join Now</a>`;
+
     const SendNotiEmail = await SendEmail(
-      InviteToJoinCompanyTemplate(
-        UserInfoEmail,
-        `You have invitation from ${snapshot.data().CompanyInvitationName} company`,
-        `<strong>You have invitation from ${snapshot.data().CompanyInvitationName} company</strong>`
-      )
+      InviteToJoinCompanyTemplate(UserInfoEmail, HeaderText, HeaderHtml, Content, ButtonRedirect)
     );
 
     return Promise.all([SendNotiBell, SendNotiEmail]);
@@ -1378,13 +1400,13 @@ const InviteIntoShipmentTemplate = (To, HeaderText, HeaderHtml, Content, Button)
   };
 };
 
-const InviteToJoinCompanyTemplate = (To, Text, Html) => {
+const InviteToJoinCompanyTemplate = (To, HeaderText, HeaderHtml, Content, Button) => {
   return {
     to: To,
     from: 'noreply@yterminal.com',
     subject: 'Yterminal - Invite To Join Company',
-    text: Text,
-    html: Html
+    text: HeaderText,
+    html: BodyEmailTemplate(HeaderHtml, Content, Button)
   };
 };
 
