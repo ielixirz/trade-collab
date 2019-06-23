@@ -756,11 +756,7 @@ exports.SendEmailInviteIntoShipment = functions.firestore
       Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> a shipment </span> </p>`;
     }
 
-    const ContentDescription = `<br><p> In Yterminal you can see a snapshot of all yourshipments and easily inform
-    your company or your supply chain <span style="color: rgba(234, 70, 70, 1);">(Exporter, Importer, Forwarder,
-    Custom Broker)</span> about the shipment. So everyone is on the same page.
-    Here all your files, communications are organized 
-    by shipment. <a><u>Learn more...</u></a> </p>`;
+    const ContentDescription = `<br><p> In Yterminal you can see a snapshot of all yourshipments and easily inform your company or your supply chain <span style="color: rgba(234, 70, 70, 1);">(Exporter, Importer, Forwarder Custom Broker)</span> about the shipment. So everyone is on the same page. Here all your files, communications are organized by shipment. <a><u>Learn more...</u></a> </p>`;
 
     Content = Content + ContentDescription;
 
@@ -1379,13 +1375,13 @@ const UnreadMessageTemplate = (To, Text, HeaderText, Content, Button) => {
   };
 };
 
-const InviteIntoShipmentTemplate = (To, Text, HeaderText, Content, Button) => {
+const InviteIntoShipmentTemplate = (To, HeaderText, HeaderHtml, Content, Button) => {
   return {
     to: To,
     from: 'noreply@yterminal.com',
     subject: 'Yterminal - Invite Into Shipment',
-    text: Text,
-    html: BodyEmailTemplate(HeaderText, Content, Button)
+    text: HeaderText,
+    html: BodyEmailTemplate(HeaderHtml, Content, Button)
   };
 };
 
