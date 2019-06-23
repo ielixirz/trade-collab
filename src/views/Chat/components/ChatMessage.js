@@ -69,7 +69,7 @@ const ChatMessage = ({ message, i }) => {
                             id={`toggler${i}`}
                             style={{ marginBottom: '1rem' }}
                           >
-                            {title}
+                            {name}
                           </a>
                         </span>
                         <br />
