@@ -42,9 +42,8 @@ class MemberModal extends React.Component {
 
   render() {
     const { count, list: member } = this.props;
-    console.log('Member Modal', member);
     const shipmentMember = [];
-    console.log(this.props);
+    console.log('Member Modal props', this.props);
     _.forEach(member, item => {
       if (_.isEmpty(item.ChatRoomMemberCompanyName)) {
         if (_.isEmpty(shipmentMember.Individual)) {

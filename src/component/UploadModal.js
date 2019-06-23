@@ -178,7 +178,7 @@ const UploadModal = forwardRef((props, ref) => {
           alert(err.message);
         },
         complete: () => {
-          'TO DO LOG';
+          setIsUploading(false);
         },
       });
     });

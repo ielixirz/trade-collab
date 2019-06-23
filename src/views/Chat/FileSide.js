@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable filenames/match-regex */
@@ -35,6 +36,7 @@ const styles = {
 const FileSide = (props) => {
   const [collapse, setCollapse] = useState(false);
   const [selectedFile, setSelectedFile] = useState([]);
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
 
   const triggerCollapse = () => {
     setCollapse(!collapse);
@@ -42,12 +44,16 @@ const FileSide = (props) => {
 
   const deleteSelectedFile = (e) => {
     e.stopPropagation();
-    const updatingFile = [...props.chatFile];
-    _.forEach(selectedFile, (fileIndex) => {
-      updatingFile.splice(fileIndex, 1);
-    });
-    setSelectedFile([]);
-    EditChatRoomFileLink(props.shipmentKey, props.chatroomKey, updatingFile);
+    if (selectedFile.length > 0) {
+      const updatingFile = [...props.chatFile];
+      _.forEach(selectedFile, (fileIndex) => {
+        updatingFile[fileIndex].FileIsDelete = true;
+      });
+      setSelectedFile([]);
+      EditChatRoomFileLink(props.shipmentKey, props.chatroomKey, updatingFile);
+    } else {
+      setIsDeleteMode(!isDeleteMode);
+    }
   };
 
   const selectFile = (selectIndex) => {
@@ -71,9 +77,18 @@ const FileSide = (props) => {
                 <i className="fa fa-file" />
               </span>
               <span style={styles.title}>
-                Shared Files (
-                {props.chatFile === undefined ? '0' : props.chatFile.length}
-)
+                {!isDeleteMode ? 'Shared Files' : 'Deleted Files'}
+                {' '}
+(
+                {props.chatFile === undefined
+                  ? '0'
+                  : isDeleteMode
+                    ? _.filter(props.chatFile, file => file.FileIsDelete === true).length
+                    : _.filter(
+                      props.chatFile,
+                      file => file.FileIsDelete === undefined || file.FileIsDelete !== true,
+                    ).length}
+                )
               </span>
             </Col>
             <Col xs="1" style={{ padding: 0, top: '5px' }}>
@@ -109,11 +124,19 @@ const FileSide = (props) => {
           </Row>
           <Collapse isOpen={collapse}>
             <FileList
-              chatFiles={props.chatFile}
+              chatFiles={
+                isDeleteMode
+                  ? _.filter(props.chatFile, file => file.FileIsDelete === true)
+                  : _.filter(
+                    props.chatFile,
+                    file => file.FileIsDelete === undefined || file.FileIsDelete !== true,
+                  )
+              }
               shipmentKey={props.shipmentKey}
               chatroomKey={props.chatroomKey}
               selectFileHandler={selectFile}
               selectedFile={selectedFile}
+              isDeleteMode={isDeleteMode}
             />
           </Collapse>
         </CardBody>
