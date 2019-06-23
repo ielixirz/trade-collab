@@ -741,29 +741,26 @@ exports.SendEmailInviteIntoShipment = functions.firestore
     } else if (ShipmentReference) {
       HeaderText = `Join ${RecruiterProfileFirstName} ${RecruiterProfileSurName} on a shipment ${ShipmentReference}`;
       HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${RecruiterProfileFirstName} ${RecruiterProfileSurName}</span> on a shipment ${ShipmentReference} </h2>`;
-
-      Content = `<p> <span style="color: rgba(22, 160, 133, 1);"> ${RecruiterShipmentMemberCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(22, 160, 133, 1);"> ${ShipmentReference} </span> </p>`;
     } else {
       HeaderText = `Join ${RecruiterProfileFirstName} ${RecruiterProfileSurName} on a shipment in yterminal`;
       HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${RecruiterProfileFirstName} ${RecruiterProfileSurName}</span> on a shipment in yterminal </h2>`;
-
-      Content = `<p> <span style="color: rgba(22, 160, 133, 1);"> ${RecruiterShipmentMemberCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(22, 160, 133, 1);"> a shipment </span> </p>`;
     }
 
     if (RecruiterShipmentMemberCompanyName && ShipmentReference && ProductName) {
-      Content = `<p> <span style="color: rgba(22, 160, 133, 1);"> ${RecruiterShipmentMemberCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(22, 160, 133, 1);"> ${ShipmentReference} ${ProductName} </span> </p>`;
+      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterShipmentMemberCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReference} ${ProductName} </span> </p>`;
     } else if (ShipmentReference && ProductName) {
-      Content = `<p> <span style="color: rgba(22, 160, 133, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(22, 160, 133, 1);"> ${ShipmentReference} ${ProductName} </span> </p>`;
+      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReference} ${ProductName} </span> </p>`;
     } else if (RecruiterShipmentMemberCompanyName && ShipmentReference) {
-      Content = `<p> <span style="color: rgba(22, 160, 133, 1);"> ${RecruiterShipmentMemberCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(22, 160, 133, 1);"> ${ShipmentReference} </span> </p>`;
+      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterShipmentMemberCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReference} </span> </p>`;
     } else {
-      Content = `<p> <span style="color: rgba(22, 160, 133, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(22, 160, 133, 1);"> a shipment </span> </p>`;
+      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> a shipment </span> </p>`;
     }
 
     const ContentDescription = `<br><p> In Yterminal you can see a snapshot of all yourshipments and easily inform
-    your company or your supply chain <span style="color: rgba(22, 160, 133, 1);">(Exporter, Importer, Forwarder,
+    your company or your supply chain <span style="color: rgba(234, 70, 70, 1);">(Exporter, Importer, Forwarder,
     Custom Broker)</span> about the shipment. So everyone is on the same page.
-    Here all your files, communications are organized by shipment. <a><u>Learn more...</u></a> </p>`;
+    Here all your files, communications are organized 
+    by shipment. <a><u>Learn more...</u></a> </p>`;
 
     Content = Content + ContentDescription;
 
