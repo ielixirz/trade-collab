@@ -693,12 +693,55 @@ exports.SendEmailInviteIntoShipment = functions.firestore
   .onCreate(async (snapshot, context) => {
     const UserEmail = snapshot.data().ChatRoomMemberEmail;
 
+    const RecruiterUserKey = snapshot.data().ChatRoomMemberRecruiterUserKey;
+
+    const RecruiterProfileFirstName = snapshot.data().ChatRoomMemberRecruiterProfileFirstName;
+    const RecruiterProfileSurName = snapshot.data().ChatRoomMemberRecruiterProfileSurName;
+
+    let ShipmentReference;
+
+    const GetShipmentData = await admin
+      .firestore()
+      .collection('Shipment')
+      .doc(context.params.ShipmentKey)
+      .get();
+
+    const ProductName = GetShipmentData.data().ShipmentProductName;
+
+    const RecruiterShipmentMemberCompanyKey = GetShipmentData.data().ShipmentMember[
+      RecruiterUserKey
+    ].ShipmentMemberCompanyKey;
+
+    if (RecruiterShipmentMemberCompanyKey) {
+      const GetShipmentReference = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ShipmentReference')
+        .where('ShipmentReferenceCompanyKey', '==', RecruiterShipmentMemberCompanyKey)
+        .get();
+
+      if (GetShipmentReference.size > 0) {
+        ShipmentReference = GetShipmentReference.docs[0].data().ShipmentReferenceID;
+      }
+    }
+
+    let HeaderText;
+    let HeaderHtml;
+
+    if (ShipmentReference && ProductName) {
+      HeaderText = `Join ${RecruiterProfileFirstName} ${RecruiterProfileSurName} on a shipment ${ShipmentReference} ${ProductName}`;
+      HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${RecruiterProfileFirstName} ${RecruiterProfileSurName}</span> on a shipment ${ShipmentReference} ${ProductName}</h2>`;
+    } else if (ShipmentReference) {
+      HeaderText = `Join ${RecruiterProfileFirstName} ${RecruiterProfileSurName} on a shipment ${ShipmentReference}`;
+      HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${RecruiterProfileFirstName} ${RecruiterProfileSurName}</span> on a shipment ${ShipmentReference} </h2>`;
+    } else {
+      HeaderText = `Join ${RecruiterProfileFirstName} ${RecruiterProfileSurName} on a shipment in yterminal`;
+      HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${RecruiterProfileFirstName} ${RecruiterProfileSurName}</span> on a shipment in yterminal </h2>`;
+    }
+
     const SendInviteIntoShipment = await SendEmail(
-      InviteIntoShipmentTemplate(
-        UserEmail,
-        `You have new invitation into shipment `,
-        BodyEmailTemplate()
-      )
+      InviteIntoShipmentTemplate(UserEmail, HeaderText, HeaderHtml)
     );
 
     return SendInviteIntoShipment;
@@ -1300,13 +1343,13 @@ const UnreadMessageTemplate = (To, Text, HeaderText, Content, Button) => {
   };
 };
 
-const InviteIntoShipmentTemplate = (To, Text, Html) => {
+const InviteIntoShipmentTemplate = (To, Text, HeaderText, Content, Button) => {
   return {
     to: To,
     from: 'noreply@yterminal.com',
     subject: 'Yterminal - Invite Into Shipment',
     text: Text,
-    html: Html
+    html: BodyEmailTemplate(HeaderText, Content, Button)
   };
 };
 
