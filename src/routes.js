@@ -52,7 +52,13 @@ const routes = [
     isProfileRequired: true,
   },
   { path: '/mockdata', name: 'mockdata', component: MockData },
-  { path: '/testservice', name: 'testservice', component: TestService },
+  {
+    path: '/testservice',
+    name: 'testservice',
+    component: TestService,
+    validation: validateAuth,
+    isProfileRequired: false,
+  },
   {
     path: '/selectprofile',
     name: 'selectprofile',

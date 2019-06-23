@@ -16,7 +16,7 @@ import OtherDetail from './masterDetailModal/OtherDetail';
 
 import { UpdateMasterData } from '../service/masterdata/masterdata';
 import { EditShipment } from '../service/shipment/shipment';
-import { GetDiffDay } from '../utils/date';
+import { GetDiffDay, AddDay } from '../utils/date';
 
 const statusOptions = [
   {
@@ -104,6 +104,13 @@ const MasterDetailModal = forwardRef((props, ref) => {
     EditShipment(shipmentKey, { ShipmentStatus: select.value.status });
   };
 
+  const calWarehouseETA = (data, diffDay) => {
+    const d = data;
+    const calETA = AddDay(masterData.ConsigneeETAPortDate.seconds * 1000, diffDay);
+    d.ConsigneeETAWarehouseDate = { seconds: +calETA / 1000 };
+    setMasterData(d);
+  };
+
   const handleDetailInputChange = (event) => {
     const newMasterData = { ...masterData };
     const field = event.target.id;
@@ -122,7 +129,10 @@ const MasterDetailModal = forwardRef((props, ref) => {
         newMasterData.ConsigneeCompanyName = value;
         break;
       case 'eta-warehouse-days':
-        // TO-DO Calculation
+        if (value) {
+          calWarehouseETA(newMasterData, value);
+        }
+        setETADayDiff(value);
         break;
       case 'port-importer':
         newMasterData.ConsigneePort = value;
@@ -297,6 +307,11 @@ const MasterDetailModal = forwardRef((props, ref) => {
                 || masterData.ConsigneeETAPortDate === null
                   ? null
                   : new Date(masterData.ConsigneeETAPortDate.seconds * 1000)
+              }
+              etd={
+                masterData.ShipperETDDate === undefined || masterData.ShipperETDDate === null
+                  ? null
+                  : new Date(masterData.ShipperETDDate.seconds * 1000)
               }
               inputHandle={handleDetailInputChange}
               etaWarehouseHandle={handleETAWarehouseInputChange}

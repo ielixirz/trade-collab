@@ -153,7 +153,7 @@ class ForgotPass extends React.Component {
                       type="email"
                       id="email"
                       name="email"
-                      placeholder="please eneter your account&email"
+                      placeholder="please eneter your account email"
                       style={{ marginTop: 0 }}
                       onChange={this.onChange}
                     />
