@@ -308,6 +308,11 @@ const MasterDetailModal = forwardRef((props, ref) => {
                   ? null
                   : new Date(masterData.ConsigneeETAPortDate.seconds * 1000)
               }
+              etd={
+                masterData.ShipperETDDate === undefined || masterData.ShipperETDDate === null
+                  ? null
+                  : new Date(masterData.ShipperETDDate.seconds * 1000)
+              }
               inputHandle={handleDetailInputChange}
               etaWarehouseHandle={handleETAWarehouseInputChange}
               etaPortHandle={handleETAPortInputChange}
