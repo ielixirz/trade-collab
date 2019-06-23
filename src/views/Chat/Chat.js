@@ -425,14 +425,15 @@ class Chat extends Component {
 const mapStateToProps = state => {
   const { ChatReducer, authReducer, profileReducer, companyReducer, shipmentReducer } = state;
 
-  const sender = _.find(
+  let sender = _.find(
     profileReducer.ProfileList,
     item => item.id === profileReducer.ProfileDetail.id
   );
-
+  const user = authReducer.user;
+  sender.uid = user.uid;
   return {
     ChatReducer,
-    user: authReducer.user,
+    user,
     sender,
     shipments: shipmentReducer.Shipments,
     companies: companyReducer.UserCompany

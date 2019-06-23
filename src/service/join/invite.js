@@ -192,6 +192,7 @@ export const CreateChatMultipleInvitation = (
   ChatRoomKey,
   sender
 ) => {
+  console.log('Sender Data', sender);
   const EmailList = ChatInviteDataList.map(ChatInviteItem => ChatInviteItem.Email);
 
   const EmailListSource = from(EmailList).pipe(
@@ -202,13 +203,20 @@ export const CreateChatMultipleInvitation = (
       const ID = UserInfoList[0].id;
       const Doc = { ...Data, id: ID };
       const PreloadData = _.find(ChatInviteDataList, { Email: Data.UserInfoEmail });
-
+      // ChatRoomMemberRecruiterUserKey (string)
+      // ChatRoomMemberRecruiterProfileKey (string)
+      // ChatRoomMemberRecruiterProfileFirstName (string)
+      // ChatRoomMemberRecruiterProfileSurName (string)
       const PayloadData = {
         ChatRoomMemberUserKey: Doc.id,
         ChatRoomMemberEmail: Doc.UserInfoEmail,
         ChatRoomMemberRole: PreloadData.Role,
         ChatRoomMemberCompanyName: _.get(PreloadData, 'ChatRoomMemberCompanyName', ''),
-        ChatRoomMemberCompanyKey: _.get(PreloadData, 'ChatRoomMemberCompanyKey', '')
+        ChatRoomMemberCompanyKey: _.get(PreloadData, 'ChatRoomMemberCompanyKey', ''),
+        ChatRoomMemberRecruiterUserKey: sender.uid,
+        ChatRoomMemberRecruiterProfileKey: sender.id,
+        ChatRoomMemberRecruiterProfileFirstName: sender.ProfileFirstname,
+        ChatRoomMemberRecruiterProfileSurName: sender.ProfileSurname
       };
       return PayloadData;
     }),
