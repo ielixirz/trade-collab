@@ -135,9 +135,6 @@ class ChatWithHeader extends Component {
       members: member
     } = this.props;
 
-    if (this.props.ChatRoomData.ChatRoomType === 'Internal') {
-      return '';
-    }
     const members = ShipmentData.ShipmentMember;
     const memberData = _.find(members, (item, index) => index === user.uid);
     console.log('Member Data', memberData);
