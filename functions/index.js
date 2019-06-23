@@ -693,12 +693,87 @@ exports.SendEmailInviteIntoShipment = functions.firestore
   .onCreate(async (snapshot, context) => {
     const UserEmail = snapshot.data().ChatRoomMemberEmail;
 
+    const RecruiterUserKey = snapshot.data().ChatRoomMemberRecruiterUserKey;
+
+    const RecruiterProfileFirstName = snapshot.data().ChatRoomMemberRecruiterProfileFirstName;
+    const RecruiterProfileSurName = snapshot.data().ChatRoomMemberRecruiterProfileSurName;
+
+    let ShipmentReference;
+
+    const GetShipmentData = await admin
+      .firestore()
+      .collection('Shipment')
+      .doc(context.params.ShipmentKey)
+      .get();
+
+    const ProductName = GetShipmentData.data().ShipmentProductName;
+
+    const RecruiterShipmentMemberCompanyKey = GetShipmentData.data().ShipmentMember[
+      RecruiterUserKey
+    ].ShipmentMemberCompanyKey;
+
+    const RecruiterShipmentMemberCompanyName = GetShipmentData.data().ShipmentMember[
+      RecruiterUserKey
+    ].ShipmentMemberCompanyName;
+
+    if (RecruiterShipmentMemberCompanyKey && RecruiterShipmentMemberCompanyName) {
+      const GetShipmentReference = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(context.params.ShipmentKey)
+        .collection('ShipmentReference')
+        .where('ShipmentReferenceCompanyKey', '==', RecruiterShipmentMemberCompanyKey)
+        .get();
+
+      if (GetShipmentReference.size > 0) {
+        ShipmentReference = GetShipmentReference.docs[0].data().ShipmentReferenceID;
+      }
+    }
+
+    let HeaderText;
+    let HeaderHtml;
+
+    let Content;
+
+    if (ShipmentReference && ProductName) {
+      HeaderText = `Join ${RecruiterProfileFirstName} ${RecruiterProfileSurName} on a shipment ${ShipmentReference} ${ProductName}`;
+      HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${RecruiterProfileFirstName} ${RecruiterProfileSurName}</span> on a shipment ${ShipmentReference} ${ProductName}</h2>`;
+    } else if (ShipmentReference) {
+      HeaderText = `Join ${RecruiterProfileFirstName} ${RecruiterProfileSurName} on a shipment ${ShipmentReference}`;
+      HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${RecruiterProfileFirstName} ${RecruiterProfileSurName}</span> on a shipment ${ShipmentReference} </h2>`;
+    } else {
+      HeaderText = `Join ${RecruiterProfileFirstName} ${RecruiterProfileSurName} on a shipment in yterminal`;
+      HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${RecruiterProfileFirstName} ${RecruiterProfileSurName}</span> on a shipment in yterminal </h2>`;
+    }
+
+    if (RecruiterShipmentMemberCompanyName && ShipmentReference && ProductName) {
+      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterShipmentMemberCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReference} ${ProductName} </span> </p>`;
+    } else if (ShipmentReference && ProductName) {
+      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReference} ${ProductName} </span> </p>`;
+    } else if (RecruiterShipmentMemberCompanyName && ShipmentReference) {
+      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterShipmentMemberCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReference} </span> </p>`;
+    } else {
+      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> a shipment </span> </p>`;
+    }
+
+    const ContentDescription = `<br><p> In Yterminal you can see a snapshot of all yourshipments and easily inform your company or your supply chain <span style="color: rgba(234, 70, 70, 1);">(Exporter, Importer, Forwarder Custom Broker)</span> about the shipment. So everyone is on the same page. Here all your files, communications are organized by shipment. <a><u>Learn more...</u></a> </p>`;
+
+    Content = Content + ContentDescription;
+
+    const ButtonRedirect = `<a style="width: 400px;
+      font-size:14px;
+      font-weight:500;
+      letter-spacing:0.25px;
+      text-decoration:none;
+      text-transform:none;
+      display:inline-block;
+      border-radius:8px;
+      padding:18px 0;
+      background-color:rgba(255, 90 , 95, 1);
+      color:#ffffff;" class="redirectbutton" href='https://yterminal-b0906.firebaseapp.com/#/shipment'>Join Now</a>`;
+
     const SendInviteIntoShipment = await SendEmail(
-      InviteIntoShipmentTemplate(
-        UserEmail,
-        `You have new invitation into shipment `,
-        BodyEmailTemplate()
-      )
+      InviteIntoShipmentTemplate(UserEmail, HeaderText, HeaderHtml, Content, ButtonRedirect)
     );
 
     return SendInviteIntoShipment;
@@ -1300,13 +1375,13 @@ const UnreadMessageTemplate = (To, Text, HeaderText, Content, Button) => {
   };
 };
 
-const InviteIntoShipmentTemplate = (To, Text, Html) => {
+const InviteIntoShipmentTemplate = (To, HeaderText, HeaderHtml, Content, Button) => {
   return {
     to: To,
     from: 'noreply@yterminal.com',
     subject: 'Yterminal - Invite Into Shipment',
-    text: Text,
-    html: Html
+    text: HeaderText,
+    html: BodyEmailTemplate(HeaderHtml, Content, Button)
   };
 };
 
