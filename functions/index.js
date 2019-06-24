@@ -1043,7 +1043,7 @@ exports.NotiBellAndEmailInviteToJoinCompany = functions.firestore
       border-radius:8px;
       padding:18px 0;
       background-color:rgba(255, 90 , 95, 1);
-      color:#ffffff;" class="redirectbutton" href='https://yterminal-b0906.firebaseapp.com/#//network/company/${
+      color:#ffffff;" class="redirectbutton" href='https://yterminal-b0906.firebaseapp.com/#/network/company/${
         snapshot.data().CompanyInvitationCompanyKey
       }'>Join Now</a>`;
 
