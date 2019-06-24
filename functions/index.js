@@ -1024,8 +1024,8 @@ exports.NotiBellAndEmailInviteToJoinCompany = functions.firestore
     const HeaderText = `Invited to join ${snapshot.data().CompanyInvitationName}`;
     const HeaderHtml = `<h2>Invited to join ${snapshot.data().CompanyInvitationName}</h2>`;
 
-    let Content = `<p> ${snapshot.data().UserInvitationRecruiterProfileFirstName} ${
-      snapshot.data().UserInvitationRecruiterProfileSurName
+    let Content = `<p> ${snapshot.data().CompanyInvitationRecruiterProfileFirstName} ${
+      snapshot.data().CompanyInvitationRecruiterProfileSurName
     } has invited you to join ${snapshot.data().CompanyInvitationName} on
     Yterminal. </p>`;
 
@@ -1498,3 +1498,22 @@ exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
     return res.status(200).send(JSON.stringify(GroupProfileByUserEmail));
   });
 });
+
+exports.CheckMultipleProfile = functions.firestore
+  .document('UserInfo/{UserKey}/Profile/{ProfileKey}')
+  .onWrite(async (change, context) => {
+    const GetAllProfile = await admin
+      .firestore()
+      .collection('UserInfo')
+      .doc(context.params.UserKey)
+      .collection('Profile')
+      .get();
+
+    if (GetAllProfile.size > 0) {
+      return admin
+        .firestore()
+        .collection('UserInfo')
+        .doc(context.params.User)
+        .set({ IsMultipleProfile: true }, { merge: true });
+    }
+  });
