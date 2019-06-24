@@ -254,7 +254,7 @@ Upload Files (
               <i
                 className="fa fa-times"
                 role="button"
-                style={{ cursor: 'pointer', marginLeft: '15px' }}
+                style={{ cursor: 'pointer', marginTop: '10px' }}
                 onClick={() => cancelUpload(index)}
                 onKeyDown={null}
                 tabIndex="-1"
