@@ -273,10 +273,10 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
   const invite = () => {
     const inviteDataList = [];
     const recruiter = {
-      UserInvitationRecruiterUserKey: props.recruiter.uid,
-      UserInvitationRecruiterProfileKey: props.recruiter.profile.id,
-      UserInvitationRecruiterProfileFirstName: props.recruiter.profile.ProfileFirstname,
-      UserInvitationRecruiterProfileSurName: props.recruiter.profile.ProfileSurname,
+      CompanyInvitationRecruiterUserKey: props.recruiter.uid,
+      CompanyInvitationRecruiterProfileKey: props.recruiter.profile.id,
+      CompanyInvitationRecruiterProfileFirstName: props.recruiter.profile.ProfileFirstname,
+      CompanyInvitationRecruiterProfileSurName: props.recruiter.profile.ProfileSurname,
     };
     const role = updateRole;
     const position = updatePosition;
