@@ -137,6 +137,7 @@ const FileSide = (props) => {
               selectFileHandler={selectFile}
               selectedFile={selectedFile}
               isDeleteMode={isDeleteMode}
+              sendMessage={props.sendMessage}
             />
           </Collapse>
         </CardBody>
