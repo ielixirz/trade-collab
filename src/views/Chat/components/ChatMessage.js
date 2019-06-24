@@ -52,7 +52,12 @@ const ChatMessage = ({ message, i }) => {
             <div className="received_withd_msg">
               <Row className="flex-nowrap">
                 <div className="sender">
-                  <p>
+                  <p
+                    style={{
+                      maxWidth: '300px',
+                      'word-break': 'break-all'
+                    }}
+                  >
                     {type !== 'System' ? (
                       <div>
                         <span className="user-name">{name}</span> <br />${text}
@@ -176,7 +181,12 @@ const ChatMessage = ({ message, i }) => {
               </span>
             </div>
             <div>
-              <p>
+              <p
+                style={{
+                  maxWidth: '300px',
+                  'word-break': 'break-all'
+                }}
+              >
                 {text}
                 {hasFile ? (
                   <Row>
