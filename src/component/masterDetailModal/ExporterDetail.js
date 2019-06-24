@@ -22,7 +22,7 @@ const ExporterDetail = ({
       <Input
         type="text"
         id="company-exporter-name"
-        placeholder="Example Co., Ltd."
+        placeholder="Unassigned"
         onChange={inputHandle}
         value={company}
       />

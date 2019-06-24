@@ -255,11 +255,7 @@ const MasterDetailModal = forwardRef((props, ref) => {
         <Row>
           <Col xs="6">
             <ExporterDetail
-              company={
-                masterData.ShipperCompanyName === undefined || masterData.ShipperCompanyName === ''
-                  ? 'Unassigned'
-                  : masterData.ShipperCompanyName
-              }
+              company={masterData.ShipperCompanyName}
               port={
                 masterData.ShipperPort === undefined || masterData.ShipperPort === ''
                   ? null
@@ -279,12 +275,7 @@ const MasterDetailModal = forwardRef((props, ref) => {
               etdHandle={handleETDInputChange}
             />
             <ImporterDetail
-              company={
-                masterData.ConsigneeCompanyName === undefined
-                || masterData.ConsigneeCompanyName === ''
-                  ? 'Unassigned'
-                  : masterData.ConsigneeCompanyName
-              }
+              company={masterData.ConsigneeCompanyName}
               etaDays={etaDayDiff}
               port={
                 masterData.ConsigneePort === undefined || masterData.ConsigneePort === ''
