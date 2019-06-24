@@ -1514,6 +1514,6 @@ exports.CheckMultipleProfile = functions.firestore
         .firestore()
         .collection('UserInfo')
         .doc(context.params.UserKey)
-        .set({ IsMultipleProfile: true }, { merge: true });
+        .set({ UserInfoIsMultipleProfile: true }, { merge: true });
     }
   });
