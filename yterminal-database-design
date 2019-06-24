@@ -118,6 +118,7 @@
         UserInfoCompanyName (string)
         UserInfoCompanyRelate (string)
         UserInfoNotificationToken (Array<string>)
+        UserInfoIsMultipleProfile (bool)
         +Profile
             >ProfileKey
                 ProfileFirstname (string)
