@@ -111,6 +111,7 @@ const UploadModal = forwardRef((props, ref) => {
   useImperativeHandle(ref, () => ({
     // eslint-disable-next-line no-shadow
     triggerUploading(file, shipmentKey, chatRoomKey) {
+      setIsInitial(true);
       if (file !== undefined) {
         setUploadedFiles(initFileUpload(file));
       }
