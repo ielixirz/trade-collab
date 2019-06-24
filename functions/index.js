@@ -1513,7 +1513,7 @@ exports.CheckMultipleProfile = functions.firestore
       return admin
         .firestore()
         .collection('UserInfo')
-        .doc(context.params.User)
+        .doc(context.params.UserKey)
         .set({ IsMultipleProfile: true }, { merge: true });
     }
   });
