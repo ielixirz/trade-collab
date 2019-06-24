@@ -31,7 +31,7 @@ const ImporterDetail = ({
       <Input
         type="text"
         id="company-importer-name"
-        placeholder="Example Co., Ltd."
+        placeholder="Unassigned"
         onChange={inputHandle}
         value={company}
       />

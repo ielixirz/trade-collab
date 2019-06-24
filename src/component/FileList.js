@@ -18,6 +18,7 @@ const FileList = ({
   selectFileHandler,
   selectedFile,
   isDeleteMode,
+  sendMessage,
 }) => {
   const [chatFile, setChatFile] = useState(false);
   const [hoveringFile, setHoveringFile] = useState(undefined);
@@ -70,7 +71,7 @@ const FileList = ({
   return (
     <div>
       <ListGroup onClick={preventParentCollapse} flush style={fileListGroupStyle}>
-        <CopyModal ref={copyModalRef} />
+        <CopyModal ref={copyModalRef} sendMessage={sendMessage} />
         <EditFileModal ref={editModalRef} shipmentKey={shipmentKey} chatroomKey={chatroomKey} />
         {_.map(chatFile, (s, index) => (
           <ListGroupItem className="file-row" tag="a">
@@ -113,7 +114,7 @@ const FileList = ({
                     },
                     {
                       text: 'Copy',
-                      function: () => copyModalRef.current.triggerCopying(s),
+                      function: () => copyModalRef.current.triggerCopying(s, sendMessage),
                     },
                     {
                       text: 'Rename',

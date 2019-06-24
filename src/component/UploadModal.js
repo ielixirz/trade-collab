@@ -111,6 +111,7 @@ const UploadModal = forwardRef((props, ref) => {
   useImperativeHandle(ref, () => ({
     // eslint-disable-next-line no-shadow
     triggerUploading(file, shipmentKey, chatRoomKey) {
+      setIsInitial(true);
       if (file !== undefined) {
         setUploadedFiles(initFileUpload(file));
       }
@@ -253,7 +254,7 @@ Upload Files (
               <i
                 className="fa fa-times"
                 role="button"
-                style={{ cursor: 'pointer', marginLeft: '15px' }}
+                style={{ cursor: 'pointer', marginTop: '10px' }}
                 onClick={() => cancelUpload(index)}
                 onKeyDown={null}
                 tabIndex="-1"
