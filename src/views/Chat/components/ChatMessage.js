@@ -184,7 +184,7 @@ const ChatMessage = ({ message, i }) => {
                 {text}
                 {hasFile ? (
                   <Row>
-                    <Col xs="auto">
+                    <Col xs="8">
                       {files.map(item => {
                         const { filename = 'nameoffile', type = 'pdf' } = item;
                         return (

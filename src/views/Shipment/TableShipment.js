@@ -647,7 +647,158 @@ class TableShipment extends React.Component {
     let columns = [];
     let input = [];
     if (_.size(this.props.input) === 0) {
-      return '';
+      columns = [
+        { text: 'id', dataField: 'id', sort: true, hidden: true },
+        {
+          text: '',
+          dataField: 'alert',
+          sort: false,
+          style: { width: '5%' },
+          headerAlign: 'center',
+          headerStyle: { width: '5%' },
+          classes: 'alert-column'
+        },
+        {
+          text: 'Ref',
+          dataField: 'Ref',
+          sort: false,
+          style: { width: '12%' },
+          headerAlign: 'left',
+          align: 'left',
+          headerStyle: { width: '12%' }
+        },
+        { text: 'Seller', dataField: 'Seller', headerAlign: 'left', align: 'left', sort: true },
+        { text: 'Buyer', dataField: 'Buyer', headerAlign: 'left', align: 'left', sort: true },
+        {
+          text: 'Product',
+          dataField: 'Product',
+          sort: false,
+          style: { width: '15%' },
+          headerAlign: 'center',
+          align: 'center',
+          headerStyle: { width: '15%' }
+        },
+        {
+          text: 'ETD',
+          dataField: 'ETD',
+          sort: true,
+          headerAlign: 'center',
+          align: 'center',
+          width: '15%'
+        },
+        {
+          text: 'ETA',
+          dataField: 'ETA',
+          sort: true,
+          headerAlign: 'center',
+          align: 'center',
+          width: '15%'
+        },
+        {
+          text: '',
+          dataField: '',
+          sort: false,
+          style: { width: '2.5%' },
+          headerAlign: 'center',
+          headerStyle: { width: '2.5%' }
+        },
+        {
+          text: 'Status',
+          dataField: 'Status',
+          style: { width: '15%' },
+          headerAlign: 'center',
+          align: 'center',
+          headerStyle: { width: '15%' }
+        },
+        { text: 'uid', dataField: 'uid', sort: true, hidden: true },
+        { text: 'ShipmentMember', dataField: 'ShipmentMember', sort: true, hidden: true }
+      ];
+      return (
+        <ToolkitProvider keyField="id" data={data} columns={columns} search>
+          {props => (
+            <div>
+              <Row>
+                <Col xs="2">
+                  <SearchBar
+                    {...props.searchProps}
+                    placeholder="&#xF002; Typing"
+                    id="search"
+                    style={{ width: 200, height: 38 }}
+                  />
+                </Col>
+                <Col xs="3">
+                  <Select
+                    name="colors"
+                    id="role-filter"
+                    className="basic-multi-select role-filter-select"
+                    classNamePrefix="select"
+                    placeholder="Filter Status"
+                    styles={{ control: styles => ({ ...styles, width: '250px' }) }}
+                    options={SHIPMENT_STATUS_OPTIONS}
+                    onChange={event => this.setFilterStatus(event.value.status)}
+                  />{' '}
+                </Col>
+                <Col xs="5" />
+                <Col
+                  xs="2"
+                  style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}
+                >
+                  {this.state.isEdit ? (
+                    <Button
+                      style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 10 }}
+                      onClick={() => {
+                        this.editShipment();
+                        this.setState({
+                          isEdit: false
+                        });
+                      }}
+                    >
+                      <span style={{ fontWeight: 'bold', color: 'white' }}>Save</span>
+                    </Button>
+                  ) : (
+                    <Button
+                      style={{ backgroundColor: 'white', marginTop: 2, marginRight: 10 }}
+                      onClick={() => {
+                        this.setState({
+                          isEdit: true
+                        });
+                      }}
+                    >
+                      <i className="icons cui-pencil" style={{ color: 'black' }} />
+                      <span style={{ fontWeight: 'bold', color: '#707070' }}>Edit</span>
+                    </Button>
+                  )}
+                </Col>
+              </Row>
+              <div
+                className="table"
+                onScroll={e => {
+                  const obj = e.target;
+                  const isTrigger = obj.scrollTop === obj.scrollHeight - obj.offsetHeight;
+                  if (isTrigger) {
+                    this.props.fetchMoreShipment();
+                  }
+                }}
+              >
+                <MainDataTable
+                  id="tableshipment"
+                  data={data}
+                  toolkitbaseProps={{ ...props.baseProps }}
+                  filter={this.filterShipmentStatus}
+                  filterKeyword={this.state.filterStatus}
+                  isFilter={this.state.filterStatus !== undefined}
+                  column={columns}
+                  cssClass="shipment-table"
+                  wraperClass="shipment-table-wraper"
+                  isBorder={false}
+                  toolkit="search"
+                  rowEvents={rowEvents}
+                />
+              </div>
+            </div>
+          )}
+        </ToolkitProvider>
+      );
     }
     // _.orderBy(myArr, [columnName], ['asc'])
     console.log('this.props.input', this.props.input);
