@@ -188,14 +188,38 @@ class Shipment extends Component {
     this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
       next: notification => {
         CombineShipmentAndShipmentReference(
-          this.state.typeShipment,
+          '',
           '',
           'asc',
           _.size(this.props.shipments) + 10,
           this.props.user.uid
         ).subscribe({
           next: shipment => {
-            this.props.fetchShipments(shipment, notification);
+            const { typeShipment } = this.state;
+            let result = _.filter(shipment, item => {
+              let keyword = '';
+              if (_.isEmpty(typeShipment)) {
+                return true;
+              } else {
+                console.log('typeShipment', typeShipment);
+
+                switch (typeShipment) {
+                  case 'Plan':
+                    keyword = ['Planing', 'Order Confirmed'];
+                    return _.some(keyword, el => _.includes(item, el));
+                  case 'Active':
+                    keyword = ['In Transit', 'Order Confirmed', 'Delayed'];
+                    return _.some(keyword, el => _.includes(item, el));
+                  case 'Complete':
+                    keyword = ['Delivered', 'Completed'];
+                    return _.some(keyword, el => _.includes(item, el));
+                  case 'Cancel':
+                    keyword = ['Cancelled'];
+                    return _.some(keyword, el => _.includes(item, el));
+                }
+              }
+            });
+            this.props.fetchShipments(result, notification);
           },
           error: err => {
             console.log(err);
@@ -213,14 +237,39 @@ class Shipment extends Component {
     this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
       next: notification => {
         CombineShipmentAndShipmentReference(
-          this.state.typeShipment,
+          '',
           '',
           'asc',
           _.size(this.props.shipments) + 10,
           this.props.user.uid
         ).subscribe({
           next: shipment => {
-            this.props.fetchShipments(shipment, notification);
+            const { typeShipment } = this.state;
+            console.log('typeShipment', typeShipment);
+            let result = _.filter(shipment, item => {
+              console.log('Shipment', JSON.stringify(item));
+              let keyword = '';
+              if (_.isEmpty(typeShipment)) {
+                return true;
+              } else {
+                switch (typeShipment) {
+                  case 'Plan':
+                    keyword = ['Planning', 'Order Confirmed'];
+                    console.log(_.some(keyword, el => _.includes(item, el)));
+                    return _.some(keyword, el => _.includes(item, el));
+                  case 'Active':
+                    keyword = ['In Transit', 'Order Confirmed', 'Delayed'];
+                    return _.some(keyword, el => _.includes(item, el));
+                  case 'Complete':
+                    keyword = ['Delivered', 'Completed'];
+                    return _.some(keyword, el => _.includes(item, el));
+                  case 'Cancel':
+                    keyword = ['Cancelled'];
+                    return _.some(keyword, el => _.includes(item, el));
+                }
+              }
+            });
+            this.props.fetchShipments(result, notification);
           },
           error: err => {
             console.log(err);
@@ -236,16 +285,36 @@ class Shipment extends Component {
   componentDidMount() {
     this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
       next: notification => {
-        CombineShipmentAndShipmentReference(
-          this.state.typeShipment,
-          '',
-          'asc',
-          20,
-          this.props.user.uid
-        ).subscribe({
+        CombineShipmentAndShipmentReference('', '', 'asc', 20, this.props.user.uid).subscribe({
           next: shipment => {
-            console.log('SHIPMENTS', shipment);
-            this.props.fetchShipments(shipment, notification);
+            // Alert : All Status
+            // Plan : Planning, Order Confirmed
+            // Active : Order Confirmed, In Transit, Delayed
+            // Complete: Delivered, Completed
+            // Cancel: Cancelled
+            const { typeShipment } = this.state;
+            let result = _.filter(shipment, item => {
+              let keyword = '';
+              if (_.isEmpty(typeShipment)) {
+                return true;
+              } else {
+                switch (typeShipment) {
+                  case 'Plan':
+                    keyword = ['Planing', 'Order Confirmed'];
+                    return _.some(keyword, el => _.includes(item, el));
+                  case 'Active':
+                    keyword = ['In Transit', 'Order Confirmed', 'Delayed'];
+                    return _.some(keyword, el => _.includes(item, el));
+                  case 'Complete':
+                    keyword = ['Delivered', 'Completed'];
+                    return _.some(keyword, el => _.includes(item, el));
+                  case 'Cancel':
+                    keyword = ['Cancelled'];
+                    return _.some(keyword, el => _.includes(item, el));
+                }
+              }
+            });
+            this.props.fetchShipments(result, notification);
           },
           error: err => {
             console.log(err);
@@ -269,8 +338,6 @@ class Shipment extends Component {
     console.log('has Update State', this.state);
     if (prevState.activeTab !== this.state.activeTab) {
       console.log('reFetch');
-
-      this.props.fetchShipments(this.state.typeShipment);
     }
   }
 
@@ -694,10 +761,10 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.typeShipment === 'Planning' })}
+              className={classnames({ active: this.state.typeShipment === 'Plan' })}
               onClick={() => {
                 this.toggle('1');
-                this.setState({ typeShipment: 'Planning' });
+                this.setState({ typeShipment: 'Plan' });
                 this.fetchShipmentReload();
               }}
             >
@@ -706,10 +773,10 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.typeShipment === 'active' })}
+              className={classnames({ active: this.state.typeShipment === 'Active' })}
               onClick={() => {
                 this.toggle('1');
-                this.setState({ typeShipment: 'active' });
+                this.setState({ typeShipment: 'Active' });
                 this.fetchShipmentReload();
               }}
             >
@@ -718,10 +785,10 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.typeShipment === 'Delivered' })}
+              className={classnames({ active: this.state.typeShipment === 'Complete' })}
               onClick={() => {
                 this.toggle('1');
-                this.setState({ typeShipment: 'Delivered' });
+                this.setState({ typeShipment: 'Complete' });
                 this.fetchShipmentReload();
               }}
             >
@@ -730,10 +797,10 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.typeShipment === 'Cancelled' })}
+              className={classnames({ active: this.state.typeShipment === 'Cancel' })}
               onClick={() => {
                 this.toggle('1');
-                this.setState({ typeShipment: 'Cancelled' });
+                this.setState({ typeShipment: 'Cancel' });
                 this.fetchShipmentReload();
               }}
             >
