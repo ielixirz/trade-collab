@@ -346,7 +346,10 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
             userEmail={user.UserInfoEmail}
             updateCompany={responseToCreate}
           />
-          <InviteToCompanyModal ref={inviteToCompanyModalRef} />
+          <InviteToCompanyModal
+            ref={inviteToCompanyModalRef}
+            recruiter={{ uid: auth.uid, profile: currentProfile }}
+          />
           <RequestToJoinModal
             ref={requestToJoinModalRef}
             userId={auth.uid}
@@ -455,7 +458,8 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
                   <span
                     role="button"
                     className="button-as-link"
-                    onClick={() => resetPasswordModalRef.current.triggerResetPassword(user.UserInfoEmail)}
+                    onClick={() => resetPasswordModalRef.current.triggerResetPassword(user.UserInfoEmail)
+                    }
                     onKeyDown={null}
                     tabIndex="-1"
                   >

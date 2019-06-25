@@ -637,6 +637,7 @@ class ChatWithHeader extends Component {
               chatFile={ChatRoomFileLink}
               shipmentKey={ShipmentKey}
               chatroomKey={ChatRoomKey}
+              sendMessage={sendMessage}
             />
             <ShipmentSide
               mainData={this.props.ShipmentData}

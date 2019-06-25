@@ -86,7 +86,7 @@ const FileSide = (props) => {
                     ? _.filter(props.chatFile, file => file.FileIsDelete === true).length
                     : _.filter(
                       props.chatFile,
-                      file => file.FileIsDelete === undefined || file.FileIsDelete !== true,
+                      file => file.FileIsDelete === undefined || file.FileIsDelete === false,
                     ).length}
                 )
               </span>
@@ -124,19 +124,13 @@ const FileSide = (props) => {
           </Row>
           <Collapse isOpen={collapse}>
             <FileList
-              chatFiles={
-                isDeleteMode
-                  ? _.filter(props.chatFile, file => file.FileIsDelete === true)
-                  : _.filter(
-                    props.chatFile,
-                    file => file.FileIsDelete === undefined || file.FileIsDelete !== true,
-                  )
-              }
+              chatFiles={props.chatFile}
               shipmentKey={props.shipmentKey}
               chatroomKey={props.chatroomKey}
               selectFileHandler={selectFile}
               selectedFile={selectedFile}
               isDeleteMode={isDeleteMode}
+              sendMessage={props.sendMessage}
             />
           </Collapse>
         </CardBody>

@@ -132,11 +132,6 @@ export const CreateCompanyMultipleInvitation = (
       UserInvitationRole: ColleaguesDataList[index].Role,
       UserInvitationTimestamp: new Date(),
       UserInvitationStatus: 'Pending',
-      UserInvitationRecruiterUserKey: RecruiterData.UserInvitationRecruiterUserKey,
-      UserInvitationRecruiterProfileKey: RecruiterData.UserInvitationRecruiterProfileKey,
-      UserInvitationRecruiterProfileFirstName:
-        RecruiterData.UserInvitationRecruiterProfileFirstName,
-      UserInvitationRecruiterProfileSurName: RecruiterData.UserInvitationRecruiterProfileSurName,
     })),
   );
 
@@ -155,6 +150,12 @@ export const CreateCompanyMultipleInvitation = (
         CompanyInvitationRole: PreloadData.Role,
         CompanyInvitationTimestamp: new Date(),
         CompanyInvitationStatus: 'Pending',
+        CompanyInvitationRecruiterUserKey: RecruiterData.CompanyInvitationRecruiterUserKey,
+        CompanyInvitationRecruiterProfileKey: RecruiterData.CompanyInvitationRecruiterProfileKey,
+        CompanyInvitationRecruiterProfileFirstName:
+            RecruiterData.CompanyInvitationRecruiterProfileFirstName,
+        CompanyInvitationRecruiterProfileSurName:
+            RecruiterData.CompanyInvitationRecruiterProfileSurName,
       };
 
       return payload;

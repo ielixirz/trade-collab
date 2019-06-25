@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
 /* as it is component */
 import React, {
@@ -35,6 +36,17 @@ const CopyModal = forwardRef((props, ref) => {
       const copiedChatRoomFileLink = room.value.file === undefined ? [] : room.value.file;
       copiedChatRoomFileLink.push(file);
       EditChatRoomFileLink(room.value.shipmentKey, room.value.chatroomKey, copiedChatRoomFileLink);
+      const msg = JSON.stringify({
+        msg: '',
+        files: [
+          {
+            filename: file.FileName,
+            type: 'pdf',
+            link: file.FileUrl,
+          },
+        ],
+      });
+      props.sendMessage(room.value.chatroomKey, room.value.shipmentKey, msg, true);
     });
     toggle();
   };
