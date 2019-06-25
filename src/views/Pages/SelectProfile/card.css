@@ -108,3 +108,10 @@ p {
 .add-profile-link:focus {
   outline: none;
 }
+
+.field-error-msg {
+  font-size: 0.8em;
+  font-weight: bold;
+  color: #b90e0e;
+  float: right;
+}
