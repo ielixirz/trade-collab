@@ -128,7 +128,7 @@ const UploadModal = forwardRef((props, ref) => {
       urlObs.push(GetURLFromStorageRefString(file.refPath));
     });
 
-    combineLatest(urlObs).subscribe((urls, text) => {
+    combineLatest(urlObs).subscribe((urls) => {
       _.forEach(urls, (url, index) => {
         msgFiles.push({
           filename: uploadedFiles[index].fileName,
@@ -136,7 +136,7 @@ const UploadModal = forwardRef((props, ref) => {
           link: url,
         });
       });
-      const msg = JSON.stringify({ msg: text, files: msgFiles });
+      const msg = JSON.stringify({ msg: message, files: msgFiles });
       props.sendMessage(chatRoomKey, shipmentKey, msg, true);
     });
   };
