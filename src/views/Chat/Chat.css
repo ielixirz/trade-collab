@@ -177,9 +177,9 @@ img {
 .receiver {
   float: right;
   margin-right: 15px;
+  word-break: break-word;
 }
 .sender {
-  max-width: 300px;
   margin-right: 15px;
   margin-left: 15px;
 }

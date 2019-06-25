@@ -52,12 +52,7 @@ const ChatMessage = ({ message, i }) => {
             <div className="received_withd_msg">
               <Row className="flex-nowrap">
                 <div className="sender">
-                  <p
-                    style={{
-                      maxWidth: '300px',
-                      'word-break': 'break-all'
-                    }}
-                  >
+                  <p>
                     {type !== 'System' ? (
                       <div>
                         <span className="user-name">{name}</span> <br />${text}
@@ -180,13 +175,12 @@ const ChatMessage = ({ message, i }) => {
                 {moment(status).format('hh:mm a')}
               </span>
             </div>
-            <div>
-              <p
-                style={{
-                  maxWidth: '300px',
-                  'word-break': 'break-all'
-                }}
-              >
+            <div
+              style={{
+                maxWidth: '80%'
+              }}
+            >
+              <p>
                 {text}
                 {hasFile ? (
                   <Row>
@@ -202,7 +196,7 @@ const ChatMessage = ({ message, i }) => {
                       })}
                     </Col>
                     <Col
-                      xs="auto"
+                      xs="1"
                       style={{
                         marginLeft: '10px'
                       }}
