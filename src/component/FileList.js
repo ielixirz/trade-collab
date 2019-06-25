@@ -10,6 +10,7 @@ import _ from 'lodash';
 import ThreeDotDropdown from './ThreeDotDropdown';
 import CopyModal from './CopyModal';
 import EditFileModal from './EditFileModal';
+import { EditChatRoomFileLink } from '../service/chat/chat';
 
 const FileList = ({
   chatFiles,
@@ -26,7 +27,14 @@ const FileList = ({
   const editModalRef = useRef(null);
 
   useEffect(() => {
-    setChatFile(chatFiles);
+    setChatFile(
+      isDeleteMode
+        ? _.filter(chatFiles, file => file.FileIsDelete === true)
+        : _.filter(
+          chatFiles,
+          file => file.FileIsDelete === undefined || file.FileIsDelete === false,
+        ),
+    );
   });
 
   const preventParentCollapse = (e) => {
@@ -43,6 +51,12 @@ const FileList = ({
 
   const openFile = (url) => {
     window.open(url, '_blank');
+  };
+
+  const restoreFile = (restoreIndex) => {
+    const updatingFile = [...chatFiles];
+    updatingFile[restoreIndex].FileIsDelete = false;
+    EditChatRoomFileLink(shipmentKey, chatroomKey, updatingFile);
   };
 
   const downloadFile = (url) => {
@@ -107,20 +121,29 @@ const FileList = ({
               </Col>
               <Col xs="2" style={{ left: '10px' }}>
                 <ThreeDotDropdown
-                  options={[
-                    {
-                      text: 'Download',
-                      function: () => openFile(s.FileUrl),
-                    },
-                    {
-                      text: 'Copy',
-                      function: () => copyModalRef.current.triggerCopying(s, sendMessage),
-                    },
-                    {
-                      text: 'Rename',
-                      function: () => editModalRef.current.triggerEditing(index, chatFile),
-                    },
-                  ]}
+                  options={
+                    isDeleteMode
+                      ? [
+                        {
+                          text: 'Restore',
+                          function: () => restoreFile(index),
+                        },
+                      ]
+                      : [
+                        {
+                          text: 'Download',
+                          function: () => openFile(s.FileUrl),
+                        },
+                        {
+                          text: 'Copy',
+                          function: () => copyModalRef.current.triggerCopying(s, sendMessage),
+                        },
+                        {
+                          text: 'Rename',
+                          function: () => editModalRef.current.triggerEditing(index, chatFile),
+                        },
+                      ]
+                  }
                 />
               </Col>
             </Row>
