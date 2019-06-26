@@ -177,7 +177,7 @@ export const CreateShipmentMember = (ShipmentKey, ShipmentMemberUserKey, Data) =
   );
 };
 
-export const SearchShipment = (ShipmentMemberUserKey, SearchText) => {
+export const SearchShipment = (ShipmentMemberUserKey, SearchText, LimitNumber = 15) => {
   const DefaultQuery = ShipmentRefPath().where(
     'ShipmentMemberList',
     'array-contains',
@@ -185,10 +185,9 @@ export const SearchShipment = (ShipmentMemberUserKey, SearchText) => {
   );
 
   return collection(
-    DefaultQuery.where('ShipmentProductName', '>=', SearchText).orderBy(
-      'ShipmentProductName',
-      'asc',
-    ),
+    DefaultQuery.where('ShipmentProductName', '>=', SearchText)
+      .orderBy('ShipmentProductName', 'asc')
+      .limit(LimitNumber),
   );
 };
 
