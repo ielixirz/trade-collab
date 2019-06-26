@@ -30,6 +30,7 @@ import { fetchUserNotification } from '../../actions/userActions';
 import { notificationTitleHelper } from '../../utils/tool';
 import notiReducer from '../../reducers/notiReducer';
 import { SetUserNotificationRead } from '../../service/user/user';
+import MainLogo from '../../component/svg/MainLogo';
 
 const propTypes = {
   children: PropTypes.node,
@@ -73,20 +74,7 @@ class DefaultHeader extends Component {
     return (
       <React.Fragment>
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
-        <AppNavbarBrand
-          full={{
-            src: logo,
-            width: 89,
-            height: 25,
-            alt: 'CoreUI Logo',
-          }}
-          minimized={{
-            src: sygnet,
-            width: 30,
-            height: 30,
-            alt: 'Y terminal',
-          }}
-        />
+        <MainLogo />
         <Nav className="d-md-down-none">
           <NavItem className="px-1" style={styles.marginNav}>
             <NavLink activeClassName="cool-think" to="/shipment" style={styles.fontNav}>

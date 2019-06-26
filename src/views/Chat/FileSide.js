@@ -3,7 +3,6 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable filenames/match-regex */
 import React, { useEffect, useState, useRef } from 'react';
-
 import {
   Collapse, CardBody, Card, Row, Col,
 } from 'reactstrap';
@@ -38,6 +37,7 @@ const FileSide = (props) => {
   const [collapse, setCollapse] = useState(false);
   const [selectedFile, setSelectedFile] = useState([]);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const fileListRef = useRef(null);
 
   const triggerCollapse = () => {
     setCollapse(!collapse);
@@ -47,23 +47,25 @@ const FileSide = (props) => {
     e.stopPropagation();
     if (selectedFile.length > 0) {
       const updatingFile = [...props.chatFile];
-      _.forEach(selectedFile, (fileIndex) => {
-        updatingFile[fileIndex].FileIsDelete = true;
+      _.forEach(selectedFile, (f) => {
+        updatingFile[f.originalindex].FileIsDelete = true;
       });
       setSelectedFile([]);
       EditChatRoomFileLink(props.shipmentKey, props.chatroomKey, updatingFile);
+      fileListRef.current.toggleMode();
     } else {
       setIsDeleteMode(!isDeleteMode);
+      fileListRef.current.toggleMode();
     }
   };
 
-  const selectFile = (selectIndex) => {
+  const selectFile = (selectIndex, originalindex) => {
     const selects = [...selectedFile];
-    const foundIndex = selects.indexOf(selectIndex);
-    if (foundIndex === -1) {
-      selects.push(selectIndex);
+    const found = selects.find(s => s.selectIndex === selectIndex);
+    if (found) {
+      selects.splice(selectIndex, 1);
     } else {
-      selects.splice(foundIndex, 1);
+      selects.push({ selectIndex, originalindex });
     }
     setSelectedFile(selects);
   };
@@ -179,6 +181,7 @@ const FileSide = (props) => {
               selectedFile={selectedFile}
               isDeleteMode={isDeleteMode}
               sendMessage={props.sendMessage}
+              ref={fileListRef}
             />
           </Collapse>
         </CardBody>
