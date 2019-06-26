@@ -6,7 +6,7 @@ import { LoginWithEmail } from '../../service/auth/login';
 import { VerificationEmail, AuthStage } from '../../service/auth/manageuser';
 import { Register, RegisterWithEmail } from '../../service/auth/register';
 import { UpdateUserInfo, GetUserCompany } from '../../service/user/user';
-import { GetShipmentList, EditShipment } from '../../service/shipment/shipment';
+import { GetShipmentList, EditShipment, SearchShipment } from '../../service/shipment/shipment';
 import { GetMasterDataChatRoom, GetDefaultTemplate } from '../../service/masterdata/masterdata';
 import {
   CreateCompanyMultipleInvitation,
@@ -179,27 +179,24 @@ const TestService = () => {
     //   CompanyUserAccessibilityRolePermissionCode: '22222',
     // }).subscribe(console.log);
     // DeleteCompanyUserAccessibility('TestCompany', '29Qnsob3H6rcqXtI9v8B').subscribe(console.log);
-
     // GetDefaultTemplate().subscribe((a) => {
     //   const MisterData = a.data();
-
     //   console.log(MisterData);
     //   console.log(MisterData.ShipperPort);
     //   if (MisterData.ShipperPort) {
     //     console.log('eiei');
     //   }
     // });
-
-    EditShipment('3UDJxPG2h6nf0AUVfj5S', {
-      ShipmentMember: {
-        '12fZxWfwIPN9bgdPEN7bcXEvZyA3': {
-          ShipmentMemberCompanyName: firebase.firestore.FieldValue.delete(),
-          ShipmentMemberCompanyKey: firebase.firestore.FieldValue.delete(),
-        },
-      },
-    }).subscribe(console.log);
+    //   EditShipment('3UDJxPG2h6nf0AUVfj5S', {
+    //     ShipmentMember: {
+    //       '12fZxWfwIPN9bgdPEN7bcXEvZyA3': {
+    //         ShipmentMemberCompanyName: firebase.firestore.FieldValue.delete(),
+    //         ShipmentMemberCompanyKey: firebase.firestore.FieldValue.delete(),
+    //       },
+    //     },
+    //   }).subscribe(console.log);
+    // SearchShipment('ZmtGheg8u5UEUzbdhuDZcu5gSyg2', 'a').subscribe(r => r.map(item => console.log(item.data())));
   }, []);
-
   return (
     <div>
       <h1>Test Service Component</h1>
