@@ -36,10 +36,13 @@ const FileList = ({
             return f;
           })
           .filter(file => file.FileIsDelete === true)
-        : _.filter(
-          chatFiles,
-          file => file.FileIsDelete === undefined || file.FileIsDelete === false,
-        ),
+        : chatFiles
+          .map((file, index) => {
+            const f = { ...file };
+            f.originalIndex = index;
+            return f;
+          })
+          .filter(file => file.FileIsDelete === undefined || file.FileIsDelete === false),
     );
   });
 
@@ -60,7 +63,6 @@ const FileList = ({
   };
 
   const restoreFile = (restoreIndex) => {
-    console.log(restoreIndex);
     const updatingFile = [...chatFiles];
     updatingFile[restoreIndex].FileIsDelete = false;
     EditChatRoomFileLink(shipmentKey, chatroomKey, updatingFile);
@@ -121,7 +123,7 @@ const FileList = ({
                     />
                   </svg>
                 </Col>
-              ) : hoveringFile === index || selectedFile.indexOf(index) !== -1 ? (
+              ) : hoveringFile === index || selectedFile.find(f => f.selectIndex === index) ? (
                 <Col xs="1" style={{ left: '20px' }}>
                   <Input
                     className="form-check-input"
@@ -129,7 +131,7 @@ const FileList = ({
                     id="inline-checkbox1"
                     name="inline-checkbox1"
                     value={index}
-                    onClick={() => selectFileHandler(index)}
+                    onClick={() => selectFileHandler(index, s.originalIndex)}
                   />
                 </Col>
               ) : (

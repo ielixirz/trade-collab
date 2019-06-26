@@ -47,8 +47,8 @@ const FileSide = (props) => {
     e.stopPropagation();
     if (selectedFile.length > 0) {
       const updatingFile = [...props.chatFile];
-      _.forEach(selectedFile, (fileIndex) => {
-        updatingFile[fileIndex].FileIsDelete = true;
+      _.forEach(selectedFile, (f) => {
+        updatingFile[f.originalindex].FileIsDelete = true;
       });
       setSelectedFile([]);
       EditChatRoomFileLink(props.shipmentKey, props.chatroomKey, updatingFile);
@@ -57,13 +57,13 @@ const FileSide = (props) => {
     }
   };
 
-  const selectFile = (selectIndex) => {
+  const selectFile = (selectIndex, originalindex) => {
     const selects = [...selectedFile];
-    const foundIndex = selects.indexOf(selectIndex);
-    if (foundIndex === -1) {
-      selects.push(selectIndex);
+    const found = selects.find(s => s.selectIndex === selectIndex);
+    if (found) {
+      selects.splice(selectIndex, 1);
     } else {
-      selects.splice(foundIndex, 1);
+      selects.push({ selectIndex, originalindex });
     }
     setSelectedFile(selects);
   };
