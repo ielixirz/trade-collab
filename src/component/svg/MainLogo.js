@@ -1,7 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable filenames/match-regex */
 import React from 'react';
-import './style/MainLogo.scss';
 
 const MainLogo = () => (
   <svg
