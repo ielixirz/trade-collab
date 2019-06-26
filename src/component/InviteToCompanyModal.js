@@ -272,6 +272,12 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
 
   const invite = () => {
     const inviteDataList = [];
+    const recruiter = {
+      CompanyInvitationRecruiterUserKey: props.recruiter.uid,
+      CompanyInvitationRecruiterProfileKey: props.recruiter.profile.id,
+      CompanyInvitationRecruiterProfileFirstName: props.recruiter.profile.ProfileFirstname,
+      CompanyInvitationRecruiterProfileSurName: props.recruiter.profile.ProfileSurname,
+    };
     const role = updateRole;
     const position = updatePosition;
     const invites = existingInvited.concat(nonExistingInvited);
@@ -286,9 +292,12 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
       inviteDataList.push(inviteData);
     });
     if (validateRoleSelection(inviteDataList)) {
-      CreateCompanyMultipleInvitation(inviteDataList, company.key, company.companyName).subscribe(
-        () => {},
-      );
+      CreateCompanyMultipleInvitation(
+        inviteDataList,
+        company.key,
+        company.companyName,
+        recruiter,
+      ).subscribe(() => {});
       if (props.clearInput !== undefined) {
         props.clearInput();
       }

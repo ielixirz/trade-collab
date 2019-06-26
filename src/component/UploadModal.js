@@ -111,6 +111,7 @@ const UploadModal = forwardRef((props, ref) => {
   useImperativeHandle(ref, () => ({
     // eslint-disable-next-line no-shadow
     triggerUploading(file, shipmentKey, chatRoomKey) {
+      setIsInitial(true);
       if (file !== undefined) {
         setUploadedFiles(initFileUpload(file));
       }
@@ -127,7 +128,7 @@ const UploadModal = forwardRef((props, ref) => {
       urlObs.push(GetURLFromStorageRefString(file.refPath));
     });
 
-    combineLatest(urlObs).subscribe((urls, text) => {
+    combineLatest(urlObs).subscribe((urls) => {
       _.forEach(urls, (url, index) => {
         msgFiles.push({
           filename: uploadedFiles[index].fileName,
@@ -135,7 +136,7 @@ const UploadModal = forwardRef((props, ref) => {
           link: url,
         });
       });
-      const msg = JSON.stringify({ msg: text, files: msgFiles });
+      const msg = JSON.stringify({ msg: message, files: msgFiles });
       props.sendMessage(chatRoomKey, shipmentKey, msg, true);
     });
   };
@@ -253,7 +254,7 @@ Upload Files (
               <i
                 className="fa fa-times"
                 role="button"
-                style={{ cursor: 'pointer', marginLeft: '15px' }}
+                style={{ cursor: 'pointer', marginTop: '10px' }}
                 onClick={() => cancelUpload(index)}
                 onKeyDown={null}
                 tabIndex="-1"

@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
 import React, { useState, useEffect, useRef } from 'react';
@@ -422,7 +423,11 @@ const CompanyPanel = (props) => {
     <div style={{ width: '100%', height: '100%' }}>
       <BlockUi tag="div" blocking={blocking} style={{ height: '100%' }}>
         <div className="company-container">
-          <InviteToCompanyModal ref={inviteToCompanyModalRef} clearInput={clearInviteInput} />
+          <InviteToCompanyModal
+            ref={inviteToCompanyModalRef}
+            clearInput={clearInviteInput}
+            recruiter={{ uid: props.auth.uid, profile: props.currentProfile }}
+          />
           <input
             type="file"
             id="file"
@@ -644,10 +649,14 @@ Members (
 
 const mapStateToProps = (state) => {
   const { authReducer, userReducer, profileReducer } = state;
+  const profile = _.find(
+    profileReducer.ProfileList,
+    item => item.id === profileReducer.ProfileDetail.id,
+  );
   return {
     auth: authReducer.user,
     user: userReducer.UserInfo,
-    currentProfile: profileReducer.ProfileList[0],
+    currentProfile: profile,
   };
 };
 

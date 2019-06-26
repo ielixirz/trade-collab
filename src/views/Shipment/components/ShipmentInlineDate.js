@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-date-picker';
 
 const ShipmentInlineDate = ({
-  updateHandle, id, initialValue, shipmentKey, field,
+  updateHandle, id, initialValue, shipmentKey, field, minDate,
 }) => {
   const [date, setDate] = useState(false);
   const [isInit, setIsInit] = useState(false);
@@ -29,6 +29,7 @@ const ShipmentInlineDate = ({
         e.stopPropagation();
       }}
       value={date}
+      minDate={minDate}
     />
   );
 };

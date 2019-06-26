@@ -162,6 +162,7 @@ img {
   width: 100%;
   height: 81vh;
 }
+
 .notibadge {
   position: absolute;
   right: -10px;
@@ -176,9 +177,9 @@ img {
 .receiver {
   float: right;
   margin-right: 15px;
+  word-break: break-word;
 }
 .sender {
-  max-width: 300px;
   margin-right: 15px;
   margin-left: 15px;
 }
@@ -195,6 +196,8 @@ img {
 }
 
 .outgoing_msg {
+
+
   overflow: hidden;
   margin: 26px 0 26px;
 }
@@ -252,7 +255,7 @@ img {
 }
 
 .msg_history {
-  height: 85%;
+  height: 90%;
   overflow: auto;
   padding-right: 10px;
   display: flex;
@@ -428,3 +431,5 @@ h2.time-background:before {
   font-size: 1em;
   font-weight: bold;
 }
+
+

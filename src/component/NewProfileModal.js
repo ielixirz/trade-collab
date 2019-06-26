@@ -1,3 +1,5 @@
+/* eslint-disable react/no-access-state-in-setstate */
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable filenames/match-regex */
@@ -10,6 +12,7 @@ import {
 import './MemberModal.css';
 import { CreateProfile } from '../service/user/profile';
 import './style/NewProfileModal.scss';
+import { isValidName } from '../utils/validation';
 
 class NewProfileModal extends React.Component {
   static propTypes = {
@@ -27,6 +30,11 @@ class NewProfileModal extends React.Component {
       modal: false,
       ProfileFirstname: '',
       ProfileSurname: '',
+      invalid: {
+        Firstname: { isInvalid: undefined, msg: '' },
+        Surname: { isInvalid: undefined, msg: '' },
+      },
+      isWorking: false,
     };
 
     this.toggle = this.toggle.bind(this);
@@ -35,19 +43,68 @@ class NewProfileModal extends React.Component {
   setInput = (field, value) => this.setState({ [field]: value });
 
   submit = async () => {
+    this.setState({
+      isWorking: true,
+    });
     const { user } = this.props;
     const { ProfileFirstname, ProfileSurname } = this.state;
-    CreateProfile(user.uid, {
-      ProfileFirstname,
-      ProfileSurname,
-    }).subscribe(this.complete);
+    if (this.validateFields()) {
+      CreateProfile(user.uid, {
+        ProfileFirstname,
+        ProfileSurname,
+      }).subscribe(this.complete);
+    } else {
+      this.setState({
+        isWorking: false,
+      });
+    }
   };
 
   complete = () => {
     this.toggle();
   };
 
+  validateFields = () => {
+    let valid = true;
+    const i = { ...this.state.invalid };
+    const firstname = this.state.ProfileFirstname;
+    const surname = this.state.ProfileSurname;
+    if (firstname !== '') {
+      if (!isValidName(firstname)) {
+        valid = valid && false;
+        i.Firstname.isInvalid = true;
+        i.Firstname.msg = '*Invalid';
+      } else {
+        i.Firstname.isInvalid = false;
+      }
+    } else {
+      valid = valid && false;
+      i.Firstname.isInvalid = true;
+      i.Firstname.msg = '*Required';
+    }
+
+    if (surname !== '') {
+      if (!isValidName(surname)) {
+        valid = valid && false;
+        i.Surname.isInvalid = true;
+        i.Surname.msg = '*Invalid';
+      } else {
+        i.Surname.isInvalid = false;
+      }
+    } else {
+      valid = valid && false;
+      i.Surname.isInvalid = true;
+      i.Surname.msg = '*Required';
+    }
+
+    this.setState({
+      invalid: i,
+    });
+    return valid;
+  };
+
   toggle() {
+    console.log('adsd');
     this.setState(prevState => ({
       modal: !prevState.modal,
     }));
@@ -93,6 +150,11 @@ class NewProfileModal extends React.Component {
               <form>
                 <div style={{ marginTop: '20px' }}>
                   <span style={{ fontSize: '1em', fontWeight: 'bold' }}>Name</span>
+                  {this.state.invalid.Firstname.isInvalid ? (
+                    <span className="field-error-msg">{this.state.invalid.Firstname.msg}</span>
+                  ) : (
+                    ''
+                  )}
                   <Input
                     type="text"
                     id="Firstname"
@@ -106,6 +168,11 @@ class NewProfileModal extends React.Component {
 
                 <div style={{ marginTop: '15px' }}>
                   <span style={{ fontSize: '1em', fontWeight: 'bold' }}>Surname</span>
+                  {this.state.invalid.Surname.isInvalid ? (
+                    <span className="field-error-msg">{this.state.invalid.Surname.msg}</span>
+                  ) : (
+                    ''
+                  )}
                   <Input
                     type="text"
                     id="Surname"
@@ -121,7 +188,12 @@ class NewProfileModal extends React.Component {
                 <b>Edit profile setting</b>
               </p>
               <div className="col-sm-12 text-center">
-                <Button className="create-profile-btn" type="submit" onClick={this.submit}>
+                <Button
+                  className="create-profile-btn"
+                  type="submit"
+                  onClick={this.submit}
+                  disabled={this.state.isWorking}
+                >
                   <span>Create Profile</span>
                 </Button>
               </div>
