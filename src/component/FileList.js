@@ -29,7 +29,13 @@ const FileList = ({
   useEffect(() => {
     setChatFile(
       isDeleteMode
-        ? _.filter(chatFiles, file => file.FileIsDelete === true)
+        ? chatFiles
+          .map((file, index) => {
+            const f = { ...file };
+            f.originalIndex = index;
+            return f;
+          })
+          .filter(file => file.FileIsDelete === true)
         : _.filter(
           chatFiles,
           file => file.FileIsDelete === undefined || file.FileIsDelete === false,
@@ -54,6 +60,7 @@ const FileList = ({
   };
 
   const restoreFile = (restoreIndex) => {
+    console.log(restoreIndex);
     const updatingFile = [...chatFiles];
     updatingFile[restoreIndex].FileIsDelete = false;
     EditChatRoomFileLink(shipmentKey, chatroomKey, updatingFile);
@@ -156,7 +163,7 @@ const FileList = ({
                       ? [
                         {
                           text: 'Restore',
-                          function: () => restoreFile(index),
+                          function: () => restoreFile(s.originalIndex),
                         },
                       ]
                       : [
