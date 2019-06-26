@@ -3,7 +3,6 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable filenames/match-regex */
 import React, { useEffect, useState, useRef } from 'react';
-
 import {
   Collapse, CardBody, Card, Row, Col,
 } from 'reactstrap';
@@ -38,6 +37,9 @@ const FileSide = (props) => {
   const [collapse, setCollapse] = useState(false);
   const [selectedFile, setSelectedFile] = useState([]);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const fileListRef = useRef(null);
+
+  useEffect(() => {}, []);
 
   const triggerCollapse = () => {
     setCollapse(!collapse);
@@ -54,6 +56,7 @@ const FileSide = (props) => {
       EditChatRoomFileLink(props.shipmentKey, props.chatroomKey, updatingFile);
     } else {
       setIsDeleteMode(!isDeleteMode);
+      fileListRef.current.toggleMode();
     }
   };
 
@@ -179,6 +182,7 @@ const FileSide = (props) => {
               selectedFile={selectedFile}
               isDeleteMode={isDeleteMode}
               sendMessage={props.sendMessage}
+              ref={fileListRef}
             />
           </Collapse>
         </CardBody>
