@@ -34,23 +34,27 @@ const FileList = forwardRef(
     const editModalRef = useRef(null);
 
     useEffect(() => {
-      setChatFile(
-        isDeleteMode
-          ? chatFiles
-            .map((file, index) => {
-              const f = { ...file };
-              f.originalIndex = index;
-              return f;
-            })
-            .filter(file => file.FileIsDelete === true)
-          : chatFiles
-            .map((file, index) => {
-              const f = { ...file };
-              f.originalIndex = index;
-              return f;
-            })
-            .filter(file => file.FileIsDelete === undefined || file.FileIsDelete === false),
-      );
+      if (chatFiles) {
+        setChatFile(
+          isDeleteMode
+            ? chatFiles
+              .map((file, index) => {
+                const f = { ...file };
+                f.originalIndex = index;
+                return f;
+              })
+              .filter(file => file.FileIsDelete === true)
+            : chatFiles
+              .map((file, index) => {
+                const f = { ...file };
+                f.originalIndex = index;
+                return f;
+              })
+              .filter(file => file.FileIsDelete === undefined || file.FileIsDelete === false),
+        );
+      } else {
+        setChatFile([]);
+      }
     }, [toggle]);
 
     useImperativeHandle(ref, () => ({

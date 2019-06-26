@@ -39,6 +39,10 @@ const FileSide = (props) => {
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const fileListRef = useRef(null);
 
+  useEffect(() => {
+    fileListRef.current.toggleMode();
+  });
+
   const triggerCollapse = () => {
     setCollapse(!collapse);
   };
