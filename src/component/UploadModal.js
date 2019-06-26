@@ -43,6 +43,7 @@ const UploadModal = forwardRef((props, ref) => {
   const messageRef = useRef();
 
   const toggle = (isCancel) => {
+    setMessage('');
     setConfirming(false);
     if (isCancel) {
       // eslint-disable-next-line no-use-before-define
