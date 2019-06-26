@@ -79,6 +79,7 @@ const FileList = forwardRef(
       const updatingFile = [...chatFiles];
       updatingFile[restoreIndex].FileIsDelete = false;
       EditChatRoomFileLink(shipmentKey, chatroomKey, updatingFile);
+      setToggle(!toggle);
     };
 
     const downloadFile = (url) => {

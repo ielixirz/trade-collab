@@ -39,8 +39,6 @@ const FileSide = (props) => {
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const fileListRef = useRef(null);
 
-  useEffect(() => {}, []);
-
   const triggerCollapse = () => {
     setCollapse(!collapse);
   };
@@ -54,6 +52,7 @@ const FileSide = (props) => {
       });
       setSelectedFile([]);
       EditChatRoomFileLink(props.shipmentKey, props.chatroomKey, updatingFile);
+      fileListRef.current.toggleMode();
     } else {
       setIsDeleteMode(!isDeleteMode);
       fileListRef.current.toggleMode();
