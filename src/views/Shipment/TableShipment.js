@@ -936,7 +936,8 @@ class TableShipment extends React.Component {
           e.target.tagName !== 'I' &&
           e.target.tagName !== 'DIV' &&
           e.target.tagName !== 'INPUT' &&
-          e.target.tagName !== 'P'
+          e.target.tagName !== 'P' &&
+          e.target.tagName !== 'BUTTON'
         ) {
           window.location.href = `#/chat/${row.uid}`;
         }
