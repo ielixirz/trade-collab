@@ -316,9 +316,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
                 editedUserProfile.UserInfoProfileImageLink = url;
                 UpdateProfile(auth.uid, currentProfile.id, editedUserProfile);
               },
-              complete: () => {
-                window.location.reload();
-              },
+              complete: () => {},
             });
           },
         });

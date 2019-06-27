@@ -23,6 +23,7 @@ class SelectProfile extends Component {
   goToShipment = (profile) => {
     const { user, history, fetchProfile } = this.props;
     fetchProfile(user.uid, profile.id, history);
+    history.push('/shipment');
   };
 
   renderProfile = profile => (
