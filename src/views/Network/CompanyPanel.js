@@ -385,6 +385,7 @@ const CompanyPanel = (props) => {
   };
 
   const changeCompanyPic = (file) => {
+    setBlocking(true);
     const companyKey = props.match.params.key;
     const editedCompany = company;
     const storageRefPath = `/Company/${companyKey}/${new Date().valueOf()}${file.name}`;
@@ -402,7 +403,9 @@ const CompanyPanel = (props) => {
             GetURLFromStorageRefPath(metaData.ref).subscribe({
               next: (url) => {
                 editedCompany.CompanyImageLink = url;
-                UpdateCompany(companyKey, editedCompany);
+                UpdateCompany(companyKey, editedCompany).subscribe(() => {
+                  setBlocking(false);
+                });
               },
               complete: () => {},
             });

@@ -298,6 +298,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
   };
 
   const changeProfilePic = (file) => {
+    setBlocking(true);
     const editedUserProfile = userProfile;
     const storageRefPath = `/Profile/${currentProfile.id}/${new Date().valueOf()}${file.name}`;
     PutFile(storageRefPath, file).subscribe({
@@ -314,7 +315,9 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
             GetURLFromStorageRefPath(metaData.ref).subscribe({
               next: (url) => {
                 editedUserProfile.UserInfoProfileImageLink = url;
-                UpdateProfile(auth.uid, currentProfile.id, editedUserProfile);
+                UpdateProfile(auth.uid, currentProfile.id, editedUserProfile).subscribe(() => {
+                  setBlocking(false);
+                });
               },
               complete: () => {},
             });
