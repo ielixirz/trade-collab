@@ -514,7 +514,15 @@ class ChatWithHeader extends Component {
                     };
                   }
 
-                  return <ChatMessage message={message} i={i} />;
+                  return (
+                    <div
+                      style={{
+                        marginBottom: '-40px'
+                      }}
+                    >
+                      <ChatMessage message={message} i={i} />
+                    </div>
+                  );
                 })}
                 {_.isEmpty(sending) ? '' : <PreMessage message={sending} callback={sendMessage} />}
                 <div className="msg_history-cover-bar" />

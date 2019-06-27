@@ -87,6 +87,8 @@ const ChatMessage = ({ message, i }) => {
                           id={`toggler${i}`}
                         >
                           {getSystemTitle(name)}
+                          {'  '}
+                          <i className="fa fa-angle-double-down" />
                         </a>
                         <br />
                         <UncontrolledCollapse toggler={`#toggler${i}`}>{text}</UncontrolledCollapse>
