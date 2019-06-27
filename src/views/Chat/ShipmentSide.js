@@ -12,6 +12,7 @@ import ShipmentListContext from '../../context/ShipmentContext';
 
 import shipmentReducer from '../../reducers/shipmentReducer';
 import ShipmentList from '../../component/ShipmentList';
+import TextLoading from '../../component/svg/TextLoading';
 
 const styles = {
   button: {},
@@ -20,6 +21,7 @@ const styles = {
     fontSize: '1.2em',
     fontWeight: 'bold',
     color: '#707070',
+    marginLeft: 10,
   },
   arrow: {
     fontSize: '1.2em',
@@ -88,9 +90,11 @@ class ShipmentSide extends Component {
                   Shipment Update :
                   {' '}
                   <span style={styles.status}>
-                    {this.props.mainData.ShipmentStatus === undefined
-                      ? '-'
-                      : this.props.mainData.ShipmentStatus}
+                    {this.props.mainData.ShipmentStatus === undefined ? (
+                      <TextLoading />
+                    ) : (
+                      this.props.mainData.ShipmentStatus
+                    )}
                   </span>
                 </span>
               </Col>

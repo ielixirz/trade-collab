@@ -14,7 +14,7 @@ import {
   NavItem,
   UncontrolledDropdown,
   Row,
-  Col
+  Col,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 
@@ -30,9 +30,10 @@ import { fetchUserNotification } from '../../actions/userActions';
 import { notificationTitleHelper } from '../../utils/tool';
 import notiReducer from '../../reducers/notiReducer';
 import { SetUserNotificationRead } from '../../service/user/user';
+import MainLogo from '../../component/svg/MainLogo';
 
 const propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 
 const defaultProps = {};
@@ -65,30 +66,15 @@ class DefaultHeader extends Component {
     notifications = _.orderBy(
       notifications,
       item => new Date(item.UserNotificationTimestamp.seconds * 1000),
-      'desc'
+      'desc',
     );
 
-    const notification = _.map(notifications, (item, index) =>
-      notificationTitleHelper(item, index, this.props.user.uid)
-    );
+    const notification = _.map(notifications, (item, index) => notificationTitleHelper(item, index, this.props.user.uid));
     console.log('notifications===>', notifications);
     return (
       <React.Fragment>
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
-        <AppNavbarBrand
-          full={{
-            src: logo,
-            width: 89,
-            height: 25,
-            alt: 'CoreUI Logo'
-          }}
-          minimized={{
-            src: sygnet,
-            width: 30,
-            height: 30,
-            alt: 'Y terminal'
-          }}
-        />
+        <MainLogo />
         <Nav className="d-md-down-none">
           <NavItem className="px-1" style={styles.marginNav}>
             <NavLink activeClassName="cool-think" to="/shipment" style={styles.fontNav}>
@@ -125,14 +111,14 @@ class DefaultHeader extends Component {
               <DropdownItem
                 header
                 style={{
-                  backgroundColor: '#277C83'
+                  backgroundColor: '#277C83',
                 }}
                 tag="div"
               >
                 <span
                   style={{
                     fontWeight: 'bold',
-                    float: 'left'
+                    float: 'left',
                   }}
                 >
                   Notification
@@ -140,16 +126,16 @@ class DefaultHeader extends Component {
                 <span
                   style={{
                     fontWeight: 'bold',
-                    float: 'right'
+                    float: 'right',
                   }}
                 >
                   <div>
                     <span
                       style={{
-                        cursor: 'pointer'
+                        cursor: 'pointer',
                       }}
                       onClick={() => {
-                        _.forEach(notifications, item => {
+                        _.forEach(notifications, (item) => {
                           if (item.UserNotificationReadStatus === false) {
                             SetUserNotificationRead(this.props.user.uid, item.id);
                           }
@@ -195,13 +181,13 @@ class DefaultHeader extends Component {
 
 DefaultHeader.propTypes = propTypes;
 DefaultHeader.defaultProps = defaultProps;
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { authReducer, notiReducer } = state;
   console.log('default header', state);
   return {
     user: authReducer.user,
 
-    notifications: notiReducer.notifications
+    notifications: notiReducer.notifications,
   };
 };
 
@@ -209,11 +195,11 @@ const styles = {
   fontNav: {
     color: '#3B3B3B',
     textDecoration: 'none',
-    fontSize: 16
+    fontSize: 16,
   },
-  marginNav: { marginRight: 18 }
+  marginNav: { marginRight: 18 },
 };
 export default connect(
   mapStateToProps,
-  { logout, clearProfile, fetchUserNotification }
+  { logout, clearProfile, fetchUserNotification },
 )(DefaultHeader);

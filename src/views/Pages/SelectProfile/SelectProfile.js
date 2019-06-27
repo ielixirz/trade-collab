@@ -81,10 +81,10 @@ class SelectProfile extends Component {
               <div className="card">
                 <div className="container">
                   <h2>Select Profile</h2>
-                  {this.renderProfiles()}
+                  <div style={{ maxHeight: 400, overflowY: 'scroll' }}>{this.renderProfiles()}</div>
                   <div style={{ textAlign: 'center' }}>
                     <NewProfileModal>
-                      <p style={{ color: '#16a085' }} className="add-profile-link">
+                      <p style={{ color: '#16a085', marginTop: 20 }} className="add-profile-link">
                         Add New User
                       </p>
                     </NewProfileModal>

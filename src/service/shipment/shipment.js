@@ -177,5 +177,19 @@ export const CreateShipmentMember = (ShipmentKey, ShipmentMemberUserKey, Data) =
   );
 };
 
+export const SearchShipment = (ShipmentMemberUserKey, SearchText, LimitNumber = 15) => {
+  const DefaultQuery = ShipmentRefPath().where(
+    'ShipmentMemberList',
+    'array-contains',
+    ShipmentMemberUserKey,
+  );
+
+  return collection(
+    DefaultQuery.where('ShipmentProductName', '>=', SearchText)
+      .orderBy('ShipmentProductName', 'asc')
+      .limit(LimitNumber),
+  );
+};
+
 // eslint-disable-next-line max-len
 export const TestCollectionGroup = ShipmentMemberUserKey => collection(ShipmentRefPath().where(`ShipmentMember.${ShipmentMemberUserKey}`, '>=', {}));
