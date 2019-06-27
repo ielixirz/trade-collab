@@ -205,17 +205,17 @@ class Shipment extends Component {
 
                 switch (typeShipment) {
                   case 'Plan':
-                    keyword = ['Planing', 'Order Confirmed'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    keyword = ['Planning', 'Order Confirmed'];
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Active':
                     keyword = ['In Transit', 'Order Confirmed', 'Delayed'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Complete':
                     keyword = ['Delivered', 'Completed'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Cancel':
                     keyword = ['Cancelled'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                 }
               }
             });
@@ -247,7 +247,6 @@ class Shipment extends Component {
             const { typeShipment } = this.state;
             console.log('typeShipment', typeShipment);
             let result = _.filter(shipment, item => {
-              console.log('Shipment', JSON.stringify(item));
               let keyword = '';
               if (_.isEmpty(typeShipment)) {
                 return true;
@@ -255,17 +254,16 @@ class Shipment extends Component {
                 switch (typeShipment) {
                   case 'Plan':
                     keyword = ['Planning', 'Order Confirmed'];
-                    console.log(_.some(keyword, el => _.includes(item, el)));
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Active':
                     keyword = ['In Transit', 'Order Confirmed', 'Delayed'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Complete':
                     keyword = ['Delivered', 'Completed'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Cancel':
                     keyword = ['Cancelled'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                 }
               }
             });
@@ -300,17 +298,17 @@ class Shipment extends Component {
               } else {
                 switch (typeShipment) {
                   case 'Plan':
-                    keyword = ['Planing', 'Order Confirmed'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    keyword = ['Planning', 'Order Confirmed'];
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Active':
                     keyword = ['In Transit', 'Order Confirmed', 'Delayed'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Complete':
                     keyword = ['Delivered', 'Completed'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Cancel':
                     keyword = ['Cancelled'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                 }
               }
             });
