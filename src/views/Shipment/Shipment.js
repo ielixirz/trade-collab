@@ -201,7 +201,7 @@ class Shipment extends Component {
               if (_.isEmpty(typeShipment)) {
                 return true;
               } else {
-                console.log('typeShipment', typeShipment);
+                console.log('shipment', item);
 
                 switch (typeShipment) {
                   case 'Plan':
@@ -251,6 +251,7 @@ class Shipment extends Component {
               if (_.isEmpty(typeShipment)) {
                 return true;
               } else {
+                console.log('shipment', item);
                 switch (typeShipment) {
                   case 'Plan':
                     keyword = ['Planning', 'Order Confirmed'];

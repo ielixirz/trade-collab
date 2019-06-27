@@ -931,13 +931,16 @@ class TableShipment extends React.Component {
 
     const rowEvents = {
       onClick: (e, row, rowIndex) => {
+        console.log('clicked role is', e.target.tagName);
         if (
           e.target.tagName !== 'SELECT' &&
           e.target.tagName !== 'I' &&
           e.target.tagName !== 'DIV' &&
           e.target.tagName !== 'INPUT' &&
           e.target.tagName !== 'P' &&
-          e.target.tagName !== 'BUTTON'
+          e.target.tagName !== 'BUTTON' &&
+          e.target.tagName !== 'path' &&
+          e.target.tagName !== 'svg'
         ) {
           window.location.href = `#/chat/${row.uid}`;
         }

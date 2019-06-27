@@ -162,6 +162,10 @@ img {
   width: 100%;
   height: 81vh;
 }
+.system-message
+{
+  background-color: transparent !important;
+}
 
 .notibadge {
   position: absolute;

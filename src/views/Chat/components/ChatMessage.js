@@ -4,12 +4,18 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable filenames/match-regex */
 import React from 'react';
-import {
-  Row, Col, Button, UncontrolledCollapse, Card, CardBody,
-} from 'reactstrap';
+import { Row, Col, Button, UncontrolledCollapse, Card, CardBody } from 'reactstrap';
 import _ from 'lodash';
 import moment from 'moment';
 
+const getSystemTitle = title => {
+  switch (title) {
+    case 'InviteIntoShipment':
+      return 'User has been invited';
+    default:
+      return title;
+  }
+};
 const ChatMessage = ({ message, i }) => {
   const {
     title = 'System Message',
@@ -19,7 +25,7 @@ const ChatMessage = ({ message, i }) => {
     status = new Date(),
     readers = [],
     hasFile = false,
-    files = [1, 2, 3],
+    files = [1, 2, 3]
   } = message;
   const prev = _.get(message, 'prev', false);
   let isFirstMessageOfTheDay = false;
@@ -54,7 +60,7 @@ const ChatMessage = ({ message, i }) => {
             <div className="received_withd_msg">
               <Row className="flex-nowrap">
                 <div className="sender">
-                  <p>
+                  <p className={type === 'System' ? 'system-message' : ''}>
                     {type !== 'System' ? (
                       <div>
                         <span className="user-name">{name}</span>
@@ -69,19 +75,19 @@ const ChatMessage = ({ message, i }) => {
                       </div>
                     ) : (
                       <div>
-                        <span className="user-name">
-                          <a
-                            color="primary"
-                            href="#"
-                            onClick={(e) => {
-                              e.preventDefault();
-                            }}
-                            id={`toggler${i}`}
-                            style={{ marginBottom: '1rem' }}
-                          >
-                            {name}
-                          </a>
-                        </span>
+                        <a
+                          href={'#'}
+                          style={{
+                            color: 'black'
+                          }}
+                          className="user-name"
+                          onClick={e => {
+                            e.preventDefault();
+                          }}
+                          id={`toggler${i}`}
+                        >
+                          {getSystemTitle(name)}
+                        </a>
                         <br />
                         <UncontrolledCollapse toggler={`#toggler${i}`}>{text}</UncontrolledCollapse>
                       </div>
@@ -89,7 +95,7 @@ const ChatMessage = ({ message, i }) => {
                     {hasFile ? (
                       <Row>
                         <Col xs="8">
-                          {files.map((item) => {
+                          {files.map(item => {
                             const { filename = 'nameoffile', type = 'pdf' } = item;
                             return (
                               <div style={{ fontSize: '0.8em' }}>
@@ -117,20 +123,20 @@ const ChatMessage = ({ message, i }) => {
                         <Col
                           xs="auto"
                           style={{
-                            marginLeft: '10px',
+                            marginLeft: '10px'
                           }}
                         >
                           <a
                             href=""
-                            onClick={(e) => {
+                            onClick={e => {
                               e.preventDefault();
-                              _.forEach(files, (item) => {
+                              _.forEach(files, item => {
                                 const { link = 'http://example.com/files/myfile.pdf' } = item;
 
                                 window.open(
                                   link,
                                   '_blank',
-                                  'resizable=yes, scrollbars=yes, titlebar=yes, width=800, height=900, top=10, left=10',
+                                  'resizable=yes, scrollbars=yes, titlebar=yes, width=800, height=900, top=10, left=10'
                                 );
                               });
                             }}
@@ -202,7 +208,7 @@ const ChatMessage = ({ message, i }) => {
             </div>
             <div
               style={{
-                maxWidth: '80%',
+                maxWidth: '80%'
               }}
             >
               <p>
@@ -216,7 +222,7 @@ const ChatMessage = ({ message, i }) => {
                 {hasFile ? (
                   <Row style={{ textAlign: 'left', marginTop: 7 }}>
                     <Col xs="8">
-                      {files.map((item) => {
+                      {files.map(item => {
                         const { filename = 'nameoffile', type = 'pdf' } = item;
                         return (
                           <div style={{ fontSize: '0.8em' }}>
@@ -244,20 +250,20 @@ const ChatMessage = ({ message, i }) => {
                     <Col
                       xs="1"
                       style={{
-                        marginLeft: '10px',
+                        marginLeft: '10px'
                       }}
                     >
                       <a
                         href=""
-                        onClick={(e) => {
+                        onClick={e => {
                           e.preventDefault();
-                          _.forEach(files, (item) => {
+                          _.forEach(files, item => {
                             const { link = 'http://example.com/files/myfile.pdf' } = item;
 
                             window.open(
                               link,
                               '_blank',
-                              'resizable=yes, scrollbars=yes, titlebar=yes, width=800, height=900, top=10, left=10',
+                              'resizable=yes, scrollbars=yes, titlebar=yes, width=800, height=900, top=10, left=10'
                             );
                           });
                         }}
