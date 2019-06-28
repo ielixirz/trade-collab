@@ -140,6 +140,16 @@ class ChatWithHeader extends Component {
                   this.props.fetchMoreMessage(chatkey, ShipmentKey);
                 }
               });
+              let ChatRoomMember = AddChatRoomMember(ShipmentKey, chatkey, {
+                ChatRoomMemberUserKey: this.props.user.uid,
+                ChatRoomMemberEmail: this.props.user.email,
+                ChatRoomMemberImageUrl: '',
+                ChatRoomMemberRole: inviteRole,
+                ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+              }).subscribe({
+                next: result => {}
+              });
             },
             complete: result => {
               console.log(result);
@@ -177,6 +187,7 @@ class ChatWithHeader extends Component {
     if (memberData) {
       if (_.size(memberData.ShipmentMemberRole) > 0) {
         if (_.isEmpty(memberData.ShipmentMemberCompanyName)) {
+          console.log('no Company');
           if (ShipmentData.ShipmentCreatorUserKey === user.uid) {
             output = (
               <div
@@ -233,6 +244,7 @@ class ChatWithHeader extends Component {
                 </Row>
               </div>
             );
+            return output;
           } else {
             output = (
               <div
@@ -289,6 +301,7 @@ class ChatWithHeader extends Component {
                 </Row>
               </div>
             );
+            return output;
           }
         }
       }
@@ -364,7 +377,6 @@ class ChatWithHeader extends Component {
         </div>
       );
     }
-    return output;
   }
 
   render() {
