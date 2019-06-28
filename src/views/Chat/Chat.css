@@ -162,6 +162,10 @@ img {
   width: 100%;
   height: 81vh;
 }
+.system-message
+{
+  background-color: transparent !important;
+}
 
 .notibadge {
   position: absolute;
@@ -334,7 +338,7 @@ img {
 }
 
 .react-tabs-tab-close {
-  display: none;
+  display: none !important;
 }
 
 .chat-toolbar {

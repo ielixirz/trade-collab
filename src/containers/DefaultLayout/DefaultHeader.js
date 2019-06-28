@@ -93,12 +93,17 @@ class DefaultHeader extends Component {
               <NavItem className="d-md-down-none">
                 <NavLink to="#" className="nav-link">
                   <i className="icon-bell" />
-                  <Badge pill color="danger">
-                    {
-                      _.filter(notifications, item => item.UserNotificationReadStatus === false)
-                        .length
-                    }
-                  </Badge>
+                  {_.filter(notifications, item => item.UserNotificationReadStatus === false)
+                    .length > 0 ? (
+                    <Badge pill color="danger">
+                      {
+                        _.filter(notifications, item => item.UserNotificationReadStatus === false)
+                          .length
+                      }
+                    </Badge>
+                  ) : (
+                    ''
+                  )}
                 </NavLink>
               </NavItem>
             </DropdownToggle>

@@ -236,7 +236,7 @@ tbody tr {
 
 .setting-table-wraper {
   margin: 5rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
   overflow-x: scroll;
   overflow-y: hidden;
 }
@@ -302,7 +302,7 @@ tbody tr {
 
 .table.setting-table > tbody {
   display: block;
-  height: 55vh; /* Just for the demo          */
+  height: 65vh; /* Just for the demo          */
   overflow-y: auto; /* Trigger vertical scroll    */
   overflow-x: hidden; /* Hide the horizontal scroll */
 }

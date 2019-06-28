@@ -273,16 +273,14 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
   };
 
   const handleProfileInputChange = (event) => {
-    const editedUserProfile = userProfile;
+    const editedUserProfile = { ...userProfile };
     const inputName = event.target.id;
     const inputValue = event.target.value;
 
-    if (inputName === 'name') {
-      const firstnameSurname = inputValue.trim().split(' ');
-      [editedUserProfile.ProfileFirstname, editedUserProfile.ProfileSurname] = [
-        firstnameSurname[0],
-        firstnameSurname[1],
-      ];
+    if (inputName === 'firstname') {
+      editedUserProfile.ProfileFirstname = inputValue;
+    } else if (inputName === 'surname') {
+      editedUserProfile.ProfileSurname = inputValue;
     } else if (inputName === 'email') {
       editedUserProfile.ProfileEmail = inputValue;
     } else if (inputName === 'desc') {
@@ -298,6 +296,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
   };
 
   const changeProfilePic = (file) => {
+    setBlocking(true);
     const editedUserProfile = userProfile;
     const storageRefPath = `/Profile/${currentProfile.id}/${new Date().valueOf()}${file.name}`;
     PutFile(storageRefPath, file).subscribe({
@@ -314,11 +313,11 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
             GetURLFromStorageRefPath(metaData.ref).subscribe({
               next: (url) => {
                 editedUserProfile.UserInfoProfileImageLink = url;
-                UpdateProfile(auth.uid, currentProfile.id, editedUserProfile);
+                UpdateProfile(auth.uid, currentProfile.id, editedUserProfile).subscribe(() => {
+                  setBlocking(false);
+                });
               },
-              complete: () => {
-                window.location.reload();
-              },
+              complete: () => {},
             });
           },
         });
@@ -394,23 +393,34 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
                     tabIndex="-1"
                   />
                 </Col>
-                <Col xs={9}>
-                  {isEdit ? (
-                    <div>
+                {isEdit ? (
+                  <React.Fragment>
+                    <Col xs={3}>
                       <Input
-                        style={{ width: '40%', marginBottom: '0.5rem' }}
+                        style={{ marginBottom: '0.5rem' }}
                         type="text"
-                        id="name"
-                        placeholder={`${userProfile.ProfileFirstname} ${
-                          userProfile.ProfileSurname
-                        }`}
+                        id="firstname"
+                        placeholder="your firstname..."
+                        value={userProfile.ProfileFirstname}
                         onChange={handleProfileInputChange}
                       />
-                    </div>
-                  ) : (
+                    </Col>
+                    <Col xs={3} style={{ paddingLeft: 0 }}>
+                      <Input
+                        style={{ marginBottom: '0.5rem' }}
+                        type="text"
+                        id="surname"
+                        placeholder="your surname..."
+                        value={userProfile.ProfileSurname}
+                        onChange={handleProfileInputChange}
+                      />
+                    </Col>
+                  </React.Fragment>
+                ) : (
+                  <Col xs={9}>
                     <h4>{`${userProfile.ProfileFirstname} ${userProfile.ProfileSurname}`}</h4>
-                  )}
-                </Col>
+                  </Col>
+                )}
               </Row>
               <Row>
                 <Col xs={1} />
@@ -421,7 +431,8 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
                         style={{ width: '100%', marginBottom: '0.5rem' }}
                         type="text"
                         id="email"
-                        placeholder={userProfile.ProfileEmail}
+                        value={userProfile.ProfileEmail}
+                        placeholder="your email..."
                         onChange={handleProfileInputChange}
                       />
                     </div>
@@ -440,9 +451,8 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
                       style={{ width: '100%' }}
                       type="textarea"
                       id="desc"
-                      placeholder={
-                        userProfile.Description === undefined ? '-' : userProfile.Description
-                      }
+                      placeholder="describe yourself..."
+                      value={userProfile.Description}
                       onChange={handleProfileInputChange}
                     />
                   ) : (

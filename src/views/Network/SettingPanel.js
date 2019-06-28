@@ -6,19 +6,17 @@ import { map } from 'rxjs/operators';
 import _ from 'lodash';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
-
 import {
   Row,
-  Col,
   DropdownToggle,
   Dropdown,
   Button,
   Input,
-  ButtonGroup,
-  ButtonToolbar,
   DropdownMenu,
   DropdownItem,
 } from 'reactstrap';
+import ErrorPopup from '../../component/commonPopup/ErrorPopup';
+
 import MainDataTable from '../../component/MainDataTable';
 import { PERMISSION_LIST } from '../../constants/network';
 import {
@@ -26,6 +24,7 @@ import {
   UpdateCompanyUserAccessibility,
   CreateCompanyUserAccessibility,
   DeleteCompanyUserAccessibility,
+  CompanyUserAccessibilityIsTargetRole,
 } from '../../service/company/company';
 
 const RoleButton = ({ roleName, deleteHandler, editHandler }) => {
@@ -47,7 +46,11 @@ const RoleButton = ({ roleName, deleteHandler, editHandler }) => {
 
   return !isEditing ? (
     <Dropdown toggle={toggle} isOpen={open}>
-      <DropdownToggle caret style={{ width: '100%', background: 'white', borderColor: '#ededed' }}>
+      <DropdownToggle
+        caret
+        style={{ width: '100%', background: 'white', borderColor: '#ededed' }}
+        disabled={roleName === 'Owner'}
+      >
         {roleName}
       </DropdownToggle>
       <DropdownMenu style={{ content: 'Float', clear: 'both' }}>
@@ -70,7 +73,7 @@ const RoleButton = ({ roleName, deleteHandler, editHandler }) => {
   );
 };
 
-const PermissionButton = ({ binary, updatePermission }) => (binary === '1' ? (
+const PermissionButton = ({ binary, updatePermission, disabled }) => (binary === '1' ? (
   <i
     className="cui-check icons font-2xl d-block matrix-check"
     role="button"
@@ -80,7 +83,7 @@ const PermissionButton = ({ binary, updatePermission }) => (binary === '1' ? (
       cursor: 'pointer',
     }}
       // eslint-disable-next-line max-len
-    onClick={updatePermission}
+    onClick={disabled === true ? null : updatePermission}
     onKeyDown={null}
     tabIndex="-1"
   />
@@ -90,11 +93,11 @@ const PermissionButton = ({ binary, updatePermission }) => (binary === '1' ? (
     role="button"
     onKeyDown={null}
     tabIndex="-1"
-    onClick={updatePermission}
+    onClick={disabled === true ? null : updatePermission}
   />
 ));
 
-const SettingPanel = (props, { auth }) => {
+const SettingPanel = (props) => {
   const [roles, setRoles] = useState([]);
   const [roleColumn, setRoleColumn] = useState([
     {
@@ -110,6 +113,7 @@ const SettingPanel = (props, { auth }) => {
   ]);
   const [lastUpdate, setLastUpdate] = useState({});
   const [blocking, setBlocking] = useState(true);
+  const errorPopupRef = useRef(null);
 
   const toggleBlocking = (block) => {
     setBlocking(block);
@@ -123,8 +127,17 @@ const SettingPanel = (props, { auth }) => {
     });
   };
 
-  const deleteRole = (key) => {
-    DeleteCompanyUserAccessibility(props.match.params.key, key);
+  const deleteRole = (key, roleName) => {
+    CompanyUserAccessibilityIsTargetRole(props.match.params.key, roleName).subscribe((inUsed) => {
+      if (!inUsed) {
+        DeleteCompanyUserAccessibility(props.match.params.key, key);
+      } else {
+        errorPopupRef.current.triggerError(
+          "Can't remove role, someone still using this role.",
+          'WARN',
+        );
+      }
+    });
   };
 
   const updateRole = (editedRoleName, key) => {
@@ -171,7 +184,7 @@ const SettingPanel = (props, { auth }) => {
         text: (
           <RoleButton
             roleName={result.CompanyUserAccessibilityRoleName}
-            deleteHandler={() => deleteRole(result.id)}
+            deleteHandler={() => deleteRole(result.id, result.CompanyUserAccessibilityRoleName)}
             editHandler={editingRole => updateRole(editingRole, result.id)}
           />
         ),
@@ -194,6 +207,7 @@ const SettingPanel = (props, { auth }) => {
           ...initialRow[index + increment],
           [result.CompanyUserAccessibilityRoleName]: (
             <PermissionButton
+              disabled={result.CompanyUserAccessibilityRoleName === 'Owner'}
               binary={binary}
               updatePermission={() => updatePermission(
                 result.CompanyUserAccessibilityRoleName,
@@ -265,7 +279,7 @@ const SettingPanel = (props, { auth }) => {
     <div style={{ width: '100%', height: '100%' }}>
       <BlockUi tag="div" blocking={blocking} style={{ height: '100%' }}>
         <Row>
-          <span style={{ padding: '4rem' }}>
+          <span style={{ paddingLeft: '4rem', paddingTop: '4rem' }}>
             <h2>Roles & Permissions Setting</h2>
           </span>
         </Row>
@@ -279,6 +293,7 @@ const SettingPanel = (props, { auth }) => {
             rowStyle={rowStyle}
           />
         </Row>
+        <ErrorPopup ref={errorPopupRef} />
       </BlockUi>
     </div>
   );

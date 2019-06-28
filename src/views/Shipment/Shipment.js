@@ -143,30 +143,7 @@ class Shipment extends Component {
         UpdateMasterData(createdShipment.id, 'DefaultTemplate', {
           ShipmentDetailProduct: parameter.ShipmentProductName
         }).subscribe(() => {
-          CreateChatRoom(shipmentKey, {
-            ChatRoomType: 'Internal',
-            ChatRoomName: 'Internal'
-          }).subscribe({
-            next: result => {
-              const data = result.path.split('/');
-              let chatkey = result.id;
-              let ChatRoomMember = AddChatRoomMember(shipmentKey, result.id, {
-                ChatRoomMemberUserKey: this.props.user.uid,
-                ChatRoomMemberEmail: this.props.user.email,
-                ChatRoomMemberImageUrl: '',
-                ChatRoomMemberRole: [parameter.ShipmentCreatorType],
-                ChatRoomMemberCompanyName: '',
-                ChatRoomMemberCompanyKey: ''
-              }).subscribe({
-                next: result => {
-                  this.props.history.push(`/chat/${createdShipment.id}`);
-                }
-              });
-            },
-            complete: result => {
-              console.log(result);
-            }
-          });
+          this.props.history.push(`/chat/${shipmentKey}`);
         });
       }
     });
@@ -201,21 +178,21 @@ class Shipment extends Component {
               if (_.isEmpty(typeShipment)) {
                 return true;
               } else {
-                console.log('typeShipment', typeShipment);
+                console.log('shipment', item);
 
                 switch (typeShipment) {
                   case 'Plan':
-                    keyword = ['Planing', 'Order Confirmed'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    keyword = ['Planning', 'Order Confirmed'];
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Active':
                     keyword = ['In Transit', 'Order Confirmed', 'Delayed'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Complete':
                     keyword = ['Delivered', 'Completed'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Cancel':
                     keyword = ['Cancelled'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                 }
               }
             });
@@ -247,25 +224,24 @@ class Shipment extends Component {
             const { typeShipment } = this.state;
             console.log('typeShipment', typeShipment);
             let result = _.filter(shipment, item => {
-              console.log('Shipment', JSON.stringify(item));
               let keyword = '';
               if (_.isEmpty(typeShipment)) {
                 return true;
               } else {
+                console.log('shipment', item);
                 switch (typeShipment) {
                   case 'Plan':
                     keyword = ['Planning', 'Order Confirmed'];
-                    console.log(_.some(keyword, el => _.includes(item, el)));
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Active':
                     keyword = ['In Transit', 'Order Confirmed', 'Delayed'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Complete':
                     keyword = ['Delivered', 'Completed'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Cancel':
                     keyword = ['Cancelled'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                 }
               }
             });
@@ -300,17 +276,17 @@ class Shipment extends Component {
               } else {
                 switch (typeShipment) {
                   case 'Plan':
-                    keyword = ['Planing', 'Order Confirmed'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    keyword = ['Planning', 'Order Confirmed'];
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Active':
                     keyword = ['In Transit', 'Order Confirmed', 'Delayed'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Complete':
                     keyword = ['Delivered', 'Completed'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                   case 'Cancel':
                     keyword = ['Cancelled'];
-                    return _.some(keyword, el => _.includes(item, el));
+                    return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                 }
               }
             });

@@ -15,6 +15,7 @@ import {
 
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
 import Select from 'react-select';
+import ErrorPopup from '../../component/commonPopup/ErrorPopup';
 import MainDataTable from '../../component/MainDataTable';
 import MultiSelectTextInput from '../../component/MultiSelectTextInput';
 import InviteToCompanyModal from '../../component/InviteToCompanyModal';
@@ -29,6 +30,7 @@ import {
   IsCompanyMember,
   UpdateCompanyMember,
   GetCompanyUserAccessibility,
+  CompanyUserAccessibilityIsOnlyOneOwner,
 } from '../../service/company/company';
 import { GetProlfileList } from '../../service/user/profile';
 
@@ -132,6 +134,7 @@ const CompanyPanel = (props) => {
   const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
   const inviteInput = useRef(null);
+  const errorPopupRef = useRef(null);
 
   const handleInputPositionChange = (event, key) => {
     const temp = updatePosition;
@@ -146,7 +149,24 @@ const CompanyPanel = (props) => {
   };
 
   const updateMember = (companyKey, userKey, data) => {
-    UpdateCompanyMember(companyKey, userKey, data);
+    if (Object.prototype.hasOwnProperty.call(data, 'UserMemberRoleName')) {
+      const isOnlyOwner = CompanyUserAccessibilityIsOnlyOneOwner(props.match.params.key);
+      isOnlyOwner.subscribe((onlyOwner) => {
+        if (onlyOwner) {
+          errorPopupRef.current.triggerError(
+            <span>
+              <b>Can't change role</b>
+, You must have atleast 1 Owner left in the company.
+            </span>,
+            'WARN',
+          );
+        } else {
+          UpdateCompanyMember(companyKey, userKey, data);
+        }
+      });
+    } else {
+      UpdateCompanyMember(companyKey, userKey, data);
+    }
   };
 
   const validateMembership = (companyKey, userKey) => {
@@ -385,6 +405,7 @@ const CompanyPanel = (props) => {
   };
 
   const changeCompanyPic = (file) => {
+    setBlocking(true);
     const companyKey = props.match.params.key;
     const editedCompany = company;
     const storageRefPath = `/Company/${companyKey}/${new Date().valueOf()}${file.name}`;
@@ -402,7 +423,9 @@ const CompanyPanel = (props) => {
             GetURLFromStorageRefPath(metaData.ref).subscribe({
               next: (url) => {
                 editedCompany.CompanyImageLink = url;
-                UpdateCompany(companyKey, editedCompany);
+                UpdateCompany(companyKey, editedCompany).subscribe(() => {
+                  setBlocking(false);
+                });
               },
               complete: () => {},
             });
@@ -642,6 +665,7 @@ Members (
         ) : (
           ''
         )}
+        <ErrorPopup ref={errorPopupRef} />
       </BlockUi>
     </div>
   );

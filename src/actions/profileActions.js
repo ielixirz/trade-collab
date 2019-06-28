@@ -36,7 +36,6 @@ export const getProfileDetail = (userInfoKey, profileKey, history) => (dispatch)
         type: FETCH_PROFILE_DETAIL,
         payload: ProfileDetail,
       });
-      history.push('/shipment');
     },
     error: (err) => {
       console.log(err);
