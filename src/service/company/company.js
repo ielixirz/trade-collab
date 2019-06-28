@@ -127,3 +127,14 @@ export const RemoveFromCompany = (CompanyKey, UserKey) => collection(
     .doc(UserKey)
     .delete(),
 );
+
+export const CompanyUserAccessibilityIsOnlyOneOwner = (
+  CompanyKey,
+  CompanyUserAccessibilityRoleName,
+) => collection(
+  CompanyMemberRefPath(CompanyKey).where(
+    'CompanyUserAccessibilityRoleName',
+    '==',
+    CompanyUserAccessibilityRoleName,
+  ),
+).pipe(map(CompanyUserAccessibilityDoc => CompanyUserAccessibilityDoc.length > 1));
