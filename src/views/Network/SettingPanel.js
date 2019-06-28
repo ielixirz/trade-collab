@@ -6,19 +6,17 @@ import { map } from 'rxjs/operators';
 import _ from 'lodash';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
-
 import {
   Row,
-  Col,
   DropdownToggle,
   Dropdown,
   Button,
   Input,
-  ButtonGroup,
-  ButtonToolbar,
   DropdownMenu,
   DropdownItem,
 } from 'reactstrap';
+import ErrorPopup from '../../component/commonPopup/ErrorPopup';
+
 import MainDataTable from '../../component/MainDataTable';
 import { PERMISSION_LIST } from '../../constants/network';
 import {
@@ -26,6 +24,7 @@ import {
   UpdateCompanyUserAccessibility,
   CreateCompanyUserAccessibility,
   DeleteCompanyUserAccessibility,
+  CompanyUserAccessibilityIsTargetRole,
 } from '../../service/company/company';
 
 const RoleButton = ({ roleName, deleteHandler, editHandler }) => {
@@ -98,7 +97,7 @@ const PermissionButton = ({ binary, updatePermission, disabled }) => (binary ===
   />
 ));
 
-const SettingPanel = (props, { auth }) => {
+const SettingPanel = (props) => {
   const [roles, setRoles] = useState([]);
   const [roleColumn, setRoleColumn] = useState([
     {
@@ -114,6 +113,7 @@ const SettingPanel = (props, { auth }) => {
   ]);
   const [lastUpdate, setLastUpdate] = useState({});
   const [blocking, setBlocking] = useState(true);
+  const errorPopupRef = useRef(null);
 
   const toggleBlocking = (block) => {
     setBlocking(block);
@@ -127,8 +127,17 @@ const SettingPanel = (props, { auth }) => {
     });
   };
 
-  const deleteRole = (key) => {
-    DeleteCompanyUserAccessibility(props.match.params.key, key);
+  const deleteRole = (key, roleName) => {
+    CompanyUserAccessibilityIsTargetRole(props.match.params.key, roleName).subscribe((inUsed) => {
+      if (!inUsed) {
+        DeleteCompanyUserAccessibility(props.match.params.key, key);
+      } else {
+        errorPopupRef.current.triggerError(
+          "Can't remove role, someone still using this role.",
+          'WARN',
+        );
+      }
+    });
   };
 
   const updateRole = (editedRoleName, key) => {
@@ -175,7 +184,7 @@ const SettingPanel = (props, { auth }) => {
         text: (
           <RoleButton
             roleName={result.CompanyUserAccessibilityRoleName}
-            deleteHandler={() => deleteRole(result.id)}
+            deleteHandler={() => deleteRole(result.id, result.CompanyUserAccessibilityRoleName)}
             editHandler={editingRole => updateRole(editingRole, result.id)}
           />
         ),
@@ -284,6 +293,7 @@ const SettingPanel = (props, { auth }) => {
             rowStyle={rowStyle}
           />
         </Row>
+        <ErrorPopup ref={errorPopupRef} />
       </BlockUi>
     </div>
   );

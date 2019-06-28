@@ -133,12 +133,16 @@ export const CompanyUserAccessibilityIsTargetRole = (
   CompanyUserAccessibilityRoleName,
 ) => collection(
   CompanyMemberRefPath(CompanyKey).where(
-    'CompanyUserAccessibilityRoleName',
+    'UserMemberRoleName',
     '==',
     CompanyUserAccessibilityRoleName,
   ),
-).pipe(map(CompanyUserAccessibilityDoc => CompanyUserAccessibilityDoc.length > 0));
+).pipe(
+  take(1),
+  map(CompanyUserAccessibilityDoc => CompanyUserAccessibilityDoc.length > 0),
+);
 
-export const CompanyUserAccessibilityIsOnlyOneOwner = CompanyKey => collection(
-  CompanyMemberRefPath(CompanyKey).where('CompanyUserAccessibilityRoleName', '==', 'Owner'),
-).pipe(map(CompanyUserAccessibilityDoc => CompanyUserAccessibilityDoc.length > 1));
+export const CompanyUserAccessibilityIsOnlyOneOwner = CompanyKey => collection(CompanyMemberRefPath(CompanyKey).where('UserMemberRoleName', '==', 'Owner')).pipe(
+  take(1),
+  map(CompanyUserAccessibilityDoc => CompanyUserAccessibilityDoc.length === 1),
+);
