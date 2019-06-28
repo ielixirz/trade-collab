@@ -128,7 +128,7 @@ export const RemoveFromCompany = (CompanyKey, UserKey) => collection(
     .delete(),
 );
 
-export const CompanyUserAccessibilityIsOnlyOneOwner = (
+export const CompanyUserAccessibilityIsTargetRole = (
   CompanyKey,
   CompanyUserAccessibilityRoleName,
 ) => collection(
@@ -137,4 +137,8 @@ export const CompanyUserAccessibilityIsOnlyOneOwner = (
     '==',
     CompanyUserAccessibilityRoleName,
   ),
+).pipe(map(CompanyUserAccessibilityDoc => CompanyUserAccessibilityDoc.length > 0));
+
+export const CompanyUserAccessibilityIsOnlyOneOwner = CompanyKey => collection(
+  CompanyMemberRefPath(CompanyKey).where('CompanyUserAccessibilityRoleName', '==', 'Owner'),
 ).pipe(map(CompanyUserAccessibilityDoc => CompanyUserAccessibilityDoc.length > 1));
