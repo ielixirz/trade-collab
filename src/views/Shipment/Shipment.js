@@ -143,30 +143,7 @@ class Shipment extends Component {
         UpdateMasterData(createdShipment.id, 'DefaultTemplate', {
           ShipmentDetailProduct: parameter.ShipmentProductName
         }).subscribe(() => {
-          CreateChatRoom(shipmentKey, {
-            ChatRoomType: 'Internal',
-            ChatRoomName: 'Internal'
-          }).subscribe({
-            next: result => {
-              const data = result.path.split('/');
-              let chatkey = result.id;
-              let ChatRoomMember = AddChatRoomMember(shipmentKey, result.id, {
-                ChatRoomMemberUserKey: this.props.user.uid,
-                ChatRoomMemberEmail: this.props.user.email,
-                ChatRoomMemberImageUrl: '',
-                ChatRoomMemberRole: [parameter.ShipmentCreatorType],
-                ChatRoomMemberCompanyName: '',
-                ChatRoomMemberCompanyKey: ''
-              }).subscribe({
-                next: result => {
-                  this.props.history.push(`/chat/${createdShipment.id}`);
-                }
-              });
-            },
-            complete: result => {
-              console.log(result);
-            }
-          });
+          this.props.history.push(`/chat/${shipmentKey}`);
         });
       }
     });

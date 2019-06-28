@@ -17,6 +17,8 @@ import ShipmentSide from '../ShipmentSide';
 import ChatMessage from './ChatMessage';
 import PreMessage from './PreMessage';
 import {
+  AddChatRoomMember,
+  CreateChatRoom,
   GetChatRoomMemberList,
   UpdateChatRoomMember,
   UpdateChatRoomMessageReader
@@ -117,6 +119,30 @@ class ChatWithHeader extends Component {
               console.log(res);
               invite.unsubscribe();
               this.props.fetchMoreMessage(ChatRoomKey, ShipmentKey);
+            }
+          });
+          CreateChatRoom(ShipmentKey, {
+            ChatRoomType: 'Internal',
+            ChatRoomName: 'Internal'
+          }).subscribe({
+            next: result => {
+              const data = result.path.split('/');
+              let chatkey = result.id;
+              const invite = CreateChatMultipleInvitation(
+                inviteMember,
+                ShipmentKey,
+                chatkey,
+                this.props.sender
+              ).subscribe({
+                next: res => {
+                  console.log(res);
+                  invite.unsubscribe();
+                  this.props.fetchMoreMessage(chatkey, ShipmentKey);
+                }
+              });
+            },
+            complete: result => {
+              console.log(result);
             }
           });
           getCompany.unsubscribe();
