@@ -47,7 +47,11 @@ const RoleButton = ({ roleName, deleteHandler, editHandler }) => {
 
   return !isEditing ? (
     <Dropdown toggle={toggle} isOpen={open}>
-      <DropdownToggle caret style={{ width: '100%', background: 'white', borderColor: '#ededed' }}>
+      <DropdownToggle
+        caret
+        style={{ width: '100%', background: 'white', borderColor: '#ededed' }}
+        disabled={roleName === 'Owner'}
+      >
         {roleName}
       </DropdownToggle>
       <DropdownMenu style={{ content: 'Float', clear: 'both' }}>
@@ -70,7 +74,7 @@ const RoleButton = ({ roleName, deleteHandler, editHandler }) => {
   );
 };
 
-const PermissionButton = ({ binary, updatePermission }) => (binary === '1' ? (
+const PermissionButton = ({ binary, updatePermission, disabled }) => (binary === '1' ? (
   <i
     className="cui-check icons font-2xl d-block matrix-check"
     role="button"
@@ -80,7 +84,7 @@ const PermissionButton = ({ binary, updatePermission }) => (binary === '1' ? (
       cursor: 'pointer',
     }}
       // eslint-disable-next-line max-len
-    onClick={updatePermission}
+    onClick={disabled === true ? null : updatePermission}
     onKeyDown={null}
     tabIndex="-1"
   />
@@ -90,7 +94,7 @@ const PermissionButton = ({ binary, updatePermission }) => (binary === '1' ? (
     role="button"
     onKeyDown={null}
     tabIndex="-1"
-    onClick={updatePermission}
+    onClick={disabled === true ? null : updatePermission}
   />
 ));
 
@@ -194,6 +198,7 @@ const SettingPanel = (props, { auth }) => {
           ...initialRow[index + increment],
           [result.CompanyUserAccessibilityRoleName]: (
             <PermissionButton
+              disabled={result.CompanyUserAccessibilityRoleName === 'Owner'}
               binary={binary}
               updatePermission={() => updatePermission(
                 result.CompanyUserAccessibilityRoleName,
@@ -265,7 +270,7 @@ const SettingPanel = (props, { auth }) => {
     <div style={{ width: '100%', height: '100%' }}>
       <BlockUi tag="div" blocking={blocking} style={{ height: '100%' }}>
         <Row>
-          <span style={{ padding: '4rem' }}>
+          <span style={{ paddingLeft: '4rem', paddingTop: '4rem' }}>
             <h2>Roles & Permissions Setting</h2>
           </span>
         </Row>
