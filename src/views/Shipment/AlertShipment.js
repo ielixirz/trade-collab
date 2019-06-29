@@ -79,7 +79,7 @@ export class AlertShipment extends React.Component {
   render() {
     return (
       <UncontrolledDropdown>
-        <DropdownToggle caret>
+        <DropdownToggle>
           <i className="fa fa-ellipsis-v" />
         </DropdownToggle>
         <DropdownMenu>
