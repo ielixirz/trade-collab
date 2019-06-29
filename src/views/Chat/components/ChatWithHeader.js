@@ -555,7 +555,8 @@ class ChatWithHeader extends Component {
                   return (
                     <div
                       style={{
-                        marginBottom: '-40px'
+                        padding: '20px',
+                        marginBottom: '-70px'
                       }}
                     >
                       <ChatMessage message={message} i={i} />
