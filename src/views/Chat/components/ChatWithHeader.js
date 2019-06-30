@@ -650,7 +650,7 @@ class ChatWithHeader extends Component {
                     }}
                     onKeyPress={event => {
                       if (event.key === 'Enter') {
-                        if (text !== '') {
+                        if (!_.isEmpty(text)) {
                           sendMessage(ChatRoomKey, ShipmentKey, text);
                           scrollChatToBottom();
                         }
@@ -666,7 +666,7 @@ class ChatWithHeader extends Component {
                     <Button
                       color="default1"
                       onClick={() => {
-                        if (text !== '') {
+                        if (!_.isEmpty(text)) {
                           sendMessage(ChatRoomKey, ShipmentKey, text);
                           scrollChatToBottom();
                         }
