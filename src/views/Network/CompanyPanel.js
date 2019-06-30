@@ -10,7 +10,15 @@ import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 
 import {
-  Row, Col, DropdownToggle, Dropdown, Button, Label, Input, ButtonGroup,
+  Row,
+  Col,
+  DropdownToggle,
+  Dropdown,
+  Button,
+  Label,
+  Input,
+  ButtonGroup,
+  Badge,
 } from 'reactstrap';
 
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
@@ -384,7 +392,7 @@ const CompanyPanel = (props) => {
   };
 
   const handleCompanyInputChange = (event) => {
-    const editedCompany = company;
+    const editedCompany = { ...company };
     const inputName = event.target.id;
     const inputValue = event.target.value;
 
@@ -498,26 +506,43 @@ const CompanyPanel = (props) => {
                       style={{ width: '100%', marginBottom: '0.5rem', paddingRight: '5rem' }}
                       type="text"
                       id="name"
-                      placeholder={company.CompanyName}
+                      value={company.CompanyName}
                       onChange={handleCompanyInputChange}
                     />
                   </div>
                 ) : (
                   <h4>{company.CompanyName}</h4>
                 )}
-                <i
-                  className="cui-pencil icons"
-                  role="button"
-                  style={{
-                    marginLeft: '1rem',
-                    marginTop: '0.1rem',
-                    fontSize: 'medium',
-                    cursor: 'pointer',
-                  }}
-                  onClick={toggleEdit}
-                  onKeyDown={null}
-                  tabIndex="-1"
-                />
+                {isEdit ? (
+                  <Badge
+                    className="mr-1"
+                    color="info"
+                    onClick={toggleEdit}
+                    style={{
+                      cursor: 'pointer',
+                      height: '100%',
+                      padding: 5,
+                      marginTop: '5px',
+                      marginLeft: '10px',
+                    }}
+                  >
+                    Save
+                  </Badge>
+                ) : (
+                  <i
+                    className="cui-pencil icons"
+                    role="button"
+                    style={{
+                      marginLeft: '1rem',
+                      marginTop: '0.1rem',
+                      fontSize: 'medium',
+                      cursor: 'pointer',
+                    }}
+                    onClick={toggleEdit}
+                    onKeyDown={null}
+                    tabIndex="-1"
+                  />
+                )}
               </Row>
               <Row>
                 {isEdit ? (
@@ -526,7 +551,8 @@ const CompanyPanel = (props) => {
                       style={{ width: '80%', marginBottom: '0.5rem', paddingRight: '5rem' }}
                       type="text"
                       id="tel"
-                      placeholder={company.CompanyTelNumber}
+                      placeholder="your company number..."
+                      value={company.CompanyTelNumber}
                       onChange={handleCompanyInputChange}
                     />
                   </div>
@@ -540,7 +566,8 @@ const CompanyPanel = (props) => {
                     style={{ width: '50%' }}
                     type="textarea"
                     id="desc"
-                    placeholder={company.CompanyAboutUs}
+                    placeholder="describe your company here..."
+                    value={company.CompanyAboutUs}
                     onChange={handleCompanyInputChange}
                   />
                 ) : (

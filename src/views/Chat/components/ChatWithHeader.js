@@ -555,7 +555,8 @@ class ChatWithHeader extends Component {
                   return (
                     <div
                       style={{
-                        marginBottom: '-40px'
+                        padding: '20px',
+                        marginBottom: '-70px'
                       }}
                     >
                       <ChatMessage message={message} i={i} />
@@ -648,8 +649,10 @@ class ChatWithHeader extends Component {
                       typing(e);
                     }}
                     onKeyPress={event => {
-                      if (event.key === 'Enter') {
-                        if (text !== '') {
+                      if (event.which == 13 && event.shiftKey) {
+                      } else if (event.which == 13) {
+                        event.preventDefault(); //Stops enter from creating a new line
+                        if (!_.isEmpty(_.trim(text))) {
                           sendMessage(ChatRoomKey, ShipmentKey, text);
                           scrollChatToBottom();
                         }
@@ -665,7 +668,9 @@ class ChatWithHeader extends Component {
                     <Button
                       color="default1"
                       onClick={() => {
-                        if (text !== '') {
+                        console.log('Input text is size', _.size(text));
+
+                        if (!_.isEmpty(_.trim(text))) {
                           sendMessage(ChatRoomKey, ShipmentKey, text);
                           scrollChatToBottom();
                         }

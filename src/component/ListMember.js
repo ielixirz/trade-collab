@@ -29,7 +29,11 @@ export default class ListMember extends React.Component {
                     height="30"
                   />
                 </span>
-
+                <span style={{ marginLeft: 10 }}>
+                  {member.ChatRoomMemberFirstnameFirstProfile}{' '}
+                  {member.ChatRoomMemberSurnameFirstProfile}
+                </span>
+                <br />
                 <span style={{ marginLeft: 40, fontSize: 12 }}>{email}</span>
               </Col>
               <Col xs="6" sm="3">

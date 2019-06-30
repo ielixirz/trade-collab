@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
 import React, { useState, useEffect, useRef } from 'react';
@@ -10,7 +11,7 @@ import 'react-block-ui/style.css';
 import '../../scss/ResetPassword.scss';
 
 import {
-  Row, Col, DropdownToggle, Dropdown, Button, Input, ButtonGroup,
+  Row, Col, DropdownToggle, Dropdown, Button, Input, ButtonGroup, Badge,
 } from 'reactstrap';
 
 import MainDataTable from '../../component/MainDataTable';
@@ -384,14 +385,25 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
             <Col xs={7} className="col-profile-info">
               <Row>
                 <Col sm={1} style={{ paddingLeft: '0px', paddingRight: '0px', textAlign: 'right' }}>
-                  <i
-                    className="cui-pencil icons"
-                    role="button"
-                    style={{ cursor: 'pointer' }}
-                    onClick={toggleEdit}
-                    onKeyDown={null}
-                    tabIndex="-1"
-                  />
+                  {isEdit ? (
+                    <Badge
+                      className="mr-1"
+                      color="info"
+                      onClick={toggleEdit}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      Save
+                    </Badge>
+                  ) : (
+                    <i
+                      className="cui-pencil icons"
+                      role="button"
+                      style={{ cursor: 'pointer' }}
+                      onClick={toggleEdit}
+                      onKeyDown={null}
+                      tabIndex="-1"
+                    />
+                  )}
                 </Col>
                 {isEdit ? (
                   <React.Fragment>
