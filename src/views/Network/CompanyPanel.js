@@ -516,7 +516,6 @@ const CompanyPanel = (props) => {
                 {isEdit ? (
                   <Badge
                     className="mr-1"
-                    href="#"
                     color="info"
                     onClick={toggleEdit}
                     style={{

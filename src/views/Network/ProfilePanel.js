@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
 import React, { useState, useEffect, useRef } from 'react';
@@ -385,7 +386,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
               <Row>
                 <Col sm={1} style={{ paddingLeft: '0px', paddingRight: '0px', textAlign: 'right' }}>
                   {isEdit ? (
-                    <Badge className="mr-1" href="#" color="info" onClick={toggleEdit}>
+                    <Badge className="mr-1" color="info" onClick={toggleEdit}>
                       Save
                     </Badge>
                   ) : (
