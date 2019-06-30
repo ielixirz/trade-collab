@@ -392,7 +392,7 @@ const CompanyPanel = (props) => {
   };
 
   const handleCompanyInputChange = (event) => {
-    const editedCompany = company;
+    const editedCompany = { ...company };
     const inputName = event.target.id;
     const inputValue = event.target.value;
 
@@ -506,7 +506,7 @@ const CompanyPanel = (props) => {
                       style={{ width: '100%', marginBottom: '0.5rem', paddingRight: '5rem' }}
                       type="text"
                       id="name"
-                      placeholder={company.CompanyName}
+                      value={company.CompanyName}
                       onChange={handleCompanyInputChange}
                     />
                   </div>
@@ -519,7 +519,11 @@ const CompanyPanel = (props) => {
                     color="info"
                     onClick={toggleEdit}
                     style={{
-                      height: '100%', padding: 5, marginTop: '5px', marginLeft: '10px',
+                      cursor: 'pointer',
+                      height: '100%',
+                      padding: 5,
+                      marginTop: '5px',
+                      marginLeft: '10px',
                     }}
                   >
                     Save
@@ -547,7 +551,8 @@ const CompanyPanel = (props) => {
                       style={{ width: '80%', marginBottom: '0.5rem', paddingRight: '5rem' }}
                       type="text"
                       id="tel"
-                      placeholder={company.CompanyTelNumber}
+                      placeholder="your company number..."
+                      value={company.CompanyTelNumber}
                       onChange={handleCompanyInputChange}
                     />
                   </div>
@@ -561,7 +566,8 @@ const CompanyPanel = (props) => {
                     style={{ width: '50%' }}
                     type="textarea"
                     id="desc"
-                    placeholder={company.CompanyAboutUs}
+                    placeholder="describe your company here..."
+                    value={company.CompanyAboutUs}
                     onChange={handleCompanyInputChange}
                   />
                 ) : (

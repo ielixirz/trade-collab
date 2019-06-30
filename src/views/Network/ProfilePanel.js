@@ -386,7 +386,12 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
               <Row>
                 <Col sm={1} style={{ paddingLeft: '0px', paddingRight: '0px', textAlign: 'right' }}>
                   {isEdit ? (
-                    <Badge className="mr-1" color="info" onClick={toggleEdit}>
+                    <Badge
+                      className="mr-1"
+                      color="info"
+                      onClick={toggleEdit}
+                      style={{ cursor: 'pointer' }}
+                    >
                       Save
                     </Badge>
                   ) : (
