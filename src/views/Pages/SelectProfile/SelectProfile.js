@@ -43,7 +43,11 @@ class SelectProfile extends Component {
         }}
       >
         <img
-          src="//placehold.it/50"
+          src={
+            profile.UserInfoProfileImageLink === undefined
+              ? '../../assets/img/default-grey.jpg'
+              : profile.UserInfoProfileImageLink
+          }
           alt="Avatar"
           style={{
             display: 'flex',

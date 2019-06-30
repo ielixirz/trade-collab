@@ -10,9 +10,15 @@ import {
   Modal, ModalHeader, ModalBody, Input, Button,
 } from 'reactstrap';
 import './MemberModal.css';
-import { CreateProfile } from '../service/user/profile';
+import { CreateProfile, UpdateProfile } from '../service/user/profile';
 import './style/NewProfileModal.scss';
 import { isValidName } from '../utils/validation';
+
+import {
+  PutFile,
+  GetMetaDataFromStorageRefPath,
+  GetURLFromStorageRefPath,
+} from '../service/storage/managestorage';
 
 class NewProfileModal extends React.Component {
   static propTypes = {
@@ -35,8 +41,10 @@ class NewProfileModal extends React.Component {
         Surname: { isInvalid: undefined, msg: '' },
       },
       isWorking: false,
+      selectedPic: undefined,
     };
-
+    this.fileInput = React.createRef();
+    this.previewPic = React.createRef();
     this.toggle = this.toggle.bind(this);
   }
 
@@ -52,7 +60,14 @@ class NewProfileModal extends React.Component {
       CreateProfile(user.uid, {
         ProfileFirstname,
         ProfileSurname,
-      }).subscribe(this.complete);
+      }).subscribe((result) => {
+        const { selectedPic } = this.state;
+        if (selectedPic !== undefined) {
+          this.uploadProfilePic(selectedPic, result.id);
+        } else {
+          this.complete();
+        }
+      });
     } else {
       this.setState({
         isWorking: false,
@@ -103,8 +118,44 @@ class NewProfileModal extends React.Component {
     return valid;
   };
 
+  browseFile = () => {
+    this.fileInput.current.value = null;
+    this.fileInput.current.click();
+  };
+
+  uploadProfilePic = (file, createdId) => {
+    const { user } = this.props;
+    const storageRefPath = `/Profile/${createdId}/${new Date().valueOf()}${file.name}`;
+    PutFile(storageRefPath, file).subscribe({
+      next: () => {},
+      error: (err) => {
+        console.log(err);
+      },
+      complete: () => {
+        GetMetaDataFromStorageRefPath(storageRefPath).subscribe({
+          next: (metaData) => {
+            GetURLFromStorageRefPath(metaData.ref).subscribe({
+              next: (url) => {
+                UpdateProfile(user.uid, createdId, { UserInfoProfileImageLink: url }).subscribe(
+                  this.complete,
+                );
+              },
+              complete: () => {},
+            });
+          },
+        });
+      },
+    });
+  };
+
+  selectProfilePic = (file) => {
+    this.previewPic.current.src = URL.createObjectURL(file);
+    this.setState({
+      selectedPic: file,
+    });
+  };
+
   toggle() {
-    console.log('adsd');
     this.setState(prevState => ({
       modal: !prevState.modal,
     }));
@@ -131,6 +182,7 @@ class NewProfileModal extends React.Component {
               <div className="text-center" style={{ marginTop: '20px' }}>
                 <img
                   src="//placehold.it/140"
+                  ref={this.previewPic}
                   style={{
                     width: 140,
                     height: 140,
@@ -143,8 +195,24 @@ class NewProfileModal extends React.Component {
               </div>
               <div>
                 <i
+                  onClick={this.browseFile}
+                  role="button"
+                  onKeyDown={null}
+                  tabIndex="-1"
                   className="icons cui-pencil"
-                  style={{ position: 'absolute', right: 180, top: 210 }}
+                  style={{
+                    position: 'absolute',
+                    right: 180,
+                    top: 210,
+                    cursor: 'pointer',
+                  }}
+                />
+                <input
+                  type="file"
+                  id="file"
+                  ref={this.fileInput}
+                  style={{ display: 'none' }}
+                  onChange={event => this.selectProfilePic(event.target.files[0])}
                 />
               </div>
               <form>
