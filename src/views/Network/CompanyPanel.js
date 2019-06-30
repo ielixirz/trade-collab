@@ -10,7 +10,15 @@ import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 
 import {
-  Row, Col, DropdownToggle, Dropdown, Button, Label, Input, ButtonGroup,
+  Row,
+  Col,
+  DropdownToggle,
+  Dropdown,
+  Button,
+  Label,
+  Input,
+  ButtonGroup,
+  Badge,
 } from 'reactstrap';
 
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
@@ -505,19 +513,33 @@ const CompanyPanel = (props) => {
                 ) : (
                   <h4>{company.CompanyName}</h4>
                 )}
-                <i
-                  className="cui-pencil icons"
-                  role="button"
-                  style={{
-                    marginLeft: '1rem',
-                    marginTop: '0.1rem',
-                    fontSize: 'medium',
-                    cursor: 'pointer',
-                  }}
-                  onClick={toggleEdit}
-                  onKeyDown={null}
-                  tabIndex="-1"
-                />
+                {isEdit ? (
+                  <Badge
+                    className="mr-1"
+                    href="#"
+                    color="info"
+                    onClick={toggleEdit}
+                    style={{
+                      height: '100%', padding: 5, marginTop: '5px', marginLeft: '10px',
+                    }}
+                  >
+                    Save
+                  </Badge>
+                ) : (
+                  <i
+                    className="cui-pencil icons"
+                    role="button"
+                    style={{
+                      marginLeft: '1rem',
+                      marginTop: '0.1rem',
+                      fontSize: 'medium',
+                      cursor: 'pointer',
+                    }}
+                    onClick={toggleEdit}
+                    onKeyDown={null}
+                    tabIndex="-1"
+                  />
+                )}
               </Row>
               <Row>
                 {isEdit ? (
