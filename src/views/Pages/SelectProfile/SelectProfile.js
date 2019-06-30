@@ -8,6 +8,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Col, Container, Row } from 'reactstrap';
 import './card.css';
+import BlockUi from 'react-block-ui';
+import 'react-block-ui/style.css';
 
 import NewProfileModal from '../../../component/NewProfileModal';
 import { getProfileDetail } from '../../../actions/profileActions';
@@ -20,10 +22,23 @@ class SelectProfile extends Component {
     fetchProfile: PropTypes.isRequired,
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      blocking: false,
+    };
+  }
+
   goToShipment = (profile) => {
     const { user, history, fetchProfile } = this.props;
     fetchProfile(user.uid, profile.id, history);
-    history.push('/shipment');
+    this.setState({
+      blocking: true,
+    });
+    // using timeout rightnow for workaround
+    setTimeout(() => {
+      history.push('/shipment');
+    }, 2000);
   };
 
   renderProfile = profile => (
@@ -85,18 +100,22 @@ class SelectProfile extends Component {
             <Col md="9" lg="7" xl="6">
               <div className="card">
                 <div className="container">
-                  <h2>Select Profile</h2>
-                  <div style={{ maxHeight: 400, overflowY: 'scroll' }}>{this.renderProfiles()}</div>
-                  <div style={{ textAlign: 'center' }}>
-                    <NewProfileModal>
-                      <p style={{ color: '#16a085', marginTop: 20 }} className="add-profile-link">
-                        Add New User
+                  <BlockUi tag="div" blocking={this.state.blocking}>
+                    <h2>Select Profile</h2>
+                    <div style={{ maxHeight: 400, overflowY: 'scroll' }}>
+                      {this.renderProfiles()}
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <NewProfileModal>
+                        <p style={{ color: '#16a085', marginTop: 20 }} className="add-profile-link">
+                          Add New User
+                        </p>
+                      </NewProfileModal>
+                      <p style={{ color: '#16a085' }}>
+                        You can have multiple users using the same e-mail address
                       </p>
-                    </NewProfileModal>
-                    <p style={{ color: '#16a085' }}>
-                      You can have multiple users using the same e-mail address
-                    </p>
-                  </div>
+                    </div>
+                  </BlockUi>
                 </div>
               </div>
             </Col>
