@@ -5,6 +5,9 @@
 /* eslint-disable filenames/match-regex */
 import PropTypes from 'prop-types';
 import React from 'react';
+import BlockUi from 'react-block-ui';
+import 'react-block-ui/style.css';
+
 import { connect } from 'react-redux';
 import {
   Modal, ModalHeader, ModalBody, Input, Button,
@@ -40,7 +43,7 @@ class NewProfileModal extends React.Component {
         Firstname: { isInvalid: undefined, msg: '' },
         Surname: { isInvalid: undefined, msg: '' },
       },
-      isWorking: false,
+      isWorking: true,
       selectedPic: undefined,
     };
     this.fileInput = React.createRef();
@@ -175,98 +178,100 @@ class NewProfileModal extends React.Component {
           {children}
         </div>
         <Modal isOpen={modal} toggle={this.toggle}>
-          <ModalHeader toggle={this.toggle} close={closeBtn} style={{ border: 0 }} />
-          <ModalBody>
-            <div style={{ paddingLeft: 70, paddingRight: 70, paddingBottom: 40 }}>
-              <h2 style={{ textAlign: 'center', margin: 0 }}>Add New Profile!</h2>
-              <div className="text-center" style={{ marginTop: '20px' }}>
-                <img
-                  src="//placehold.it/140"
-                  ref={this.previewPic}
-                  style={{
-                    width: 140,
-                    height: 140,
-                    borderRadius: 140 / 2,
-                    marginTop: 10,
-                    marginBottom: 10,
-                  }}
-                  alt="avatar"
-                />
-              </div>
-              <div>
-                <i
-                  onClick={this.browseFile}
-                  role="button"
-                  onKeyDown={null}
-                  tabIndex="-1"
-                  className="icons cui-pencil"
-                  style={{
-                    position: 'absolute',
-                    right: 180,
-                    top: 210,
-                    cursor: 'pointer',
-                  }}
-                />
-                <input
-                  type="file"
-                  id="file"
-                  ref={this.fileInput}
-                  style={{ display: 'none' }}
-                  onChange={event => this.selectProfilePic(event.target.files[0])}
-                />
-              </div>
-              <form>
-                <div style={{ marginTop: '20px' }}>
-                  <span style={{ fontSize: '1em', fontWeight: 'bold' }}>Name</span>
-                  {this.state.invalid.Firstname.isInvalid ? (
-                    <span className="field-error-msg">{this.state.invalid.Firstname.msg}</span>
-                  ) : (
-                    ''
-                  )}
-                  <Input
-                    type="text"
-                    id="Firstname"
-                    name="fname"
-                    placeholder="Enter Firstname"
-                    style={{ marginTop: 0 }}
-                    value={ProfileFirstname}
-                    onChange={e => this.setInput('ProfileFirstname', e.target.value)}
+          <BlockUi tag="div" blocking={this.state.isWorking}>
+            <ModalHeader toggle={this.toggle} close={closeBtn} style={{ border: 0 }} />
+            <ModalBody>
+              <div style={{ paddingLeft: 70, paddingRight: 70, paddingBottom: 40 }}>
+                <h2 style={{ textAlign: 'center', margin: 0 }}>Add New Profile!</h2>
+                <div className="text-center" style={{ marginTop: '20px' }}>
+                  <img
+                    src="//placehold.it/140"
+                    ref={this.previewPic}
+                    style={{
+                      width: 140,
+                      height: 140,
+                      borderRadius: 140 / 2,
+                      marginTop: 10,
+                      marginBottom: 10,
+                    }}
+                    alt="avatar"
                   />
                 </div>
+                <div>
+                  <i
+                    onClick={this.browseFile}
+                    role="button"
+                    onKeyDown={null}
+                    tabIndex="-1"
+                    className="icons cui-pencil"
+                    style={{
+                      position: 'absolute',
+                      right: 180,
+                      top: 210,
+                      cursor: 'pointer',
+                    }}
+                  />
+                  <input
+                    type="file"
+                    id="file"
+                    ref={this.fileInput}
+                    style={{ display: 'none' }}
+                    onChange={event => this.selectProfilePic(event.target.files[0])}
+                  />
+                </div>
+                <form>
+                  <div style={{ marginTop: '20px' }}>
+                    <span style={{ fontSize: '1em', fontWeight: 'bold' }}>Name</span>
+                    {this.state.invalid.Firstname.isInvalid ? (
+                      <span className="field-error-msg">{this.state.invalid.Firstname.msg}</span>
+                    ) : (
+                      ''
+                    )}
+                    <Input
+                      type="text"
+                      id="Firstname"
+                      name="fname"
+                      placeholder="Enter Firstname"
+                      style={{ marginTop: 0 }}
+                      value={ProfileFirstname}
+                      onChange={e => this.setInput('ProfileFirstname', e.target.value)}
+                    />
+                  </div>
 
-                <div style={{ marginTop: '15px' }}>
-                  <span style={{ fontSize: '1em', fontWeight: 'bold' }}>Surname</span>
-                  {this.state.invalid.Surname.isInvalid ? (
-                    <span className="field-error-msg">{this.state.invalid.Surname.msg}</span>
-                  ) : (
-                    ''
-                  )}
-                  <Input
-                    type="text"
-                    id="Surname"
-                    name="sname"
-                    placeholder="Enter Surname"
-                    style={{ marginTop: 0 }}
-                    value={ProfileSurname}
-                    onChange={e => this.setInput('ProfileSurname', e.target.value)}
-                  />
+                  <div style={{ marginTop: '15px' }}>
+                    <span style={{ fontSize: '1em', fontWeight: 'bold' }}>Surname</span>
+                    {this.state.invalid.Surname.isInvalid ? (
+                      <span className="field-error-msg">{this.state.invalid.Surname.msg}</span>
+                    ) : (
+                      ''
+                    )}
+                    <Input
+                      type="text"
+                      id="Surname"
+                      name="sname"
+                      placeholder="Enter Surname"
+                      style={{ marginTop: 0 }}
+                      value={ProfileSurname}
+                      onChange={e => this.setInput('ProfileSurname', e.target.value)}
+                    />
+                  </div>
+                </form>
+                <p style={{ color: '#16A085', marginTop: 20 }}>
+                  <b>Edit profile setting</b>
+                </p>
+                <div className="col-sm-12 text-center">
+                  <Button
+                    className="create-profile-btn"
+                    type="submit"
+                    onClick={this.submit}
+                    disabled={this.state.isWorking}
+                  >
+                    <span>Create Profile</span>
+                  </Button>
                 </div>
-              </form>
-              <p style={{ color: '#16A085', marginTop: 20 }}>
-                <b>Edit profile setting</b>
-              </p>
-              <div className="col-sm-12 text-center">
-                <Button
-                  className="create-profile-btn"
-                  type="submit"
-                  onClick={this.submit}
-                  disabled={this.state.isWorking}
-                >
-                  <span>Create Profile</span>
-                </Button>
               </div>
-            </div>
-          </ModalBody>
+            </ModalBody>
+          </BlockUi>
         </Modal>
       </div>
     );
