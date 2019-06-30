@@ -144,5 +144,5 @@ export const UpdateChatRoomMessageReader = (ShipmentKey, ChatRoomKey, ProfileKey
 export const LeaveChatRoomMember = (ShipmentKey, ChatRoomKey, ChatRoomMemberKey) => collection(
   ChatRoomMemberRefPath(ShipmentKey, ChatRoomKey)
     .doc(ChatRoomMemberKey)
-    .delete(),
+    .set({ ChatRoomMemberIsLeave: true }, { merge: true }),
 );
