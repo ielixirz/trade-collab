@@ -101,7 +101,7 @@ class SelectProfile extends Component {
               <div className="card">
                 <div className="container">
                   <BlockUi tag="div" blocking={this.state.blocking}>
-                    <h2>Select Profile</h2>
+                    <h2 className="header-select-profile">Select Profile</h2>
                     <div style={{ maxHeight: 400, overflowY: 'scroll' }}>
                       {this.renderProfiles()}
                     </div>

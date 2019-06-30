@@ -37,7 +37,7 @@
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
 
-h2 {
+h2.header-select-profile {
   margin: 25px 25px 25px 80px;
 }
 
