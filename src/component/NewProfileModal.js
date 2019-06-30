@@ -43,7 +43,7 @@ class NewProfileModal extends React.Component {
         Firstname: { isInvalid: undefined, msg: '' },
         Surname: { isInvalid: undefined, msg: '' },
       },
-      isWorking: true,
+      isWorking: false,
       selectedPic: undefined,
     };
     this.fileInput = React.createRef();
