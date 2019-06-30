@@ -89,6 +89,7 @@
                         ChatRoomMemberRecruiterProfileKey (string)
                         ChatRoomMemberRecruiterProfileFirstName (string)
                         ChatRoomMemberRecruiterProfileSurName (string)
+                        ChatRoomMemberIsLeave (bool)
                 +ChatRoomMessageReader
                     >ChatRoomMessageKeyList *(Static document name) (Create for util)
                         ChatRoomMessageKeyList (Array<string>)
