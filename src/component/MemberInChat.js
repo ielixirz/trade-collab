@@ -13,6 +13,7 @@ import {
 } from 'reactstrap';
 import RoleBadges from './RoleBadges.js';
 import ListMember from './ListMember.js';
+import * as _ from 'lodash';
 
 const styles = {
   arrow: {
@@ -35,8 +36,7 @@ class MemberInChat extends Component {
   }
 
   render() {
-    const { member } = this.props;
-
+    let { member, toggleBlocking } = this.props;
     return (
       <div>
         <Row>
@@ -64,7 +64,7 @@ class MemberInChat extends Component {
         )}
         <Collapse isOpen={this.state.collapse}>
           {member.map(item => {
-            return <ListMember item={item} {...this.props} />;
+            return <ListMember toggleBlocking={toggleBlocking} item={item} {...this.props} />;
           })}
         </Collapse>
       </div>

@@ -6,7 +6,7 @@ import { LeaveChatRoomMember } from '../service/chat/chat';
 
 export default class ListMember extends React.Component {
   render() {
-    const { item: member } = this.props;
+    const { item: member, toggleBlocking } = this.props;
 
     let email = _.get(member, 'ChatRoomMemberEmail', '');
     let role = _.map(member.ChatRoomMemberRole, item => {
@@ -14,6 +14,7 @@ export default class ListMember extends React.Component {
       let acronym = matches.join(''); // JSON
       return acronym;
     });
+
     return (
       <div>
         <ListGroup flush>
@@ -63,7 +64,7 @@ export default class ListMember extends React.Component {
                   href="#"
                   onClick={e => {
                     e.preventDefault();
-
+                    toggleBlocking(true);
                     LeaveChatRoomMember(
                       this.props.ShipmentKey,
                       this.props.ChatRoomKey,
@@ -71,6 +72,7 @@ export default class ListMember extends React.Component {
                     ).subscribe({
                       next: res => {},
                       error: res => {
+                        toggleBlocking(false);
                         console.error(res);
                       },
                       complete: res => {}

@@ -1,9 +1,14 @@
 // eslint-disable-next-line filenames/match-exported
-import { FETCH_COMPANY_DETAIL, FETCH_COMPANY_USER } from '../constants/constants';
+import {
+  FETCH_COMPANY_DETAIL,
+  FETCH_COMPANY_USER,
+  FETCH_NETWORK_EMAIL
+} from '../constants/constants';
 
 const INITIAL_STATE = {
   CompanyDetail: {},
-  UserCompany: {}
+  UserCompany: {},
+  NetworkEmail: {}
 };
 
 export default function reducer(state = INITIAL_STATE, action) {
@@ -12,6 +17,11 @@ export default function reducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         CompanyDetail: action.payload
+      };
+    case FETCH_NETWORK_EMAIL:
+      return {
+        ...state,
+        NetworkEmail: action.payload
       };
     case FETCH_COMPANY_USER:
       return {

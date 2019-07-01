@@ -29,6 +29,7 @@ import { moveTab } from '../../../actions/chatActions';
 import { PutFile } from '../../../service/storage/managestorage';
 import { FETCH_CHAT_MEMBER, FETCH_COMPANY_USER } from '../../../constants/constants';
 import { GetUserCompany } from '../../../service/user/user';
+import Autocomplete from 'react-autocomplete';
 
 const AVAILABLE_ROLES = {
   Importer: 'Exporter',
@@ -306,7 +307,12 @@ class ChatWithHeader extends Component {
         }
       }
     }
-
+    let suggestion = _.map(this.props.network, item => {
+      return {
+        id: item.UserMemberEmail,
+        label: item.UserMemberEmail
+      };
+    });
     if (_.size(member) < 2) {
       return (
         <div
@@ -329,10 +335,37 @@ class ChatWithHeader extends Component {
 
           <Row>
             <Col xs={6}>
-              <Input
+              <Autocomplete
+                renderInput={props => {
+                  return (
+                    <input
+                      {...props}
+                      style={{
+                        width: '100%'
+                      }}
+                    />
+                  );
+                }}
+                wrapperStyle={{
+                  width: '100%'
+                }}
+                items={suggestion}
+                shouldItemRender={(item, value) =>
+                  item.label.toLowerCase().indexOf(value.toLowerCase()) > -1
+                }
+                getItemValue={item => item.label}
+                renderItem={(item, highlighted) => (
+                  <div
+                    key={item.id}
+                    style={{ backgroundColor: highlighted ? '#eee' : 'transparent' }}
+                  >
+                    {item.label}
+                  </div>
+                )}
                 value={this.state.email}
                 placeholder="...input email address"
                 onChange={e => this.setState({ email: e.target.value })}
+                onSelect={value => this.setState({ email: value })}
               />
             </Col>
             <Col xs={2}>
@@ -383,12 +416,14 @@ class ChatWithHeader extends Component {
     const {
       alert,
       user,
+      network,
       msg: sending,
       chatMsg,
       text,
       typing,
       uploadModalRef,
       fileInputRef,
+      toggleBlocking,
       sender,
       ShipmentKey,
       ShipmentData = {},
@@ -413,16 +448,14 @@ class ChatWithHeader extends Component {
     const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
     let ref = '';
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
-    console.log(ship, 'ship???');
+    console.log(isInvited, 'member???');
 
     if (!_.isEmpty(isInvited)) {
-      console.log('Find shipmetn REF >>>>>', _.get(ship, 'ShipmentReferenceList', []));
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
         ref = _.find(
           ship.ShipmentReferenceList,
           item => item.ShipmentReferenceCompanyKey === isInvited.ChatRoomMemberCompanyKey
         );
-        console.log(ref, 'reffff');
       }
     } else {
       ref = 'loading';
@@ -445,7 +478,13 @@ class ChatWithHeader extends Component {
               sender={this.props.sender}
             />
             <Button className="btn-chat-label">|</Button>
-            <MemberModal {...this.props} count={member.length} list={member} />
+            <MemberModal
+              {...this.props}
+              count={_.filter(member, item => item.ChatRoomMemberIsLeave === false).length}
+              toggleBlocking={toggleBlocking}
+              list={member}
+              network={network}
+            />
 
             <Button className="btn-chat-label">|</Button>
             <Button className="btn-chat-label">

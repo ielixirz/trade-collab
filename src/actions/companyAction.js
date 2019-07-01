@@ -1,7 +1,11 @@
 import _ from 'lodash';
 import { configureStore } from '../utils/configureStore';
-import { FETCH_COMPANY_DETAIL, FETCH_COMPANY_USER } from '../constants/constants';
-import { GetCompanyDetail } from '../service/company/company';
+import {
+  FETCH_COMPANY_DETAIL,
+  FETCH_COMPANY_USER,
+  FETCH_NETWORK_EMAIL
+} from '../constants/constants';
+import { GetCompanyDetail, GetCompanyMember } from '../service/company/company';
 
 const { store } = configureStore();
 
@@ -25,7 +29,33 @@ export const getCompanyDetail = companyKey => dispatch => {
   });
 };
 
-export const fetchCompany = companies => dispatch => {
+export const fetchCompany = companies => async (dispatch, getState) => {
+  let members = getState().companyReducer.NetworkEmail;
+  _.forEach(companies, async item => {
+    dispatch({
+      type: FETCH_NETWORK_EMAIL,
+      payload: await new Promise((resolve, reject) => {
+        GetCompanyMember(item.CompanyKey).subscribe({
+          next: res => {
+            _.forEach(res, memberData => {
+              const user = {
+                ...memberData.data()
+              };
+              members[user.UserMemberEmail] = {
+                ...user
+              };
+            });
+            console.log('member', members);
+            resolve(members);
+          },
+          error: res => {
+            resolve(members);
+          }
+        });
+      })
+    });
+  });
+
   dispatch({
     type: FETCH_COMPANY_USER,
     payload: companies

@@ -5,7 +5,8 @@ import {
   TYPING_TEXT,
   FETCH_CHAT_ROOMS,
   SEND_MESSAGE,
-  FETCH_CHAT_MEMBER
+  FETCH_CHAT_MEMBER,
+  TOGGLE_LOAD
 } from '../constants/constants';
 import {
   GetChatMessage,
@@ -65,11 +66,14 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
             next: res => {
               console.log('Respond', res);
               const members = _.map(res, item => {
-                console.log(item);
                 return {
                   ChatRoomMemberKey: item.id,
                   ...item.data()
                 };
+              });
+              dispatch({
+                type: TOGGLE_LOAD,
+                payload: false
               });
               dispatch({
                 type: FETCH_CHAT_MEMBER,
@@ -155,6 +159,10 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
                   ChatRoomMemberKey: item.id,
                   ...item.data()
                 };
+              });
+              dispatch({
+                type: TOGGLE_LOAD,
+                payload: false
               });
               dispatch({
                 type: FETCH_CHAT_MEMBER,
@@ -280,6 +288,10 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
                   };
                 });
                 dispatch({
+                  type: TOGGLE_LOAD,
+                  payload: false
+                });
+                dispatch({
                   type: FETCH_CHAT_MEMBER,
                   id: ChatRoomKey,
                   payload: members
@@ -299,7 +311,12 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
   dispatch({ type: MOVE_TAB, payload: originalReducer });
 };
 
-export const selectChat = chatkey => (dispatch, getState) => {};
+export const toggleLoading = toggle => (dispatch, getState) => {
+  dispatch({
+    type: TOGGLE_LOAD,
+    payload: toggle
+  });
+};
 
 export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch, getState) => {
   // ShipmentKey,ChatRoomKey,Data
@@ -473,6 +490,10 @@ export const getChatRoomList = (shipmentKey, uid) => dispatch => {
                         ChatRoomMemberKey: item.id,
                         ...item.data()
                       };
+                    });
+                    dispatch({
+                      type: TOGGLE_LOAD,
+                      payload: false
                     });
                     dispatch({
                       type: FETCH_CHAT_MEMBER,
