@@ -392,9 +392,6 @@ class Chat extends Component {
                 }
               }}
             />
-            <Badge pill className="notibadge" color="danger">
-              5
-            </Badge>
           </div>
         );
       }
