@@ -4,7 +4,8 @@ import {
   moveTab,
   FETCH_CHAT_ROOMS,
   SEND_MESSAGE,
-  FETCH_CHAT_MEMBER
+  FETCH_CHAT_MEMBER,
+  TOGGLE_LOAD
 } from '../constants/constants';
 import _ from 'lodash';
 const ShipmentKey = 'HDTPONlnceJeG5yAA1Zy';
@@ -14,7 +15,8 @@ const INITIAL_STATE = {
   text: '',
   chatrooms: {},
   chatroomsMsg: {},
-  msg: {}
+  msg: {},
+  toggle: false
 };
 export default (state = INITIAL_STATE, action) => {
   console.log(action);
@@ -23,6 +25,11 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         text: action.text
+      };
+    case TOGGLE_LOAD:
+      return {
+        ...state,
+        toggle: action.payload
       };
     case FETCH_CHAT:
       return {

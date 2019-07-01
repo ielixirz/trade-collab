@@ -1,4 +1,5 @@
 export const TYPING_TEXT = 'TYPING_TEXT';
+export const TOGGLE_LOAD = 'TOGGLE_LOAD';
 export const FILL_CREDENCIAL = 'FILL_CREDENCIAL';
 export const SAVE_CREDENCIAL = 'SAVE_CREDENCIAL';
 export const moveTab = 'moveTab';

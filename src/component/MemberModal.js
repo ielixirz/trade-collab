@@ -41,7 +41,7 @@ class MemberModal extends React.Component {
   );
 
   render() {
-    const { count, list: member } = this.props;
+    const { count, list: member, toggleBlocking } = this.props;
     const shipmentMember = [];
     console.log('Member Modal props', this.props);
     _.forEach(member, item => {
@@ -116,7 +116,12 @@ class MemberModal extends React.Component {
             </Row>
             <hr />
             {Object.keys(shipmentMember).map((key, index) => (
-              <MemberInChat title={key} member={shipmentMember[key]} {...props} />
+              <MemberInChat
+                toggleBlocking={toggleBlocking}
+                title={key}
+                member={shipmentMember[key]}
+                {...props}
+              />
             ))}
           </ModalBody>
         </Modal>

@@ -389,6 +389,7 @@ class ChatWithHeader extends Component {
       typing,
       uploadModalRef,
       fileInputRef,
+      toggleBlocking,
       sender,
       ShipmentKey,
       ShipmentData = {},
@@ -445,7 +446,12 @@ class ChatWithHeader extends Component {
               sender={this.props.sender}
             />
             <Button className="btn-chat-label">|</Button>
-            <MemberModal {...this.props} count={member.length} list={member} />
+            <MemberModal
+              {...this.props}
+              count={member.length}
+              toggleBlocking={toggleBlocking}
+              list={member}
+            />
 
             <Button className="btn-chat-label">|</Button>
             <Button className="btn-chat-label">

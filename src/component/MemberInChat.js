@@ -35,7 +35,7 @@ class MemberInChat extends Component {
   }
 
   render() {
-    const { member } = this.props;
+    const { member, toggleBlocking } = this.props;
 
     return (
       <div>
@@ -64,7 +64,7 @@ class MemberInChat extends Component {
         )}
         <Collapse isOpen={this.state.collapse}>
           {member.map(item => {
-            return <ListMember item={item} {...this.props} />;
+            return <ListMember toggleBlocking={toggleBlocking} item={item} {...this.props} />;
           })}
         </Collapse>
       </div>
