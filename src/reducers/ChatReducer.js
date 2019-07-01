@@ -19,7 +19,6 @@ const INITIAL_STATE = {
   toggle: true
 };
 export default (state = INITIAL_STATE, action) => {
-  console.log(action);
   switch (action.type) {
     case TYPING_TEXT:
       return {

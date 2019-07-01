@@ -75,9 +75,7 @@ export default class ListMember extends React.Component {
                         toggleBlocking(false);
                         console.error(res);
                       },
-                      complete: res => {
-                        toggleBlocking(false);
-                      }
+                      complete: res => {}
                     });
                   }}
                 >

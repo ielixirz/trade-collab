@@ -14,10 +14,12 @@ import {
   Row,
   Col
 } from 'reactstrap';
+import Autocomplete from 'react-autocomplete';
 import './MemberModal.css';
 import * as _ from 'lodash';
 import TextLoading from './svg/TextLoading';
 import MemberInChat from './MemberInChat';
+import { CreateChatMultipleInvitation } from '../service/join/invite';
 
 class MemberModal extends React.Component {
   constructor(props) {
@@ -41,9 +43,15 @@ class MemberModal extends React.Component {
   );
 
   render() {
-    let { count, list: member, toggleBlocking } = this.props;
+    let { count, list: member, toggleBlocking, network, ShipmentKey, ChatRoomKey } = this.props;
     const shipmentMember = [];
     console.log('Member Modal props', this.props);
+    let suggestion = _.map(network, item => {
+      return {
+        id: item.UserMemberEmail,
+        label: item.UserMemberEmail
+      };
+    });
     member = _.filter(member, item => item.ChatRoomMemberIsLeave === false);
 
     _.forEach(member, item => {
@@ -87,11 +95,59 @@ class MemberModal extends React.Component {
           <ModalHeader toggle={this.toggle} close={this.renderCloseButton()}>
             <InputGroup>
               <InputGroupAddon addonType="prepend">
-                <Button>
+                <Button
+                  className="invite-btn"
+                  style={{
+                    color: 'white',
+                    backgroundColor: '#16A085'
+                  }}
+                  onClick={() => {
+                    const inviteMember = [];
+                    const role = [];
+                    role.push(this.props.ChatRoomData.ChatRoomType);
+                    inviteMember.push({
+                      Email: this.state.value,
+                      Image: '',
+                      Role: role,
+                      ChatRoomMemberCompanyName: '',
+                      ChatRoomMemberCompanyKey: ''
+                    });
+                    console.log(inviteMember);
+                    const invite = CreateChatMultipleInvitation(
+                      inviteMember,
+                      ShipmentKey,
+                      ChatRoomKey,
+                      this.props.sender
+                    ).subscribe({
+                      next: res => {
+                        console.log(res);
+                        invite.unsubscribe();
+                      }
+                    });
+                  }}
+                >
                   <span style={{ color: '#fff', fontWeight: 'bold' }}>Invite new member:</span>
                 </Button>
               </InputGroupAddon>
-              <Input placeholder="...input email address" />
+              <Autocomplete
+                items={suggestion}
+                shouldItemRender={(item, value) =>
+                  item.label.toLowerCase().indexOf(value.toLowerCase()) > -1
+                }
+                getItemValue={item => item.label}
+                renderItem={(item, highlighted) => (
+                  <div
+                    key={item.id}
+                    style={{ backgroundColor: highlighted ? '#eee' : 'transparent' }}
+                  >
+                    {item.label}
+                  </div>
+                )}
+                value={this.state.value}
+                placeholder="...input email address"
+                onChange={e => this.setState({ value: e.target.value })}
+                onSelect={value => this.setState({ value })}
+              />
             </InputGroup>
             <br />
           </ModalHeader>

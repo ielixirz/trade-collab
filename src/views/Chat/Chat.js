@@ -141,6 +141,7 @@ class Chat extends Component {
     return (
       <ChatWithHeader
         alert={this.state.chatAlert}
+        network={this.props.network}
         msg={msg}
         user={user}
         sender={sender}
@@ -446,7 +447,8 @@ const mapStateToProps = state => {
     user,
     sender,
     shipments: shipmentReducer.Shipments,
-    companies: companyReducer.UserCompany
+    companies: companyReducer.UserCompany,
+    network: companyReducer.NetworkEmail
   };
 };
 
