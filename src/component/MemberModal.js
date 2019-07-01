@@ -53,7 +53,7 @@ class MemberModal extends React.Component {
       };
     });
     member = _.filter(member, item => _.get(item, 'ChatRoomMemberIsLeave', false) === false);
-
+    console.log('ChatRoomMemberIsLeave', member);
     _.forEach(member, item => {
       if (_.isEmpty(item.ChatRoomMemberCompanyName)) {
         if (_.isEmpty(shipmentMember.Individual)) {

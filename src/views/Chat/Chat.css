@@ -151,7 +151,7 @@ img {
 }
 
 .received_withd_msg {
-  width: 57%;
+  width: 80%;
   margin-bottom: 30px;
 }
 
@@ -179,7 +179,7 @@ img {
 }
 .receiver {
   float: right;
-  margin-right: 15px;
+
   word-break: break-word;
 }
 .sender {
@@ -200,10 +200,8 @@ img {
 }
 
 .outgoing_msg {
-
   float: right;
-  width: 46%;
-  overflow: hidden;
+
   margin: 26px 0 26px;
 }
 
