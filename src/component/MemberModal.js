@@ -52,7 +52,7 @@ class MemberModal extends React.Component {
         label: item.UserMemberEmail
       };
     });
-    member = _.filter(member, item => item.ChatRoomMemberIsLeave === false);
+    member = _.filter(member, item => _.get(item, 'ChatRoomMemberIsLeave', false) === false);
 
     _.forEach(member, item => {
       if (_.isEmpty(item.ChatRoomMemberCompanyName)) {

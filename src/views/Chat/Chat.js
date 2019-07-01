@@ -87,6 +87,7 @@ class Chat extends Component {
       next: result => {
         const data = result.path.split('/');
         const chatkey = result.id;
+        this.props.toggleLoading(true);
         const ChatRoomMember = AddChatRoomMember(shipmentkey, result.id, {
           ChatRoomMemberUserKey: user.uid,
           ChatRoomMemberEmail: user.email,

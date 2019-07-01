@@ -201,14 +201,15 @@ img {
 
 .outgoing_msg {
 
-
+  float: right;
+  width: 46%;
   overflow: hidden;
   margin: 26px 0 26px;
 }
 
 .sent_msg {
-  float: right;
-  width: 46%;
+
+
 }
 
 .chatbox {

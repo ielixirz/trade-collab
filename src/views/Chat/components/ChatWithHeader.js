@@ -480,7 +480,10 @@ class ChatWithHeader extends Component {
             <Button className="btn-chat-label">|</Button>
             <MemberModal
               {...this.props}
-              count={_.filter(member, item => item.ChatRoomMemberIsLeave === false).length}
+              count={
+                _.filter(member, item => _.get(item, 'ChatRoomMemberIsLeave', false) === false)
+                  .length
+              }
               toggleBlocking={toggleBlocking}
               list={member}
               network={network}
@@ -675,7 +678,10 @@ class ChatWithHeader extends Component {
                       if (event.which == 13 && event.shiftKey) {
                       } else if (event.which == 13) {
                         event.preventDefault(); //Stops enter from creating a new line
-                        if (!_.isEmpty(_.trim(text)) && isInvited.ChatRoomMemberIsLeave === false) {
+                        if (
+                          !_.isEmpty(_.trim(text)) &&
+                          _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
+                        ) {
                           sendMessage(ChatRoomKey, ShipmentKey, text);
                           scrollChatToBottom();
                         }
@@ -693,7 +699,10 @@ class ChatWithHeader extends Component {
                       onClick={() => {
                         console.log('Input text is size', _.size(text));
 
-                        if (!_.isEmpty(_.trim(text)) && isInvited.ChatRoomMemberIsLeave === false) {
+                        if (
+                          !_.isEmpty(_.trim(text)) &&
+                          _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
+                        ) {
                           sendMessage(ChatRoomKey, ShipmentKey, text);
                           scrollChatToBottom();
                         }
