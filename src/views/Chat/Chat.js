@@ -375,6 +375,7 @@ class Chat extends Component {
             <Input
               value={this.state.roomeditor.roomName}
               type="text"
+              maxLength={70}
               onChange={e => {
                 this.setState({
                   roomeditor: {
