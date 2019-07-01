@@ -14,6 +14,7 @@ export default class ListMember extends React.Component {
       let acronym = matches.join(''); // JSON
       return acronym;
     });
+
     return (
       <div>
         <ListGroup flush>

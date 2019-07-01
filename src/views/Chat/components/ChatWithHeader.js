@@ -414,16 +414,14 @@ class ChatWithHeader extends Component {
     const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
     let ref = '';
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
-    console.log(ship, 'ship???');
+    console.log(isInvited, 'member???');
 
     if (!_.isEmpty(isInvited)) {
-      console.log('Find shipmetn REF >>>>>', _.get(ship, 'ShipmentReferenceList', []));
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
         ref = _.find(
           ship.ShipmentReferenceList,
           item => item.ShipmentReferenceCompanyKey === isInvited.ChatRoomMemberCompanyKey
         );
-        console.log(ref, 'reffff');
       }
     } else {
       ref = 'loading';
@@ -448,7 +446,7 @@ class ChatWithHeader extends Component {
             <Button className="btn-chat-label">|</Button>
             <MemberModal
               {...this.props}
-              count={member.length}
+              count={_.filter(member, item => item.ChatRoomMemberIsLeave === false).length}
               toggleBlocking={toggleBlocking}
               list={member}
             />

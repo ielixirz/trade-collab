@@ -16,7 +16,7 @@ const INITIAL_STATE = {
   chatrooms: {},
   chatroomsMsg: {},
   msg: {},
-  toggle: false
+  toggle: true
 };
 export default (state = INITIAL_STATE, action) => {
   console.log(action);

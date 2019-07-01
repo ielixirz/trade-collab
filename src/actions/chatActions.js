@@ -66,11 +66,14 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
             next: res => {
               console.log('Respond', res);
               const members = _.map(res, item => {
-                console.log(item);
                 return {
                   ChatRoomMemberKey: item.id,
                   ...item.data()
                 };
+              });
+              dispatch({
+                type: TOGGLE_LOAD,
+                payload: false
               });
               dispatch({
                 type: FETCH_CHAT_MEMBER,
@@ -156,6 +159,10 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
                   ChatRoomMemberKey: item.id,
                   ...item.data()
                 };
+              });
+              dispatch({
+                type: TOGGLE_LOAD,
+                payload: false
               });
               dispatch({
                 type: FETCH_CHAT_MEMBER,
@@ -279,6 +286,10 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
                     ChatRoomMemberKey: item.id,
                     ...item.data()
                   };
+                });
+                dispatch({
+                  type: TOGGLE_LOAD,
+                  payload: false
                 });
                 dispatch({
                   type: FETCH_CHAT_MEMBER,
@@ -479,6 +490,10 @@ export const getChatRoomList = (shipmentKey, uid) => dispatch => {
                         ChatRoomMemberKey: item.id,
                         ...item.data()
                       };
+                    });
+                    dispatch({
+                      type: TOGGLE_LOAD,
+                      payload: false
                     });
                     dispatch({
                       type: FETCH_CHAT_MEMBER,
