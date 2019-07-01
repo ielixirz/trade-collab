@@ -30,7 +30,7 @@ export const getCompanyDetail = companyKey => dispatch => {
 };
 
 export const fetchCompany = companies => async (dispatch, getState) => {
-  let members = getState().companyReducer.NetworkEmail;
+  let members = _.get(getState(), 'companyReducer.NetworkEmail', {});
   _.forEach(companies, async item => {
     dispatch({
       type: FETCH_NETWORK_EMAIL,
