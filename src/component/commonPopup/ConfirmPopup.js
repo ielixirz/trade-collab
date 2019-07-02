@@ -6,7 +6,7 @@ import {
   Button, Modal, ModalBody, ModalFooter, ModalHeader,
 } from 'reactstrap';
 
-const ErrorPopup = forwardRef((props, ref) => {
+const ConfirmPopup = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
   const [level, setLevel] = useState(undefined);
   const [message, setMessage] = useState(undefined);
@@ -19,12 +19,11 @@ const ErrorPopup = forwardRef((props, ref) => {
     triggerError(msg, lv) {
       setMessage(msg);
       setLevel(lv);
-      toggle();
     },
   }));
 
-  const renderHeader = (lv) => {
-    switch (lv) {
+  const renderBody = () => {
+    switch (level) {
       case 'ERROR':
         return 'An Error Occured.';
       case 'WARN':
@@ -35,13 +34,13 @@ const ErrorPopup = forwardRef((props, ref) => {
   };
 
   return (
-    <Modal isOpen={modal} fade={false} toggle={toggle} className="upload-modal">
-      <ModalHeader toggle={toggle} style={{ border: 'none' }}>
-        <b>{renderHeader(level)}</b>
+    <Modal isOpen={modal} toggle={toggle} className="upload-modal">
+      <ModalHeader toggle={toggle}>
+        <b>{renderBody}</b>
       </ModalHeader>
       <ModalBody>{message}</ModalBody>
-      <ModalFooter style={{ border: 'none' }}>
-        <Button color="warning" onClick={toggle}>
+      <ModalFooter>
+        <Button color="primary" onClick={toggle}>
           OK
         </Button>
       </ModalFooter>
@@ -49,4 +48,4 @@ const ErrorPopup = forwardRef((props, ref) => {
   );
 });
 
-export default ErrorPopup;
+export default ConfirmPopup;

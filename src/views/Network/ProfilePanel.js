@@ -20,6 +20,7 @@ import CreateCompanyModal from '../../component/CreateCompanyModal';
 import InviteToCompanyModal from '../../component/InviteToCompanyModal';
 import RequestToJoinModal from '../../component/RequestToJoinModal';
 import ResetPasswordModal from '../../component/ResetPasswordModal';
+import ErrorPopup from '../../component/commonPopup/ErrorPopup';
 
 import { profileColumns } from '../../constants/network';
 
@@ -38,6 +39,8 @@ import {
   GetMetaDataFromStorageRefPath,
   GetURLFromStorageRefPath,
 } from '../../service/storage/managestorage';
+
+import { isValidProfileImg } from '../../utils/validation';
 
 const mockProfile = {
   fullname: 'John Jerald',
@@ -119,6 +122,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
   const resetPasswordModalRef = useRef(null);
   const fileInput = useRef(null);
   const requestToJoinModalRef = useRef(null);
+  const errorPopupRef = useRef(null);
 
   const toggleBlocking = () => {
     setBlocking(!blocking);
@@ -297,33 +301,43 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
   };
 
   const changeProfilePic = (file) => {
-    setBlocking(true);
-    const editedUserProfile = userProfile;
-    const storageRefPath = `/Profile/${currentProfile.id}/${new Date().valueOf()}${file.name}`;
-    PutFile(storageRefPath, file).subscribe({
-      next: () => {
-        console.log('TODO: UPLOAD PROGRESS');
-      },
-      error: (err) => {
-        console.log(err);
-        alert(err.message);
-      },
-      complete: () => {
-        GetMetaDataFromStorageRefPath(storageRefPath).subscribe({
-          next: (metaData) => {
-            GetURLFromStorageRefPath(metaData.ref).subscribe({
-              next: (url) => {
-                editedUserProfile.UserInfoProfileImageLink = url;
-                UpdateProfile(auth.uid, currentProfile.id, editedUserProfile).subscribe(() => {
-                  setBlocking(false);
-                });
-              },
-              complete: () => {},
-            });
-          },
-        });
-      },
-    });
+    if (isValidProfileImg(file)) {
+      setBlocking(true);
+      const editedUserProfile = userProfile;
+      const storageRefPath = `/Profile/${currentProfile.id}/${new Date().valueOf()}${file.name}`;
+      PutFile(storageRefPath, file).subscribe({
+        next: () => {
+          console.log('TODO: UPLOAD PROGRESS');
+        },
+        error: (err) => {
+          console.log(err);
+          alert(err.message);
+        },
+        complete: () => {
+          GetMetaDataFromStorageRefPath(storageRefPath).subscribe({
+            next: (metaData) => {
+              GetURLFromStorageRefPath(metaData.ref).subscribe({
+                next: (url) => {
+                  editedUserProfile.UserInfoProfileImageLink = url;
+                  UpdateProfile(auth.uid, currentProfile.id, editedUserProfile).subscribe(() => {
+                    setBlocking(false);
+                  });
+                },
+                complete: () => {},
+              });
+            },
+          });
+        },
+      });
+    } else {
+      errorPopupRef.current.triggerError(
+        <span>
+          <b>Profile image is not valid</b>
+, Please upload only .jpg and .png files.
+        </span>,
+        'WARN',
+      );
+    }
   };
 
   const routeToCompany = (key) => {
@@ -539,6 +553,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
             rowEvents={tableRowEvents}
           />
         </div>
+        <ErrorPopup ref={errorPopupRef} />
       </BlockUi>
     </div>
   );
