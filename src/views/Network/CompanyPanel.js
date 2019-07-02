@@ -49,6 +49,7 @@ import {
 } from '../../service/join/request';
 
 import { GetCompanyInvitation } from '../../service/join/invite';
+import { isValidProfileImg } from '../../utils/validation';
 
 import {
   PutFile,
@@ -413,34 +414,44 @@ const CompanyPanel = (props) => {
   };
 
   const changeCompanyPic = (file) => {
-    setBlocking(true);
-    const companyKey = props.match.params.key;
-    const editedCompany = company;
-    const storageRefPath = `/Company/${companyKey}/${new Date().valueOf()}${file.name}`;
-    PutFile(storageRefPath, file).subscribe({
-      next: () => {
-        console.log('TODO: UPLOAD PROGRESS');
-      },
-      error: (err) => {
-        console.log(err);
-        alert(err.message);
-      },
-      complete: () => {
-        GetMetaDataFromStorageRefPath(storageRefPath).subscribe({
-          next: (metaData) => {
-            GetURLFromStorageRefPath(metaData.ref).subscribe({
-              next: (url) => {
-                editedCompany.CompanyImageLink = url;
-                UpdateCompany(companyKey, editedCompany).subscribe(() => {
-                  setBlocking(false);
-                });
-              },
-              complete: () => {},
-            });
-          },
-        });
-      },
-    });
+    if (isValidProfileImg(file)) {
+      setBlocking(true);
+      const companyKey = props.match.params.key;
+      const editedCompany = company;
+      const storageRefPath = `/Company/${companyKey}/${new Date().valueOf()}${file.name}`;
+      PutFile(storageRefPath, file).subscribe({
+        next: () => {
+          console.log('TODO: UPLOAD PROGRESS');
+        },
+        error: (err) => {
+          console.log(err);
+          alert(err.message);
+        },
+        complete: () => {
+          GetMetaDataFromStorageRefPath(storageRefPath).subscribe({
+            next: (metaData) => {
+              GetURLFromStorageRefPath(metaData.ref).subscribe({
+                next: (url) => {
+                  editedCompany.CompanyImageLink = url;
+                  UpdateCompany(companyKey, editedCompany).subscribe(() => {
+                    setBlocking(false);
+                  });
+                },
+                complete: () => {},
+              });
+            },
+          });
+        },
+      });
+    } else {
+      errorPopupRef.current.triggerError(
+        <span>
+          <b>Profile image is not valid</b>
+, Please upload only .jpg and .png files.
+        </span>,
+        'WARN',
+      );
+    }
   };
 
   const clearInviteInput = () => {

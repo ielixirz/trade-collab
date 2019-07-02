@@ -13,9 +13,10 @@ import {
   Modal, ModalHeader, ModalBody, Input, Button,
 } from 'reactstrap';
 import './MemberModal.css';
+import ErrorPopup from './commonPopup/ErrorPopup';
 import { CreateProfile, UpdateProfile } from '../service/user/profile';
 import './style/NewProfileModal.scss';
-import { isValidName } from '../utils/validation';
+import { isValidName, isValidProfileImg } from '../utils/validation';
 
 import {
   PutFile,
@@ -48,6 +49,7 @@ class NewProfileModal extends React.Component {
     };
     this.fileInput = React.createRef();
     this.previewPic = React.createRef();
+    this.errorPopupRef = React.createRef();
     this.toggle = this.toggle.bind(this);
   }
 
@@ -152,10 +154,20 @@ class NewProfileModal extends React.Component {
   };
 
   selectProfilePic = (file) => {
-    this.previewPic.current.src = URL.createObjectURL(file);
-    this.setState({
-      selectedPic: file,
-    });
+    if (isValidProfileImg(file)) {
+      this.previewPic.current.src = URL.createObjectURL(file);
+      this.setState({
+        selectedPic: file,
+      });
+    } else {
+      this.errorPopupRef.current.triggerError(
+        <span>
+          <b>Profile image is not valid</b>
+, Please upload only .jpg and .png files.
+        </span>,
+        'WARN',
+      );
+    }
   };
 
   toggle() {
@@ -271,6 +283,7 @@ class NewProfileModal extends React.Component {
                 </div>
               </div>
             </ModalBody>
+            <ErrorPopup ref={this.errorPopupRef} />
           </BlockUi>
         </Modal>
       </div>

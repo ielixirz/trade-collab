@@ -11,8 +11,10 @@ import './card.css';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 
+import ErrorPopup from '../../../component/commonPopup/ErrorPopup';
 import NewProfileModal from '../../../component/NewProfileModal';
 import { getProfileDetail } from '../../../actions/profileActions';
+import { isValidProfileImg } from '../../../utils/validation';
 
 class SelectProfile extends Component {
   static propTypes = {
@@ -27,6 +29,7 @@ class SelectProfile extends Component {
     this.state = {
       blocking: false,
     };
+    this.errorPopupRef = React.createRef();
   }
 
   goToShipment = (profile) => {
@@ -115,6 +118,7 @@ class SelectProfile extends Component {
                         You can have multiple users using the same e-mail address
                       </p>
                     </div>
+                    <ErrorPopup ref={this.errorPopupRef} />
                   </BlockUi>
                 </div>
               </div>

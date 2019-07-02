@@ -14,3 +14,10 @@ export const isValidPassword = password => VALID_PASSWORD_REGEX.test(password);
 
 const VALID_ROLE_NAME_REGEX = RegExp('[!@#$%^&*(),.?":{}|<>]');
 export const isValidRoleName = role => !VALID_ROLE_NAME_REGEX.test(role);
+
+export const isValidProfileImg = (file) => {
+  if (file.type === 'image/png' || file.type === 'image/jpg') {
+    return true;
+  }
+  return false;
+};
