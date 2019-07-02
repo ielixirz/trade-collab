@@ -472,7 +472,7 @@ const CompanyPanel = (props) => {
                 <DropdownToggle className="network-pic-btn">
                   <div role="button" onClick={browseFile} onKeyDown={null} tabIndex="-1">
                     <img
-                      style={{ width: '70%' }}
+                      style={{ width: 150, height: 150 }}
                       src={
                         company.CompanyImageLink === undefined
                           ? '../assets/img/default-grey.jpg'
