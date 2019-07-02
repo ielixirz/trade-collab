@@ -208,11 +208,7 @@ const ChatMessage = ({ message, i }) => {
                 {moment(status).format('hh:mm a')}
               </span>
             </div>
-            <div
-              style={{
-                maxWidth: '80%'
-              }}
-            >
+            <div>
               <p>
                 {hasFile ? (
                   <Row style={{ margin: 'auto' }}>

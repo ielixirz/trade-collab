@@ -87,6 +87,7 @@ class Chat extends Component {
       next: result => {
         const data = result.path.split('/');
         const chatkey = result.id;
+        this.props.toggleLoading(true);
         const ChatRoomMember = AddChatRoomMember(shipmentkey, result.id, {
           ChatRoomMemberUserKey: user.uid,
           ChatRoomMemberEmail: user.email,
@@ -375,6 +376,7 @@ class Chat extends Component {
             <Input
               value={this.state.roomeditor.roomName}
               type="text"
+              maxLength={70}
               onChange={e => {
                 this.setState({
                   roomeditor: {
@@ -392,9 +394,6 @@ class Chat extends Component {
                 }
               }}
             />
-            <Badge pill className="notibadge" color="danger">
-              5
-            </Badge>
           </div>
         );
       }

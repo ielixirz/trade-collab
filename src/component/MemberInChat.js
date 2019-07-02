@@ -37,6 +37,7 @@ class MemberInChat extends Component {
 
   render() {
     let { member, toggleBlocking } = this.props;
+
     return (
       <div>
         <Row>
