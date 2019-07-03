@@ -31,6 +31,7 @@ import { PutFile } from '../../../service/storage/managestorage';
 import { FETCH_CHAT_MEMBER, FETCH_COMPANY_USER } from '../../../constants/constants';
 import { GetUserCompany } from '../../../service/user/user';
 import Autocomplete from 'react-autocomplete';
+import { ClearUnReadChatMessage } from '../../../service/personalize/personalize';
 
 const AVAILABLE_ROLES = {
   Importer: 'Exporter',
@@ -655,6 +656,15 @@ class ChatWithHeader extends Component {
                     value={text}
                     disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}
                     onMouseEnter={() => {
+                      let clearUnReadChatMessage = ClearUnReadChatMessage(
+                        sender.id,
+                        ShipmentKey,
+                        ChatRoomKey
+                      ).subscribe({
+                        next: res => {
+                          clearUnReadChatMessage.unsubscribe();
+                        }
+                      });
                       if (chatMsg.length > 0) {
                         if (chatMsg[chatMsg.length - 1].id !== lastkey) {
                           this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
