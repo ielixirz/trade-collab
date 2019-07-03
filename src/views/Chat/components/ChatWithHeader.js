@@ -636,9 +636,14 @@ class ChatWithHeader extends Component {
                     />
                   </InputGroupAddon>
                   <Input
-                    placeholder="type...."
+                    placeholder={
+                      _.get(isInvited, 'ChatRoomMemberIsLeave', false)
+                        ? 'You has been remove from the chat'
+                        : 'type...'
+                    }
                     type={'textarea'}
                     value={text}
+                    disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}
                     onMouseEnter={() => {
                       if (chatMsg.length > 0) {
                         if (chatMsg[chatMsg.length - 1].id !== lastkey) {
