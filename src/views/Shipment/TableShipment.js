@@ -554,12 +554,18 @@ class TableShipment extends React.Component {
   }
 
   renderStatusComponent(item) {
+    console.log(
+      'SHIPMENT_STATUS_UPDATE_OPTIONS',
+      _.find(SHIPMENT_STATUS_UPDATE_OPTIONS, option => {
+        return option.value.status === item.ShipmentStatus;
+      })
+    );
     return (
       <div>
         <Select
-          defaultValue={SHIPMENT_STATUS_UPDATE_OPTIONS.find(
-            option => option.value.status === item.ShipmentStatus
-          )}
+          value={_.find(SHIPMENT_STATUS_UPDATE_OPTIONS, option => {
+            return option.value.status === item.ShipmentStatus;
+          })}
           name="colors"
           id="shipment-status-select"
           className="basic-multi-select"

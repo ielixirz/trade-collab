@@ -55,7 +55,7 @@ import { fetchCompany } from '../../actions/companyAction';
 class Chat extends Component {
   constructor(props) {
     super(props);
-
+    this.textInput = React.createRef();
     this.moveTab = moveTab.bind(this);
     this.selectTab = this.props.selectTab.bind(this);
     this.addTab = this.addTab.bind(this);
@@ -275,12 +275,18 @@ class Chat extends Component {
     );
   }
 
-  componentDidUpdate() {}
+  componentDidUpdate() {
+    if (this.state.roomeditor.ShipmentKey) {
+      console.log('Focus', this.nameInput);
+      this.nameInput.focus(true);
+    }
+  }
 
   componentDidMount() {
     const {
       match: { params }
     } = this.props;
+
     this.props.getChatRoomList(params.shipmentkey, this.props.user.uid); // MOCK SHIPMENT KEY
     const chats = _.filter(this.props.ChatReducer.chatrooms, item => {
       if (item.ShipmentKey === 'custom') return true;
@@ -374,9 +380,12 @@ class Chat extends Component {
         content = (
           <div className="noti">
             <Input
+              ref={input => {
+                this.nameInput = input;
+              }}
               value={this.state.roomeditor.roomName}
               type="text"
-              maxLength={70}
+              maxLength={40}
               onChange={e => {
                 this.setState({
                   roomeditor: {
@@ -384,6 +393,13 @@ class Chat extends Component {
                     roomName: e.target.value
                   }
                 });
+              }}
+              onBlur={e => {
+                console.log('Focus Out', e);
+                EditChatRoom(item.ShipmentKey, item.ChatRoomKey, {
+                  ChatRoomName: this.state.roomeditor.roomName
+                });
+                this.setState({ roomeditor: {} });
               }}
               onKeyDown={button => {
                 if (button.key === 'Enter') {

@@ -16,6 +16,7 @@ import FileSide from '../FileSide';
 import ShipmentSide from '../ShipmentSide';
 import ChatMessage from './ChatMessage';
 import PreMessage from './PreMessage';
+
 import {
   AddChatRoomMember,
   CreateChatRoom,
@@ -30,6 +31,7 @@ import { PutFile } from '../../../service/storage/managestorage';
 import { FETCH_CHAT_MEMBER, FETCH_COMPANY_USER } from '../../../constants/constants';
 import { GetUserCompany } from '../../../service/user/user';
 import Autocomplete from 'react-autocomplete';
+import { ClearUnReadChatMessage } from '../../../service/personalize/personalize';
 
 const AVAILABLE_ROLES = {
   Importer: 'Exporter',
@@ -616,7 +618,16 @@ class ChatWithHeader extends Component {
                 />
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">
-                    <Button color="default" onClick={() => browseFile(ShipmentKey)}>
+                    <Button
+                      color="default"
+                      onClick={() => {
+                        if (_.get(isInvited, 'ChatRoomMemberIsLeave', false) === false) {
+                          browseFile(ShipmentKey);
+                        } else {
+                          window.alert('You has been remove from the chat');
+                        }
+                      }}
+                    >
                       {' '}
                       <i className="fa fa-plus fa-lg" />
                     </Button>
@@ -636,10 +647,24 @@ class ChatWithHeader extends Component {
                     />
                   </InputGroupAddon>
                   <Input
-                    placeholder="type...."
+                    placeholder={
+                      _.get(isInvited, 'ChatRoomMemberIsLeave', false)
+                        ? 'You has been remove from the chat'
+                        : 'type...'
+                    }
                     type={'textarea'}
                     value={text}
+                    disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}
                     onMouseEnter={() => {
+                      let clearUnReadChatMessage = ClearUnReadChatMessage(
+                        sender.id,
+                        ShipmentKey,
+                        ChatRoomKey
+                      ).subscribe({
+                        next: res => {
+                          clearUnReadChatMessage.unsubscribe();
+                        }
+                      });
                       if (chatMsg.length > 0) {
                         if (chatMsg[chatMsg.length - 1].id !== lastkey) {
                           this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
