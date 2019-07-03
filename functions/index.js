@@ -693,10 +693,16 @@ exports.SendEmailInviteIntoShipment = functions.firestore
   .onCreate(async (snapshot, context) => {
     const UserEmail = snapshot.data().ChatRoomMemberEmail;
 
-    const RecruiterUserKey = snapshot.data().ChatRoomMemberRecruiterUserKey;
+    let RecruiterUserKey;
+    if (snapshot.data().ChatRoomMemberRecruiterUserKey)
+      RecruiterUserKey = snapshot.data().ChatRoomMemberRecruiterUserKey;
 
-    const RecruiterProfileFirstName = snapshot.data().ChatRoomMemberRecruiterProfileFirstName;
-    const RecruiterProfileSurName = snapshot.data().ChatRoomMemberRecruiterProfileSurName;
+    let RecruiterProfileFirstName;
+    if (snapshot.data().ChatRoomMemberRecruiterProfileFirstName)
+      RecruiterProfileFirstName = snapshot.data().ChatRoomMemberRecruiterProfileFirstName;
+    let RecruiterProfileSurName;
+    if (snapshot.data().ChatRoomMemberRecruiterProfileSurName)
+      RecruiterProfileSurName = snapshot.data().ChatRoomMemberRecruiterProfileSurName;
 
     let ShipmentReference;
 
@@ -708,13 +714,20 @@ exports.SendEmailInviteIntoShipment = functions.firestore
 
     const ProductName = GetShipmentData.data().ShipmentProductName;
 
-    const RecruiterShipmentMemberCompanyKey = GetShipmentData.data().ShipmentMember[
-      RecruiterUserKey
-    ].ShipmentMemberCompanyKey;
+    let RecruiterShipmentMemberCompanyKey;
+    let RecruiterShipmentMemberCompanyName;
 
-    const RecruiterShipmentMemberCompanyName = GetShipmentData.data().ShipmentMember[
-      RecruiterUserKey
-    ].ShipmentMemberCompanyName;
+    if (RecruiterUserKey) {
+      if (GetShipmentData.data().ShipmentMember[RecruiterUserKey].ShipmentMemberCompanyKey) {
+        RecruiterShipmentMemberCompanyKey = GetShipmentData.data().ShipmentMember[RecruiterUserKey]
+          .ShipmentMemberCompanyKey;
+      }
+
+      if (GetShipmentData.data().ShipmentMember[RecruiterUserKey].ShipmentMemberCompanyName) {
+        RecruiterShipmentMemberCompanyName = GetShipmentData.data().ShipmentMember[RecruiterUserKey]
+          .ShipmentMemberCompanyName;
+      }
+    }
 
     if (RecruiterShipmentMemberCompanyKey && RecruiterShipmentMemberCompanyName) {
       const GetShipmentReference = await admin
@@ -774,11 +787,15 @@ exports.SendEmailInviteIntoShipment = functions.firestore
         context.params.ShipmentKey
       }'>Join Now</a>`;
 
-    const SendInviteIntoShipment = await SendEmail(
-      InviteIntoShipmentTemplate(UserEmail, HeaderText, HeaderHtml, Content, ButtonRedirect)
-    );
+    if (RecruiterProfileFirstName && RecruiterProfileSurName) {
+      const SendInviteIntoShipment = await SendEmail(
+        InviteIntoShipmentTemplate(UserEmail, HeaderText, HeaderHtml, Content, ButtonRedirect)
+      );
 
-    return SendInviteIntoShipment;
+      return SendInviteIntoShipment;
+    } else {
+      return null;
+    }
   });
 
 exports.NotiSystemGenInviteIntoShipment = functions.firestore
