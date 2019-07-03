@@ -179,6 +179,12 @@ class Shipment extends Component {
                 return true;
               } else {
                 console.log('shipment', item);
+                //
+                // Alert : All Status
+                // Plan : Planning, Order Confirmed
+                // Active : Order Confirmed, In Transit, Delayed
+                // Complete: Delivered, Completed
+                // Cancel: Cancelled
 
                 switch (typeShipment) {
                   case 'Plan':
