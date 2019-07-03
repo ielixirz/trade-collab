@@ -116,9 +116,12 @@ img {
 .active_chat {
   background: #ebebeb;
 }
-
+.incoming_msg{
+  margin-top: 20px;
+}
 .incoming_msg_img {
   display: inline-block;
+
   width: 6%;
 }
 
@@ -151,7 +154,7 @@ img {
 }
 
 .received_withd_msg {
-  width: 80%;
+
   margin-bottom: 30px;
 }
 
@@ -178,8 +181,8 @@ img {
   padding: 5px 10px;
   z-index: 1;
 }
-.receiver {
-
+.rightMessage {
+  width: 100%;
 }
 .sender {
   margin-right: 15px;
@@ -197,16 +200,19 @@ img {
   padding: 5px 10px 5px 12px;
   text-align: right;
   float: right;
-  width: auto;
+  width: 100%;
   word-break: break-word;
 }
 
 .outgoing_msg {
   float: right;
+  width: 700px;
   margin: 26px 0 26px;
 }
 
 .sent_msg {
+  display: inline-flex;
+  float: right;
 
 
 }
