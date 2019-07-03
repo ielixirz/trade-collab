@@ -16,6 +16,7 @@ import FileSide from '../FileSide';
 import ShipmentSide from '../ShipmentSide';
 import ChatMessage from './ChatMessage';
 import PreMessage from './PreMessage';
+
 import {
   AddChatRoomMember,
   CreateChatRoom,
@@ -616,7 +617,16 @@ class ChatWithHeader extends Component {
                 />
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">
-                    <Button color="default" onClick={() => browseFile(ShipmentKey)}>
+                    <Button
+                      color="default"
+                      onClick={() => {
+                        if (_.get(isInvited, 'ChatRoomMemberIsLeave', false) === false) {
+                          browseFile(ShipmentKey);
+                        } else {
+                          window.alert('You has been remove from the chat');
+                        }
+                      }}
+                    >
                       {' '}
                       <i className="fa fa-plus fa-lg" />
                     </Button>
