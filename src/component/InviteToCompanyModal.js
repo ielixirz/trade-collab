@@ -310,6 +310,8 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
     triggerInviteToCompany(propinvitedEmails, propCompany) {
       clear();
       if (propinvitedEmails.length === 0) {
+        setCompany('');
+        setinvitedEmails([]);
         setCurrentStep(1);
         setAvailableCompany(mapCompanyForDropdown(propCompany));
       } else {
