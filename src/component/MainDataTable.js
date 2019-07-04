@@ -16,6 +16,7 @@ const MainDataTable = ({
   toolkitbaseProps,
   rowEvents,
   rowStyle,
+  defaultSorted
 }) => (
   <BootstrapTable
     {...toolkitbaseProps}
@@ -27,6 +28,7 @@ const MainDataTable = ({
     columns={column}
     bordered={isBorder}
     rowEvents={rowEvents}
+    defaultSort={defaultSorted}
     rowStyle={rowStyle}
   />
 );

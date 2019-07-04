@@ -370,15 +370,14 @@ class TableShipment extends React.Component {
 
   renderRefComponent(index, ref, shipmentKey, ShipmentMember) {
     const { user, companies } = this.props;
-    console.log('renderRefComponent', ref);
-    const refs = [];
-    _.forEach(ref, item => {
-      _.forEach(companies, company => {
-        if (item.ShipmentReferenceCompanyKey === company.CompanyKey) {
-          refs.push(item);
-        }
-      });
+    const userCompany = [];
+    let refs = [];
+    refs = _.filter(ref, refItem => {
+      return _.some(companies, item =>
+        _.includes(refItem.ShipmentReferenceCompanyKey, item.CompanyKey)
+      );
     });
+
     console.log('Result refsis', refs);
 
     const hasCompany = _.get(ShipmentMember, `${user.uid}`, {});
@@ -529,6 +528,8 @@ class TableShipment extends React.Component {
                                 this.state.input.newRef
                               );
                             }
+
+                            this.props.fetchMoreShipment();
                           }
                         },
                         2000,
@@ -554,12 +555,6 @@ class TableShipment extends React.Component {
   }
 
   renderStatusComponent(item) {
-    console.log(
-      'SHIPMENT_STATUS_UPDATE_OPTIONS',
-      _.find(SHIPMENT_STATUS_UPDATE_OPTIONS, option => {
-        return option.value.status === item.ShipmentStatus;
-      })
-    );
     return (
       <div>
         <Select
@@ -640,7 +635,7 @@ class TableShipment extends React.Component {
     );
   }
 
-  render() {
+  render = () => {
     let data = [];
     let columns = [];
     let input = [];
@@ -824,6 +819,7 @@ class TableShipment extends React.Component {
 
       if (this.state.isEdit) {
         return {
+          id: index,
           alert: this.renderAlertComponent(index, item, item.ShipmentID),
           Ref: this.renderRefComponent(
             index,
@@ -866,6 +862,7 @@ class TableShipment extends React.Component {
         };
       }
       return {
+        id: index,
         alert: this.renderAlertComponent(index, item, item.ShipmentID),
         Ref: this.renderRefComponent(
           index,
@@ -952,7 +949,12 @@ class TableShipment extends React.Component {
         }
       }
     };
-
+    const defaultSorted = [
+      {
+        dataField: 'id',
+        order: 'desc'
+      }
+    ];
     return (
       <ToolkitProvider keyField="id" data={data} columns={columns} search>
         {props => (
@@ -1029,6 +1031,7 @@ class TableShipment extends React.Component {
                 wraperClass="shipment-table-wraper"
                 isBorder={false}
                 toolkit="search"
+                defaultSort={defaultSorted}
                 rowEvents={rowEvents}
               />
             </div>
@@ -1036,7 +1039,7 @@ class TableShipment extends React.Component {
         )}
       </ToolkitProvider>
     );
-  }
+  };
 }
 
 const mapStateToProps = state => {
