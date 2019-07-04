@@ -60,6 +60,7 @@ class Chat extends Component {
     this.selectTab = this.props.selectTab.bind(this);
     this.addTab = this.addTab.bind(this);
     this.putFile = PutFile.bind(this);
+    this.createChatRoom = this.createChatRoom.bind(this);
     this.state = {
       activeTab: new Array(4).fill('1'),
       text: '',
