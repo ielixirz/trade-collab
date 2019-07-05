@@ -45,7 +45,9 @@ import {
   EditShipment,
   UpdateShipmentReference,
   GetShipmentDetail,
-  GetShipmentReferenceList
+  GetShipmentReferenceList,
+  SearchShipment,
+  CombineShipmentAndShipmentReference
 } from '../../service/shipment/shipment';
 import { UpdateMasterData } from '../../service/masterdata/masterdata';
 import { GetShipmentPin, GetShipmentTotalCount } from '../../service/personalize/personalize';
@@ -378,10 +380,7 @@ class TableShipment extends React.Component {
       );
     });
 
-    console.log('Result refsis', refs);
-
     const hasCompany = _.get(ShipmentMember, `${user.uid}`, {});
-    console.log('hasCompany', hasCompany);
 
     const alreadyHave = refs.length > 0;
     if (!_.isEmpty(hasCompany.ShipmentMemberCompanyName)) {
@@ -636,6 +635,9 @@ class TableShipment extends React.Component {
   }
 
   render = () => {
+    const shipmentsProps = this.props;
+
+    const { setShipments } = this.props;
     let data = [];
     let columns = [];
     let input = [];
@@ -712,12 +714,7 @@ class TableShipment extends React.Component {
             <div>
               <Row>
                 <Col xs="2">
-                  <SearchBar
-                    {...props.searchProps}
-                    placeholder="&#xF002; Typing"
-                    id="search"
-                    style={{ width: 200, height: 38 }}
-                  />
+                  <Col xs="2">{shipmentsProps.searchInput()}</Col>
                 </Col>
                 <Col xs="3">
                   <Select
@@ -960,14 +957,7 @@ class TableShipment extends React.Component {
         {props => (
           <div>
             <Row>
-              <Col xs="2">
-                <SearchBar
-                  {...props.searchProps}
-                  placeholder="&#xF002; Typing"
-                  id="search"
-                  style={{ width: 200, height: 38 }}
-                />
-              </Col>
+              <Col xs="2">{shipmentsProps.searchInput()}</Col>
               <Col xs="3">
                 <Select
                   name="colors"
