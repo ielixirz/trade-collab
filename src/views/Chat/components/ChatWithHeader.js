@@ -6,8 +6,11 @@
 /* eslint-disable filenames/match-regex */
 import _ from 'lodash';
 import React, { Component } from 'react';
-import { Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
+import {
+  Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input,
+} from 'reactstrap';
 import Select from 'react-select';
+import Autocomplete from 'react-autocomplete';
 import MemberModal from '../../../component/MemberModal';
 import MemberInviteModal from '../../../component/MemberInviteModal';
 import UploadModal from '../../../component/UploadModal';
@@ -22,7 +25,7 @@ import {
   CreateChatRoom,
   GetChatRoomMemberList,
   UpdateChatRoomMember,
-  UpdateChatRoomMessageReader
+  UpdateChatRoomMessageReader,
 } from '../../../service/chat/chat';
 import { GetCompanyMember } from '../../../service/company/company';
 import { CreateChatMultipleInvitation } from '../../../service/join/invite';
@@ -30,12 +33,11 @@ import { moveTab } from '../../../actions/chatActions';
 import { PutFile } from '../../../service/storage/managestorage';
 import { FETCH_CHAT_MEMBER, FETCH_COMPANY_USER } from '../../../constants/constants';
 import { GetUserCompany } from '../../../service/user/user';
-import Autocomplete from 'react-autocomplete';
 import { ClearUnReadChatMessage } from '../../../service/personalize/personalize';
 
 const AVAILABLE_ROLES = {
   Importer: 'Exporter',
-  Exporter: 'Importer'
+  Exporter: 'Importer',
 };
 
 class ChatWithHeader extends Component {
@@ -46,7 +48,7 @@ class ChatWithHeader extends Component {
       company: '',
       email: '',
       companies: [],
-      members: []
+      members: [],
     };
   }
 
@@ -75,18 +77,18 @@ class ChatWithHeader extends Component {
     const pickedCompany = _.find(companies, item => item.CompanyKey === e.value);
     if (pickedCompany) {
       const getCompany = GetCompanyMember(e.value).subscribe({
-        next: res => {
+        next: (res) => {
           const CompanyMember = _.map(res, item => ({
-            ...item.data()
+            ...item.data(),
           }));
           const inviteRole = userRole;
           console.log('CompanyMember', CompanyMember);
           console.log('members', members);
           const inviteMember = [];
-          _.forEach(CompanyMember, memberItem => {
+          _.forEach(CompanyMember, (memberItem) => {
             const chatMember = _.find(
               members,
-              item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail
+              item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail,
             );
 
             if (chatMember) {
@@ -97,8 +99,8 @@ class ChatWithHeader extends Component {
                 {
                   ...chatMember,
                   ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
-                }
+                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
+                },
               );
               console.log(result);
             } else {
@@ -107,7 +109,7 @@ class ChatWithHeader extends Component {
                 Image: '',
                 Role: inviteRole,
                 ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
               });
             }
           });
@@ -116,50 +118,50 @@ class ChatWithHeader extends Component {
             inviteMember,
             ShipmentKey,
             ChatRoomKey,
-            this.props.sender
+            this.props.sender,
           ).subscribe({
-            next: res => {
+            next: (res) => {
               console.log(res);
               invite.unsubscribe();
               this.props.fetchMoreMessage(ChatRoomKey, ShipmentKey);
-            }
+            },
           });
           CreateChatRoom(ShipmentKey, {
             ChatRoomType: 'Internal',
-            ChatRoomName: 'Internal'
+            ChatRoomName: 'Internal',
           }).subscribe({
-            next: result => {
+            next: (result) => {
               const data = result.path.split('/');
-              let chatkey = result.id;
+              const chatkey = result.id;
               const invite = CreateChatMultipleInvitation(
                 inviteMember,
                 ShipmentKey,
                 chatkey,
-                this.props.sender
+                this.props.sender,
               ).subscribe({
-                next: res => {
+                next: (res) => {
                   console.log(res);
                   invite.unsubscribe();
                   this.props.fetchMoreMessage(chatkey, ShipmentKey);
-                }
+                },
               });
-              let ChatRoomMember = AddChatRoomMember(ShipmentKey, chatkey, {
+              const ChatRoomMember = AddChatRoomMember(ShipmentKey, chatkey, {
                 ChatRoomMemberUserKey: this.props.user.uid,
                 ChatRoomMemberEmail: this.props.user.email,
                 ChatRoomMemberImageUrl: '',
                 ChatRoomMemberRole: inviteRole,
                 ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
               }).subscribe({
-                next: result => {}
+                next: (result) => {},
               });
             },
-            complete: result => {
+            complete: (result) => {
               console.log(result);
-            }
+            },
           });
           getCompany.unsubscribe();
-        }
+        },
       });
     }
   }
@@ -171,7 +173,7 @@ class ChatWithHeader extends Component {
       ShipmentData,
       ShipmentKey,
       ChatRoomKey,
-      members: member
+      members: member,
     } = this.props;
 
     const members = ShipmentData.ShipmentMember;
@@ -184,7 +186,7 @@ class ChatWithHeader extends Component {
     let options = [];
     options = _.map(companies, item => ({
       value: item.CompanyKey,
-      label: item.CompanyName
+      label: item.CompanyName,
     }));
     let output = '';
     if (memberData) {
@@ -199,16 +201,20 @@ class ChatWithHeader extends Component {
                   height: 'auto',
                   padding: '10px',
                   borderRadius: '5px',
-                  zIndex: '100'
+                  zIndex: '100',
                 }}
               >
                 <p
                   style={{
                     fontWeight: 700,
-                    color: '#000000'
+                    color: '#000000',
                   }}
                 >
-                  You have assigned your self as an {_.join(memberData.ShipmentMemberRole, ',')} for
+                  You have assigned your self as an
+                  {' '}
+                  {_.join(memberData.ShipmentMemberRole, ',')}
+                  {' '}
+for
                   this shipment
                 </p>
                 <p>Select a company, to inform your team about this shipment</p>
@@ -216,7 +222,7 @@ class ChatWithHeader extends Component {
                 <Row>
                   <Col xs={6}>
                     <Select
-                      onChange={e => {
+                      onChange={(e) => {
                         this.setState({ company: e });
                       }}
                       name="company"
@@ -231,70 +237,13 @@ class ChatWithHeader extends Component {
                         marginLeft: '2rem',
                         marginRight: '1rem',
                         color: 'white',
-                        backgroundColor: '#16A085'
+                        backgroundColor: '#16A085',
                       }}
                       onClick={() => {
                         this.handleAssignCompany(
                           this.state.company,
                           ChatRoomType,
-                          memberData.ShipmentMemberRole
-                        );
-                      }}
-                    >
-                      Confirm
-                    </Button>
-                  </Col>
-                </Row>
-              </div>
-            );
-            return output;
-          } else {
-            output = (
-              <div
-                style={{
-                  backgroundColor: 'rgba(242, 175, 41, 0.3)',
-                  height: 'auto',
-                  padding: '10px',
-                  borderRadius: '5px',
-                  zIndex: '100'
-                }}
-              >
-                <p
-                  style={{
-                    fontWeight: 700,
-                    color: '#000000'
-                  }}
-                >
-                  {user.email} has been invited as
-                  {_.join(memberData.ShipmentMemberRole, ',')} for this shipment
-                </p>
-                <p>Select a company, to inform your team about this shipment</p>
-
-                <Row>
-                  <Col xs={6}>
-                    <Select
-                      onChange={e => {
-                        this.setState({ company: e });
-                      }}
-                      name="company"
-                      options={options}
-                      value={this.state.company}
-                    />
-                  </Col>
-                  <Col xs={2}>
-                    <Button
-                      className="invite-btn"
-                      style={{
-                        marginLeft: '2rem',
-                        marginRight: '1rem',
-                        color: 'white',
-                        backgroundColor: '#16A085'
-                      }}
-                      onClick={() => {
-                        this.handleAssignCompany(
-                          this.state.company,
-                          ChatRoomType,
-                          memberData.ShipmentMemberRole
+                          memberData.ShipmentMemberRole,
                         );
                       }}
                     >
@@ -306,15 +255,73 @@ class ChatWithHeader extends Component {
             );
             return output;
           }
+          output = (
+            <div
+              style={{
+                backgroundColor: 'rgba(242, 175, 41, 0.3)',
+                height: 'auto',
+                padding: '10px',
+                borderRadius: '5px',
+                zIndex: '100',
+              }}
+            >
+              <p
+                style={{
+                  fontWeight: 700,
+                  color: '#000000',
+                }}
+              >
+                {user.email}
+                {' '}
+has been invited as
+                {_.join(memberData.ShipmentMemberRole, ',')}
+                {' '}
+for this shipment
+              </p>
+              <p>Select a company, to inform your team about this shipment</p>
+
+              <Row>
+                <Col xs={6}>
+                  <Select
+                    onChange={(e) => {
+                      this.setState({ company: e });
+                    }}
+                    name="company"
+                    options={options}
+                    value={this.state.company}
+                  />
+                </Col>
+                <Col xs={2}>
+                  <Button
+                    className="invite-btn"
+                    style={{
+                      marginLeft: '2rem',
+                      marginRight: '1rem',
+                      color: 'white',
+                      backgroundColor: '#16A085',
+                    }}
+                    onClick={() => {
+                      this.handleAssignCompany(
+                        this.state.company,
+                        ChatRoomType,
+                        memberData.ShipmentMemberRole,
+                      );
+                    }}
+                  >
+                      Confirm
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          );
+          return output;
         }
       }
     }
-    let suggestion = _.map(this.props.network, item => {
-      return {
-        id: item.UserMemberEmail,
-        label: item.UserMemberEmail
-      };
-    });
+    const suggestion = _.map(this.props.network, item => ({
+      id: item.UserMemberEmail,
+      label: item.UserMemberEmail,
+    }));
     if (_.size(member) < 2) {
       return (
         <div
@@ -323,37 +330,38 @@ class ChatWithHeader extends Component {
             height: 'auto',
             padding: '10px',
             borderRadius: '5px',
-            zIndex: '100'
+            zIndex: '100',
           }}
         >
           <p
             style={{
               fontWeight: 700,
-              color: '#000000'
+              color: '#000000',
             }}
           >
-            Input your {this.props.ChatRoomData.ChatRoomType} e-mail address only for this shipment
+            Input your
+            {' '}
+            {this.props.ChatRoomData.ChatRoomType}
+            {' '}
+e-mail address only for this shipment
           </p>
 
           <Row>
             <Col xs={6}>
               <Autocomplete
-                renderInput={props => {
-                  return (
-                    <input
-                      {...props}
-                      style={{
-                        width: '100%'
-                      }}
-                    />
-                  );
-                }}
+                renderInput={props => (
+                  <input
+                    {...props}
+                    style={{
+                      width: '100%',
+                    }}
+                  />
+                )}
                 wrapperStyle={{
-                  width: '100%'
+                  width: '100%',
                 }}
                 items={suggestion}
-                shouldItemRender={(item, value) =>
-                  item.label.toLowerCase().indexOf(value.toLowerCase()) > -1
+                shouldItemRender={(item, value) => item.label.toLowerCase().indexOf(value.toLowerCase()) > -1
                 }
                 getItemValue={item => item.label}
                 renderItem={(item, highlighted) => (
@@ -377,7 +385,7 @@ class ChatWithHeader extends Component {
                   marginLeft: '2rem',
                   marginRight: '1rem',
                   color: 'white',
-                  backgroundColor: '#16A085'
+                  backgroundColor: '#16A085',
                 }}
                 onClick={() => {
                   const inviteMember = [];
@@ -388,19 +396,19 @@ class ChatWithHeader extends Component {
                     Image: '',
                     Role: role,
                     ChatRoomMemberCompanyName: '',
-                    ChatRoomMemberCompanyKey: ''
+                    ChatRoomMemberCompanyKey: '',
                   });
                   console.log(inviteMember);
                   const invite = CreateChatMultipleInvitation(
                     inviteMember,
                     ShipmentKey,
                     ChatRoomKey,
-                    this.props.sender
+                    this.props.sender,
                   ).subscribe({
-                    next: res => {
+                    next: (res) => {
                       console.log(res);
                       invite.unsubscribe();
-                    }
+                    },
                   });
                 }}
               >
@@ -444,7 +452,7 @@ class ChatWithHeader extends Component {
       onDragOver,
       onDragLeave,
       onFileDrop,
-      shipments
+      shipments,
     } = this.props;
     let lastkey = '';
     const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
@@ -456,7 +464,7 @@ class ChatWithHeader extends Component {
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
         ref = _.find(
           ship.ShipmentReferenceList,
-          item => item.ShipmentReferenceCompanyKey === isInvited.ChatRoomMemberCompanyKey
+          item => item.ShipmentReferenceCompanyKey === isInvited.ChatRoomMemberCompanyKey,
         );
       }
     } else {
@@ -468,7 +476,7 @@ class ChatWithHeader extends Component {
         <Row
           style={{
             backgroundColor: 'white',
-            borderBottom: '1px solid #707070'
+            borderBottom: '1px solid #707070',
           }}
         >
           <Breadcrumb className="chat-toolbar">
@@ -529,9 +537,9 @@ class ChatWithHeader extends Component {
                       ChatRoomMessageReaderProfileImageUrl: _.get(
                         sender,
                         'UserInfoProfileImageLink',
-                        ''
+                        '',
                       ),
-                      ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+                      ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
                     });
                   }
                   lastkey = chatMsg[chatMsg.length - 1].id;
@@ -547,18 +555,18 @@ class ChatWithHeader extends Component {
                     fetchMoreMessage(ChatRoomKey, ShipmentKey);
                   }
                 }}
-                ref={el => {
+                ref={(el) => {
                   this.msgChatRef = el;
                 }}
               >
                 {_.get(this.props.ShipmentData, 'ShipmentCreatorUserKey', false) === user.uid
                   ? this.renderAssignCompany(this.props.ShipmentData.ShipmentCreatorType)
                   : isInvited
-                  ? this.renderAssignCompany(
+                    ? this.renderAssignCompany(
                       isInvited.ChatRoomMemberRole[0],
-                      _.get(isInvited, 'ChatRoomMemberCompanyKey', false)
+                      _.get(isInvited, 'ChatRoomMemberCompanyKey', false),
                     )
-                  : ''}
+                    : ''}
                 {chatMsg.map((msg, i) => {
                   const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = _.get(msg, 'ChatRoomMessageType', 'sender');
@@ -581,7 +589,7 @@ class ChatWithHeader extends Component {
                       prev: chatMsg[i - 1],
                       isLast: chatMsg.length - 1 === i,
                       hasFile: true,
-                      files: msgJson.files
+                      files: msgJson.files,
                     };
                   } else {
                     message = {
@@ -592,7 +600,7 @@ class ChatWithHeader extends Component {
                       readers: msg.ChatRoomMessageReader,
                       prev: chatMsg[i - 1],
                       isLast: chatMsg.length - 1 === i,
-                      hasFile: false
+                      hasFile: false,
                     };
                   }
 
@@ -600,14 +608,25 @@ class ChatWithHeader extends Component {
                     <div
                       style={{
                         padding: '20px',
-                        marginBottom: '-70px'
+                        marginBottom: '-70px',
                       }}
                     >
                       <ChatMessage message={message} i={i} />
                     </div>
                   );
                 })}
-                {_.isEmpty(sending) ? '' : <PreMessage message={sending} callback={sendMessage} />}
+                {_.isEmpty(sending) ? (
+                  ''
+                ) : (
+                  <div
+                    style={{
+                      padding: '20px',
+                      marginBottom: '-70px',
+                    }}
+                  >
+                    <PreMessage message={sending} callback={sendMessage} />
+                  </div>
+                )}
                 <div className="msg_history-cover-bar" />
               </div>
               <div className="type_msg">
@@ -637,12 +656,11 @@ class ChatWithHeader extends Component {
                       multiple
                       ref={fileInputRef}
                       style={{ display: 'none' }}
-                      onChange={event =>
-                        uploadModalRef.current.triggerUploading(
-                          event.target.files,
-                          ShipmentKey,
-                          ChatRoomKey
-                        )
+                      onChange={event => uploadModalRef.current.triggerUploading(
+                        event.target.files,
+                        ShipmentKey,
+                        ChatRoomKey,
+                      )
                       }
                     />
                   </InputGroupAddon>
@@ -652,18 +670,18 @@ class ChatWithHeader extends Component {
                         ? 'You has been remove from the chat'
                         : 'type...'
                     }
-                    type={'textarea'}
+                    type="textarea"
                     value={text}
                     disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}
                     onMouseEnter={() => {
-                      let clearUnReadChatMessage = ClearUnReadChatMessage(
+                      const clearUnReadChatMessage = ClearUnReadChatMessage(
                         sender.id,
                         ShipmentKey,
-                        ChatRoomKey
+                        ChatRoomKey,
                       ).subscribe({
-                        next: res => {
+                        next: (res) => {
                           clearUnReadChatMessage.unsubscribe();
-                        }
+                        },
                       });
                       if (chatMsg.length > 0) {
                         if (chatMsg[chatMsg.length - 1].id !== lastkey) {
@@ -673,15 +691,15 @@ class ChatWithHeader extends Component {
                             ChatRoomMessageReaderProfileImageUrl: _.get(
                               sender,
                               'UserInfoProfileImageLink',
-                              ''
+                              '',
                             ),
-                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
                           });
                         }
                         lastkey = chatMsg[chatMsg.length - 1].id;
                       }
                     }}
-                    onChange={e => {
+                    onChange={(e) => {
                       if (chatMsg.length > 0) {
                         if (chatMsg[chatMsg.length - 1].id !== lastkey) {
                           this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
@@ -690,22 +708,22 @@ class ChatWithHeader extends Component {
                             ChatRoomMessageReaderProfileImageUrl: _.get(
                               sender,
                               'UserInfoProfileImageLink',
-                              ''
+                              '',
                             ),
-                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
                           });
                         }
                         lastkey = chatMsg[chatMsg.length - 1].id;
                       }
                       typing(e);
                     }}
-                    onKeyPress={event => {
+                    onKeyPress={(event) => {
                       if (event.which == 13 && event.shiftKey) {
                       } else if (event.which == 13) {
-                        event.preventDefault(); //Stops enter from creating a new line
+                        event.preventDefault(); // Stops enter from creating a new line
                         if (
-                          !_.isEmpty(_.trim(text)) &&
-                          _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
+                          !_.isEmpty(_.trim(text))
+                          && _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
                         ) {
                           sendMessage(ChatRoomKey, ShipmentKey, text);
                           scrollChatToBottom();
@@ -725,8 +743,8 @@ class ChatWithHeader extends Component {
                         console.log('Input text is size', _.size(text));
 
                         if (
-                          !_.isEmpty(_.trim(text)) &&
-                          _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
+                          !_.isEmpty(_.trim(text))
+                          && _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
                         ) {
                           sendMessage(ChatRoomKey, ShipmentKey, text);
                           scrollChatToBottom();
