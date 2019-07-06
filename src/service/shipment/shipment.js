@@ -147,7 +147,10 @@ export const CombineShipmentAndShipmentReference = (
   const ShipmentReferenceListSource = combineLatest(ShipmentKeyListSource.pipe(take(1))).pipe(
     concatMap(ShipmentKeyList => combineLatest(ShipmentKeyList)),
     concatMap(ShipmentKeyItem => ShipmentKeyItem),
-    mergeMap(ShipmentKey => GetShipmentReferenceList(ShipmentKey).pipe(take(1))),
+    mergeMap(ShipmentKey => GetShipmentReferenceList(ShipmentKey).pipe(
+      map(RefData => ({ ...RefData, ShipmentKey })),
+      take(1),
+    )),
     toArray(),
   );
 
@@ -157,7 +160,14 @@ export const CombineShipmentAndShipmentReference = (
       return CombineResult[0].map((Item, Index) => {
         const ShipmentData = Item.data();
         const ShipmentID = Item.id;
-        const ShipmentReferenceList = _.reverse(CombineResult[1])[Index];
+        // console.log(CombineResult[1]);
+        const ShipmentReferenceList = _.find(CombineResult[1], ['ShipmentKey', ShipmentID]);
+        delete ShipmentReferenceList.ShipmentKey;
+
+        // const ShipmentReferenceList = _.reverse(CombineResult[1][Index]);
+
+        // console.warn(`${ShipmentData.ShipmentProductName}`, CombineResult[1]);
+        console.warn({ ...ShipmentData, ShipmentID, ShipmentReferenceList });
 
         return { ...ShipmentData, ShipmentID, ShipmentReferenceList };
       });
