@@ -54,6 +54,7 @@ import { GetShipmentPin, GetShipmentTotalCount } from '../../service/personalize
 import { connect } from 'react-redux';
 import { SAVE_CREDENCIAL } from '../../constants/constants';
 import { GetUserCompany } from '../../service/user/user';
+import BlockUi from 'react-block-ui';
 
 const SHIPMENT_STATUS_UPDATE_OPTIONS = [
   {
@@ -1009,21 +1010,23 @@ class TableShipment extends React.Component {
                 }
               }}
             >
-              <MainDataTable
-                id="tableshipment"
-                data={data}
-                toolkitbaseProps={{ ...props.baseProps }}
-                filter={this.filterShipmentStatus}
-                filterKeyword={this.state.filterStatus}
-                isFilter={this.state.filterStatus !== undefined}
-                column={columns}
-                cssClass="shipment-table"
-                wraperClass="shipment-table-wraper"
-                isBorder={false}
-                toolkit="search"
-                defaultSort={defaultSorted}
-                rowEvents={rowEvents}
-              />
+              <BlockUi tag="div" blocking={this.props.blocking} style={{ height: '100%' }}>
+                <MainDataTable
+                  id="tableshipment"
+                  data={data}
+                  toolkitbaseProps={{ ...props.baseProps }}
+                  filter={this.filterShipmentStatus}
+                  filterKeyword={this.state.filterStatus}
+                  isFilter={this.state.filterStatus !== undefined}
+                  column={columns}
+                  cssClass="shipment-table"
+                  wraperClass="shipment-table-wraper"
+                  isBorder={false}
+                  toolkit="search"
+                  defaultSort={defaultSorted}
+                  rowEvents={rowEvents}
+                />
+              </BlockUi>
             </div>
           </div>
         )}
