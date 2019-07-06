@@ -6,21 +6,8 @@
 import React, { Component } from 'react';
 import BlockUi from 'react-block-ui';
 import {
-  Button,
-  CardBody,
-  Card,
-  Col,
-  InputGroup,
-  InputGroupAddon,
-  Row,
-  TabContent,
-  Input,
-  TabPane,
-  Breadcrumb,
-  UncontrolledCollapse,
-  Badge
+  TabContent, Input, TabPane, Badge,
 } from 'reactstrap';
-import EdiText from 'react-editext';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import Tabs from 'react-draggable-tabs';
@@ -33,19 +20,14 @@ import {
   moveTab,
   selectTab,
   getChatRoomList,
-  toggleLoading
+  toggleLoading,
 } from '../../actions/chatActions';
 
 import ChatWithHeader from './components/ChatWithHeader';
 import ChatCreateRoom from './components/ChatCreateRoom';
 
-import {
-  AddChatRoomMember,
-  CreateChatRoom,
-  EditChatRoom,
-  UpdateChatRoomMessageReader
-} from '../../service/chat/chat';
-import './Chat.css';
+import { AddChatRoomMember, CreateChatRoom, EditChatRoom } from '../../service/chat/chat';
+import './Chat.scss';
 import './MasterDetail.css';
 import { GetShipmentDetail } from '../../service/shipment/shipment';
 import { GetShipmentNotificationCount } from '../../service/personalize/personalize';
@@ -69,23 +51,25 @@ class Chat extends Component {
       onDropChatStyle: false,
       shipments: {},
       chatAlert: [],
-      blocking: false
+      blocking: false,
     };
     this.toggleBlocking = this.toggleBlocking.bind(this);
     this.uploadModalRef = React.createRef();
     this.fileInput = React.createRef();
   }
-  toggleBlocking = toggle => {
+
+  toggleBlocking = (toggle) => {
     console.log('Toggle block ui', toggle);
     this.props.toggleLoading(toggle);
   };
+
   createChatRoom(fetchChatMessage, param, room, user) {
     const shipmentkey = _.get(param, 'shipmentkey', 'HDTPONlnceJeG5yAA1Zy');
     CreateChatRoom(shipmentkey, {
       ChatRoomType: room,
-      ChatRoomName: room
+      ChatRoomName: room,
     }).subscribe({
-      next: result => {
+      next: (result) => {
         const data = result.path.split('/');
         const chatkey = result.id;
         this.props.toggleLoading(true);
@@ -95,24 +79,24 @@ class Chat extends Component {
           ChatRoomMemberImageUrl: '',
           ChatRoomMemberRole: [room],
           ChatRoomMemberCompanyName: '',
-          ChatRoomMemberCompanyKey: ''
+          ChatRoomMemberCompanyKey: '',
         }).subscribe({
-          next: result => {
+          next: () => {
             fetchChatMessage(data[data.length - 1], shipmentkey, chatkey);
             ChatRoomMember.unsubscribe();
-          }
+          },
         });
       },
-      complete: result => {
+      complete: (result) => {
         console.log(result);
-      }
+      },
     });
   }
 
   renderChat(ChatRoomKey = '', ShipmentKey = '') {
     if (ShipmentKey === 'custom') {
       const {
-        match: { params }
+        match: { params },
       } = this.props;
       return (
         <ChatCreateRoom
@@ -130,7 +114,7 @@ class Chat extends Component {
       onSendMessage,
       onFetchMoreMessage,
       sender,
-      companies
+      companies,
     } = this.props;
     const { text, chatrooms, msg } = ChatReducer;
     const chat = _.get(this.props, `ChatReducer.chatroomsMsg.${ChatRoomKey}`, []);
@@ -186,7 +170,7 @@ class Chat extends Component {
     event.preventDefault();
     const fileItems = event.dataTransfer.items;
     const files = [];
-    _.forEach(fileItems, i => {
+    _.forEach(fileItems, (i) => {
       files.push(i.getAsFile());
     });
 
@@ -194,27 +178,27 @@ class Chat extends Component {
     event.target.value = null;
     this.uploadModalRef.current.triggerUploading(files, ShipmentKey, ChatRoomKey);
     this.setState({
-      onDropChatStyle: false
+      onDropChatStyle: false,
     });
   };
 
-  onDragOver = event => {
+  onDragOver = (event) => {
     event.stopPropagation();
     event.preventDefault();
     this.setState({
-      onDropChatStyle: true
+      onDropChatStyle: true,
     });
   };
 
-  onDragLeave = event => {
+  onDragLeave = (event) => {
     event.stopPropagation();
     event.preventDefault();
     this.setState({
-      onDropChatStyle: false
+      onDropChatStyle: false,
     });
   };
 
-  onDragEnter = event => {
+  onDragEnter = (event) => {
     event.preventDefault();
   };
 
@@ -226,8 +210,8 @@ class Chat extends Component {
     }
   };
 
-  closedTab(removedIndex, removedID) {
-    this.setState((state, props) => {
+  closedTab(removedIndex) {
+    this.setState((state) => {
       const newTabs = [...state.tabs];
       newTabs.splice(removedIndex, 1);
 
@@ -242,27 +226,23 @@ class Chat extends Component {
   }
 
   addTab() {
-    this.setState((state, props) => {
+    this.setState((state) => {
       const newTabs = [...state.tabs];
       newTabs.push({
         id: newTabs.length + 1,
         content: 'Cute *',
-        display: <div key={newTabs.length + 1}>Cute *</div>
+        display: <div key={newTabs.length + 1}>Cute *</div>,
       });
 
       return { tabs: newTabs };
     });
   }
 
-  lorem() {
-    return 'Teddy ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit.';
-  }
-
   toggle(tabPane, tab) {
     const newArray = this.state.activeTab.slice();
     newArray[tabPane] = tab;
     this.setState({
-      activeTab: newArray
+      activeTab: newArray,
     });
   }
 
@@ -285,46 +265,46 @@ class Chat extends Component {
 
   componentDidMount() {
     const {
-      match: { params }
+      match: { params },
     } = this.props;
 
     this.props.getChatRoomList(params.shipmentkey, this.props.user.uid); // MOCK SHIPMENT KEY
-    const chats = _.filter(this.props.ChatReducer.chatrooms, item => {
+    const chats = _.filter(this.props.ChatReducer.chatrooms, (item) => {
       if (item.ShipmentKey === 'custom') return true;
       return item.ShipmentKey === params.shipmentkey;
     });
     GetShipmentDetail(params.shipmentkey).subscribe({
-      next: res => {
+      next: (res) => {
         this.setState({
           shipments: {
-            ...res.data()
-          }
+            ...res.data(),
+          },
         });
-      }
+      },
     });
     GetShipmentNotificationCount(this.props.sender.id, params.shipmentkey).subscribe({
-      next: res => {
+      next: (res) => {
         this.setState({
-          chatAlert: res.data()
+          chatAlert: res.data(),
         });
-      }
+      },
     });
     const tabs = [];
-    _.forEach(chats, (item, index) => {
+    _.forEach(chats, (item) => {
       tabs.push({
         ChatRoomKey: item.ChatRoomKey,
-        ShipmentKey: item.ShipmentKey
+        ShipmentKey: item.ShipmentKey,
       });
     });
-    _.forEach(tabs, tab => {
+    _.forEach(tabs, (tab) => {
       console.log('fetch', tab);
       this.props.fetchChatMessage(tab.ChatRoomKey, tab.ShipmentKey);
     });
     GetUserCompany(this.props.user.uid).subscribe({
-      next: res => {
+      next: (res) => {
         console.log('Fetched Company is', res);
         this.props.fetchCompany(res);
-      }
+      },
     });
   }
 
@@ -334,10 +314,10 @@ class Chat extends Component {
 
   render() {
     const {
-      match: { params }
+      match: { params },
     } = this.props;
 
-    const chats = _.filter(this.props.ChatReducer.chatrooms, item => {
+    const chats = _.filter(this.props.ChatReducer.chatrooms, (item) => {
       if (item.ShipmentKey === 'custom') {
         return true;
       }
@@ -346,18 +326,18 @@ class Chat extends Component {
 
     let tabs = [];
 
-    _.forEach(chats, (item, index) => {
+    _.forEach(chats, (item) => {
       let content = (
         <div
-          className="noti"
+          className={item.roomName === '+' ? 'create-new-chat-tab' : 'noti'}
           onDoubleClick={() => {
             if (item.roomName !== '+') {
               this.setState({
                 roomeditor: {
                   roomName: item.roomName,
                   ChatRoomKey: item.ChatRoomKey,
-                  ShipmentKey: item.ShipmentKey
-                }
+                  ShipmentKey: item.ShipmentKey,
+                },
               });
             }
           }}
@@ -375,37 +355,37 @@ class Chat extends Component {
         </div>
       );
       if (
-        this.state.roomeditor.ShipmentKey === item.ShipmentKey &&
-        this.state.roomeditor.ChatRoomKey === item.ChatRoomKey
+        this.state.roomeditor.ShipmentKey === item.ShipmentKey
+        && this.state.roomeditor.ChatRoomKey === item.ChatRoomKey
       ) {
         content = (
           <div className="noti">
             <Input
-              ref={input => {
+              ref={(input) => {
                 this.nameInput = input;
               }}
               value={this.state.roomeditor.roomName}
               type="text"
               maxLength={40}
-              onChange={e => {
+              onChange={(e) => {
                 this.setState({
                   roomeditor: {
                     ...this.state.roomeditor,
-                    roomName: e.target.value
-                  }
+                    roomName: e.target.value,
+                  },
                 });
               }}
-              onBlur={e => {
+              onBlur={(e) => {
                 console.log('Focus Out', e);
                 EditChatRoom(item.ShipmentKey, item.ChatRoomKey, {
-                  ChatRoomName: this.state.roomeditor.roomName
+                  ChatRoomName: this.state.roomeditor.roomName,
                 });
                 this.setState({ roomeditor: {} });
               }}
-              onKeyDown={button => {
+              onKeyDown={(button) => {
                 if (button.key === 'Enter') {
                   EditChatRoom(item.ShipmentKey, item.ChatRoomKey, {
-                    ChatRoomName: this.state.roomeditor.roomName
+                    ChatRoomName: this.state.roomeditor.roomName,
                   });
                   this.setState({ roomeditor: {} });
                 }
@@ -421,7 +401,7 @@ class Chat extends Component {
         ChatRoomKey: item.ChatRoomKey,
         ShipmentKey: item.ShipmentKey,
         position: item.position,
-        member: item.member
+        member: item.member,
       });
     });
     tabs = _.sortBy(tabs, 'position');
@@ -449,12 +429,14 @@ class Chat extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  const { ChatReducer, authReducer, profileReducer, companyReducer, shipmentReducer } = state;
+const mapStateToProps = (state) => {
+  const {
+    ChatReducer, authReducer, profileReducer, companyReducer, shipmentReducer,
+  } = state;
 
   const sender = _.find(
     profileReducer.ProfileList,
-    item => item.id === profileReducer.ProfileDetail.id
+    item => item.id === profileReducer.ProfileDetail.id,
   );
   const user = authReducer.user;
   sender.uid = user.uid;
@@ -464,7 +446,7 @@ const mapStateToProps = state => {
     sender,
     shipments: shipmentReducer.Shipments,
     companies: companyReducer.UserCompany,
-    network: companyReducer.NetworkEmail
+    network: companyReducer.NetworkEmail,
   };
 };
 
@@ -479,6 +461,6 @@ export default connect(
     moveTab,
     selectTab,
     getChatRoomList,
-    fetchCompany
-  }
+    fetchCompany,
+  },
 )(Chat);

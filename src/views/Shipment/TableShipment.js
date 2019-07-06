@@ -45,13 +45,16 @@ import {
   EditShipment,
   UpdateShipmentReference,
   GetShipmentDetail,
-  GetShipmentReferenceList
+  GetShipmentReferenceList,
+  SearchShipment,
+  CombineShipmentAndShipmentReference
 } from '../../service/shipment/shipment';
 import { UpdateMasterData } from '../../service/masterdata/masterdata';
 import { GetShipmentPin, GetShipmentTotalCount } from '../../service/personalize/personalize';
 import { connect } from 'react-redux';
 import { SAVE_CREDENCIAL } from '../../constants/constants';
 import { GetUserCompany } from '../../service/user/user';
+import BlockUi from 'react-block-ui';
 
 const SHIPMENT_STATUS_UPDATE_OPTIONS = [
   {
@@ -370,19 +373,15 @@ class TableShipment extends React.Component {
 
   renderRefComponent(index, ref, shipmentKey, ShipmentMember) {
     const { user, companies } = this.props;
-    console.log('renderRefComponent', ref);
-    const refs = [];
-    _.forEach(ref, item => {
-      _.forEach(companies, company => {
-        if (item.ShipmentReferenceCompanyKey === company.CompanyKey) {
-          refs.push(item);
-        }
-      });
+    const userCompany = [];
+    let refs = [];
+    refs = _.filter(ref, refItem => {
+      return _.some(companies, item =>
+        _.includes(refItem.ShipmentReferenceCompanyKey, item.CompanyKey)
+      );
     });
-    console.log('Result refsis', refs);
 
     const hasCompany = _.get(ShipmentMember, `${user.uid}`, {});
-    console.log('hasCompany', hasCompany);
 
     const alreadyHave = refs.length > 0;
     if (!_.isEmpty(hasCompany.ShipmentMemberCompanyName)) {
@@ -529,6 +528,8 @@ class TableShipment extends React.Component {
                                 this.state.input.newRef
                               );
                             }
+
+                            this.props.fetchMoreShipment();
                           }
                         },
                         2000,
@@ -554,12 +555,6 @@ class TableShipment extends React.Component {
   }
 
   renderStatusComponent(item) {
-    console.log(
-      'SHIPMENT_STATUS_UPDATE_OPTIONS',
-      _.find(SHIPMENT_STATUS_UPDATE_OPTIONS, option => {
-        return option.value.status === item.ShipmentStatus;
-      })
-    );
     return (
       <div>
         <Select
@@ -640,7 +635,10 @@ class TableShipment extends React.Component {
     );
   }
 
-  render() {
+  render = () => {
+    const shipmentsProps = this.props;
+
+    const { setShipments } = this.props;
     let data = [];
     let columns = [];
     let input = [];
@@ -717,12 +715,7 @@ class TableShipment extends React.Component {
             <div>
               <Row>
                 <Col xs="2">
-                  <SearchBar
-                    {...props.searchProps}
-                    placeholder="&#xF002; Typing"
-                    id="search"
-                    style={{ width: 200, height: 38 }}
-                  />
+                  <Col xs="2">{shipmentsProps.searchInput()}</Col>
                 </Col>
                 <Col xs="3">
                   <Select
@@ -824,6 +817,7 @@ class TableShipment extends React.Component {
 
       if (this.state.isEdit) {
         return {
+          id: index,
           alert: this.renderAlertComponent(index, item, item.ShipmentID),
           Ref: this.renderRefComponent(
             index,
@@ -866,6 +860,7 @@ class TableShipment extends React.Component {
         };
       }
       return {
+        id: index,
         alert: this.renderAlertComponent(index, item, item.ShipmentID),
         Ref: this.renderRefComponent(
           index,
@@ -952,20 +947,18 @@ class TableShipment extends React.Component {
         }
       }
     };
-
+    const defaultSorted = [
+      {
+        dataField: 'id',
+        order: 'desc'
+      }
+    ];
     return (
       <ToolkitProvider keyField="id" data={data} columns={columns} search>
         {props => (
           <div>
             <Row>
-              <Col xs="2">
-                <SearchBar
-                  {...props.searchProps}
-                  placeholder="&#xF002; Typing"
-                  id="search"
-                  style={{ width: 200, height: 38 }}
-                />
-              </Col>
+              <Col xs="2">{shipmentsProps.searchInput()}</Col>
               <Col xs="3">
                 <Select
                   name="colors"
@@ -1017,26 +1010,29 @@ class TableShipment extends React.Component {
                 }
               }}
             >
-              <MainDataTable
-                id="tableshipment"
-                data={data}
-                toolkitbaseProps={{ ...props.baseProps }}
-                filter={this.filterShipmentStatus}
-                filterKeyword={this.state.filterStatus}
-                isFilter={this.state.filterStatus !== undefined}
-                column={columns}
-                cssClass="shipment-table"
-                wraperClass="shipment-table-wraper"
-                isBorder={false}
-                toolkit="search"
-                rowEvents={rowEvents}
-              />
+              <BlockUi tag="div" blocking={this.props.blocking} style={{ height: '100%' }}>
+                <MainDataTable
+                  id="tableshipment"
+                  data={data}
+                  toolkitbaseProps={{ ...props.baseProps }}
+                  filter={this.filterShipmentStatus}
+                  filterKeyword={this.state.filterStatus}
+                  isFilter={this.state.filterStatus !== undefined}
+                  column={columns}
+                  cssClass="shipment-table"
+                  wraperClass="shipment-table-wraper"
+                  isBorder={false}
+                  toolkit="search"
+                  defaultSort={defaultSorted}
+                  rowEvents={rowEvents}
+                />
+              </BlockUi>
             </div>
           </div>
         )}
       </ToolkitProvider>
     );
-  }
+  };
 }
 
 const mapStateToProps = state => {

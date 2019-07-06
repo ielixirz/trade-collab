@@ -37,7 +37,10 @@ import TableShipment from './TableShipment';
 import { fetchShipments, fetchMoreShipments } from '../../actions/shipmentActions';
 import {
   CombineShipmentAndShipmentReference,
-  CreateShipment
+  CreateShipment,
+  CreateShipmentReference,
+  SearchShipment,
+  UpdateShipmentReference
 } from '../../service/shipment/shipment';
 import { UpdateMasterData } from '../../service/masterdata/masterdata';
 import './Shipment.css';
@@ -46,16 +49,13 @@ import { GetShipmentTotalCount } from '../../service/personalize/personalize';
 import _ from 'lodash';
 import { fetchCompany } from '../../actions/companyAction';
 import { AddChatRoomMember, CreateChatRoom } from '../../service/chat/chat';
-
+const WAIT_INTERVAL = 1000;
+const ENTER_KEY = 13;
 class Shipment extends Component {
   constructor(props) {
     super(props);
-    this.fetchMoreShipment = this.fetchMoreShipment.bind(this);
-    this.toggle = this.toggle.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.dropdown = this.dropdown.bind(this);
-    this.fetchShipment = {};
     this.state = {
+      keyword: '',
       activeTab: '1',
       typeShipment: '',
       input: {
@@ -71,8 +71,19 @@ class Shipment extends Component {
       companies: {},
       modal: false,
       dropdownOpen: false,
-      blocking: false
+      blocking: true
     };
+    this.fetchMoreShipment = this.fetchMoreShipment.bind(this);
+    this.toggle = this.toggle.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.dropdown = this.dropdown.bind(this);
+    this.handleSearchChange = this.handleSearchChange.bind(this);
+    this.triggerChange = this.triggerChange.bind(this);
+    this.renderSearch = this.renderSearch.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.fetchShipment = {};
+    this.timeout = null;
+
     this.toggleBlocking = this.toggleBlocking.bind(this);
     this.writeText = this.writeText.bind(this);
     this.modal = this.modal.bind(this);
@@ -202,6 +213,8 @@ class Shipment extends Component {
                 }
               }
             });
+            this.setState({ blocking: false });
+
             this.props.fetchShipments(result, notification);
           },
           error: err => {
@@ -251,6 +264,8 @@ class Shipment extends Component {
                 }
               }
             });
+            this.setState({ blocking: false });
+
             this.props.fetchShipments(result, notification);
           },
           error: err => {
@@ -262,6 +277,9 @@ class Shipment extends Component {
         });
       }
     });
+  }
+  componentWillMount() {
+    this.timer = null;
   }
 
   componentDidMount() {
@@ -296,6 +314,8 @@ class Shipment extends Component {
                 }
               }
             });
+            this.setState({ blocking: false });
+
             this.props.fetchShipments(result, notification);
           },
           error: err => {
@@ -404,6 +424,91 @@ class Shipment extends Component {
     return false;
   }
 
+  handleSearchChange(evt) {
+    console.log('typing', evt);
+    try {
+      if (this.timer) {
+        clearTimeout(this.timer);
+      }
+    } catch (e) {
+      console.log(e, this.timer);
+    }
+
+    this.setState({ keyword: evt.target.value, blocking: true });
+    this.timer = setTimeout(this.triggerChange, WAIT_INTERVAL);
+  }
+  handleKeyDown(e) {
+    if (e.keyCode === ENTER_KEY) {
+      this.triggerChange();
+    }
+  }
+
+  triggerChange() {
+    this.props.fetchShipments({}, []);
+    const { keyword: search } = this.state;
+
+    const { typeShipment } = this.state;
+    if (_.isEmpty(search)) {
+      console.log('normal fetch');
+      this.fetchShipmentReload();
+    } else {
+      this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
+        next: notification => {
+          SearchShipment(this.props.user.uid, search, 15).subscribe({
+            next: res => {
+              let shipment = _.map(res, item => {
+                return {
+                  id: item.id,
+                  ShipmentID: item.id,
+                  ...item.data()
+                };
+              });
+
+              let result = _.filter(shipment, item => {
+                let keyword = '';
+                if (_.isEmpty(typeShipment)) {
+                  return true;
+                } else {
+                  console.log('shipment', item);
+                  switch (typeShipment) {
+                    case 'Plan':
+                      keyword = ['Planning', 'Order Confirmed'];
+                      return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
+                    case 'Active':
+                      keyword = ['In Transit', 'Order Confirmed', 'Delayed'];
+                      return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
+                    case 'Complete':
+                      keyword = ['Delivered', 'Completed'];
+                      return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
+                    case 'Cancel':
+                      keyword = ['Cancelled'];
+                      return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
+                  }
+                }
+              });
+              this.setState({ blocking: false });
+
+              this.props.fetchShipments(result, notification);
+            }
+          });
+        }
+      });
+    }
+  }
+
+  renderSearch() {
+    const { keyword } = this.state;
+    return (
+      <Input
+        placeholder="&#xF002; Typing"
+        type={'text'}
+        style={{ width: 200, height: 38 }}
+        onChange={this.handleSearchChange}
+        onKeyDown={this.handleKeyDown}
+        value={keyword}
+      />
+    );
+  }
   render() {
     const { role, bound, method, type } = this.state.input;
     console.log(this.props.user);
@@ -804,15 +909,17 @@ class Shipment extends Component {
           <TabPane tabId="1">
             <Row>
               <Col sm="12">
-                <BlockUi tag="div" blocking={this.state.blocking} style={{ height: '100%' }}>
-                  <TableShipment
-                    companies={this.props.companies}
-                    input={{ ...this.props.shipments }}
-                    typeShipment={this.state.typeShipment}
-                    toggleBlock={this.toggleBlocking}
-                    fetchMoreShipment={this.fetchMoreShipment}
-                  />
-                </BlockUi>
+                <TableShipment
+                  companies={this.props.companies}
+                  input={{ ...this.props.shipments }}
+                  typeShipment={this.state.typeShipment}
+                  toggleBlock={this.toggleBlocking}
+                  fetchMoreShipment={this.fetchMoreShipment}
+                  fetchShipment={this.fetchShipment}
+                  searchInput={this.renderSearch}
+                  setShipments={this.props.fetchShipments}
+                  blocking={this.state.blocking}
+                />
               </Col>
             </Row>
           </TabPane>

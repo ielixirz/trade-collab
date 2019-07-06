@@ -116,7 +116,7 @@ img {
 .active_chat {
   background: #ebebeb;
 }
-.incoming_msg{
+.incoming_msg {
   margin-top: 20px;
 }
 .incoming_msg_img {
@@ -154,7 +154,6 @@ img {
 }
 
 .received_withd_msg {
-
   margin-bottom: 30px;
 }
 
@@ -165,8 +164,7 @@ img {
   height: 81vh;
 }
 
-.system-message
-{
+.system-message {
   background-color: transparent !important;
 }
 
@@ -190,7 +188,6 @@ img {
   word-break: break-word;
 }
 
-
 .sent_msg p {
   background: rgba(102, 209, 188, 0.3);
   border-radius: 3px;
@@ -213,8 +210,6 @@ img {
 .sent_msg {
   display: inline-flex;
   float: right;
-
-
 }
 
 .chatbox {
@@ -230,9 +225,19 @@ img {
   width: 100%;
 }
 
-.react-tabs-tab {
-  max-width: 550px !important;
-  min-width: 40px !important;
+.react-tabs-child {
+  margin-left: 0;
+  padding-left: 0;
+
+  .react-tabs-tab {
+    max-width: 120px !important;
+    min-width: 120px !important;
+  }
+  .react-tabs-tab-content {
+    margin: auto;
+    width: 50px !important;
+    font-size: 2em !important;
+  }
 }
 
 .user-name {
@@ -316,12 +321,16 @@ img {
   padding-top: 0.5rem !important;
   border: 0px !important;
   overflow-x: auto !important;
-  height: 60px !important;
+  height: 50px !important;
 }
 
 .react-tabs-tab.react-tabs-active {
   background-color: #ffffff !important;
   font-weight: bold !important;
+}
+
+.react-tabs-tab:has(div) {
+  background-color: #000000 !important;
 }
 
 .react-tabs-tab {
@@ -335,6 +344,16 @@ img {
   max-width: 350px !important;
   min-width: 200px !important;
   position: relative;
+}
+
+.react-tabs-container > .react-tabs-tab:nth-last-child(2) {
+  max-width: 50px !important;
+  min-width: 50px !important;
+}
+
+.create-new-chat-tab {
+  font-size: 125%;
+  font-weight: bold;
 }
 
 .react-tabs-tab-content {
@@ -441,5 +460,3 @@ h2.time-background:before {
   font-size: 1em;
   font-weight: bold;
 }
-
-

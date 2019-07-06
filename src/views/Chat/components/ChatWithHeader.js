@@ -8,6 +8,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import { Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
 import Select from 'react-select';
+import Autocomplete from 'react-autocomplete';
 import MemberModal from '../../../component/MemberModal';
 import MemberInviteModal from '../../../component/MemberInviteModal';
 import UploadModal from '../../../component/UploadModal';
@@ -30,7 +31,6 @@ import { moveTab } from '../../../actions/chatActions';
 import { PutFile } from '../../../service/storage/managestorage';
 import { FETCH_CHAT_MEMBER, FETCH_COMPANY_USER } from '../../../constants/constants';
 import { GetUserCompany } from '../../../service/user/user';
-import Autocomplete from 'react-autocomplete';
 import { ClearUnReadChatMessage } from '../../../service/personalize/personalize';
 
 const AVAILABLE_ROLES = {
@@ -130,7 +130,7 @@ class ChatWithHeader extends Component {
           }).subscribe({
             next: result => {
               const data = result.path.split('/');
-              let chatkey = result.id;
+              const chatkey = result.id;
               const invite = CreateChatMultipleInvitation(
                 inviteMember,
                 ShipmentKey,
@@ -143,7 +143,7 @@ class ChatWithHeader extends Component {
                   this.props.fetchMoreMessage(chatkey, ShipmentKey);
                 }
               });
-              let ChatRoomMember = AddChatRoomMember(ShipmentKey, chatkey, {
+              const ChatRoomMember = AddChatRoomMember(ShipmentKey, chatkey, {
                 ChatRoomMemberUserKey: this.props.user.uid,
                 ChatRoomMemberEmail: this.props.user.email,
                 ChatRoomMemberImageUrl: '',
@@ -248,73 +248,70 @@ class ChatWithHeader extends Component {
               </div>
             );
             return output;
-          } else {
-            output = (
-              <div
+          }
+          output = (
+            <div
+              style={{
+                backgroundColor: 'rgba(242, 175, 41, 0.3)',
+                height: 'auto',
+                padding: '10px',
+                borderRadius: '5px',
+                zIndex: '100'
+              }}
+            >
+              <p
                 style={{
-                  backgroundColor: 'rgba(242, 175, 41, 0.3)',
-                  height: 'auto',
-                  padding: '10px',
-                  borderRadius: '5px',
-                  zIndex: '100'
+                  fontWeight: 700,
+                  color: '#000000'
                 }}
               >
-                <p
-                  style={{
-                    fontWeight: 700,
-                    color: '#000000'
-                  }}
-                >
-                  {user.email} has been invited as
-                  {_.join(memberData.ShipmentMemberRole, ',')} for this shipment
-                </p>
-                <p>Select a company, to inform your team about this shipment</p>
+                {user.email} has been invited as
+                {_.join(memberData.ShipmentMemberRole, ',')} for this shipment
+              </p>
+              <p>Select a company, to inform your team about this shipment</p>
 
-                <Row>
-                  <Col xs={6}>
-                    <Select
-                      onChange={e => {
-                        this.setState({ company: e });
-                      }}
-                      name="company"
-                      options={options}
-                      value={this.state.company}
-                    />
-                  </Col>
-                  <Col xs={2}>
-                    <Button
-                      className="invite-btn"
-                      style={{
-                        marginLeft: '2rem',
-                        marginRight: '1rem',
-                        color: 'white',
-                        backgroundColor: '#16A085'
-                      }}
-                      onClick={() => {
-                        this.handleAssignCompany(
-                          this.state.company,
-                          ChatRoomType,
-                          memberData.ShipmentMemberRole
-                        );
-                      }}
-                    >
-                      Confirm
-                    </Button>
-                  </Col>
-                </Row>
-              </div>
-            );
-            return output;
-          }
+              <Row>
+                <Col xs={6}>
+                  <Select
+                    onChange={e => {
+                      this.setState({ company: e });
+                    }}
+                    name="company"
+                    options={options}
+                    value={this.state.company}
+                  />
+                </Col>
+                <Col xs={2}>
+                  <Button
+                    className="invite-btn"
+                    style={{
+                      marginLeft: '2rem',
+                      marginRight: '1rem',
+                      color: 'white',
+                      backgroundColor: '#16A085'
+                    }}
+                    onClick={() => {
+                      this.handleAssignCompany(
+                        this.state.company,
+                        ChatRoomType,
+                        memberData.ShipmentMemberRole
+                      );
+                    }}
+                  >
+                    Confirm
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          );
+          return output;
         }
       }
     }
-    let suggestion = _.map(this.props.network, item => {
-      return {
-        id: item.UserMemberEmail,
-        label: item.UserMemberEmail
-      };
-    });
+    const suggestion = _.map(this.props.network, item => ({
+      id: item.UserMemberEmail,
+      label: item.UserMemberEmail
+    }));
     if (_.size(member) < 2) {
       return (
         <div
@@ -338,16 +335,14 @@ class ChatWithHeader extends Component {
           <Row>
             <Col xs={6}>
               <Autocomplete
-                renderInput={props => {
-                  return (
-                    <input
-                      {...props}
-                      style={{
-                        width: '100%'
-                      }}
-                    />
-                  );
-                }}
+                renderInput={props => (
+                  <input
+                    {...props}
+                    style={{
+                      width: '100%'
+                    }}
+                  />
+                )}
                 wrapperStyle={{
                   width: '100%'
                 }}
@@ -607,7 +602,18 @@ class ChatWithHeader extends Component {
                     </div>
                   );
                 })}
-                {_.isEmpty(sending) ? '' : <PreMessage message={sending} callback={sendMessage} />}
+                {_.isEmpty(sending) ? (
+                  ''
+                ) : (
+                  <div
+                    style={{
+                      padding: '20px',
+                      marginBottom: '-70px'
+                    }}
+                  >
+                    <PreMessage message={sending} callback={sendMessage} />
+                  </div>
+                )}
                 <div className="msg_history-cover-bar" />
               </div>
               <div className="type_msg">
@@ -652,11 +658,11 @@ class ChatWithHeader extends Component {
                         ? 'You has been remove from the chat'
                         : 'type...'
                     }
-                    type={'textarea'}
+                    type="textarea"
                     value={text}
                     disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}
                     onMouseEnter={() => {
-                      let clearUnReadChatMessage = ClearUnReadChatMessage(
+                      const clearUnReadChatMessage = ClearUnReadChatMessage(
                         sender.id,
                         ShipmentKey,
                         ChatRoomKey
@@ -702,7 +708,7 @@ class ChatWithHeader extends Component {
                     onKeyPress={event => {
                       if (event.which == 13 && event.shiftKey) {
                       } else if (event.which == 13) {
-                        event.preventDefault(); //Stops enter from creating a new line
+                        event.preventDefault(); // Stops enter from creating a new line
                         if (
                           !_.isEmpty(_.trim(text)) &&
                           _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
