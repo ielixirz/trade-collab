@@ -116,7 +116,7 @@ img {
 .active_chat {
   background: #ebebeb;
 }
-.incoming_msg{
+.incoming_msg {
   margin-top: 20px;
 }
 .incoming_msg_img {
@@ -154,7 +154,6 @@ img {
 }
 
 .received_withd_msg {
-
   margin-bottom: 30px;
 }
 
@@ -165,8 +164,7 @@ img {
   height: 81vh;
 }
 
-.system-message
-{
+.system-message {
   background-color: transparent !important;
 }
 
@@ -190,7 +188,6 @@ img {
   word-break: break-word;
 }
 
-
 .sent_msg p {
   background: rgba(102, 209, 188, 0.3);
   border-radius: 3px;
@@ -213,8 +210,6 @@ img {
 .sent_msg {
   display: inline-flex;
   float: right;
-
-
 }
 
 .chatbox {
@@ -441,5 +436,3 @@ h2.time-background:before {
   font-size: 1em;
   font-weight: bold;
 }
-
-
