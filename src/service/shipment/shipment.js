@@ -157,7 +157,9 @@ export const CombineShipmentAndShipmentReference = (
       return CombineResult[0].map((Item, Index) => {
         const ShipmentData = Item.data();
         const ShipmentID = Item.id;
-        const ShipmentReferenceList = _.reverse(CombineResult[1])[Index];
+        const ShipmentReferenceList = _.reverse(CombineResult[1][Index]);
+
+        console.log(ShipmentReferenceList);
 
         return { ...ShipmentData, ShipmentID, ShipmentReferenceList };
       });
