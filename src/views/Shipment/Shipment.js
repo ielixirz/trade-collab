@@ -71,7 +71,7 @@ class Shipment extends Component {
       companies: {},
       modal: false,
       dropdownOpen: false,
-      blocking: false
+      blocking: true
     };
     this.fetchMoreShipment = this.fetchMoreShipment.bind(this);
     this.toggle = this.toggle.bind(this);
@@ -80,6 +80,7 @@ class Shipment extends Component {
     this.handleSearchChange = this.handleSearchChange.bind(this);
     this.triggerChange = this.triggerChange.bind(this);
     this.renderSearch = this.renderSearch.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
     this.fetchShipment = {};
     this.timeout = null;
 
@@ -212,6 +213,8 @@ class Shipment extends Component {
                 }
               }
             });
+            this.setState({ blocking: false });
+
             this.props.fetchShipments(result, notification);
           },
           error: err => {
@@ -261,6 +264,8 @@ class Shipment extends Component {
                 }
               }
             });
+            this.setState({ blocking: false });
+
             this.props.fetchShipments(result, notification);
           },
           error: err => {
@@ -309,6 +314,8 @@ class Shipment extends Component {
                 }
               }
             });
+            this.setState({ blocking: false });
+
             this.props.fetchShipments(result, notification);
           },
           error: err => {
@@ -427,8 +434,7 @@ class Shipment extends Component {
       console.log(e, this.timer);
     }
 
-    this.setState({ keyword: evt.target.value });
-
+    this.setState({ keyword: evt.target.value, blocking: true });
     this.timer = setTimeout(this.triggerChange, WAIT_INTERVAL);
   }
   handleKeyDown(e) {
@@ -480,6 +486,8 @@ class Shipment extends Component {
                   }
                 }
               });
+              this.setState({ blocking: false });
+
               this.props.fetchShipments(result, notification);
             }
           });
@@ -901,18 +909,17 @@ class Shipment extends Component {
           <TabPane tabId="1">
             <Row>
               <Col sm="12">
-                <BlockUi tag="div" blocking={this.state.blocking} style={{ height: '100%' }}>
-                  <TableShipment
-                    companies={this.props.companies}
-                    input={{ ...this.props.shipments }}
-                    typeShipment={this.state.typeShipment}
-                    toggleBlock={this.toggleBlocking}
-                    fetchMoreShipment={this.fetchMoreShipment}
-                    fetchShipment={this.fetchShipment}
-                    searchInput={this.renderSearch}
-                    setShipments={this.props.fetchShipments}
-                  />
-                </BlockUi>
+                <TableShipment
+                  companies={this.props.companies}
+                  input={{ ...this.props.shipments }}
+                  typeShipment={this.state.typeShipment}
+                  toggleBlock={this.toggleBlocking}
+                  fetchMoreShipment={this.fetchMoreShipment}
+                  fetchShipment={this.fetchShipment}
+                  searchInput={this.renderSearch}
+                  setShipments={this.props.fetchShipments}
+                  blocking={this.state.blocking}
+                />
               </Col>
             </Row>
           </TabPane>
