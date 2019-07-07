@@ -268,12 +268,10 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
 ?
                     </span>,
                     'Leave Company',
-                    leaveCompany(e, update.data.cKey, update.data.uKey),
-                    {
-                      event: e,
-                      companyKey: update.data.cKey,
-                      userKey: update.data.uKey,
-                      index: update.data.index,
+                    (confirm) => {
+                      if (confirm) {
+                        leaveCompany(e, update.data.cKey, update.data.uKey, update.data.index);
+                      }
                     },
                   );
                 },
