@@ -3,6 +3,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 
 import NotificationComponent from '../component/NotificationComponent';
+import moment from 'moment';
 
 const LABEL = {
   id: 'id'
@@ -67,6 +68,42 @@ export const createDataTable = input => {
     ...item
   }));
   const columns = _.map(_.keys(data[0]), item => {
+    if (item === 'ETA') {
+      return {
+        text: _.get(LABEL, item, item),
+        dataField: item,
+        sort: true,
+        headerAlign: 'center',
+        align: 'center',
+        width: '15%',
+        sortFunc: (a, b, order, dataField, rowA, rowB) => {
+          const RowAETADATA = moment(rowA.ETA, 'DD MMM YYYY');
+          const RowBETADATA = moment(rowB.ETA, 'DD MMM YYYY');
+          // moment(str, 'YYYY-MM-DD').toDate()
+          console.log(RowAETADATA, RowBETADATA);
+          if (order === 'asc') return RowAETADATA - RowBETADATA;
+          else return RowBETADATA - RowAETADATA;
+        }
+      };
+    }
+    if (item === 'ETD') {
+      return {
+        text: _.get(LABEL, item, item),
+        dataField: item,
+        sort: true,
+        headerAlign: 'center',
+        align: 'center',
+        width: '15%',
+        sortFunc: (a, b, order, dataField, rowA, rowB) => {
+          const RowAETDDATA = moment(rowA.ETD, 'DD MMM YYYY');
+          const RowBETDDATA = moment(rowB.ETD, 'DD MMM YYYY');
+          // moment(str, 'YYYY-MM-DD').toDate()
+          console.log(RowAETDDATA, RowBETDDATA);
+          if (order === 'asc') return RowAETDDATA - RowBETDDATA;
+          else return RowBETDDATA - RowAETDDATA;
+        }
+      };
+    }
     if (item === 'uid') {
       return {
         text: _.get(LABEL, item, item),
