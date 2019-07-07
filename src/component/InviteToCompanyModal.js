@@ -3,7 +3,7 @@
 /* eslint-disable filenames/match-regex */
 /* as it is component */
 import React, {
-  useState, forwardRef, useImperativeHandle, useEffect,
+  useState, forwardRef, useImperativeHandle, useEffect, useRef,
 } from 'react';
 import {
   Label,
@@ -38,19 +38,23 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
   const [updatePosition, setUpdatePosition] = useState({});
   const [company, setCompany] = useState('');
   const [availableCompany, setAvailableCompany] = useState([]);
-  const [isValidInvite, setIsValidInvite] = useState(undefined);
+  const [isValidInvite2, setIsValidInvite2] = useState(undefined);
+  const [isValidInvite1, setIsValidInvite1] = useState(undefined);
+
+  const inviteInput = useRef(null);
 
   const clear = () => {
     setExistingInvited([]);
     setNonExistingInvited([]);
     setUpdateRole({});
     setUpdatePosition({});
-    setIsValidInvite(undefined);
+    setIsValidInvite1(undefined);
+    setIsValidInvite2(undefined);
   };
 
   useEffect(() => {
     // clear();
-  }, [invitedEmails, isValidInvite]);
+  }, [invitedEmails, isValidInvite1, isValidInvite2]);
 
   const handleInputPositionChange = (event, email) => {
     const temp = updatePosition;
@@ -224,22 +228,33 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
     setModal(!modal);
   };
 
-  const validateInvite = () => {
-    if (company === '' || invitedEmails.length === 0) {
+  const validateInvite = (emails) => {
+    if (company === '' || emails.length === 0) {
+      setIsValidInvite1(false);
       return false;
     }
-    if (invitedEmails.value) {
-      if (invitedEmails.value.length === 0) {
+    if (emails.value) {
+      if (emails.value.length === 0) {
+        setIsValidInvite1(false);
         return false;
       }
     }
+    setIsValidInvite1(true);
     return true;
   };
 
+  const lockInviteInput = () => inviteInput.current.handleLockInLastInput();
+
   const nextStep = () => {
-    if (validateInvite()) {
+    const lastInvite = lockInviteInput();
+    let allInvites = [...invitedEmails];
+    if (lastInvite !== undefined) {
+      allInvites = allInvites.concat(lastInvite);
+      setinvitedEmails(allInvites);
+    }
+    if (validateInvite(allInvites)) {
       setCurrentStep(currentStep + 1);
-      fetchInvitedUserDetail([...invitedEmails], company.key);
+      fetchInvitedUserDetail(allInvites, company.key);
     }
   };
 
@@ -266,7 +281,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
         isValid = false;
       }
     });
-    setIsValidInvite(isValid);
+    setIsValidInvite2(isValid);
     return isValid;
   };
 
@@ -344,6 +359,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
         id="invite-email"
         getValue={handleInviteInputChange}
         placeholder="Write email address.."
+        ref={inviteInput}
       />
     </div>
   );
@@ -371,7 +387,21 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
       </ModalHeader>
       <ModalBody>
         {currentStep === 1 ? renderStepOneBody() : renderStepTwoBody()}
-        {currentStep === 2 && isValidInvite === false ? (
+        {currentStep === 1 && isValidInvite1 === false ? (
+          <Alert color="warning" style={{ marginTop: 10, marginBottom: 0 }}>
+            Please select your
+            {' '}
+            <b>company</b>
+            {' '}
+and enter your invitee
+            {' '}
+            <b>email</b>
+.
+          </Alert>
+        ) : (
+          ''
+        )}
+        {currentStep === 2 && isValidInvite2 === false ? (
           <Alert color="warning" style={{ margin: 0 }}>
             Role must be select for all invitation.
           </Alert>
@@ -386,7 +416,6 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
             style={{ margin: 'auto' }}
             color="primary"
             onClick={nextStep}
-            disabled={!validateInvite()}
           >
             Invite
           </Button>
