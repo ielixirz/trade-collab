@@ -14,11 +14,12 @@ import {
   Col,
   InputGroup,
   InputGroupAddon,
+  Alert,
 } from 'reactstrap';
 import _ from 'lodash';
 
 import { CreateUserRequest, CreateCompanyRequest } from '../service/join/request';
-import { CheckAvaliableCompanyName } from '../service/company/company';
+import { CheckAvaliableCompanyName, IsCompanyMember } from '../service/company/company';
 
 const RequestToJoinModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
@@ -28,6 +29,7 @@ const RequestToJoinModal = forwardRef((props, ref) => {
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [foundCompany, setFoundCompany] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
+  const [isAlreadyMember, setIsAlreadyMember] = useState(undefined);
 
   const toggle = () => {
     setModal(!modal);
@@ -45,30 +47,36 @@ const RequestToJoinModal = forwardRef((props, ref) => {
     if (selectedIndex !== null) {
       const selectedCompany = foundCompany[selectedIndex];
       const userKey = props.userId;
-      const usrReqData = {
-        CompanyRequestReference: '',
-        CompanyRequestCompanyKey: selectedCompany.id,
-        CompanyRequestCompanyName: selectedCompany.data.CompanyName,
-        CompanyRequestNote: note,
-        CompanyRequestStatus: 'Pending',
-      };
-      CreateUserRequest(userKey, usrReqData).subscribe((result) => {
-        const usrReqKey = result.id;
-        const comReqData = {
-          UserRequestReference: usrReqKey,
-          UserRequestKey: usrReqKey,
-          UserRequestUserKey: userKey,
-          UserRequestCompanyKey: selectedCompany.id,
-          UserRequestCompanyName: selectedCompany.data.CompanyName,
-          UserRequestFristname: props.profile.ProfileFirstname,
-          UserRequestSurname: props.profile.ProfileSurname,
-          UserRequestEmail: props.profile.ProfileEmail,
-          UserRequestNote: note,
-          UserRequestStatus: 'Pending',
-        };
-        CreateCompanyRequest(selectedCompany.id, usrReqKey, comReqData);
+      IsCompanyMember(selectedCompany.id, userKey).subscribe((isMember) => {
+        if (isMember) {
+          setIsAlreadyMember(true);
+        } else {
+          const usrReqData = {
+            CompanyRequestReference: '',
+            CompanyRequestCompanyKey: selectedCompany.id,
+            CompanyRequestCompanyName: selectedCompany.data.CompanyName,
+            CompanyRequestNote: note,
+            CompanyRequestStatus: 'Pending',
+          };
+          CreateUserRequest(userKey, usrReqData).subscribe((result) => {
+            const usrReqKey = result.id;
+            const comReqData = {
+              UserRequestReference: usrReqKey,
+              UserRequestKey: usrReqKey,
+              UserRequestUserKey: userKey,
+              UserRequestCompanyKey: selectedCompany.id,
+              UserRequestCompanyName: selectedCompany.data.CompanyName,
+              UserRequestFristname: props.profile.ProfileFirstname,
+              UserRequestSurname: props.profile.ProfileSurname,
+              UserRequestEmail: props.profile.ProfileEmail,
+              UserRequestNote: note,
+              UserRequestStatus: 'Pending',
+            };
+            CreateCompanyRequest(selectedCompany.id, usrReqKey, comReqData);
+          });
+          toggle();
+        }
       });
-      toggle();
     }
   };
 
@@ -205,8 +213,15 @@ const RequestToJoinModal = forwardRef((props, ref) => {
           onChange={handleInputNoteChange}
           value={note}
         />
+        {isAlreadyMember === true ? (
+          <Alert color="warning" style={{ marginTop: 10, marginBottom: 0 }}>
+            You already joined this company.
+          </Alert>
+        ) : (
+          ''
+        )}
       </ModalBody>
-      <ModalFooter>
+      <ModalFooter style={{ border: 'none' }}>
         <Button
           color="primary"
           className="profile-btn create"
