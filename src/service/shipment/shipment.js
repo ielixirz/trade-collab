@@ -188,7 +188,12 @@ export const CreateShipmentMember = (ShipmentKey, ShipmentMemberUserKey, Data) =
   );
 };
 
-export const SearchShipment = (ShipmentMemberUserKey, SearchText, LimitNumber = 15) => {
+export const SearchShipment = (
+  ShipmentMemberUserKey,
+  SearchText,
+  SearchTitle,
+  LimitNumber = 15,
+) => {
   const DefaultQuery = ShipmentRefPath().where(
     'ShipmentMemberList',
     'array-contains',
@@ -196,7 +201,7 @@ export const SearchShipment = (ShipmentMemberUserKey, SearchText, LimitNumber = 
   );
 
   return collection(
-    DefaultQuery.where('ShipmentProductName', '>=', SearchText)
+    DefaultQuery.where(SearchTitle, '>=', SearchText)
       .orderBy('ShipmentProductName', 'asc')
       .limit(LimitNumber),
   );
