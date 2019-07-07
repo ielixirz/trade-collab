@@ -8,40 +8,58 @@ import {
 
 const ConfirmPopup = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
-  const [level, setLevel] = useState(undefined);
+  const [header, setHeader] = useState(undefined);
   const [message, setMessage] = useState(undefined);
+  const [callback, setCallback] = useState(undefined);
 
   const toggle = () => {
     setModal(!modal);
   };
 
+  const ok = () => {
+    toggle();
+    callback(true);
+  };
+
+  const cancel = () => {
+    toggle();
+    callback(false);
+  };
+
   useImperativeHandle(ref, () => ({
-    triggerError(msg, lv) {
+    triggerError(msg, head, cb) {
       setMessage(msg);
-      setLevel(lv);
+      setHeader(head);
+      setCallback(() => cb);
+      toggle();
     },
   }));
 
-  const renderBody = () => {
-    switch (level) {
-      case 'ERROR':
-        return 'An Error Occured.';
-      case 'WARN':
-        return 'Warning';
-      default:
-        return 'UNHANDLED';
-    }
+  const renderHeader = () => header;
+
+  const yesStyle = {
+    color: 'white',
+    backgroundColor: '#16a085',
+  };
+
+  const noStyle = {
+    backgroundColor: 'white',
+    color: '#16a085',
+    borderColor: '#16a085',
   };
 
   return (
-    <Modal isOpen={modal} toggle={toggle} className="upload-modal">
-      <ModalHeader toggle={toggle}>
-        <b>{renderBody}</b>
+    <Modal isOpen={modal} fade={false} toggle={toggle} className="upload-modal">
+      <ModalHeader toggle={toggle} style={{ border: 'none' }}>
+        <b>{renderHeader()}</b>
       </ModalHeader>
       <ModalBody>{message}</ModalBody>
-      <ModalFooter>
-        <Button color="primary" onClick={toggle}>
-          OK
+      <ModalFooter style={{ border: 'none' }}>
+        <Button color="primary" onClick={ok} style={yesStyle}>
+          Yes
+        </Button>
+        <Button color="warning" onClick={cancel} style={noStyle}>
+          No
         </Button>
       </ModalFooter>
     </Modal>
