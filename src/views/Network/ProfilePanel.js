@@ -21,6 +21,7 @@ import InviteToCompanyModal from '../../component/InviteToCompanyModal';
 import RequestToJoinModal from '../../component/RequestToJoinModal';
 import ResetPasswordModal from '../../component/ResetPasswordModal';
 import ErrorPopup from '../../component/commonPopup/ErrorPopup';
+import ConfirmPopup from '../../component/commonPopup/ConfirmPopup';
 
 import { profileColumns } from '../../constants/network';
 
@@ -41,12 +42,6 @@ import {
 } from '../../service/storage/managestorage';
 
 import { isValidProfileImg } from '../../utils/validation';
-
-const mockProfile = {
-  fullname: 'John Jerald',
-  email: 'john@gmail.com',
-  desc: 'Fruit Exporter from coconut land',
-};
 
 const renderStatus = (status, data, listener) => {
   if (status === 'Invited') {
@@ -109,7 +104,7 @@ const renderStatus = (status, data, listener) => {
 };
 
 const ProfilePanel = ({ currentProfile, auth, user }) => {
-  const [userProfile, setUserProfile] = useState(mockProfile);
+  const [userProfile, setUserProfile] = useState({});
   const [companyList, setCompanyList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [acceptedInvite, setAcceptedInvite] = useState(undefined);
@@ -123,6 +118,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
   const fileInput = useRef(null);
   const requestToJoinModalRef = useRef(null);
   const errorPopupRef = useRef(null);
+  const confirmPopupRef = useRef(null);
 
   const toggleBlocking = () => {
     setBlocking(!blocking);
@@ -130,7 +126,6 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
 
   const leaveCompany = (e, companyKey, memberKey, index) => {
     e.stopPropagation();
-    // LeaveCompany(companyKey, memberKey);
     RemoveFromCompany(companyKey, memberKey);
     // eslint-disable-next-line no-use-before-define
     setLeaving({ index, isLeave: true });
@@ -202,7 +197,23 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
               options={[
                 {
                   text: 'Leave',
-                  function: e => leaveCompany(e, item.CompanyKey, userKey, index),
+                  function: (e) => {
+                    confirmPopupRef.current.triggerError(
+                      <span>
+                        Are you leaving
+                        {' '}
+                        <b>{item.CompanyName}</b>
+                        {' '}
+?
+                      </span>,
+                      'Leave Company',
+                      (confirm) => {
+                        if (confirm) {
+                          leaveCompany(e, item.CompanyKey, userKey, index);
+                        }
+                      },
+                    );
+                  },
                 },
               ]}
             />
@@ -247,7 +258,25 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
             options={[
               {
                 text: 'Leave',
-                function: e => leaveCompany(e, update.data.cKey, update.data.uKey),
+                function: (e) => {
+                  confirmPopupRef.current.triggerError(
+                    <span>
+                      Are you leaving
+                      {' '}
+                      <b>{update.data.cName}</b>
+                      {' '}
+?
+                    </span>,
+                    'Leave Company',
+                    leaveCompany(e, update.data.cKey, update.data.uKey),
+                    {
+                      event: e,
+                      companyKey: update.data.cKey,
+                      userKey: update.data.uKey,
+                      index: update.data.index,
+                    },
+                  );
+                },
               },
             ]}
           />
@@ -554,6 +583,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
           />
         </div>
         <ErrorPopup ref={errorPopupRef} />
+        <ConfirmPopup ref={confirmPopupRef} />
       </BlockUi>
     </div>
   );
