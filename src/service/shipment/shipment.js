@@ -202,7 +202,7 @@ export const SearchShipment = (
 
   return collection(
     DefaultQuery.where(SearchTitle, '>=', SearchText)
-      .orderBy('ShipmentProductName', 'asc')
+      .orderBy(SearchTitle, 'asc')
       .limit(LimitNumber),
   );
 };
