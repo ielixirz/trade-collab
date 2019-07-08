@@ -27,6 +27,7 @@ import { GetUserInfoFromEmail } from '../service/user/user';
 import { GetCompanyUserAccessibility, IsCompanyMember } from '../service/company/company';
 import { GetProlfileList } from '../service/user/profile';
 import { CreateCompanyMultipleInvitation } from '../service/join/invite';
+import { DeepCopyArray } from '../utils/parsing';
 
 const InviteToCompanyModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
@@ -184,15 +185,17 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
           });
           setNonExistingInvited(inviteNotExistEntities);
           combineLatest(profileObs).subscribe((results2) => {
+            const loopOne = DeepCopyArray(results2);
+            const loopTwo = DeepCopyArray(results2);
             const memberCheckObs = [];
             // First loop to check isMember
-            results2.forEach((result) => {
+            loopOne.forEach((result) => {
               const firstProfile = result.pop();
               memberCheckObs.push(IsCompanyMember(companyKey, firstProfile.key));
             });
             combineLatest(memberCheckObs).subscribe((isMemberList) => {
               // Second loop to populate invite
-              results2.forEach((result, index) => {
+              loopTwo.forEach((result, index) => {
                 const firstProfile = result.pop();
                 if (isMemberList[index]) {
                   const inviteEntity = {

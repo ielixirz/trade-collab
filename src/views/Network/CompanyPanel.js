@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
@@ -410,8 +411,10 @@ const CompanyPanel = (props) => {
   };
 
   const browseFile = () => {
-    fileInput.current.value = null;
-    fileInput.current.click();
+    if (isMember) {
+      fileInput.current.value = null;
+      fileInput.current.click();
+    }
   };
 
   const changeCompanyPic = (file) => {
@@ -525,35 +528,39 @@ const CompanyPanel = (props) => {
                 ) : (
                   <h4>{company.CompanyName}</h4>
                 )}
-                {isEdit ? (
-                  <Badge
-                    className="mr-1"
-                    color="info"
-                    onClick={toggleEdit}
-                    style={{
-                      cursor: 'pointer',
-                      height: '100%',
-                      padding: 5,
-                      marginTop: '5px',
-                      marginLeft: '10px',
-                    }}
-                  >
-                    Save
-                  </Badge>
+                {isMember ? (
+                  isEdit ? (
+                    <Badge
+                      className="mr-1"
+                      color="info"
+                      onClick={toggleEdit}
+                      style={{
+                        cursor: 'pointer',
+                        height: '100%',
+                        padding: 5,
+                        marginTop: '5px',
+                        marginLeft: '10px',
+                      }}
+                    >
+                      Save
+                    </Badge>
+                  ) : (
+                    <i
+                      className="cui-pencil icons"
+                      role="button"
+                      style={{
+                        marginLeft: '1rem',
+                        marginTop: '0.1rem',
+                        fontSize: 'medium',
+                        cursor: 'pointer',
+                      }}
+                      onClick={toggleEdit}
+                      onKeyDown={null}
+                      tabIndex="-1"
+                    />
+                  )
                 ) : (
-                  <i
-                    className="cui-pencil icons"
-                    role="button"
-                    style={{
-                      marginLeft: '1rem',
-                      marginTop: '0.1rem',
-                      fontSize: 'medium',
-                      cursor: 'pointer',
-                    }}
-                    onClick={toggleEdit}
-                    onKeyDown={null}
-                    tabIndex="-1"
-                  />
+                  ''
                 )}
               </Row>
               <Row>
