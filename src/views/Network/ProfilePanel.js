@@ -126,9 +126,10 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
 
   const leaveCompany = (e, companyKey, memberKey, index) => {
     e.stopPropagation();
-    RemoveFromCompany(companyKey, memberKey);
-    // eslint-disable-next-line no-use-before-define
-    setLeaving({ index, isLeave: true });
+    setBlocking(true);
+    RemoveFromCompany(companyKey, memberKey).then(() => {
+      setLeaving({ index, isLeave: true });
+    });
   };
 
   const fetchCompany = (userKey) => {
@@ -185,40 +186,42 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
       });
 
       joins.forEach((item, index) => {
-        joinedList.push({
-          key: item.CompanyKey,
-          company: item.CompanyName,
-          position: item.UserMemberPosition,
-          role: item.UserMemberRoleName,
-          roleKey: item.UserMatrixRolePermissionCode,
-          status: renderStatus(item.UserMemberCompanyStandingStatus),
-          button: (
-            <ThreeDotDropdown
-              options={[
-                {
-                  text: 'Leave',
-                  function: (e) => {
-                    confirmPopupRef.current.triggerError(
-                      <span>
-                        Are you leaving
-                        {' '}
-                        <b>{item.CompanyName}</b>
-                        {' '}
+        if (item.CompanyUserAccessibilityRolePermissionCode !== undefined) {
+          joinedList.push({
+            key: item.CompanyKey,
+            company: item.CompanyName,
+            position: item.UserMemberPosition,
+            role: item.UserMemberRoleName,
+            roleKey: item.CompanyUserAccessibilityRolePermissionCode,
+            status: renderStatus(item.UserMemberCompanyStandingStatus),
+            button: (
+              <ThreeDotDropdown
+                options={[
+                  {
+                    text: 'Leave',
+                    function: (e) => {
+                      confirmPopupRef.current.triggerError(
+                        <span>
+                          Are you leaving
+                          {' '}
+                          <b>{item.CompanyName}</b>
+                          {' '}
 ?
-                      </span>,
-                      'Leave Company',
-                      (confirm) => {
-                        if (confirm) {
-                          leaveCompany(e, item.CompanyKey, userKey, index);
-                        }
-                      },
-                    );
+                        </span>,
+                        'Leave Company',
+                        (confirm) => {
+                          if (confirm) {
+                            leaveCompany(e, item.CompanyKey, userKey, index);
+                          }
+                        },
+                      );
+                    },
                   },
-                },
-              ]}
-            />
-          ),
-        });
+                ]}
+              />
+            ),
+          });
+        }
       });
       toggleBlocking();
       setCompanyList([joinedList, inviteList, requestList]);
@@ -243,9 +246,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
 
   const updateCompanyList = (update) => {
     const currentList = companyList;
-    if (update.isLeave) {
-      currentList[0].splice(update.index, 1);
-    } else if (update.status === 'Approve') {
+    if (update.status === 'Approve') {
       currentList[1].splice(update.data.index, 1);
       currentList[0].push({
         key: update.data.cKey,
@@ -291,7 +292,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
     if (acceptedInvite) {
       updateCompanyList(acceptedInvite);
     } else if (leaving) {
-      updateCompanyList(leaving);
+      fetchCompany(auth.uid);
     } else {
       fetchCompany(auth.uid);
     }
