@@ -341,7 +341,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
       const inviteData = {
         Email: email,
         Role: role[email],
-        Position: position[email],
+        Position: position[email] === undefined ? '' : position[email],
       };
       inviteDataList.push(inviteData);
     });
