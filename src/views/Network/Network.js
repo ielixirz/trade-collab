@@ -6,7 +6,7 @@ import { Route, Switch } from 'react-router-dom';
 import CompanyPanel from './CompanyPanel';
 import ProfilePanel from './ProfilePanel';
 import SettingPanel from './SettingPanel';
-import './Network.css';
+import './Network.scss';
 
 class Network extends Component {
   constructor(props) {
