@@ -462,9 +462,8 @@ class Shipment extends Component {
             next: res => {
               let shipment = _.map(res, item => {
                 return {
-                  id: item.id,
-                  ShipmentID: item.id,
-                  ...item.data()
+                  id: item.ShipmentID,
+                  ...item
                 };
               });
 
