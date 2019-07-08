@@ -24,7 +24,7 @@ import MainDataTable from './MainDataTable';
 
 import { inviteToCompanyColumns } from '../constants/network';
 import { GetUserInfoFromEmail } from '../service/user/user';
-import { GetCompanyUserAccessibility } from '../service/company/company';
+import { GetCompanyUserAccessibility, IsCompanyMember } from '../service/company/company';
 import { GetProlfileList } from '../service/user/profile';
 import { CreateCompanyMultipleInvitation } from '../service/join/invite';
 
@@ -33,6 +33,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [invitedEmails, setinvitedEmails] = useState([]);
   const [existingInvited, setExistingInvited] = useState([]);
+  const [alreadyMemberInvited, setAlreadyMemberInvited] = useState([]);
   const [nonExistingInvited, setNonExistingInvited] = useState([]);
   const [updateRole, setUpdateRole] = useState({});
   const [updatePosition, setUpdatePosition] = useState({});
@@ -122,6 +123,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
 
         combineLatest(userObs).subscribe((results1) => {
           const profileObs = [];
+          const inviteAlreadyMemberEntities = [];
           const inviteNotExistEntities = [];
           const inviteExistEntities = [];
           let n = 0;
@@ -181,46 +183,77 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
           });
           setNonExistingInvited(inviteNotExistEntities);
           combineLatest(profileObs).subscribe((results2) => {
-            results2.forEach((result, index) => {
-              // TO-DO get first profile for now
+            const memberCheckObs = [];
+            // First loop to check isMember
+            results2.forEach((result) => {
               const firstProfile = result.pop();
-              const inviteEntity = {
-                key: firstProfile.key,
-                name: `${firstProfile.ProfileFirstname} ${firstProfile.ProfileSurname}`,
-                email: firstProfile.email,
-                position: (
-                  <Input
-                    type="text"
-                    id={`position#e${index}`}
-                    placeholder="Position"
-                    onChange={event => handleInputPositionChange(event, firstProfile.email)}
-                  />
-                ),
-                role: (
-                  <Select
-                    onChange={input => handleRoleInputChange(input, firstProfile.email)}
-                    name="company"
-                    id={`company-invite#e${index}`}
-                    options={roles}
-                    className="basic-multi-select"
-                    classNamePrefix="select"
-                    placeholder="Choose Role"
-                  />
-                ),
-                // remove: (
-                //   <i
-                //     className="cui-trash icons"
-                //     role="button"
-                //     style={{ cursor: 'pointer' }}
-                //     onClick={() => removeInvite(firstProfile.email)}
-                //     onKeyDown={null}
-                //     tabIndex="-1"
-                //   />
-                // ),
-              };
-              inviteExistEntities.push(inviteEntity);
+              memberCheckObs.push(IsCompanyMember(companyKey, firstProfile.key));
             });
-            setExistingInvited(inviteExistEntities);
+            combineLatest(memberCheckObs).subscribe((isMemberList) => {
+              // Second loop to populate invite
+              results2.forEach((result, index) => {
+                const firstProfile = result.pop();
+                if (isMemberList[index]) {
+                  const inviteEntity = {
+                    key: null,
+                    name: <i style={{ color: 'grey' }}>Already a Member</i>,
+                    email: firstProfile.email,
+                    position: '-',
+                    role: '-',
+                    // remove: (
+                    //   <i
+                    //     className="cui-trash icons"
+                    //     role="button"
+                    //     style={{ cursor: 'pointer' }}
+                    //     onClick={removeInvite(result.email)}
+                    //     onKeyDown={null}
+                    //     tabIndex="-1"
+                    //   />
+                    // ),
+                  };
+                  inviteAlreadyMemberEntities.push(inviteEntity);
+                } else {
+                  // TO-DO get first profile for now
+                  const inviteEntity = {
+                    key: firstProfile.key,
+                    name: `${firstProfile.ProfileFirstname} ${firstProfile.ProfileSurname}`,
+                    email: firstProfile.email,
+                    position: (
+                      <Input
+                        type="text"
+                        id={`position#e${index}`}
+                        placeholder="Position"
+                        onChange={event => handleInputPositionChange(event, firstProfile.email)}
+                      />
+                    ),
+                    role: (
+                      <Select
+                        onChange={input => handleRoleInputChange(input, firstProfile.email)}
+                        name="company"
+                        id={`company-invite#e${index}`}
+                        options={roles}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        placeholder="Choose Role"
+                      />
+                    ),
+                    // remove: (
+                    //   <i
+                    //     className="cui-trash icons"
+                    //     role="button"
+                    //     style={{ cursor: 'pointer' }}
+                    //     onClick={() => removeInvite(firstProfile.email)}
+                    //     onKeyDown={null}
+                    //     tabIndex="-1"
+                    //   />
+                    // ),
+                  };
+                  inviteExistEntities.push(inviteEntity);
+                }
+              });
+              setAlreadyMemberInvited(inviteAlreadyMemberEntities);
+              setExistingInvited(inviteExistEntities);
+            });
           });
         });
       });
@@ -379,7 +412,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
 
   const renderStepTwoBody = () => (
     <MainDataTable
-      data={existingInvited.concat(nonExistingInvited)}
+      data={existingInvited.concat(nonExistingInvited, alreadyMemberInvited)}
       column={inviteToCompanyColumns}
       cssClass="company-invite-table"
       wraperClass="company-invite-table-wraper"
@@ -438,9 +471,10 @@ and enter your invitee
             style={{ margin: 'auto' }}
             color="primary"
             onClick={invite}
+            disabled={existingInvited.concat(nonExistingInvited).length === 0}
           >
             Send Invitation (
-            {invitedEmails.length}
+            {existingInvited.concat(nonExistingInvited).length}
 )
           </Button>
         )}
