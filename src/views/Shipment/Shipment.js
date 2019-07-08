@@ -156,7 +156,8 @@ class Shipment extends Component {
         }).subscribe(() => {
           this.props.history.push(`/chat/${shipmentKey}`);
         });
-      }
+      },
+      error: () => {}
     });
 
     this.setState(prevState => ({
@@ -219,6 +220,7 @@ class Shipment extends Component {
           },
           error: err => {
             console.log(err);
+            this.setState({ blocking: false });
           },
           complete: () => {
             console.log('Hello World');
@@ -270,6 +272,7 @@ class Shipment extends Component {
           },
           error: err => {
             console.log(err);
+            this.setState({ blocking: false });
           },
           complete: () => {
             console.log('Hello World');
@@ -320,6 +323,7 @@ class Shipment extends Component {
           },
           error: err => {
             console.log(err);
+            this.setState({ blocking: false });
           },
           complete: () => {
             console.log('Hello World');
@@ -454,13 +458,12 @@ class Shipment extends Component {
     } else {
       this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
         next: notification => {
-          SearchShipment(this.props.user.uid, search, 15).subscribe({
+          SearchShipment(this.props.user.uid, search, 'ShipmentProductName', 15).subscribe({
             next: res => {
               let shipment = _.map(res, item => {
                 return {
-                  id: item.id,
-                  ShipmentID: item.id,
-                  ...item.data()
+                  id: item.ShipmentID,
+                  ...item
                 };
               });
 

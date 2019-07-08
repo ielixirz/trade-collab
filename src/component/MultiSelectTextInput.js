@@ -24,6 +24,14 @@ export default class MultiSelectTextInput extends Component {
     };
   }
 
+  validateDuplicate = (value, input) => {
+    if (this.props.handleDuplication) {
+      const found = value.find(i => i.value === input);
+      return found === undefined;
+    }
+    return true;
+  };
+
   handleChange = (value) => {
     this.setState({ value });
     this.props.getValue([...value]);
@@ -43,15 +51,22 @@ export default class MultiSelectTextInput extends Component {
       case 'Enter':
       case 'Tab':
       case ' ':
-        this.setState(
-          {
-            inputValue: '',
-            value: [...value, createOption(inputValue)],
-          },
-          () => {
-            this.props.getValue([...value, createOption(inputValue)]);
-          },
-        );
+        if (this.validateDuplicate(value, inputValue)) {
+          if (this.props.handleDuplication) {
+            this.props.duplicationCallback(false);
+          }
+          this.setState(
+            {
+              inputValue: '',
+              value: [...value, createOption(inputValue)],
+            },
+            () => {
+              this.props.getValue([...value, createOption(inputValue)]);
+            },
+          );
+        } else {
+          this.props.duplicationCallback(true);
+        }
         event.preventDefault();
     }
   };

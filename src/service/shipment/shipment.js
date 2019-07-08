@@ -188,17 +188,48 @@ export const CreateShipmentMember = (ShipmentKey, ShipmentMemberUserKey, Data) =
   );
 };
 
-export const SearchShipment = (ShipmentMemberUserKey, SearchText, LimitNumber = 15) => {
+export const SearchShipment = (
+  ShipmentMemberUserKey,
+  SearchText,
+  SearchTitle,
+  LimitNumber = 15,
+) => {
   const DefaultQuery = ShipmentRefPath().where(
     'ShipmentMemberList',
     'array-contains',
     ShipmentMemberUserKey,
   );
 
-  return collection(
-    DefaultQuery.where('ShipmentProductName', '>=', SearchText)
-      .orderBy('ShipmentProductName', 'asc')
+  const ShipmentListSource = collection(
+    DefaultQuery.where(SearchTitle, '>=', SearchText)
+      .orderBy(SearchTitle, 'asc')
       .limit(LimitNumber),
+  );
+
+  const ShipmentKeyListSource = ShipmentListSource.pipe(
+    map(ShipmentList => ShipmentList.map(ShipmentItem => ShipmentItem.id)),
+  );
+
+  const ShipmentReferenceListSource = combineLatest(ShipmentKeyListSource.pipe(take(1))).pipe(
+    concatMap(ShipmentKeyList => combineLatest(ShipmentKeyList)),
+    concatMap(ShipmentKeyItem => ShipmentKeyItem),
+    mergeMap(ShipmentKey => GetShipmentReferenceList(ShipmentKey).pipe(
+      map(RefData => ({ ...RefData, ShipmentKey })),
+      take(1),
+    )),
+    toArray(),
+  );
+
+  return combineLatest(ShipmentListSource, ShipmentReferenceListSource).pipe(
+    map(CombineResult => CombineResult[0].map((Item) => {
+      const ShipmentData = Item.data();
+      const ShipmentID = Item.id;
+      const ShipmentReferenceList = _.find(CombineResult[1], ['ShipmentKey', ShipmentID]);
+
+      if (ShipmentReferenceList.ShipmentKey) delete ShipmentReferenceList.ShipmentKey;
+
+      return { ...ShipmentData, ShipmentID, ShipmentReferenceList };
+    })),
   );
 };
 

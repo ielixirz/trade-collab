@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
@@ -139,6 +140,7 @@ const CompanyPanel = (props) => {
   const [acceptedRequest, setAcceptedRequest] = useState(undefined);
   const [isMember, setIsMember] = useState(false);
   const [blocking, setBlocking] = useState(false);
+  const [isEmailDuplicate, setIsEmailDuplicate] = useState(undefined);
 
   const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
@@ -409,8 +411,10 @@ const CompanyPanel = (props) => {
   };
 
   const browseFile = () => {
-    fileInput.current.value = null;
-    fileInput.current.click();
+    if (isMember) {
+      fileInput.current.value = null;
+      fileInput.current.click();
+    }
   };
 
   const changeCompanyPic = (file) => {
@@ -524,35 +528,39 @@ const CompanyPanel = (props) => {
                 ) : (
                   <h4>{company.CompanyName}</h4>
                 )}
-                {isEdit ? (
-                  <Badge
-                    className="mr-1"
-                    color="info"
-                    onClick={toggleEdit}
-                    style={{
-                      cursor: 'pointer',
-                      height: '100%',
-                      padding: 5,
-                      marginTop: '5px',
-                      marginLeft: '10px',
-                    }}
-                  >
-                    Save
-                  </Badge>
+                {isMember ? (
+                  isEdit ? (
+                    <Badge
+                      className="mr-1"
+                      color="info"
+                      onClick={toggleEdit}
+                      style={{
+                        cursor: 'pointer',
+                        height: '100%',
+                        padding: 5,
+                        marginTop: '5px',
+                        marginLeft: '10px',
+                      }}
+                    >
+                      Save
+                    </Badge>
+                  ) : (
+                    <i
+                      className="cui-pencil icons"
+                      role="button"
+                      style={{
+                        marginLeft: '1rem',
+                        marginTop: '0.1rem',
+                        fontSize: 'medium',
+                        cursor: 'pointer',
+                      }}
+                      onClick={toggleEdit}
+                      onKeyDown={null}
+                      tabIndex="-1"
+                    />
+                  )
                 ) : (
-                  <i
-                    className="cui-pencil icons"
-                    role="button"
-                    style={{
-                      marginLeft: '1rem',
-                      marginTop: '0.1rem',
-                      fontSize: 'medium',
-                      cursor: 'pointer',
-                    }}
-                    onClick={toggleEdit}
-                    onKeyDown={null}
-                    tabIndex="-1"
-                  />
+                  ''
                 )}
               </Row>
               <Row>
@@ -596,6 +604,13 @@ const CompanyPanel = (props) => {
                 <Label htmlFor="email-invitation" style={{ color: 'grey' }}>
                   <b>Email invitations</b>
                 </Label>
+                {isEmailDuplicate ? (
+                  <span className="field-error-msg" style={{ marginLeft: 65 }}>
+                    You already entered this email.
+                  </span>
+                ) : (
+                  ''
+                )}
                 <Row>
                   <MultiSelectTextInput
                     id="invite-email"
@@ -603,6 +618,10 @@ const CompanyPanel = (props) => {
                     placeholder="Enter email..."
                     className="company-invitation-select"
                     ref={inviteInput}
+                    handleDuplication
+                    duplicationCallback={(isDub) => {
+                      setIsEmailDuplicate(isDub);
+                    }}
                   />
                   <Button
                     className="company-invite-btn"
