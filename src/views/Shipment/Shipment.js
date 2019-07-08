@@ -156,7 +156,8 @@ class Shipment extends Component {
         }).subscribe(() => {
           this.props.history.push(`/chat/${shipmentKey}`);
         });
-      }
+      },
+      error: () => {}
     });
 
     this.setState(prevState => ({
@@ -219,6 +220,7 @@ class Shipment extends Component {
           },
           error: err => {
             console.log(err);
+            this.setState({ blocking: false });
           },
           complete: () => {
             console.log('Hello World');
@@ -270,6 +272,7 @@ class Shipment extends Component {
           },
           error: err => {
             console.log(err);
+            this.setState({ blocking: false });
           },
           complete: () => {
             console.log('Hello World');
@@ -320,6 +323,7 @@ class Shipment extends Component {
           },
           error: err => {
             console.log(err);
+            this.setState({ blocking: false });
           },
           complete: () => {
             console.log('Hello World');
