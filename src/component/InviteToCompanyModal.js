@@ -40,6 +40,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
   const [availableCompany, setAvailableCompany] = useState([]);
   const [isValidInvite2, setIsValidInvite2] = useState(undefined);
   const [isValidInvite1, setIsValidInvite1] = useState(undefined);
+  const [isEmailDuplicate, setIsEmailDuplicate] = useState(undefined);
 
   const inviteInput = useRef(null);
 
@@ -50,6 +51,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
     setUpdatePosition({});
     setIsValidInvite1(undefined);
     setIsValidInvite2(undefined);
+    setIsEmailDuplicate(undefined);
   };
 
   useEffect(() => {
@@ -355,11 +357,22 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
       <Label htmlFor="invite-email" style={{ marginTop: '1rem' }}>
         <b>Email Address of your colleagues</b>
       </Label>
+      {isEmailDuplicate ? (
+        <span className="field-error-msg fadable" style={{ float: 'right', marginTop: '1rem' }}>
+          You already entered this email.
+        </span>
+      ) : (
+        ''
+      )}
       <MultiSelectTextInput
         id="invite-email"
         getValue={handleInviteInputChange}
         placeholder="Write email address.."
         ref={inviteInput}
+        handleDuplication
+        duplicationCallback={(isDub) => {
+          setIsEmailDuplicate(isDub);
+        }}
       />
     </div>
   );

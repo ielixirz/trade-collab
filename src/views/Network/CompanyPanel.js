@@ -139,6 +139,7 @@ const CompanyPanel = (props) => {
   const [acceptedRequest, setAcceptedRequest] = useState(undefined);
   const [isMember, setIsMember] = useState(false);
   const [blocking, setBlocking] = useState(false);
+  const [isEmailDuplicate, setIsEmailDuplicate] = useState(undefined);
 
   const inviteToCompanyModalRef = useRef(null);
   const fileInput = useRef(null);
@@ -596,6 +597,13 @@ const CompanyPanel = (props) => {
                 <Label htmlFor="email-invitation" style={{ color: 'grey' }}>
                   <b>Email invitations</b>
                 </Label>
+                {isEmailDuplicate ? (
+                  <span className="field-error-msg" style={{ marginLeft: 65 }}>
+                    You already entered this email.
+                  </span>
+                ) : (
+                  ''
+                )}
                 <Row>
                   <MultiSelectTextInput
                     id="invite-email"
@@ -603,6 +611,10 @@ const CompanyPanel = (props) => {
                     placeholder="Enter email..."
                     className="company-invitation-select"
                     ref={inviteInput}
+                    handleDuplication
+                    duplicationCallback={(isDub) => {
+                      setIsEmailDuplicate(isDub);
+                    }}
                   />
                   <Button
                     className="company-invite-btn"
