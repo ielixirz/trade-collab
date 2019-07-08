@@ -48,6 +48,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
   const clear = () => {
     setExistingInvited([]);
     setNonExistingInvited([]);
+    setAlreadyMemberInvited([]);
     setUpdateRole({});
     setUpdatePosition({});
     setIsValidInvite1(undefined);
