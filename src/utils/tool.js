@@ -179,6 +179,14 @@ export const createDataTable = input => {
         hidden: true
       };
     }
+    if (item === 'ShipmentStatus') {
+      return {
+        text: _.get(LABEL, item, item),
+        dataField: item,
+        sort: true,
+        hidden: true
+      };
+    }
     if (item === 'ShipmentMember') {
       return {
         text: _.get(LABEL, item, item),

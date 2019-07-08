@@ -338,10 +338,11 @@ class TableShipment extends React.Component {
 
   filterShipmentStatus = (status, shipment) => {
     let filterShipment = shipment;
+    console.log('Status is', status, 'Shipments', shipment);
     if (status !== 'ALL') {
       filterShipment = shipment.filter(s => {
-        if (s.Status.props.children.props.defaultValue !== null) {
-          return s.Status.props.children.props.defaultValue.value.status === status;
+        if (s.ShipmentStatus !== null) {
+          return s.ShipmentStatus === status;
         }
         return false;
       });
@@ -856,6 +857,7 @@ class TableShipment extends React.Component {
           ),
           '': this.renderDescription(index, item),
           Status: this.renderStatusComponent(item),
+          ShipmentStatus: item.ShipmentStatus,
           uid: item.ShipmentID
         };
       }
@@ -881,6 +883,7 @@ class TableShipment extends React.Component {
         ETA: eta === null ? 'Not Available' : moment(eta.seconds * 1000).format('DD MMM YYYY'),
         '': this.renderDescription(index, item),
         Status: this.renderStatusComponent(item),
+        ShipmentStatus: item.ShipmentStatus,
         uid: item.ShipmentID,
         ShipmentMember: item.ShipmentMember
       };
