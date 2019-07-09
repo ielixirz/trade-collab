@@ -131,13 +131,13 @@ export const IsExistRequest = (UserKey, CompanyKey) => {
   const CompanyRequestStatusPendingSource = collection(
     CompanyRequestRefPath(CompanyKey)
       .where('UserRequestUserKey', '==', UserKey)
-      .where('UserInvitationStatus', '==', 'Pending'),
+      .where('UserRequestStatus', '==', 'Pending'),
   ).pipe(take(1));
 
   const CompanyRequestStatusRejectSource = collection(
     CompanyRequestRefPath(CompanyKey)
       .where('UserRequestUserKey', '==', UserKey)
-      .where('UserInvitationStatus', '==', 'Reject'),
+      .where('UserRequestStatus', '==', 'Reject'),
   ).pipe(take(1));
 
   return combineLatest(CompanyRequestStatusPendingSource, CompanyRequestStatusRejectSource).pipe(
