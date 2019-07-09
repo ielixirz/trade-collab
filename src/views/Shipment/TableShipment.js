@@ -431,7 +431,8 @@ class TableShipment extends React.Component {
                           ...refItem,
                           ShipmentReferenceID: value,
                           ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
-                          ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName
+                          ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
+                          ShipmentKey: shipmentKey
                         });
                       }}
                       onKeyPress={event => {
