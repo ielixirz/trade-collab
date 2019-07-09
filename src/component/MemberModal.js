@@ -62,6 +62,7 @@ class MemberModal extends React.Component {
     });
     const memberData = _.find(member, (item, index) => item.ChatRoomMemberUserKey === user.uid);
     member = _.filter(member, item => _.get(item, 'ChatRoomMemberIsLeave', false) === false);
+
     console.log('ChatRoomMemberIsLeave', memberData);
     _.forEach(member, item => {
       if (_.isEmpty(item.ChatRoomMemberCompanyName)) {
@@ -78,6 +79,7 @@ class MemberModal extends React.Component {
         shipmentMember[item.ChatRoomMemberCompanyName].push(item);
       }
     });
+
     const props = this.props;
     return (
       <div>

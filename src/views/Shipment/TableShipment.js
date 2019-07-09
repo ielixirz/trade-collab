@@ -715,9 +715,7 @@ class TableShipment extends React.Component {
           {props => (
             <div>
               <Row>
-                <Col xs="2">
-                  <Col xs="2">{shipmentsProps.searchInput()}</Col>
-                </Col>
+                <Col xs="4">{shipmentsProps.searchInput()}</Col>
                 <Col xs="3">
                   <Select
                     name="colors"
@@ -730,7 +728,7 @@ class TableShipment extends React.Component {
                     onChange={event => this.setFilterStatus(event.value.status)}
                   />{' '}
                 </Col>
-                <Col xs="5" />
+                <Col xs="3" />
                 <Col
                   xs="2"
                   style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}
@@ -810,7 +808,6 @@ class TableShipment extends React.Component {
       return output;
     });
     const collection = _.orderBy(filtered, ['PIN'], ['desc']);
-    console.log('collection', collection);
 
     input = _.map(collection, (item, index) => {
       const etd = _.get(item, 'ShipperETDDate', 0);
@@ -961,7 +958,7 @@ class TableShipment extends React.Component {
         {props => (
           <div>
             <Row>
-              <Col xs="2">{shipmentsProps.searchInput()}</Col>
+              <Col xs="4">{shipmentsProps.searchInput()}</Col>
               <Col xs="3">
                 <Select
                   name="colors"
@@ -974,7 +971,7 @@ class TableShipment extends React.Component {
                   onChange={event => this.setFilterStatus(event.value.status)}
                 />{' '}
               </Col>
-              <Col xs="5" />
+              <Col xs="3" />
               <Col xs="2" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
                 {this.state.isEdit ? (
                   <Button

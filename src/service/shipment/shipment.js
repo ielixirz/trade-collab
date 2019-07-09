@@ -177,7 +177,9 @@ export const CombineShipmentAndShipmentReference = (
         // console.log(CombineResult[1]);
         const ShipmentReferenceList = _.find(CombineResult[1], ['ShipmentKey', ShipmentID]);
 
-        if (ShipmentReferenceList.ShipmentKey) delete ShipmentReferenceList.ShipmentKey;
+        if (ShipmentReferenceList) {
+          if (ShipmentReferenceList.ShipmentKey) delete ShipmentReferenceList.ShipmentKey;
+        }
 
         // const ShipmentReferenceList = _.reverse(CombineResult[1][Index]);
 

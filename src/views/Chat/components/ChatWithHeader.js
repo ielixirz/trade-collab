@@ -193,6 +193,7 @@ class ChatWithHeader extends Component {
       label: item.CompanyName
     }));
     let output = '';
+
     if (memberData) {
       if (_.size(memberData.ShipmentMemberRole) > 0) {
         if (_.isEmpty(memberData.ShipmentMemberCompanyName)) {
