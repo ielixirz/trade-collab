@@ -479,13 +479,16 @@ class Shipment extends Component {
                 id: item.ShipmentID,
                 ...item
               }));
-              console.log('Search Result', shipment);
-              shipment = _.filter(shipment, item =>
-                _.includes(
-                  _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName'),
-                  search
-                )
-              );
+
+              if (this.state.filterKeyword !== 'ShipmentReferenceList') {
+                shipment = _.filter(shipment, item =>
+                  _.includes(
+                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName'),
+                    search
+                  )
+                );
+              }
+
               console.log('Search Result Filtered', shipment);
               const result = _.filter(shipment, item => {
                 let keyword = '';
@@ -997,6 +1000,8 @@ class Shipment extends Component {
                   searchInput={this.renderSearch}
                   setShipments={this.props.fetchShipments}
                   blocking={this.state.blocking}
+                  filterKeyword={this.state.filterKeyword}
+                  keyword={this.state.keyword}
                 />
               </Col>
             </Row>
