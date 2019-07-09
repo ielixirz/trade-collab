@@ -127,3 +127,20 @@ export const GetUserRequest = (UserKey) => {
     map(UserRequestArray => [...UserRequestArray[0], ...UserRequestArray[1]]),
   );
 };
+export const IsExistRequest = (UserKey, CompanyKey) => {
+  const CompanyRequestStatusPendingSource = collection(
+    CompanyRequestRefPath(CompanyKey)
+      .where('UserRequestUserKey', '==', UserKey)
+      .where('UserInvitationStatus', '==', 'Pending'),
+  ).pipe(take(1));
+
+  const CompanyRequestStatusRejectSource = collection(
+    CompanyRequestRefPath(CompanyKey)
+      .where('UserRequestUserKey', '==', UserKey)
+      .where('UserInvitationStatus', '==', 'Reject'),
+  ).pipe(take(1));
+
+  return combineLatest(CompanyRequestStatusPendingSource, CompanyRequestStatusRejectSource).pipe(
+    map(Result => Result[0].length > 0 || Result[1].length > 0),
+  );
+};

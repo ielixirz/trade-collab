@@ -247,5 +247,5 @@ export const IsExistInvitation = (UserKey, CompanyKey) => {
   return combineLatest(
     CompanyInvitationStatusPendingSource,
     CompanyInvitationStatusRejectSource,
-  ).pipe(map(Result => Result[0] > 0 || Result[1] > 0));
+  ).pipe(map(Result => Result[0].length > 0 || Result[1].length > 0));
 };
