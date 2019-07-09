@@ -191,7 +191,9 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
             }
           });
           setNonExistingInvited(inviteNotExistEntities);
+          setBlocking(false);
           combineLatest(profileObs).subscribe((results2) => {
+            setBlocking(true);
             const loopOne = DeepCopyArray(results2);
             const loopTwo = DeepCopyArray(results2);
             const memberCheckObs = [];
