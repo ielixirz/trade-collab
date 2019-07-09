@@ -479,10 +479,14 @@ class Shipment extends Component {
                 id: item.ShipmentID,
                 ...item
               }));
-              shipment = _.filter(
-                shipment,
-                item => _.get(item, this.state.filterKeyword, 'ShipmentProductName') === search
+              console.log('Search Result', shipment);
+              shipment = _.filter(shipment, item =>
+                _.includes(
+                  _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName'),
+                  search
+                )
               );
+              console.log('Search Result Filtered', shipment);
               const result = _.filter(shipment, item => {
                 let keyword = '';
                 if (_.isEmpty(typeShipment)) {
@@ -579,7 +583,11 @@ class Shipment extends Component {
             <DatePicker onChange={this.handleSearchChange} value={keyword} />
           ) : (
             <Input
-              placeholder="&#xF002; Typing"
+              placeholder={` Search by ${
+                _.find(options, option => {
+                  return option.value === this.state.filterKeyword;
+                }).label
+              }`}
               type="text"
               style={{ height: 38 }}
               onChange={this.handleSearchChange}
