@@ -6,7 +6,14 @@ import { LoginWithEmail } from '../../service/auth/login';
 import { VerificationEmail, AuthStage } from '../../service/auth/manageuser';
 import { Register, RegisterWithEmail } from '../../service/auth/register';
 import { UpdateUserInfo, GetUserCompany } from '../../service/user/user';
-import { GetShipmentList, EditShipment, SearchShipment } from '../../service/shipment/shipment';
+import {
+  GetShipmentList,
+  EditShipment,
+  SearchShipment,
+  CombineShipmentAndShipmentReference,
+  TestCollectionGroup,
+  CreateShipmentMember,
+} from '../../service/shipment/shipment';
 import { GetMasterDataChatRoom, GetDefaultTemplate } from '../../service/masterdata/masterdata';
 import {
   CreateCompanyMultipleInvitation,
@@ -26,12 +33,6 @@ import {
 } from '../../service/company/company';
 
 import { GetUserRequest } from '../../service/join/request';
-
-import {
-  CombineShipmentAndShipmentReference,
-  TestCollectionGroup,
-  CreateShipmentMember,
-} from '../../service/shipment/shipment';
 
 import {
   AddShipmentPin,
@@ -195,7 +196,11 @@ const TestService = () => {
     //       },
     //     },
     //   }).subscribe(console.log);
-    // SearchShipment('ZmtGheg8u5UEUzbdhuDZcu5gSyg2', 'a').subscribe(r => r.map(item => console.log(item.data())));
+    // const d = new Date();
+    // const date = new Date(2019, 6, 1);
+    // const timestamp = firebase.firestore.Timestamp.fromDate(date);
+    // console.log(timestamp);
+    // SearchShipment('ZmtGheg8u5UEUzbdhuDZcu5gSyg2', timestamp, 'ShipperETDDate', 15).subscribe(r => r.map(item => console.log(item)));
   }, []);
   return (
     <div>
