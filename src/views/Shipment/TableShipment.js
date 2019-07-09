@@ -484,7 +484,8 @@ class TableShipment extends React.Component {
                               ...this.state.input.newRef,
                               ShipmentReferenceID: value,
                               ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
-                              ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName
+                              ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
+                              ShipmentKey: shipmentKey
                             }
                           }
                         });

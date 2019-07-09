@@ -464,8 +464,8 @@ class Shipment extends Component {
     let { keyword: search } = this.state;
     if (_.includes(this.state.filterKeyword, 'Date')) {
       search = moment(search).unix();
-      console.log('Search', search);
     }
+
     const { typeShipment } = this.state;
     if (_.isEmpty(search)) {
       console.log('normal fetch');
@@ -521,20 +521,6 @@ class Shipment extends Component {
   renderSearch() {
     const { keyword } = this.state;
 
-    // ConsigneeETAPortDate: Timestamp {seconds: 1560704400, nanoseconds: 0}
-    // ConsigneePort: "asdasd"
-    // ShipmentBuyerCompanyName: "Fluke"
-    // ShipmentCreateTimestamp: 1561986163961
-    // ShipmentCreatorType: "Importer"
-    // ShipmentCreatorUserKey: "rU6WWpwvSlREfU6bxvsiLeRkN5d2"
-    // ShipmentID: "NG14iud26PUyaNZhoxEu"
-    // ShipmentMember: {rU6WWpwvSlREfU6bxvsiLeRkN5d2: {…}}
-    // ShipmentMemberList: ["rU6WWpwvSlREfU6bxvsiLeRkN5d2"]
-    // ShipmentProductName: "test"
-    // ShipmentReferenceList: {0: QueryDocumentSnapshot}
-    // ShipmentShareList: ["DefaultTemplate"]
-    // ShipmentStatus: "Planning"
-    // ShipperETDDate: Timestamp {seconds: 1560877200, nanoseconds: 0}
     const options = [
       { value: 'ShipperETDDate', label: 'ETD' },
       { value: 'ConsigneeETAPortDate', label: 'ETA' },
@@ -558,7 +544,8 @@ class Shipment extends Component {
         onChange={option => {
           console.log('Selected Filtered is', option);
           this.setState({
-            filterKeyword: option.value
+            filterKeyword: option.value,
+            keyword: ''
           });
         }}
       />
