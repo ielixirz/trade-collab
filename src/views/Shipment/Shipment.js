@@ -479,7 +479,10 @@ class Shipment extends Component {
                 id: item.ShipmentID,
                 ...item
               }));
-              shipment = _.filter(shipment, item => item.ShipmentProductName === search);
+              shipment = _.filter(
+                shipment,
+                item => _.get(item, this.state.filterKeyword, 'ShipmentProductName') === search
+              );
               const result = _.filter(shipment, item => {
                 let keyword = '';
                 if (_.isEmpty(typeShipment)) {
