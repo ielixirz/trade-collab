@@ -70,7 +70,7 @@ class ChatWithHeader extends Component {
   }
 
   handleAssignCompany(e, role, userRole) {
-    const { ShipmentKey, ChatRoomKey, members } = this.props;
+    const { ShipmentKey, ChatRoomKey, members, user } = this.props;
     const { companies } = this.props;
 
     const memberData = _.find(members, (item, index) => index === user.uid);
@@ -162,6 +162,8 @@ class ChatWithHeader extends Component {
               }
             });
             getCompany.unsubscribe();
+          } else {
+            window.alert('You has been remove from the chat');
           }
         }
       });
@@ -402,6 +404,8 @@ class ChatWithHeader extends Component {
                         invite.unsubscribe();
                       }
                     });
+                  } else {
+                    window.alert('You has been remove from the chat');
                   }
                 }}
               >
@@ -474,6 +478,7 @@ class ChatWithHeader extends Component {
         >
           <Breadcrumb className="chat-toolbar">
             <MemberInviteModal
+              {...this.props}
               ShipmentKey={ShipmentKey}
               ChatRoomKey={ChatRoomKey}
               member={member}
