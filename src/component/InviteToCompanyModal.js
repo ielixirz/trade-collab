@@ -17,6 +17,8 @@ import {
 } from 'reactstrap';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
+import _ from 'lodash';
+import BlockUi from 'react-block-ui';
 
 import Select from 'react-select';
 import MultiSelectTextInput from './MultiSelectTextInput';
@@ -27,6 +29,7 @@ import { GetUserInfoFromEmail } from '../service/user/user';
 import { GetCompanyUserAccessibility, IsCompanyMember } from '../service/company/company';
 import { GetProlfileList } from '../service/user/profile';
 import { CreateCompanyMultipleInvitation } from '../service/join/invite';
+import { CombineIsExistInvitationRequest } from '../service/join/utiljoin';
 import { DeepCopyArray } from '../utils/parsing';
 
 const InviteToCompanyModal = forwardRef((props, ref) => {
@@ -34,6 +37,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [invitedEmails, setinvitedEmails] = useState([]);
   const [existingInvited, setExistingInvited] = useState([]);
+  const [pendingMemberInvited, setPendingMemberInvited] = useState();
   const [alreadyMemberInvited, setAlreadyMemberInvited] = useState([]);
   const [nonExistingInvited, setNonExistingInvited] = useState([]);
   const [updateRole, setUpdateRole] = useState({});
@@ -43,6 +47,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
   const [isValidInvite2, setIsValidInvite2] = useState(undefined);
   const [isValidInvite1, setIsValidInvite1] = useState(undefined);
   const [isEmailDuplicate, setIsEmailDuplicate] = useState(undefined);
+  const [blocking, setBlocking] = useState(false);
 
   const inviteInput = useRef(null);
 
@@ -93,6 +98,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
   };
 
   const fetchInvitedUserDetail = (emails, companyKey) => {
+    setBlocking(true);
     const userObs = [];
     emails.forEach((email) => {
       userObs.push(
@@ -125,6 +131,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
 
         combineLatest(userObs).subscribe((results1) => {
           const profileObs = [];
+          const inviteAlreadyPendingEntities = [];
           const inviteAlreadyMemberEntities = [];
           const inviteNotExistEntities = [];
           const inviteExistEntities = [];
@@ -184,16 +191,23 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
             }
           });
           setNonExistingInvited(inviteNotExistEntities);
+          setBlocking(false);
           combineLatest(profileObs).subscribe((results2) => {
+            setBlocking(true);
             const loopOne = DeepCopyArray(results2);
             const loopTwo = DeepCopyArray(results2);
             const memberCheckObs = [];
+            const pendingCheckObs = [];
             // First loop to check isMember
             loopOne.forEach((result) => {
               const firstProfile = result.pop();
               memberCheckObs.push(IsCompanyMember(companyKey, firstProfile.key));
+              pendingCheckObs.push(CombineIsExistInvitationRequest(firstProfile.key, companyKey));
             });
-            combineLatest(memberCheckObs).subscribe((isMemberList) => {
+            combineLatest(memberCheckObs.concat(pendingCheckObs)).subscribe((isInvitable) => {
+              const isInvitableChunk = _.chunk(isInvitable, isInvitable.length / 2);
+              const isMemberList = isInvitableChunk[0];
+              const isPendingList = isInvitableChunk[1];
               // Second loop to populate invite
               loopTwo.forEach((result, index) => {
                 const firstProfile = result.pop();
@@ -216,6 +230,25 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
                     // ),
                   };
                   inviteAlreadyMemberEntities.push(inviteEntity);
+                } else if (isPendingList[index]) {
+                  const inviteEntity = {
+                    key: null,
+                    name: <i style={{ color: 'grey' }}>Invite/Request Already Sent</i>,
+                    email: firstProfile.email,
+                    position: '-',
+                    role: '-',
+                    // remove: (
+                    //   <i
+                    //     className="cui-trash icons"
+                    //     role="button"
+                    //     style={{ cursor: 'pointer' }}
+                    //     onClick={removeInvite(result.email)}
+                    //     onKeyDown={null}
+                    //     tabIndex="-1"
+                    //   />
+                    // ),
+                  };
+                  inviteAlreadyPendingEntities.push(inviteEntity);
                 } else {
                   // TO-DO get first profile for now
                   const inviteEntity = {
@@ -255,8 +288,10 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
                   inviteExistEntities.push(inviteEntity);
                 }
               });
+              setPendingMemberInvited(inviteAlreadyPendingEntities);
               setAlreadyMemberInvited(inviteAlreadyMemberEntities);
               setExistingInvited(inviteExistEntities);
+              setBlocking(false);
             });
           });
         });
@@ -416,7 +451,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
 
   const renderStepTwoBody = () => (
     <MainDataTable
-      data={existingInvited.concat(nonExistingInvited, alreadyMemberInvited)}
+      data={existingInvited.concat(nonExistingInvited, pendingMemberInvited, alreadyMemberInvited)}
       column={inviteToCompanyColumns}
       cssClass="company-invite-table"
       wraperClass="company-invite-table-wraper"
@@ -435,29 +470,31 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
           </b>
         </h2>
       </ModalHeader>
-      <ModalBody>
-        {currentStep === 1 ? renderStepOneBody() : renderStepTwoBody()}
-        {currentStep === 1 && isValidInvite1 === false ? (
-          <Alert color="warning" style={{ marginTop: 10, marginBottom: 0 }}>
-            Please select your
-            {' '}
-            <b>company</b>
-            {' '}
+      <ModalBody style={{ minHeight: 200 }}>
+        <BlockUi tag="div" blocking={blocking} style={{ height: '100%' }}>
+          {currentStep === 1 ? renderStepOneBody() : renderStepTwoBody()}
+          {currentStep === 1 && isValidInvite1 === false ? (
+            <Alert color="warning" style={{ marginTop: 10, marginBottom: 0 }}>
+              Please select your
+              {' '}
+              <b>company</b>
+              {' '}
 and enter your invitee
-            {' '}
-            <b>email</b>
+              {' '}
+              <b>email</b>
 .
-          </Alert>
-        ) : (
-          ''
-        )}
-        {currentStep === 2 && isValidInvite2 === false ? (
-          <Alert color="warning" style={{ margin: 0 }}>
-            Role must be select for all invitation.
-          </Alert>
-        ) : (
-          ''
-        )}
+            </Alert>
+          ) : (
+            ''
+          )}
+          {currentStep === 2 && isValidInvite2 === false ? (
+            <Alert color="warning" style={{ margin: 0 }}>
+              Role must be select for all invitation.
+            </Alert>
+          ) : (
+            ''
+          )}
+        </BlockUi>
       </ModalBody>
       <ModalFooter style={{ border: 'none' }}>
         {currentStep === 1 ? (

@@ -48,6 +48,11 @@ export default class MultiSelectTextInput extends Component {
     if (!inputValue) return;
     // eslint-disable-next-line default-case
     switch (event.key) {
+      case 'Backspace':
+        if (inputValue.length === 1) {
+          this.setState({ inputValue: '' });
+        }
+        break;
       case 'Enter':
       case 'Tab':
       case ' ':

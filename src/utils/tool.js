@@ -112,6 +112,14 @@ export const createDataTable = input => {
         hidden: true
       };
     }
+    if (item === 'ShipmentReferenceList') {
+      return {
+        text: _.get(LABEL, item, item),
+        dataField: item,
+        sort: true,
+        hidden: true
+      };
+    }
     if (item === '') {
       return {
         text: _.get(LABEL, item, item),
@@ -172,6 +180,14 @@ export const createDataTable = input => {
       };
     }
     if (item === 'id') {
+      return {
+        text: _.get(LABEL, item, item),
+        dataField: item,
+        sort: true,
+        hidden: true
+      };
+    }
+    if (item === 'ShipmentStatus') {
       return {
         text: _.get(LABEL, item, item),
         dataField: item,

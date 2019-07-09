@@ -82,10 +82,12 @@ class MemberInviteModal extends React.Component {
   };
 
   onSubmit = () => {
-    const { ChatRoomKey, ShipmentKey, member } = this.props;
+    const { ChatRoomKey, ShipmentKey, member, user } = this.props;
+    const memberData = _.find(member, (item, index) => item.ChatRoomMemberUserKey === user.uid);
     const { invitationCollection } = this.state;
     console.log('invitationCollection', this.state);
     console.log('member', this.props);
+
     let input = invitationCollection;
 
     _.forEach(invitationCollection, item => {
@@ -95,22 +97,24 @@ class MemberInviteModal extends React.Component {
         }
       });
     });
-
-    console.log('Updated', input);
-    if (input.length > 0) {
-      const result = CreateChatMultipleInvitation(
-        input,
-        ShipmentKey,
-        ChatRoomKey,
-        this.props.sender
-      );
-      result.subscribe({
-        next: res => {
-          console.log(res);
-        }
-      });
+    if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
+      console.log('Updated', input);
+      if (input.length > 0) {
+        const result = CreateChatMultipleInvitation(
+          input,
+          ShipmentKey,
+          ChatRoomKey,
+          this.props.sender
+        );
+        result.subscribe({
+          next: res => {
+            console.log(res);
+          }
+        });
+      }
+    } else {
+      window.alert('You has been remove from the chat');
     }
-
     this.toggle();
   };
 

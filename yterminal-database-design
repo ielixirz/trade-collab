@@ -248,7 +248,7 @@
                 UserRequestRoleName (string)
                 UserRequestRolePermissionCode (string)
                 UserRequestPosition (string)
-                UserInvitationStatus (string) ('Reject','Approve','Pending')
+                UserRequestStatus (string) ('Reject','Approve','Pending')
         +CompanyUserAccessibility
             >CompanyUserAccessibilityKey
                 CompanyUserAccessibilityRoleName (string)

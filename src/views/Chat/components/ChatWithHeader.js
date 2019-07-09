@@ -70,8 +70,10 @@ class ChatWithHeader extends Component {
   }
 
   handleAssignCompany(e, role, userRole) {
-    const { ShipmentKey, ChatRoomKey, members } = this.props;
+    const { ShipmentKey, ChatRoomKey, members, user } = this.props;
     const { companies } = this.props;
+
+    const memberData = _.find(members, (item, index) => index === user.uid);
     const pickedCompany = _.find(companies, item => item.CompanyKey === e.value);
     if (pickedCompany) {
       const getCompany = GetCompanyMember(e.value).subscribe({
@@ -112,53 +114,57 @@ class ChatWithHeader extends Component {
             }
           });
           console.log('inviteMember', inviteMember);
-          const invite = CreateChatMultipleInvitation(
-            inviteMember,
-            ShipmentKey,
-            ChatRoomKey,
-            this.props.sender
-          ).subscribe({
-            next: res => {
-              console.log(res);
-              invite.unsubscribe();
-              this.props.fetchMoreMessage(ChatRoomKey, ShipmentKey);
-            }
-          });
-          CreateChatRoom(ShipmentKey, {
-            ChatRoomType: 'Internal',
-            ChatRoomName: 'Internal'
-          }).subscribe({
-            next: result => {
-              const data = result.path.split('/');
-              const chatkey = result.id;
-              const invite = CreateChatMultipleInvitation(
-                inviteMember,
-                ShipmentKey,
-                chatkey,
-                this.props.sender
-              ).subscribe({
-                next: res => {
-                  console.log(res);
-                  invite.unsubscribe();
-                  this.props.fetchMoreMessage(chatkey, ShipmentKey);
-                }
-              });
-              const ChatRoomMember = AddChatRoomMember(ShipmentKey, chatkey, {
-                ChatRoomMemberUserKey: this.props.user.uid,
-                ChatRoomMemberEmail: this.props.user.email,
-                ChatRoomMemberImageUrl: '',
-                ChatRoomMemberRole: inviteRole,
-                ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
-              }).subscribe({
-                next: result => {}
-              });
-            },
-            complete: result => {
-              console.log(result);
-            }
-          });
-          getCompany.unsubscribe();
+          if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
+            const invite = CreateChatMultipleInvitation(
+              inviteMember,
+              ShipmentKey,
+              ChatRoomKey,
+              this.props.sender
+            ).subscribe({
+              next: res => {
+                console.log(res);
+                invite.unsubscribe();
+                this.props.fetchMoreMessage(ChatRoomKey, ShipmentKey);
+              }
+            });
+            CreateChatRoom(ShipmentKey, {
+              ChatRoomType: 'Internal',
+              ChatRoomName: 'Internal'
+            }).subscribe({
+              next: result => {
+                const data = result.path.split('/');
+                const chatkey = result.id;
+                const invite = CreateChatMultipleInvitation(
+                  inviteMember,
+                  ShipmentKey,
+                  chatkey,
+                  this.props.sender
+                ).subscribe({
+                  next: res => {
+                    console.log(res);
+                    invite.unsubscribe();
+                    this.props.fetchMoreMessage(chatkey, ShipmentKey);
+                  }
+                });
+                const ChatRoomMember = AddChatRoomMember(ShipmentKey, chatkey, {
+                  ChatRoomMemberUserKey: this.props.user.uid,
+                  ChatRoomMemberEmail: this.props.user.email,
+                  ChatRoomMemberImageUrl: '',
+                  ChatRoomMemberRole: inviteRole,
+                  ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+                }).subscribe({
+                  next: result => {}
+                });
+              },
+              complete: result => {
+                console.log(result);
+              }
+            });
+            getCompany.unsubscribe();
+          } else {
+            window.alert('You has been remove from the chat');
+          }
         }
       });
     }
@@ -187,6 +193,7 @@ class ChatWithHeader extends Component {
       label: item.CompanyName
     }));
     let output = '';
+
     if (memberData) {
       if (_.size(memberData.ShipmentMemberRole) > 0) {
         if (_.isEmpty(memberData.ShipmentMemberCompanyName)) {
@@ -386,17 +393,21 @@ class ChatWithHeader extends Component {
                     ChatRoomMemberCompanyKey: ''
                   });
                   console.log(inviteMember);
-                  const invite = CreateChatMultipleInvitation(
-                    inviteMember,
-                    ShipmentKey,
-                    ChatRoomKey,
-                    this.props.sender
-                  ).subscribe({
-                    next: res => {
-                      console.log(res);
-                      invite.unsubscribe();
-                    }
-                  });
+                  if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
+                    const invite = CreateChatMultipleInvitation(
+                      inviteMember,
+                      ShipmentKey,
+                      ChatRoomKey,
+                      this.props.sender
+                    ).subscribe({
+                      next: res => {
+                        console.log(res);
+                        invite.unsubscribe();
+                      }
+                    });
+                  } else {
+                    window.alert('You has been remove from the chat');
+                  }
                 }}
               >
                 <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
@@ -468,6 +479,7 @@ class ChatWithHeader extends Component {
         >
           <Breadcrumb className="chat-toolbar">
             <MemberInviteModal
+              {...this.props}
               ShipmentKey={ShipmentKey}
               ChatRoomKey={ChatRoomKey}
               member={member}

@@ -43,7 +43,15 @@ class MemberModal extends React.Component {
   );
 
   render() {
-    let { count, list: member, toggleBlocking, network, ShipmentKey, ChatRoomKey } = this.props;
+    let {
+      count,
+      list: member,
+      toggleBlocking,
+      network,
+      ShipmentKey,
+      ChatRoomKey,
+      user
+    } = this.props;
     const shipmentMember = [];
     console.log('Member Modal props', this.props);
     let suggestion = _.map(network, item => {
@@ -52,8 +60,10 @@ class MemberModal extends React.Component {
         label: item.UserMemberEmail
       };
     });
+    const memberData = _.find(member, (item, index) => item.ChatRoomMemberUserKey === user.uid);
     member = _.filter(member, item => _.get(item, 'ChatRoomMemberIsLeave', false) === false);
-    console.log('ChatRoomMemberIsLeave', member);
+
+    console.log('ChatRoomMemberIsLeave', memberData);
     _.forEach(member, item => {
       if (_.isEmpty(item.ChatRoomMemberCompanyName)) {
         if (_.isEmpty(shipmentMember.Individual)) {
@@ -69,6 +79,7 @@ class MemberModal extends React.Component {
         shipmentMember[item.ChatRoomMemberCompanyName].push(item);
       }
     });
+
     const props = this.props;
     return (
       <div>
@@ -113,17 +124,21 @@ class MemberModal extends React.Component {
                       ChatRoomMemberCompanyKey: ''
                     });
                     console.log(inviteMember);
-                    const invite = CreateChatMultipleInvitation(
-                      inviteMember,
-                      ShipmentKey,
-                      ChatRoomKey,
-                      this.props.sender
-                    ).subscribe({
-                      next: res => {
-                        console.log(res);
-                        invite.unsubscribe();
-                      }
-                    });
+                    if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
+                      const invite = CreateChatMultipleInvitation(
+                        inviteMember,
+                        ShipmentKey,
+                        ChatRoomKey,
+                        this.props.sender
+                      ).subscribe({
+                        next: res => {
+                          console.log(res);
+                          invite.unsubscribe();
+                        }
+                      });
+                    } else {
+                      window.alert('You has been remove from the chat');
+                    }
                   }}
                 >
                   <span style={{ color: '#fff', fontWeight: 'bold' }}>Invite new member:</span>

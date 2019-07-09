@@ -305,6 +305,11 @@ const CompanyPanel = (props) => {
         updateKey: keys,
         status,
       });
+    } else {
+      errorPopupRef.current.triggerError(
+        <span>Please select role to approve the request.</span>,
+        'WARN',
+      );
     }
   };
 

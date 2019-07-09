@@ -430,7 +430,8 @@ export const getChatRoomList = (shipmentKey, uid) => dispatch => {
   GetChatRoomList(shipmentKey, uid).subscribe({
     next: snapshot => {
       const originalReducer = [];
-      const chatrooms = [];
+      let chatrooms = [];
+
       snapshot.map((d, index) => {
         const chatRoomKey = d.id;
 
@@ -446,7 +447,7 @@ export const getChatRoomList = (shipmentKey, uid) => dispatch => {
         });
         return true;
       });
-
+      chatrooms = _.reverse(chatrooms);
       _.forEach(chatrooms, (c, index) => {
         originalReducer[c.ChatRoomKey] = {
           ChatRoomKey: c.ChatRoomKey,

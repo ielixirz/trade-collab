@@ -163,7 +163,9 @@ export const CombineShipmentAndShipmentReference = (
         // console.log(CombineResult[1]);
         const ShipmentReferenceList = _.find(CombineResult[1], ['ShipmentKey', ShipmentID]);
 
-        if (ShipmentReferenceList.ShipmentKey) delete ShipmentReferenceList.ShipmentKey;
+        if (ShipmentReferenceList) {
+          if (ShipmentReferenceList.ShipmentKey) delete ShipmentReferenceList.ShipmentKey;
+        }
 
         // const ShipmentReferenceList = _.reverse(CombineResult[1][Index]);
 
@@ -200,11 +202,15 @@ export const SearchShipment = (
     ShipmentMemberUserKey,
   );
 
-  const ShipmentListSource = collection(
+  let ShipmentListSource = collection(
     DefaultQuery.where(SearchTitle, '>=', SearchText)
       .orderBy(SearchTitle, 'asc')
       .limit(LimitNumber),
   );
+
+  if (SearchTitle === 'ShipmentReferenceList') {
+    ShipmentListSource = collection(DefaultQuery);
+  }
 
   const ShipmentKeyListSource = ShipmentListSource.pipe(
     map(ShipmentList => ShipmentList.map(ShipmentItem => ShipmentItem.id)),
