@@ -538,11 +538,11 @@ class Shipment extends Component {
     const options = [
       { value: 'ShipperETDDate', label: 'ETD' },
       { value: 'ConsigneeETAPortDate', label: 'ETA' },
-      { value: 'ConsigneePort', label: 'Port' },
+      // { value: 'ConsigneePort', label: 'Port' },
       { value: 'ShipmentProductName', label: 'Product' },
       { value: 'ShipmentBuyerCompanyName', label: 'Buyer' },
       { value: 'ShipmentSellerCompanyName', label: 'Seller' },
-      { value: 'ShipmentStatus', label: 'Status' },
+      // { value: 'ShipmentStatus', label: 'Status' },
       { value: 'ShipmentReferenceList', label: 'Ref' }
     ];
 
