@@ -5,6 +5,7 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/sort-comp */
 /* eslint-disable filenames/match-regex */
+import firebase from 'firebase';
 import React, { Component } from 'react';
 import {
   TabContent,
@@ -463,7 +464,8 @@ class Shipment extends Component {
     this.props.fetchShipments({}, []);
     let { keyword: search } = this.state;
     if (_.includes(this.state.filterKeyword, 'Date')) {
-      search = moment(search).unix();
+      search = firebase.firestore.Timestamp.fromDate(moment(search).toDate());
+      console.log(search)
     }
 
     const { typeShipment } = this.state;
@@ -570,7 +572,7 @@ class Shipment extends Component {
             {MyComponent()}
           </InputGroupAddon>
           {_.includes(this.state.filterKeyword, 'Date') ? (
-            <DatePicker onChange={this.handleSearchChange} value={keyword} />
+            <DatePicker onChange={this.handleSearchChange} value={keyword} locale="en-GB" />
           ) : (
             <Input
               placeholder={` Search by ${
