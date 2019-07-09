@@ -216,11 +216,17 @@ export const SearchShipment = (
     ShipmentMemberUserKey
   );
 
-  const ShipmentListSource = collection(
+  let ShipmentListSource = collection(
     DefaultQuery.where(SearchTitle, '>=', SearchText)
       .orderBy(SearchTitle, 'asc')
       .limit(LimitNumber)
   );
+
+  if (SearchTitle === 'ShipmentReferenceList') {
+    ShipmentListSource = collection(
+      DefaultQuery.where(SearchTitle, '>=', SearchText),
+    );
+  }
 
   const ShipmentKeyListSource = ShipmentListSource.pipe(
     map(ShipmentList => ShipmentList.map(ShipmentItem => ShipmentItem.id))
