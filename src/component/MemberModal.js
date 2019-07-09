@@ -53,6 +53,7 @@ class MemberModal extends React.Component {
       };
     });
     member = _.filter(member, item => _.get(item, 'ChatRoomMemberIsLeave', false) === false);
+    const memberData = _.find(members, (item, index) => index === user.uid);
     console.log('ChatRoomMemberIsLeave', member);
     _.forEach(member, item => {
       if (_.isEmpty(item.ChatRoomMemberCompanyName)) {
@@ -113,17 +114,19 @@ class MemberModal extends React.Component {
                       ChatRoomMemberCompanyKey: ''
                     });
                     console.log(inviteMember);
-                    const invite = CreateChatMultipleInvitation(
-                      inviteMember,
-                      ShipmentKey,
-                      ChatRoomKey,
-                      this.props.sender
-                    ).subscribe({
-                      next: res => {
-                        console.log(res);
-                        invite.unsubscribe();
-                      }
-                    });
+                    if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
+                      const invite = CreateChatMultipleInvitation(
+                        inviteMember,
+                        ShipmentKey,
+                        ChatRoomKey,
+                        this.props.sender
+                      ).subscribe({
+                        next: res => {
+                          console.log(res);
+                          invite.unsubscribe();
+                        }
+                      });
+                    }
                   }}
                 >
                   <span style={{ color: '#fff', fontWeight: 'bold' }}>Invite new member:</span>
