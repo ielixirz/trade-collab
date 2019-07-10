@@ -493,6 +493,7 @@ class ChatWithHeader extends Component {
                 _.filter(member, item => _.get(item, 'ChatRoomMemberIsLeave', false) === false)
                   .length
               }
+
               toggleBlocking={toggleBlocking}
               list={member}
               network={network}

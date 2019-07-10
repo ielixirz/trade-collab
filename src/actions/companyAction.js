@@ -55,7 +55,7 @@ export const fetchCompany = companies => async (dispatch, getState) => {
       })
     });
   });
-
+  console.log('Company fetch', companies);
   dispatch({
     type: FETCH_COMPANY_USER,
     payload: companies

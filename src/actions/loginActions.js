@@ -30,6 +30,10 @@ export const setDefault = () => dispatch => {
 };
 export const login = (data, callback) => dispatch => {
   const { email, password } = data;
+  dispatch({
+    type: FETCH_COMPANY_USER,
+    payload: {}
+  });
   LoginWithEmail(email, password).subscribe({
     next: res => {
       dispatch({
@@ -91,6 +95,10 @@ export const logout = callback => dispatch => {
 
       dispatch({
         type: FETCH_SHIPMENT_LIST_DATA,
+        payload: {}
+      });
+      dispatch({
+        type: FETCH_COMPANY_USER,
         payload: {}
       });
       if (callback) callback();
