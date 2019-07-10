@@ -1050,6 +1050,9 @@ exports.CopyInsideMasterDataToShipment = functions.firestore
       PayloadObject['ShipmentSellerCompanyName'] = newValue.ShipperCompanyName;
     if (newValue.ConsigneeCompanyName)
       PayloadObject['ShipmentBuyerCompanyName'] = newValue.ConsigneeCompanyName;
+    if (newValue.ShipmentDetailPriceDescriptionOfGoods)
+      PayloadObject['ShipmentDetailPriceDescriptionOfGoods'] =
+        newValue.ShipmentDetailPriceDescriptionOfGoods;
 
     if (PayloadObject !== {} && change.after.id === 'DefaultTemplate') {
       return admin
