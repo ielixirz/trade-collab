@@ -374,13 +374,58 @@ exports.OnCreateShipment = functions.firestore
           ChatRoomMemberRole: [ShipmetMemberRole]
         });
 
+      const ShipmentPartnerEmail = snapshot.data().ShipmentPartnerEmail;
+
+      const FindPartnerUserKey = await admin
+        .firestore()
+        .collection('UserInfo')
+        .where('UserInfoEmail', '==', ShipmentPartnerEmail)
+        .get();
+
+      let PartnerUID;
+
+      let AddChatRoomPartnerMember = Promise.resolve(null);
+
+      if (FindPartnerUserKey.size > 0) {
+        PartnerUID = FindPartnerUserKey.docs[0].id;
+
+        let ShipmetPartnerRole;
+
+        let CreatorType = snapshot.data().ShipmentCreatorType;
+
+        if (CreatorType === 'Importer') ShipmetPartnerRole = 'Exporter';
+        else if (CreatorType === 'Exporter') ShipmetPartnerRole = 'Importer';
+        else if (CreatorType === 'Inbound Freight Forwarder')
+          ShipmetPartnerRole = 'Outbound Freight Forwarder';
+        else if (CreatorType === 'Outbound Freight Forwarder')
+          ShipmetPartnerRole = 'Inbound Freight Forwarder';
+        else if (CreatorType === 'Inbound Custom Broker')
+          ShipmetPartnerRole = 'Outbound Custom Broker';
+        else if (CreatorType === 'Outbound Custom Broker')
+          ShipmetPartnerRole = 'Inbound Custom Broker';
+
+        AddChatRoomPartnerMember = await admin
+          .firestore()
+          .collection('Shipment')
+          .doc(context.params.ShipmentKey)
+          .collection('ChatRoom')
+          .doc(ChatRoomID)
+          .collection('ChatRoomMember')
+          .add({
+            ChatRoomMemberUserKey: PartnerUID,
+            ChatRoomMemberEmail: ShipmentPartnerEmail,
+            ChatRoomMemberRole: [ShipmetPartnerRole]
+          });
+      }
+
       return Promise.all([
         CreateShipmentShareData,
         AddShipmentShareList,
         AddShipmentMember,
         AddShipmentMemberList,
         AddChatRoom,
-        AddChatRoomMember
+        AddChatRoomMember,
+        AddChatRoomPartnerMember
       ]);
     } catch (error) {
       return error;
