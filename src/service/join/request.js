@@ -134,13 +134,5 @@ export const IsExistRequest = (UserKey, CompanyKey) => {
       .where('UserRequestStatus', '==', 'Pending'),
   ).pipe(take(1));
 
-  const CompanyRequestStatusRejectSource = collection(
-    CompanyRequestRefPath(CompanyKey)
-      .where('UserRequestUserKey', '==', UserKey)
-      .where('UserRequestStatus', '==', 'Reject'),
-  ).pipe(take(1));
-
-  return combineLatest(CompanyRequestStatusPendingSource, CompanyRequestStatusRejectSource).pipe(
-    map(Result => Result[0].length > 0 || Result[1].length > 0),
-  );
+  return combineLatest(CompanyRequestStatusPendingSource).pipe(map(Result => Result[0].length > 0));
 };

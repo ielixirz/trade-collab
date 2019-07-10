@@ -238,14 +238,7 @@ export const IsExistInvitation = (UserKey, CompanyKey) => {
       .where('CompanyInvitationStatus', '==', 'Pending'),
   ).pipe(take(1));
 
-  const CompanyInvitationStatusRejectSource = collection(
-    UserInvitationRefPath(UserKey)
-      .where('CompanyInvitationCompanyKey', '==', CompanyKey)
-      .where('CompanyInvitationStatus', '==', 'Reject'),
-  ).pipe(take(1));
-
-  return combineLatest(
-    CompanyInvitationStatusPendingSource,
-    CompanyInvitationStatusRejectSource,
-  ).pipe(map(Result => Result[0].length > 0 || Result[1].length > 0));
+  return combineLatest(CompanyInvitationStatusPendingSource).pipe(
+    map(Result => Result[0].length > 0),
+  );
 };
