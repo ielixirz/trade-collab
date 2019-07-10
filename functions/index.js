@@ -376,25 +376,33 @@ exports.OnCreateShipment = functions.firestore
 
       const ShipmentPartnerEmail = snapshot.data().ShipmentPartnerEmail;
 
-      const FindPartnerUserKey = await admin.firestore().collection('UserInfo').where('UserInfoEmail','==',ShipmentPartnerEmail).get()
+      const FindPartnerUserKey = await admin
+        .firestore()
+        .collection('UserInfo')
+        .where('UserInfoEmail', '==', ShipmentPartnerEmail)
+        .get();
 
-      let PartnerUID
+      let PartnerUID;
 
-      let AddChatRoomPartnerMember = Promise.resolve(null)
-      
-      if ( FindPartnerUserKey.size > 0 ) {
-        PartnerUID = FindPartnerUserKey.docs[0].data()
+      let AddChatRoomPartnerMember = Promise.resolve(null);
 
-        let ShipmetPartnerRole
+      if (FindPartnerUserKey.size > 0) {
+        PartnerUID = FindPartnerUserKey.docs[0].data();
+
+        let ShipmetPartnerRole;
 
         let CreatorType = snapshot.data().ShipmentCreatorType;
 
-        if (CreatorType === 'Importer') ShipmetPartnerRole = 'Exporter'
-        else if (CreatorType === 'Exporter') ShipmetPartnerRole = 'Importer'
-        else if (CreatorType === 'Inbound Freight Forwarder') ShipmetPartnerRole = 'Outbound Freight Forwarder'
-        else if (CreatorType === 'Outbound Freight Forwarder') ShipmetPartnerRole = 'Inbound Freight Forwarder'
-        else if (CreatorType === 'Inbound Custom Broker') ShipmetPartnerRole = 'Outbound Custom Broker'
-        else if (CreatorType === 'Outbound Custom Broker') ShipmetPartnerRole = 'Inbound Custom Broker'
+        if (CreatorType === 'Importer') ShipmetPartnerRole = 'Exporter';
+        else if (CreatorType === 'Exporter') ShipmetPartnerRole = 'Importer';
+        else if (CreatorType === 'Inbound Freight Forwarder')
+          ShipmetPartnerRole = 'Outbound Freight Forwarder';
+        else if (CreatorType === 'Outbound Freight Forwarder')
+          ShipmetPartnerRole = 'Inbound Freight Forwarder';
+        else if (CreatorType === 'Inbound Custom Broker')
+          ShipmetPartnerRole = 'Outbound Custom Broker';
+        else if (CreatorType === 'Outbound Custom Broker')
+          ShipmetPartnerRole = 'Inbound Custom Broker';
 
         AddChatRoomPartnerMember = await admin
           .firestore()
@@ -408,7 +416,6 @@ exports.OnCreateShipment = functions.firestore
             ChatRoomMemberEmail: ShipmentPartnerEmail,
             ChatRoomMemberRole: [CreatorType]
           });
-
       }
 
       return Promise.all([
