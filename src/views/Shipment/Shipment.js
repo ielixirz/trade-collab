@@ -57,6 +57,8 @@ import { AddChatRoomMember, CreateChatRoom } from '../../service/chat/chat';
 import Select from 'react-select';
 import DatePicker from 'react-date-picker';
 import moment from 'moment';
+import { isValidEmail } from '../../utils/validation';
+import { CreateChatMultipleInvitation } from '../../service/join/invite';
 
 const WAIT_INTERVAL = 1000;
 const ENTER_KEY = 13;
@@ -156,11 +158,19 @@ class Shipment extends Component {
         parameter.ShipmentCreatorType = `Outbound ${parameter.ShipmentCreatorType}`;
       }
     }
+    if (isValidEmail(input.to)) {
+      parameter.ShipmentPartnerEmail = input.to;
+    }
+    parameter.ShipmentCreatorProfileFirstName = this.props.sender.ProfileFirstname;
+
     parameter.ShipmentCreateTimestamp = new Date().getTime();
+    console.log('Parameter ', parameter);
     CreateShipment(parameter).subscribe({
       next: createdShipment => {
         this.fetchShipmentReload();
         const shipmentKey = createdShipment.id;
+        let inviteMember = [];
+
         UpdateMasterData(createdShipment.id, 'DefaultTemplate', {
           ShipmentDetailProduct: parameter.ShipmentProductName
         }).subscribe(() => {
@@ -769,7 +779,7 @@ class Shipment extends Component {
                 </Label>
                 <Col sm={10}>
                   <Input
-                    type="text"
+                    type="email"
                     name="to"
                     id="to"
                     onChange={this.writeText}
@@ -791,22 +801,7 @@ class Shipment extends Component {
                   />
                 </Col>
               </FormGroup>
-              {/*
-              // TO BE REMOVE //
-              <FormGroup row>
-                <Label for="Ref" sm={2} className="create-shipment-field-title">
-                  Ref#
-                </Label>
-                <Col sm={10}>
-                  <Input
-                    type="text"
-                    name="ref"
-                    id="ref"
-                    onChange={this.writeText}
-                    value={this.state.input.ref}
-                  />
-                </Col>
-              </FormGroup> */}
+
               <Row className="show-grid">
                 <Col md={3} />
                 <Col md={6}>

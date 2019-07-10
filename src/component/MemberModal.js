@@ -123,7 +123,6 @@ class MemberModal extends React.Component {
                       ChatRoomMemberCompanyName: '',
                       ChatRoomMemberCompanyKey: ''
                     });
-                    console.log(inviteMember);
                     if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
                       const invite = CreateChatMultipleInvitation(
                         inviteMember,

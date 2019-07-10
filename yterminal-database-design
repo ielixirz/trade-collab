@@ -15,6 +15,9 @@
         ShipmentCreateTimestamp (timestamp)
         ShipmentLastestUpdateTimestamp (timestamp)
         ShipmentMemberList (array <string>)
+        ShipmentPartnerEmail (string)
+        ShipmentCreatorProfileFirstName (string)
+        ShipmentCreatorProfileSurName (string) 
         ShipmentMember (object<object>)
             {
                 ShipmentMemberUserKey : 

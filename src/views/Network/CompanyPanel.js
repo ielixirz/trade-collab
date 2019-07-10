@@ -291,12 +291,33 @@ const CompanyPanel = (props) => {
   };
 
   const responseToRequest = (keys, status) => {
-    if (updateRole[keys.uKey] !== undefined) {
+    if (status === 'Approve') {
+      if (updateRole[keys.uKey] !== undefined) {
+        UpdateCompanyRequestStatus(
+          keys.cKey,
+          keys.rKey,
+          status,
+          updateRole[keys.uKey],
+          'rolePermissionCode',
+          updatePosition[keys.uKey] === undefined ? '-' : updatePosition[keys.uKey],
+        );
+        UpdateUserRequestStatus(keys.uKey, keys.rKey, status);
+        setAcceptedRequest({
+          updateKey: keys,
+          status,
+        });
+      } else {
+        errorPopupRef.current.triggerError(
+          <span>Please select role to approve the request.</span>,
+          'WARN',
+        );
+      }
+    } else {
       UpdateCompanyRequestStatus(
         keys.cKey,
         keys.rKey,
         status,
-        updateRole[keys.uKey],
+        '-',
         'rolePermissionCode',
         updatePosition[keys.uKey] === undefined ? '-' : updatePosition[keys.uKey],
       );
@@ -305,11 +326,6 @@ const CompanyPanel = (props) => {
         updateKey: keys,
         status,
       });
-    } else {
-      errorPopupRef.current.triggerError(
-        <span>Please select role to approve the request.</span>,
-        'WARN',
-      );
     }
   };
 

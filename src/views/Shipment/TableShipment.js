@@ -892,8 +892,7 @@ class TableShipment extends React.Component {
         ShipmentMember: item.ShipmentMember
       };
     });
-    if (_.includes(filterKeyword, 'Date')) {
-    } else {
+    if (_.includes(filterKeyword, 'ShipmentReferenceList')) {
       input = _.filter(input, item =>
         _.includes(_.get(item, `${filterKeyword}`, 'ShipmentProductName'), keyword)
       );
