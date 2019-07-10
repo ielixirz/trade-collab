@@ -493,7 +493,6 @@ class ChatWithHeader extends Component {
                 _.filter(member, item => _.get(item, 'ChatRoomMemberIsLeave', false) === false)
                   .length
               }
-
               toggleBlocking={toggleBlocking}
               list={member}
               network={network}
@@ -675,14 +674,8 @@ class ChatWithHeader extends Component {
                     value={text}
                     disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}
                     onMouseEnter={() => {
-                      const clearUnReadChatMessage = ClearUnReadChatMessage(
-                        sender.id,
-                        ShipmentKey,
-                        ChatRoomKey
-                      ).subscribe({
-                        next: res => {
-                          clearUnReadChatMessage.unsubscribe();
-                        }
+                      ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
+                        next: res => {}
                       });
                       if (chatMsg.length > 0) {
                         if (chatMsg[chatMsg.length - 1].id !== lastkey) {
@@ -701,6 +694,9 @@ class ChatWithHeader extends Component {
                       }
                     }}
                     onChange={e => {
+                      ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
+                        next: res => {}
+                      });
                       if (chatMsg.length > 0) {
                         if (chatMsg[chatMsg.length - 1].id !== lastkey) {
                           this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {

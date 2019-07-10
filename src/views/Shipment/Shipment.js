@@ -164,6 +164,7 @@ class Shipment extends Component {
     parameter.ShipmentCreatorProfileFirstName = this.props.sender.ProfileFirstname;
 
     parameter.ShipmentCreateTimestamp = new Date().getTime();
+    console.log('Parameter ', parameter);
     CreateShipment(parameter).subscribe({
       next: createdShipment => {
         this.fetchShipmentReload();
