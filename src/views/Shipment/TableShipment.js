@@ -892,10 +892,12 @@ class TableShipment extends React.Component {
         ShipmentMember: item.ShipmentMember
       };
     });
-
-    input = _.filter(input, item =>
-      _.includes(_.get(item, `${filterKeyword}`, 'ShipmentProductName'), keyword)
-    );
+    if (_.includes(filterKeyword, 'Date')) {
+    } else {
+      input = _.filter(input, item =>
+        _.includes(_.get(item, `${filterKeyword}`, 'ShipmentProductName'), keyword)
+      );
+    }
 
     if (_.size(input) === 0) {
       columns = [
