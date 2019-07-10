@@ -387,7 +387,7 @@ exports.OnCreateShipment = functions.firestore
       let AddChatRoomPartnerMember = Promise.resolve(null);
 
       if (FindPartnerUserKey.size > 0) {
-        PartnerUID = FindPartnerUserKey.docs[0].data();
+        PartnerUID = FindPartnerUserKey.docs[0].id;
 
         let ShipmetPartnerRole;
 
@@ -414,7 +414,7 @@ exports.OnCreateShipment = functions.firestore
           .add({
             ChatRoomMemberUserKey: PartnerUID,
             ChatRoomMemberEmail: ShipmentPartnerEmail,
-            ChatRoomMemberRole: [CreatorType]
+            ChatRoomMemberRole: [ShipmetPartnerRole]
           });
       }
 
