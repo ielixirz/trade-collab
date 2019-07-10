@@ -465,7 +465,7 @@ class Shipment extends Component {
     let { keyword: search } = this.state;
     if (_.includes(this.state.filterKeyword, 'Date')) {
       search = firebase.firestore.Timestamp.fromDate(moment(search).toDate());
-      console.log(search)
+      console.log(search);
     }
 
     const { typeShipment } = this.state;
@@ -481,8 +481,14 @@ class Shipment extends Component {
                 id: item.ShipmentID,
                 ...item
               }));
-
-              if (this.state.filterKeyword !== 'ShipmentReferenceList') {
+              console.log('Search Result ', shipment);
+              if (_.includes(this.state.filterKeyword, 'Date')) {
+                shipment = _.filter(
+                  shipment,
+                  item =>
+                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName') >= search
+                );
+              } else if (this.state.filterKeyword !== 'ShipmentReferenceList') {
                 shipment = _.filter(shipment, item =>
                   _.includes(
                     _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName'),
