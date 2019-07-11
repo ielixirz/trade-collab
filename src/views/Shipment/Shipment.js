@@ -499,12 +499,12 @@ class Shipment extends Component {
                     _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName') >= search
                 );
               } else if (this.state.filterKeyword !== 'ShipmentReferenceList') {
-                shipment = _.filter(shipment, item =>
-                  _.includes(
-                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName'),
-                    search
-                  )
-                );
+                shipment = _.filter(shipment, item => {
+                  return _.includes(
+                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName').toLowerCase(),
+                    search.toLowerCase()
+                  );
+                });
               }
 
               console.log('Search Result Filtered', shipment);
