@@ -54,7 +54,7 @@ exports.ApproveCompanyInvitation = functions.firestore
           UserMemberEmail: newValue.CompanyInvitationUserEmail,
           UserMemberPosition: newValue.CompanyInvitationPosition,
           UserMemberRoleName: newValue.CompanyInvitationRole,
-          UserMatrixRolePermissionCode: newValue.CompanyInvitationRole,
+          CompanyUserAccessibilityRolePermissionCode: newValue.CompanyInvitationRole,
           UserMemberCompanyStandingStatus: 'Active',
           UserMemberJoinedTimestamp: new Date()
         });
@@ -93,7 +93,7 @@ exports.ApproveUserRequest = functions.firestore
           UserMemberEmail: newValue.UserRequestEmail,
           UserMemberPosition: newValue.UserRequestPosition,
           UserMemberRoleName: newValue.UserRequestRoleName,
-          UserMatrixRolePermissionCode: newValue.UserRequestRolePermissionCode,
+          CompanyUserAccessibilityRolePermissionCode: newValue.UserRequestRolePermissionCode,
           UserMemberCompanyStandingStatus: 'Active',
           UserMemberJoinedTimestamp: new Date()
         });
