@@ -7,12 +7,14 @@ const admin = require('firebase-admin');
 
 const sgMail = require('@sendgrid/mail');
 
-var serviceAccount = require('./yterminal-b0906-firebase-adminsdk-65p2b-1b8bfd2c44.json');
+var serviceAccount = require('./weeklyorder0-firebase-adminsdk-aruhg-0fd4837a53.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://yterminal-b0906.firebaseio.com'
+  databaseURL: 'https://weeklyorder0.firebaseio.com'
 });
+
+const CloudFunctionsRegionsAsia = functions.region('asia-east2');
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
@@ -21,7 +23,7 @@ admin.initializeApp({
 //  response.send("Hello from Firebase!");
 // });
 
-exports.ApproveCompanyInvitation = functions.firestore
+exports.ApproveCompanyInvitation = CloudFunctionsRegionsAsia.firestore
   .document('UserInfo/{UserKey}/UserInvitation/{InvitationKey}')
   .onUpdate((change, context) => {
     const oldValue = change.before.data();
@@ -63,7 +65,7 @@ exports.ApproveCompanyInvitation = functions.firestore
     }
   });
 
-exports.ApproveUserRequest = functions.firestore
+exports.ApproveUserRequest = CloudFunctionsRegionsAsia.firestore
   .document('Company/{CompanyKey}/CompanyRequest/{RequestKey}')
   .onUpdate((change, context) => {
     const oldValue = change.before.data();
@@ -102,7 +104,7 @@ exports.ApproveUserRequest = functions.firestore
     }
   });
 
-exports.ReaderLastestMessage = functions.firestore
+exports.ReaderLastestMessage = CloudFunctionsRegionsAsia.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMessageReader/{ProfileKey}')
   .onUpdate(async (change, context) => {
     try {
@@ -172,7 +174,7 @@ exports.ReaderLastestMessage = functions.firestore
     }
   });
 
-exports.CreateChatRoomMessageKeyList = functions.firestore
+exports.CreateChatRoomMessageKeyList = CloudFunctionsRegionsAsia.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMessage/{ChatRoomMessageKey}')
   .onCreate(async (snapshot, context) => {
     try {
@@ -269,7 +271,7 @@ exports.CreateChatRoomMessageKeyList = functions.firestore
     }
   });
 
-exports.OnCreateShipment = functions.firestore
+exports.OnCreateShipment = CloudFunctionsRegionsAsia.firestore
   .document('Shipment/{ShipmentKey}')
   .onCreate(async (snapshot, context) => {
     try {
@@ -432,7 +434,7 @@ exports.OnCreateShipment = functions.firestore
     }
   });
 
-exports.AddChatRoomShareDataList = functions.firestore
+exports.AddChatRoomShareDataList = CloudFunctionsRegionsAsia.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}')
   .onCreate(async (snapshot, context) => {
     return admin
@@ -449,7 +451,7 @@ exports.AddChatRoomShareDataList = functions.firestore
       );
   });
 
-exports.AddChatRoomMemberList = functions.firestore
+exports.AddChatRoomMemberList = CloudFunctionsRegionsAsia.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onCreate(async (snapshot, context) => {
     const UserKey = snapshot.data().ChatRoomMemberUserKey;
@@ -465,7 +467,7 @@ exports.AddChatRoomMemberList = functions.firestore
     return AddChatRoomMemberListAction;
   });
 
-exports.DeleteChatRoomMemberList = functions.firestore
+exports.DeleteChatRoomMemberList = CloudFunctionsRegionsAsia.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onDelete(async (snapshot, context) => {
     const oldValue = snapshot.data();
@@ -486,7 +488,7 @@ exports.DeleteChatRoomMemberList = functions.firestore
     return DeleteChatRoomMemberListAction;
   });
 
-exports.AddFirstNameSurNameFirstProfileToChatRoomMember = functions.firestore
+exports.AddFirstNameSurNameFirstProfileToChatRoomMember = CloudFunctionsRegionsAsia.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onCreate(async (snapshot, context) => {
     const UserKey = snapshot.data().ChatRoomMemberUserKey;
@@ -522,7 +524,7 @@ exports.AddFirstNameSurNameFirstProfileToChatRoomMember = functions.firestore
     return AddFirstNameSurNameFirstProfileToChatRoomMemberAction;
   });
 
-exports.AddShipmentMember = functions.firestore
+exports.AddShipmentMember = CloudFunctionsRegionsAsia.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onWrite(async (change, context) => {
     const oldValue = change.before.data();
@@ -571,7 +573,7 @@ exports.AddShipmentMember = functions.firestore
     }
   });
 
-exports.DeleteShipmentMember = functions.firestore
+exports.DeleteShipmentMember = CloudFunctionsRegionsAsia.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onDelete(async (snapshot, context) => {
     const oldValue = snapshot.data();
@@ -627,7 +629,7 @@ exports.DeleteShipmentMember = functions.firestore
     return CheckOtherChatRoomMember;
   });
 
-exports.AddNotiCountFirstJoin = functions.firestore
+exports.AddNotiCountFirstJoin = CloudFunctionsRegionsAsia.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onCreate(async (snapshot, context) => {
     const UserKey = snapshot.data().ChatRoomMemberUserKey;
@@ -667,7 +669,7 @@ exports.AddNotiCountFirstJoin = functions.firestore
     return Promise.all(UserPersonalizeProfileActionList);
   });
 
-exports.DeleteNotiCount = functions.firestore
+exports.DeleteNotiCount = CloudFunctionsRegionsAsia.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onDelete(async (snapshot, context) => {
     const oldValue = snapshot.data();
@@ -733,7 +735,7 @@ exports.DeleteNotiCount = functions.firestore
     return CheckOtherChatRoomMember;
   });
 
-exports.SendEmailInviteIntoShipment = functions.firestore
+exports.SendEmailInviteIntoShipment = CloudFunctionsRegionsAsia.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onCreate(async (snapshot, context) => {
     const UserEmail = snapshot.data().ChatRoomMemberEmail;
@@ -843,7 +845,7 @@ exports.SendEmailInviteIntoShipment = functions.firestore
     }
   });
 
-exports.NotiSystemGenInviteIntoShipment = functions.firestore
+exports.NotiSystemGenInviteIntoShipment = CloudFunctionsRegionsAsia.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onCreate(async (snapshot, context) => {
     const UserKey = snapshot.data().ChatRoomMemberUserKey;
@@ -879,7 +881,7 @@ exports.NotiSystemGenInviteIntoShipment = functions.firestore
     return CreateSystemGenInviteIntoShipment;
   });
 
-exports.SetBuyerSellerShipment = functions.firestore
+exports.SetBuyerSellerShipment = CloudFunctionsRegionsAsia.firestore
   .document('Shipment/{ShipmentKey}/ChatRoom/{ChatRoomKey}/ChatRoomMember/{ChatRoomMemberKey}')
   .onUpdate(async (change, context) => {
     const oldValue = change.before.data();
@@ -945,7 +947,7 @@ exports.SetBuyerSellerShipment = functions.firestore
     return Promise.all(SetCompanyName);
   });
 
-exports.CreateDefaultTemplateCompanyUserAccessibility = functions.firestore
+exports.CreateDefaultTemplateCompanyUserAccessibility = CloudFunctionsRegionsAsia.firestore
   .document('Company/{CompanyKey}')
   .onCreate(async (snapshot, context) => {
     const CompanyUserAccessibilityPayload = [
@@ -991,7 +993,7 @@ exports.CreateDefaultTemplateCompanyUserAccessibility = functions.firestore
     return Promise.all(CompanyUserAccessibilityActionList);
   });
 
-exports.ShipmentAllCount = functions.firestore
+exports.ShipmentAllCount = CloudFunctionsRegionsAsia.firestore
   .document('UserPersonalize/{ProfileKey}/ShipmentNotificationCount/{ShipmentKey}')
   .onWrite(async (change, context) => {
     const oldValue = change.before.data();
@@ -1031,7 +1033,7 @@ exports.ShipmentAllCount = functions.firestore
     }
   });
 
-exports.CopyInsideMasterDataToShipment = functions.firestore
+exports.CopyInsideMasterDataToShipment = CloudFunctionsRegionsAsia.firestore
   .document('Shipment/{ShipmentKey}/ShipmentShareData/{ShipmentShareDataKey}')
   .onWrite(async (change, context) => {
     const oldValue = change.before.data();
@@ -1063,7 +1065,7 @@ exports.CopyInsideMasterDataToShipment = functions.firestore
     }
   });
 
-exports.NotiBellAndEmailInviteToJoinCompany = functions.firestore
+exports.NotiBellAndEmailInviteToJoinCompany = CloudFunctionsRegionsAsia.firestore
   .document('UserInfo/{UserKey}/UserInvitation/{UserInvitationKey}')
   .onCreate(async (snapshot, context) => {
     const SendNotiBell = await admin
@@ -1121,7 +1123,7 @@ exports.NotiBellAndEmailInviteToJoinCompany = functions.firestore
     return Promise.all([SendNotiBell, SendNotiEmail]);
   });
 
-exports.NotiBellRequestToJoinCompany = functions.firestore
+exports.NotiBellRequestToJoinCompany = CloudFunctionsRegionsAsia.firestore
   .document('Company/{CompanyKey}/CompanyRequest/{CompanyRequestKey}')
   .onCreate(async (snapshot, context) => {
     const GetCompanyMember = await admin
@@ -1159,7 +1161,7 @@ exports.NotiBellRequestToJoinCompany = functions.firestore
     return Promise.all(RequestToJoinServiceList);
   });
 
-exports.NotiBellAcceptedIntoCompany = functions.firestore
+exports.NotiBellAcceptedIntoCompany = CloudFunctionsRegionsAsia.firestore
   .document('UserInfo/{UserKey}/UserInvitation/{UserInvitationKey}')
   .onUpdate(async (change, context) => {
     const oldValue = change.before.data();
@@ -1213,7 +1215,7 @@ exports.NotiBellAcceptedIntoCompany = functions.firestore
     }
   });
 
-exports.NotiBellChangeOfRoleWithInCompany = functions.firestore
+exports.NotiBellChangeOfRoleWithInCompany = CloudFunctionsRegionsAsia.firestore
   .document('Company/{CompanyKey}/CompanyMember/{CompanyMemberKey}')
   .onUpdate(async (change, context) => {
     const oldValue = change.before.data();
@@ -1266,7 +1268,7 @@ exports.NotiBellChangeOfRoleWithInCompany = functions.firestore
     }
   });
 
-exports.LeaveCompany = functions.firestore
+exports.LeaveCompany = CloudFunctionsRegionsAsia.firestore
   .document('Company/{CompanyKey}/CompanyMember/{CompanyMemberKey}')
   .onDelete(async (snapshot, context) => {
     const UserKey = snapshot.id;
@@ -1357,7 +1359,7 @@ exports.LeaveCompany = functions.firestore
     ]);
   });
 
-exports.AddProfileDataInUserPersonalizeWhenCreateProfile = functions.firestore
+exports.AddProfileDataInUserPersonalizeWhenCreateProfile = CloudFunctionsRegionsAsia.firestore
   .document('UserInfo/{UserKey}/Profile/{ProfileKey}')
   .onCreate(async (snapshot, context) => {
     const GetUserEmail = await admin
@@ -1482,13 +1484,13 @@ const SendEmail = async TemplateMessage => {
   return await sgMail.send(TemplateMessage);
 };
 
-exports.TestSendEmail = functions.https.onRequest(async (req, res) => {
+exports.TestSendEmail = CloudFunctionsRegionsAsia.https.onRequest(async (req, res) => {
   return SendEmail(TestMessage()).then(r => {
     return res.status(200).send('Email Sended');
   });
 });
 
-exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
+exports.SendUnreadMessage = CloudFunctionsRegionsAsia.https.onRequest(async (req, res) => {
   const GetShipmentChatCount = await admin
     .firestore()
     .collection('UserPersonalize')
@@ -1566,7 +1568,7 @@ exports.SendUnreadMessage = functions.https.onRequest(async (req, res) => {
   });
 });
 
-exports.CheckMultipleProfile = functions.firestore
+exports.CheckMultipleProfile = CloudFunctionsRegionsAsia.firestore
   .document('UserInfo/{UserKey}/Profile/{ProfileKey}')
   .onWrite(async (change, context) => {
     const GetAllProfile = await admin
