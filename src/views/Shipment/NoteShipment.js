@@ -1,25 +1,37 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable filenames/match-regex */
 import React from 'react';
 import {
-  Input, Popover, PopoverHeader, PopoverBody,
+  Popover, PopoverBody, Input, Tooltip,
 } from 'reactstrap';
 import { EditShipment } from '../../service/shipment/shipment';
+import { UpdateMasterData } from '../../service/masterdata/masterdata';
 
-export class NoteShipment extends React.Component {
+class NoteShipment extends React.Component {
   constructor(props) {
     super(props);
 
     this.toggle = this.toggle.bind(this);
     this.state = {
       popoverOpen: false,
-      value: this.props.item.ShipmentPriceDescription,
+      value: this.props.item.ShipmentDetailPriceDescriptionOfGoods,
       isInEditMode: false,
+      tooltipEditOpen: false,
     };
+    this.tooltipEditToggle = this.tooltipEditToggle.bind(this);
   }
 
   changeEditMode = () => {
     this.setState({
       isInEditMode: !this.state.isInEditMode,
     });
+  };
+
+  edit = (shipmentKey, editValue) => {
+    UpdateMasterData(shipmentKey, 'DefaultTemplate', {
+      ShipmentDetailPriceDescriptionOfGoods: editValue,
+    }).subscribe(() => {});
   };
 
   toggle() {
@@ -29,42 +41,59 @@ export class NoteShipment extends React.Component {
   }
 
   renderEditView = () => (
-    <div>
-      <input
-        type="text"
-        style={{ width: '100%', height: 100 }}
-        defaultValue={this.state.value}
-        ref="theTextInput"
-        onChange={(e) => {
-          this.setState({
-            value: this.refs.theTextInput.value,
-          });
-        }}
-        onKeyDown={(button) => {
-          if (button.key === 'Enter') {
-            EditShipment(this.props.item.uid, {
-              ShipmentPriceDescription: this.state.value,
+    <React.Fragment>
+      <div id="edit-desc-view">
+        <Input
+          type="textarea"
+          style={{ width: '100%', height: 100 }}
+          defaultValue={this.state.value}
+          onChange={(event) => {
+            this.setState({
+              value: event.target.value,
             });
-            this.setState({ isInEditMode: false });
-          }
-        }}
-      />
-    </div>
+          }}
+          onKeyDown={(button) => {
+            if (button.key === 'Enter') {
+              this.edit(this.props.item.uid, this.state.value);
+              this.setState({ isInEditMode: false });
+            }
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        />
+      </div>
+      <Tooltip
+        placement="right"
+        isOpen={this.state.tooltipEditOpen}
+        target="edit-desc-view"
+        toggle={this.tooltipEditToggle}
+      >
+        Press Enter to edit.
+      </Tooltip>
+    </React.Fragment>
   );
 
-  renderDefaultView = () => <div onDoubleClick={this.changeEditMode}>{this.state.value}</div>;
+  renderDefaultView = () => (this.state.value === '' || this.state.value === undefined ? (
+    <div style={{ cursor: 'pointer' }} onDoubleClick={this.changeEditMode}>
+      <i style={{ color: 'grey' }}>Double Click to edit the description...</i>
+    </div>
+  ) : (
+    <div style={{ cursor: 'pointer' }} onDoubleClick={this.changeEditMode}>
+      {this.state.value}
+    </div>
+  ));
+
+  tooltipEditToggle() {
+    this.setState({
+      tooltipEditOpen: !this.state.tooltipEditOpen,
+    });
+  }
 
   render() {
     return (
       <span>
-        <span
-          id={`Popover-${this.props.id}`}
-          onClick={() => {
-            EditShipment(this.props.item.uid, {
-              seen: true,
-            });
-          }}
-        >
+        <span id={`Popover-${this.props.id}`}>
           {this.props.item.seen ? (
             <i className="fa fa-tag fa-lg" />
           ) : (
@@ -82,7 +111,7 @@ export class NoteShipment extends React.Component {
             {this.state.isInEditMode ? this.renderEditView() : this.renderDefaultView()}
             <br />
             <div className="seenby">
-              <span style={{ color: '#707070', fontSize: 9 }}>seen by A.B.C</span>
+              {/* <span style={{ color: '#707070', fontSize: 9 }}>seen by A.B.C</span> */}
             </div>
           </PopoverBody>
         </Popover>
@@ -90,3 +119,5 @@ export class NoteShipment extends React.Component {
     );
   }
 }
+
+export default NoteShipment;
