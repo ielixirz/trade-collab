@@ -159,22 +159,26 @@ const CompanyPanel = (props) => {
     setUpdateRole(temp);
   };
 
-  const updateMember = (companyKey, userKey, data) => {
+  const updateMember = (companyKey, userKey, data, oldData) => {
     if (Object.prototype.hasOwnProperty.call(data, 'UserMemberRoleName')) {
-      const isOnlyOwner = CompanyUserAccessibilityIsOnlyOneOwner(props.match.params.key);
-      isOnlyOwner.subscribe((onlyOwner) => {
-        if (onlyOwner) {
-          errorPopupRef.current.triggerError(
-            <span>
-              <b>Can't change role</b>
+      if (oldData === 'Owner') {
+        const isOnlyOwner = CompanyUserAccessibilityIsOnlyOneOwner(props.match.params.key);
+        isOnlyOwner.subscribe((onlyOwner) => {
+          if (onlyOwner) {
+            errorPopupRef.current.triggerError(
+              <span>
+                <b>Can't change role</b>
 , You must have atleast 1 Owner left in the company.
-            </span>,
-            'WARN',
-          );
-        } else {
-          UpdateCompanyMember(companyKey, userKey, data);
-        }
-      });
+              </span>,
+              'WARN',
+            );
+          } else {
+            UpdateCompanyMember(companyKey, userKey, data);
+          }
+        });
+      } else {
+        UpdateCompanyMember(companyKey, userKey, data);
+      }
     } else {
       UpdateCompanyMember(companyKey, userKey, data);
     }
@@ -230,9 +234,14 @@ const CompanyPanel = (props) => {
               turnType="input"
               data={{
                 onChangeFn: null,
-                onKeyPressFn: event => updateMember(companyKey, member.key, {
-                  UserMemberPosition: event.target.value,
-                }),
+                onKeyPressFn: event => updateMember(
+                  companyKey,
+                  member.key,
+                  {
+                    UserMemberPosition: event.target.value,
+                  },
+                  member.UserMemberPosition,
+                ),
               }}
             />
           ),
@@ -242,7 +251,12 @@ const CompanyPanel = (props) => {
               turnType="dropdown"
               data={{
                 options: companyRoles,
-                onChangeFn: input => updateMember(companyKey, member.key, { UserMemberRoleName: input.value.role }),
+                onChangeFn: input => updateMember(
+                  companyKey,
+                  member.key,
+                  { UserMemberRoleName: input.value.role },
+                  member.UserMemberRoleName,
+                ),
               }}
             />
           ),
