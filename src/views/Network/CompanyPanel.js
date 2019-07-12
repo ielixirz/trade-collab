@@ -291,6 +291,7 @@ const CompanyPanel = (props) => {
   };
 
   const responseToRequest = (keys, status) => {
+    setBlocking(true);
     if (status === 'Approve') {
       if (updateRole[keys.uKey] !== undefined) {
         UpdateCompanyRequestStatus(
@@ -351,10 +352,14 @@ const CompanyPanel = (props) => {
                 name="company"
                 id="company-invite"
                 options={companyRoles}
-                className="basic-multi-select"
-                classNamePrefix="select"
+                className="company-request-role-select-container"
                 placeholder="Role"
                 onChange={input => handleRoleInputChange(input, item.UserRequestUserKey)}
+                classNamePrefix="company-request-role-select"
+                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                menuPortalTarget={document.body}
+                menuPosition="fixed"
+                menuPlacement="bottom"
               />
             ),
             status: renderRequestStatus(
