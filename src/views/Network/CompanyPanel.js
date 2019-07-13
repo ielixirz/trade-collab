@@ -543,7 +543,7 @@ const CompanyPanel = (props) => {
                 <Button
                   className="company-access-btn"
                   onClick={() => {
-                    window.location.replace(`#/network/company/settings/${props.match.params.key}`);
+                    props.history.push(`settings/${props.match.params.key}`);
                   }}
                 >
                   <i className="cui-wrench icons" style={{ marginRight: '0.5rem' }} />
