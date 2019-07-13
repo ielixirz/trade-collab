@@ -80,6 +80,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build-dev": "react-scripts build && cp -r build ./build-dev",
+    "build-staging": "react-scripts build && cp -r build ./build-staging",
+    "build-production": "react-scripts build && cp -r build ./build-production",
     "test": "jest",
     "test:cov": "react-scripts test --coverage",
     "test:debug": "react-scripts --inspect-brk test --runInBand",

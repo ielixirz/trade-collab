@@ -50,6 +50,10 @@ const TurnAbleTextLabel = ({ text, turnType, data }) => {
         }
         turn();
       }}
+      styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+      menuPortalTarget={document.body}
+      menuPosition="fixed"
+      menuPlacement="bottom"
     />
   );
 

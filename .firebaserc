@@ -1,5 +1,21 @@
 {
   "projects": {
-    "default": "yterminal-b0906"
+    "default": "weeklyorder0",
+    "weeklyorder": "weeklyorder0"
+  },
+  "targets": {
+    "weeklyorder0": {
+      "hosting": {
+        "develop": [
+          "weeklyorder-dev"
+        ],
+        "staging": [
+          "weeklyorder-staging"
+        ],
+        "production": [
+          "weeklyorder"
+        ]
+      }
+    }
   }
 }

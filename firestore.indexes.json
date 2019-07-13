@@ -1,4 +1,474 @@
 {
-  "indexes": [],
-  "fieldOverrides": []
+  "indexes": [
+    {
+      "collectionGroup": "ChatRoomMember",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        {
+          "fieldPath": "ChatRoomMemberUserKey",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ChatRoomMemberCompanyKey",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentBuyerCompanyName",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentBuyerCompanyName",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentETAPort",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentETAPort",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentETAWarehouse",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentETAWarehouse",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentETD",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentETD",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentSellerCompanyName",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentSellerCompanyName",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentMemberList",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "ConsigneeETAPortDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentMemberList",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "ShipmentBuyerCompanyName",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentMemberList",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentMemberList",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "ShipmentProductName",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentMemberList",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "ShipmentSellerCompanyName",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentMemberList",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "ShipperETDDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentBuyerCompanyName",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentBuyerCompanyName",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentETAPort",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentETAPort",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentETAWarehouse",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentETAWarehouse",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentETD",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentETD",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentSellerCompanyName",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Shipment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ShipmentStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "ShipmentSellerCompanyName",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ShipmentMember",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        {
+          "fieldPath": "ShipmentMemberUserKey",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ShipmentCreateTimestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "ShipmentMember",
+      "fieldPath": "ShipmentMemberUserKey",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        },
+        {
+          "order": "DESCENDING",
+          "queryScope": "COLLECTION"
+        },
+        {
+          "arrayConfig": "CONTAINS",
+          "queryScope": "COLLECTION"
+        },
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION_GROUP"
+        }
+      ]
+    }
+  ]
 }
