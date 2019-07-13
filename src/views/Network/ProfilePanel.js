@@ -103,7 +103,7 @@ const renderStatus = (status, data, listener) => {
   return '';
 };
 
-const ProfilePanel = ({ currentProfile, auth, user }) => {
+const ProfilePanel = ({ currentProfile, auth, user, history }) => {
   const [userProfile, setUserProfile] = useState({});
   const [companyList, setCompanyList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -369,7 +369,7 @@ const ProfilePanel = ({ currentProfile, auth, user }) => {
   };
 
   const routeToCompany = (key) => {
-    window.location.replace(`#/network/company/${key}`);
+    history.push(`network/company/${key}`);
   };
 
   const tableRowEvents = {
