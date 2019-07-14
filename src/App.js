@@ -42,7 +42,7 @@ const Page500 = Loadable({
 });
 
 const ResetPassword = Loadable({
-  loader: () => import('./views/Pages/Email/ResetPassword'),
+  loader: () => import('./views/Pages/Redirect/ResetPassword'),
   loading,
 });
 
