@@ -430,9 +430,13 @@ class Chat extends Component {
         />
         <TabContent>
           <BlockUi tag="div" blocking={toggle} style={{ height: '100%' }}>
-            {activeTab.length !== 0
-              ? this.renderChat(activeTab[0].ChatRoomKey, activeTab[0].ShipmentKey)
-              : ''}
+            {activeTab.length !== 0 ? (
+              this.renderChat(activeTab[0].ChatRoomKey, activeTab[0].ShipmentKey)
+            ) : (
+              <BlockUi tag="div" blocking={true} style={{ height: '100%' }}>
+                <div style={{ height: '74vh' }} />
+              </BlockUi>
+            )}
           </BlockUi>
         </TabContent>
       </div>
