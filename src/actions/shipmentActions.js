@@ -40,7 +40,8 @@ export const fetchShipments = (ShipmentData, notification) => (dispatch, getStat
         item.ShipmentReferenceList,
         (refs, item) => {
           refs[item.ShipmentReferenceKey] = {
-            ...item
+            ...item,
+            ShipmentReferenceIDInput: item.ShipmentReferenceID
           };
           return refs;
         },

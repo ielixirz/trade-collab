@@ -328,13 +328,13 @@ class TableShipment extends React.Component {
                       type="text"
                       name={`shipmentRefID${refIndex}`}
                       id={`shipmentRefID${refIndex}`}
-                      value={refItem.ShipmentReferenceID}
+                      value={refItem.ShipmentReferenceIDInput}
                       onChange={e => {
                         const value = e.target.value;
                         // (ShipmentKey, refKey, Data)
                         this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
                           ...refItem,
-                          ShipmentReferenceID: value,
+                          ShipmentReferenceIDInput: value,
                           ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
                           ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
                           ShipmentKey: shipmentKey
@@ -345,7 +345,10 @@ class TableShipment extends React.Component {
                           const update = UpdateShipmentReference(
                             shipmentKey,
                             refItem.ShipmentReferenceKey,
-                            refItem
+                            {
+                              ...refItem,
+                              ShipmentReferenceID: refItem.ShipmentReferenceIDInput
+                            }
                           ).subscribe({
                             complete: res => {
                               update.unsubscribe();
