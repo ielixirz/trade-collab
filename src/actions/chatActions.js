@@ -18,8 +18,8 @@ import {
 import { ClearUnReadChatMessage } from '../service/personalize/personalize';
 
 export const typing = data => dispatch => {
-  const text = data.target.value;
-  console.log(text);
+  const text = data;
+
   dispatch({
     type: TYPING_TEXT,
     text

@@ -39,10 +39,9 @@ export const fetchShipments = (ShipmentData, notification) => (dispatch, getStat
       ShipmentReferenceList: _.reduce(
         item.ShipmentReferenceList,
         (refs, item) => {
-          refs[item.id] = {
-            id: item.id,
-            ShipmentReferenceKey: item.id,
-            ...item.data()
+          refs[item.ShipmentReferenceKey] = {
+            ...item,
+            ShipmentReferenceIDInput: item.ShipmentReferenceID
           };
           return refs;
         },

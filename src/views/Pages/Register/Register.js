@@ -100,7 +100,7 @@ const Register = (props) => {
 
   const saveAndContinue = (e) => {
     e.preventDefault();
-    if (validateFields(props.values)) {
+    if (validateFields(props.values) && !isDuplicate) {
       props.nextStep('');
     }
   };
@@ -127,8 +127,8 @@ const Register = (props) => {
                         <h4>Firstname</h4>
                       </Col>
                       {invalid.Firstname.isInvalid ? (
-                        <Col className="field-error-container">
-                          <span className="field-error-msg">{invalid.Firstname.msg}</span>
+                        <Col className="field-error-container-regis">
+                          <span className="field-error-msg-regis">{invalid.Firstname.msg}</span>
                         </Col>
                       ) : (
                         ''
@@ -155,8 +155,8 @@ const Register = (props) => {
                         <h4>Surname</h4>
                       </Col>
                       {invalid.Surname.isInvalid ? (
-                        <Col className="field-error-container">
-                          <span className="field-error-msg">{invalid.Surname.msg}</span>
+                        <Col className="field-error-container-regis">
+                          <span className="field-error-msg-regis">{invalid.Surname.msg}</span>
                         </Col>
                       ) : (
                         ''
@@ -183,14 +183,14 @@ const Register = (props) => {
                       </Col>
                       <Col md="7">
                         {isDuplicate ? (
-                          <span className="field-error-msg">*Email already register</span>
+                          <span className="field-error-msg-regis">*Email already register</span>
                         ) : (
                           ''
                         )}
                       </Col>
                       {invalid.Email.isInvalid ? (
-                        <Col className="field-error-container">
-                          <span className="field-error-msg">{invalid.Email.msg}</span>
+                        <Col className="field-error-container-regis">
+                          <span className="field-error-msg-regis">{invalid.Email.msg}</span>
                         </Col>
                       ) : (
                         ''
@@ -218,8 +218,8 @@ const Register = (props) => {
                         <h4>Password</h4>
                       </Col>
                       {invalid.Password.isInvalid ? (
-                        <Col className="field-error-container">
-                          <span className="field-error-msg">{invalid.Password.msg}</span>
+                        <Col className="field-error-container-regis">
+                          <span className="field-error-msg-regis">{invalid.Password.msg}</span>
                         </Col>
                       ) : (
                         ''

@@ -5,6 +5,8 @@
 /* eslint-disable filenames/match-regex */
 import React, { Component } from 'react';
 import BlockUi from 'react-block-ui';
+import 'react-block-ui/style.css';
+
 import { TabContent, Input, TabPane, Badge } from 'reactstrap';
 import _ from 'lodash';
 import { connect } from 'react-redux';
@@ -417,23 +419,27 @@ class Chat extends Component {
     const activeTab = tabs.filter(tab => tab.active === true);
     const toggle = this.props.ChatReducer.toggle;
     return (
-      <BlockUi tag="div" blocking={toggle} style={{ height: '100%' }}>
-        <div className="animated fadeIn chatbox">
-          <Tabs
-            style={{ backgroundColor: 'black' }}
-            moveTab={(hoverIndex, dragIndex) => {
-              this.props.moveTab(hoverIndex, dragIndex, chats);
-            }}
-            selectTab={this.props.selectTab}
-            tabs={tabs}
-          />
-          <TabContent>
-            {activeTab.length !== 0
-              ? this.renderChat(activeTab[0].ChatRoomKey, activeTab[0].ShipmentKey)
-              : ''}
-          </TabContent>
-        </div>
-      </BlockUi>
+      <div className="animated fadeIn chatbox">
+        <Tabs
+          style={{ backgroundColor: 'black' }}
+          moveTab={(hoverIndex, dragIndex) => {
+            this.props.moveTab(hoverIndex, dragIndex, chats);
+          }}
+          selectTab={this.props.selectTab}
+          tabs={tabs}
+        />
+        <TabContent>
+          <BlockUi tag="div" blocking={toggle} style={{ height: '100%' }}>
+            {activeTab.length !== 0 ? (
+              this.renderChat(activeTab[0].ChatRoomKey, activeTab[0].ShipmentKey)
+            ) : (
+              <BlockUi tag="div" blocking={true} style={{ height: '100%' }}>
+                <div style={{ height: '74vh' }} />
+              </BlockUi>
+            )}
+          </BlockUi>
+        </TabContent>
+      </div>
     );
   }
 }
