@@ -46,6 +46,11 @@ const ResetPassword = Loadable({
   loading,
 });
 
+const NewUser = Loadable({
+  loader: () => import('./views/Pages/Redirect/NewUser'),
+  loading,
+});
+
 class App extends Component {
   render() {
     return (
@@ -57,6 +62,7 @@ class App extends Component {
                 <Route exact path="/login" name="Login Page" component={Login} />
                 <Route exact path="/register" name="Register Page" component={Register} />
                 <Route path="/rp" name="Reset Password" component={ResetPassword} />
+                <Route path="/nu" name="New User" component={NewUser} />
                 <Route exact path="/404" name="Page 404" component={Page404} />
                 <Route exact path="/500" name="Page 500" component={Page500} />
                 <Route path="/" name="Home" component={DefaultLayout} />
