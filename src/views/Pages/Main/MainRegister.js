@@ -60,7 +60,22 @@ class MainRegister extends Component {
     });
   };
 
-  handleRegisterByInvite = () => {};
+  handleRegisterByInvite = () => {
+    const { Email, Password } = this.state;
+    const { flow } = this.props.inviteData;
+
+    switch (flow) {
+      case 'COMPANY_INVITE':
+        // TO-DO
+        break;
+      case 'SHIPMENT_CHAT_INVITE':
+        // TO-DO for fluke
+        break;
+      default:
+        // TO-DO return unhandled case.
+        break;
+    }
+  };
 
   render() {
     const { step } = this.state;
@@ -93,7 +108,11 @@ class MainRegister extends Component {
       case 3:
         return <Confirmation nextStep={this.nextStep} values={values} />;
       case 4:
-        this.handleRegister();
+        if (this.props.invite) {
+          this.handleRegisterByInvite();
+        } else {
+          this.handleRegister();
+        }
         return '';
       default:
         return (
