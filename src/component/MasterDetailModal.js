@@ -77,7 +77,7 @@ const MasterDetailModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
   const [masterData, setMasterData] = useState({});
   const [shipmentStatus, setShipmentStatus] = useState(null);
-  const [etaDayDiff, setETADayDiff] = useState(undefined);
+  const [etaDayDiff, setETADayDiff] = useState(0);
 
   useEffect(() => {}, [masterData, shipmentStatus, etaDayDiff]);
 
@@ -89,12 +89,21 @@ const MasterDetailModal = forwardRef((props, ref) => {
     triggerMasterDetail(data, status) {
       setShipmentStatus(status);
       setMasterData({ ...data });
-      setETADayDiff(
-        GetDiffDay(
-          data.ConsigneeETAWarehouseDate.seconds * 1000,
-          data.ConsigneeETAPortDate.seconds * 1000,
-        ),
-      );
+      if (
+        data.ConsigneeETAWarehouseDate === undefined
+        || data.ConsigneeETAPortDate === ''
+        || data.ConsigneeETAWarehouseDate === undefined
+        || data.ConsigneeETAPortDate === ''
+      ) {
+        setETADayDiff(0);
+      } else {
+        setETADayDiff(
+          GetDiffDay(
+            data.ConsigneeETAWarehouseDate.seconds * 1000,
+            data.ConsigneeETAPortDate.seconds * 1000,
+          ),
+        );
+      }
       toggle();
     },
   }));
@@ -165,7 +174,13 @@ const MasterDetailModal = forwardRef((props, ref) => {
   };
 
   const setETADaysDiff = (etd1, etd2) => {
-    setETADayDiff(GetDiffDay(etd1, etd2));
+    const diff = GetDiffDay(etd1, etd2);
+    // eslint-disable-next-line no-restricted-globals
+    if (isNaN(diff)) {
+      setETADayDiff(0);
+    } else {
+      setETADayDiff(diff);
+    }
   };
 
   const handleETAWarehouseInputChange = (date) => {
@@ -176,10 +191,10 @@ const MasterDetailModal = forwardRef((props, ref) => {
         setETADaysDiff(date.getTime(), newMasterData.ConsigneeETAPortDate.seconds * 1000);
       } else {
         newMasterData.ConsigneeETAWarehouseDate = null;
-        setETADaysDiff(undefined);
+        setETADaysDiff(0, 0);
       }
     } catch (e) {
-      setETADaysDiff(undefined);
+      setETADaysDiff(0, 0);
     }
     setMasterData(newMasterData);
   };
@@ -192,10 +207,10 @@ const MasterDetailModal = forwardRef((props, ref) => {
         setETADaysDiff(newMasterData.ConsigneeETAWarehouseDate.seconds * 1000, date.getTime());
       } else {
         newMasterData.ConsigneeETAPortDate = null;
-        setETADaysDiff(undefined);
+        setETADaysDiff(0, 0);
       }
     } catch (e) {
-      setETADaysDiff(undefined);
+      setETADaysDiff(0, 0);
     }
     setMasterData(newMasterData);
   };
@@ -268,7 +283,9 @@ const MasterDetailModal = forwardRef((props, ref) => {
               }
               inputHandle={handleDetailInputChange}
               etd={
-                masterData.ShipperETDDate === undefined || masterData.ShipperETDDate === null
+                masterData.ShipperETDDate === undefined
+                || masterData.ShipperETDDate === null
+                || masterData.ShipperETDDate === ''
                   ? null
                   : new Date(masterData.ShipperETDDate.seconds * 1000)
               }
@@ -290,17 +307,21 @@ const MasterDetailModal = forwardRef((props, ref) => {
               etaWarehouse={
                 masterData.ConsigneeETAWarehouseDate === undefined
                 || masterData.ConsigneeETAWarehouseDate === null
+                || masterData.ConsigneeETAWarehouseDate === ''
                   ? null
                   : new Date(masterData.ConsigneeETAWarehouseDate.seconds * 1000)
               }
               etaPort={
                 masterData.ConsigneeETAPortDate === undefined
                 || masterData.ConsigneeETAPortDate === null
+                || masterData.ConsigneeETAPortDate === ''
                   ? null
                   : new Date(masterData.ConsigneeETAPortDate.seconds * 1000)
               }
               etd={
-                masterData.ShipperETDDate === undefined || masterData.ShipperETDDate === null
+                masterData.ShipperETDDate === undefined
+                || masterData.ShipperETDDate === null
+                || masterData.ShipperETDDate === ''
                   ? null
                   : new Date(masterData.ShipperETDDate.seconds * 1000)
               }
