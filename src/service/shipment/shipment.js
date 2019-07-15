@@ -151,27 +151,6 @@ export const CombineShipmentAndShipmentReference = (
     ShipmentMemberUserKey,
   );
 
-  // const ShipmentKeyListSource = ShipmentListSource.pipe(
-  //   map(ShipmentList => ShipmentList.map(ShipmentItem => ShipmentItem.ShipmentKey)),
-  // );
-
-  // const ShipmentReferenceListSource = combineLatest(ShipmentKeyListSource.pipe(take(1))).pipe(
-  //   concatMap(ShipmentKeyList => combineLatest(ShipmentKeyList)),
-  //   concatMap(ShipmentKeyItem => ShipmentKeyItem),
-  //   mergeMap(ShipmentKey => GetShipmentReferenceList(ShipmentKey).pipe(
-  //     map(RefData => ({ ...RefData, ShipmentKey })),
-  //     take(1),
-  //   )),
-  //   toArray(),
-  // );
-
-  // switchMap(cities => {
-  //   return combineLatest(...cities.map(c => {
-  //     const ref = storage.ref(`/cities/${c.id}.png`);
-  //     return getDownloadURL(ref).pipe(map(imageURL => ({ imageURL, ...c })));
-  //   }));
-  // })
-
   return ShipmentListSource.pipe(
     switchMap(ShipmentList => combineLatest(
       ...ShipmentList.map(ShipmentDoc => GetShipmentReferenceList(ShipmentDoc.ShipmentID).pipe(
@@ -179,31 +158,6 @@ export const CombineShipmentAndShipmentReference = (
       )),
     )),
   );
-
-  // const ShipmentReferenceListSource = ShipmentListSource.pipe(switchMap( ShipmentList => GetShipmentReferenceList))
-
-  // return combineLatest(ShipmentListSource, ShipmentReferenceListSource).pipe(
-  //   map((CombineResult) => {
-  //     console.log('fetch REF', CombineResult[0], CombineResult[1]);
-  //     return CombineResult[0].map((Item, Index) => {
-  //       const ShipmentData = Item.data();
-  //       const ShipmentID = Item.id;
-  //       // console.log(CombineResult[1]);
-  //       const ShipmentReferenceList = _.find(CombineResult[1], ['ShipmentKey', ShipmentID]);
-
-  //       if (ShipmentReferenceList) {
-  //         if (ShipmentReferenceList.ShipmentKey) delete ShipmentReferenceList.ShipmentKey;
-  //       }
-
-  //       // const ShipmentReferenceList = _.reverse(CombineResult[1][Index]);
-
-  //       // console.warn(`${ShipmentData.ShipmentProductName}`, CombineResult[1]);
-  //       console.warn({ ...ShipmentData, ShipmentID, ShipmentReferenceList });
-
-  //       return { ...ShipmentData, ShipmentID, ShipmentReferenceList };
-  //     });
-  //   }),
-  // );
 };
 
 export const CreateShipmentMember = (ShipmentKey, ShipmentMemberUserKey, Data) => {
@@ -248,32 +202,6 @@ export const SearchShipment = (
       )),
     )),
   );
-
-  // const ShipmentKeyListSource = ShipmentListSource.pipe(
-  //   map(ShipmentList => ShipmentList.map(ShipmentItem => ShipmentItem.id)),
-  // );
-
-  // const ShipmentReferenceListSource = combineLatest(ShipmentKeyListSource.pipe(take(1))).pipe(
-  //   concatMap(ShipmentKeyList => combineLatest(ShipmentKeyList)),
-  //   concatMap(ShipmentKeyItem => ShipmentKeyItem),
-  //   mergeMap(ShipmentKey => GetShipmentReferenceList(ShipmentKey).pipe(
-  //     map(RefData => ({ ...RefData, ShipmentKey })),
-  //     take(1),
-  //   )),
-  //   toArray(),
-  // );
-
-  // return combineLatest(ShipmentListSource, ShipmentReferenceListSource).pipe(
-  //   map(CombineResult => CombineResult[0].map((Item) => {
-  //     const ShipmentData = Item.data();
-  //     const ShipmentID = Item.id;
-  //     const ShipmentReferenceList = _.find(CombineResult[1], ['ShipmentKey', ShipmentID]);
-
-  //     if (ShipmentReferenceList.ShipmentKey) delete ShipmentReferenceList.ShipmentKey;
-
-  //     return { ...ShipmentData, ShipmentID, ShipmentReferenceList };
-  //   })),
-  // );
 };
 
 // eslint-disable-next-line max-len
