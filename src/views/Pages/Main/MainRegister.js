@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable default-case */
 /* eslint-disable filenames/match-regex */
 import React, { Component } from 'react';
@@ -9,22 +11,28 @@ import { RegisterUser } from '../../../service/auth/register';
 import { login, setDefault } from '../../../actions/loginActions';
 
 class MainRegister extends Component {
-  state = {
-    step: 1,
-    Firstname: '',
-    Surname: '',
-    Email: '',
-    Password: '',
-    AccountType: '',
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      step: 1,
+      Firstname: '',
+      Surname: '',
+      Email: '',
+      Password: '',
+      AccountType: '',
+    };
+  }
 
   nextStep = (r) => {
     const { step } = this.state;
-    console.log('r', r);
-    this.setState({
+    const nextState = {
       step: step + 1,
       AccountType: r,
-    });
+    };
+    if (this.props.invite) {
+      nextState.Email = this.props.inviteData.email;
+    }
+    this.setState(nextState);
   };
 
   handleChange = input => (event) => {
@@ -36,11 +44,9 @@ class MainRegister extends Component {
   };
 
   handleRegister = () => {
-    console.log('state', this.state);
     const { Email, Password } = this.state;
     RegisterUser(this.state).subscribe({
       next: (result) => {
-        console.log('result', result);
         this.props.setDefault();
         this.props.login({ email: Email, password: Password });
       },
@@ -54,6 +60,8 @@ class MainRegister extends Component {
     });
   };
 
+  handleRegisterByInvite = () => {};
+
   render() {
     const { step } = this.state;
     const {
@@ -66,6 +74,9 @@ class MainRegister extends Component {
       Password,
       AccountType,
     };
+    if (this.props.invite) {
+      values.Email = this.props.inviteData.email;
+    }
     switch (step) {
       case 1:
         return (
@@ -74,6 +85,7 @@ class MainRegister extends Component {
             handleChange={this.handleChange}
             handleEmailChange={this.handleEmailChange}
             values={values}
+            invite={this.props.invite}
           />
         );
       case 2:
