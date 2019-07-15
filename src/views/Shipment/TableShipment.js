@@ -328,13 +328,13 @@ class TableShipment extends React.Component {
                       type="text"
                       name={`shipmentRefID${refIndex}`}
                       id={`shipmentRefID${refIndex}`}
-                      value={refItem.ShipmentReferenceID}
+                      value={refItem.ShipmentReferenceIDInput}
                       onChange={e => {
                         const value = e.target.value;
                         // (ShipmentKey, refKey, Data)
                         this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
                           ...refItem,
-                          ShipmentReferenceID: value,
+                          ShipmentReferenceIDInput: value,
                           ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
                           ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
                           ShipmentKey: shipmentKey
@@ -345,11 +345,11 @@ class TableShipment extends React.Component {
                           const update = UpdateShipmentReference(
                             shipmentKey,
                             refItem.ShipmentReferenceKey,
-                            refItem
+                            {
+                              ...refItem,
+                              ShipmentReferenceID: refItem.ShipmentReferenceIDInput
+                            }
                           ).subscribe({
-                            next: res => {
-                              console.log('ref has been update');
-                            },
                             complete: res => {
                               update.unsubscribe();
                             }
@@ -773,7 +773,7 @@ class TableShipment extends React.Component {
           Product: _.get(item, 'ShipmentProductName', ''),
           ETD: (
             <ShipmentInlineDate
-              initialValue={etd === null ? null : new Date(etd.seconds * 1000)}
+              initialValue={etd === null || etd === '' ? null : new Date(etd.seconds * 1000)}
               id="etd-port"
               shipmentKey={item.ShipmentID}
               field="ShipperETDDate"
@@ -782,7 +782,7 @@ class TableShipment extends React.Component {
           ),
           ETA: (
             <ShipmentInlineDate
-              initialValue={etd === null ? null : new Date(eta.seconds * 1000)}
+              initialValue={eta === null || eta === '' ? null : new Date(eta.seconds * 1000)}
               id="eta-port"
               shipmentKey={item.ShipmentID}
               field="ConsigneeETAPortDate"
@@ -817,8 +817,8 @@ class TableShipment extends React.Component {
           _.get(item, 'ConsigneePort', undefined)
         ),
         Product: _.get(item, 'ShipmentProductName', ''),
-        ETD: etd === null ? 'Not Available' : moment(etd.seconds * 1000).format('DD MMM YYYY'),
-        ETA: eta === null ? 'Not Available' : moment(eta.seconds * 1000).format('DD MMM YYYY'),
+        ETD: etd === null || etd === '' ? 'Not Available' : moment(etd.seconds * 1000).format('DD MMM YYYY'),
+        ETA: eta === null || eta === '' ? 'Not Available' : moment(eta.seconds * 1000).format('DD MMM YYYY'),
         '': this.renderDescription(index, item),
         Status: this.renderStatusComponent(item),
         ShipmentStatus: item.ShipmentStatus,
