@@ -7,6 +7,7 @@ import React from 'react';
 import { Row, Col, Button, UncontrolledCollapse, Card, CardBody } from 'reactstrap';
 import _ from 'lodash';
 import moment from 'moment';
+import ReactHtmlParser from 'react-html-parser';
 
 const getSystemTitle = title => {
   switch (title) {
@@ -67,7 +68,9 @@ const ChatMessage = ({ message, i }) => {
                         <br />
                         {hasFile ? (
                           <Row style={{ margin: 'auto' }}>
-                            <span style={text === '' ? {} : { marginRight: 100 }}>{text}</span>
+                            <span style={text === '' ? {} : { marginRight: 100 }}>
+                              {ReactHtmlParser(text)}
+                            </span>
                           </Row>
                         ) : (
                           text
@@ -91,7 +94,9 @@ const ChatMessage = ({ message, i }) => {
                           <i className="fa fa-angle-double-down" />
                         </a>
                         <br />
-                        <UncontrolledCollapse toggler={`#toggler${i}`}>{text}</UncontrolledCollapse>
+                        <UncontrolledCollapse toggler={`#toggler${i}`}>
+                          {ReactHtmlParser(text)}
+                        </UncontrolledCollapse>
                       </div>
                     )}
                     {hasFile ? (
@@ -206,13 +211,13 @@ const ChatMessage = ({ message, i }) => {
             {moment(status).format('hh:mm a')}
           </span>
 
-          <p>
+          <p className="textP">
             {hasFile ? (
               <Row style={{ margin: 'auto' }}>
-                <span style={text === '' ? {} : { marginRight: 100 }}>{text}</span>
+                <span style={text === '' ? {} : { marginRight: 100 }}>{ReactHtmlParser(text)}</span>
               </Row>
             ) : (
-              text
+              ReactHtmlParser(text)
             )}
             {hasFile ? (
               <Row style={{ textAlign: 'left', marginTop: 7 }}>

@@ -17,7 +17,8 @@ import FileSide from '../FileSide';
 import ShipmentSide from '../ShipmentSide';
 import ChatMessage from './ChatMessage';
 import PreMessage from './PreMessage';
-
+import CKEditor from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import {
   AddChatRoomMember,
   CreateChatRoom,
@@ -512,10 +513,18 @@ class ChatWithHeader extends Component {
             </Button>
           </Breadcrumb>
         </Row>
-        <Row>
+        <Row
+          style={{
+            height: 'auto'
+          }}
+        >
           <Col
             xs="8"
-            style={{ backgroundColor: 'white', marginTop: '0.5rem', paddingRight: '5px' }}
+            style={{
+              backgroundColor: 'white',
+              marginTop: '0.5rem',
+              paddingRight: '5px'
+            }}
           >
             <div
               className="mesgs"
@@ -664,14 +673,24 @@ class ChatWithHeader extends Component {
                       }
                     />
                   </InputGroupAddon>
-                  <Input
-                    placeholder={
-                      _.get(isInvited, 'ChatRoomMemberIsLeave', false)
-                        ? 'You has been remove from the chat'
-                        : 'type...'
-                    }
-                    type="textarea"
-                    value={text}
+                  <CKEditor
+                    editor={ClassicEditor}
+                    data={text}
+                    config={{
+                      width: '80%',
+                      toolbar: []
+                    }}
+                    className="ckinput"
+                    onInit={editor => {
+                      editor.config.width = '76%';
+                      console.log('Editor is ready to use!', editor);
+                    }}
+                    onBlur={editor => {
+                      console.log('Blur.', editor);
+                    }}
+                    onFocus={editor => {
+                      console.log('Focus.', editor);
+                    }}
                     disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}
                     onMouseEnter={() => {
                       ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
@@ -693,7 +712,8 @@ class ChatWithHeader extends Component {
                         lastkey = chatMsg[chatMsg.length - 1].id;
                       }
                     }}
-                    onChange={e => {
+                    onChange={(event, editor) => {
+                      const data = editor.getData();
                       ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
                         next: res => {}
                       });
@@ -712,8 +732,13 @@ class ChatWithHeader extends Component {
                         }
                         lastkey = chatMsg[chatMsg.length - 1].id;
                       }
-                      typing(e);
+                      typing(data);
                     }}
+                    placeholder={
+                      _.get(isInvited, 'ChatRoomMemberIsLeave', false)
+                        ? 'You has been remove from the chat'
+                        : 'type...'
+                    }
                     onKeyPress={event => {
                       if (event.which == 13 && event.shiftKey) {
                       } else if (event.which == 13) {
@@ -728,6 +753,70 @@ class ChatWithHeader extends Component {
                       }
                     }}
                   />
+                  {/*<Input*/}
+                  {/*  placeholder={*/}
+                  {/*    _.get(isInvited, 'ChatRoomMemberIsLeave', false)*/}
+                  {/*      ? 'You has been remove from the chat'*/}
+                  {/*      : 'type...'*/}
+                  {/*  }*/}
+                  {/*  type="textarea"*/}
+                  {/*  value={text}*/}
+                  {/*  disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}*/}
+                  {/*  onMouseEnter={() => {*/}
+                  {/*    ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({*/}
+                  {/*      next: res => {}*/}
+                  {/*    });*/}
+                  {/*    if (chatMsg.length > 0) {*/}
+                  {/*      if (chatMsg[chatMsg.length - 1].id !== lastkey) {*/}
+                  {/*        this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {*/}
+                  {/*          ChatRoomMessageReaderFirstName: sender.ProfileFirstname,*/}
+                  {/*          ChatRoomMessageReaderSurName: sender.ProfileSurname,*/}
+                  {/*          ChatRoomMessageReaderProfileImageUrl: _.get(*/}
+                  {/*            sender,*/}
+                  {/*            'UserInfoProfileImageLink',*/}
+                  {/*            ''*/}
+                  {/*          ),*/}
+                  {/*          ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id*/}
+                  {/*        });*/}
+                  {/*      }*/}
+                  {/*      lastkey = chatMsg[chatMsg.length - 1].id;*/}
+                  {/*    }*/}
+                  {/*  }}*/}
+                  {/*  onChange={e => {*/}
+                  {/*    ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({*/}
+                  {/*      next: res => {}*/}
+                  {/*    });*/}
+                  {/*    if (chatMsg.length > 0) {*/}
+                  {/*      if (chatMsg[chatMsg.length - 1].id !== lastkey) {*/}
+                  {/*        this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {*/}
+                  {/*          ChatRoomMessageReaderFirstName: sender.ProfileFirstname,*/}
+                  {/*          ChatRoomMessageReaderSurName: sender.ProfileSurname,*/}
+                  {/*          ChatRoomMessageReaderProfileImageUrl: _.get(*/}
+                  {/*            sender,*/}
+                  {/*            'UserInfoProfileImageLink',*/}
+                  {/*            ''*/}
+                  {/*          ),*/}
+                  {/*          ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id*/}
+                  {/*        });*/}
+                  {/*      }*/}
+                  {/*      lastkey = chatMsg[chatMsg.length - 1].id;*/}
+                  {/*    }*/}
+                  {/*    typing(e);*/}
+                  {/*  }}*/}
+                  {/*  onKeyPress={event => {*/}
+                  {/*    if (event.which == 13 && event.shiftKey) {*/}
+                  {/*    } else if (event.which == 13) {*/}
+                  {/*      event.preventDefault(); // Stops enter from creating a new line*/}
+                  {/*      if (*/}
+                  {/*        !_.isEmpty(_.trim(text)) &&*/}
+                  {/*        _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false*/}
+                  {/*      ) {*/}
+                  {/*        sendMessage(ChatRoomKey, ShipmentKey, text);*/}
+                  {/*        scrollChatToBottom();*/}
+                  {/*      }*/}
+                  {/*    }*/}
+                  {/*  }}*/}
+                  {/*/>*/}
                   <InputGroupAddon addonType="append">
                     <Button color="default1"> @</Button>
                     <Button color="default1">
