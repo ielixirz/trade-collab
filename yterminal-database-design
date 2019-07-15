@@ -298,6 +298,8 @@
 +NonUserInvite
     >NonUserInviteKey
         ShipmentKey (string)
+        ShipmentProductName (string)
+        ShipmentReferenceID (string)
         ChatRoomKey (string)
         CompanyKey (string)
         NonUserInviteType (string)
