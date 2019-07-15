@@ -306,3 +306,5 @@
         NonUserInviteRecruiterProfileKey (string)
         NonUserInviteRecruiterProfileFirstName (string)
         NonUserInviteRecruiterProfileSurName (string)
+        NonUserInviteRecruiterCompanyName (string)
+        NonUserInviteRecruiterCompanyKey (string)
