@@ -123,6 +123,8 @@
         UserInfoCompanyRelate (string)
         UserInfoNotificationToken (Array<string>)
         UserInfoIsMultipleProfile (bool)
+        UserInfoIsInviteFromEmail (bool)
+        UserInfoInviteDocumentKey (string)
         +Profile
             >ProfileKey
                 ProfileFirstname (string)
@@ -177,7 +179,7 @@
                 UserNotificationCompanyKey (string)
                 UserNotificationRedirectPage (string)
                 UserNotificationShipmentKey (string)
-                UserNotificationChatroonKey (string)
+                UserNotificationChatRoomKey (string)
 
 +UserPersonalize
     >ProfileKey
@@ -293,38 +295,13 @@
         ConsigneeETAWarehouseDate (timestamp)
         ConsigneeCountry (string)
 
-
-__________________________________________________________________________________
-
-User 
-    A
-        A1 
-        A2
-        A3
-    B
-        B1
-        B2
-
-Ogan
-    A
-        A1 : Owner
-        A2 : Editor
-        A3 : Editor
-        A4 : Observe
-        A5 : Creator
-    B
-        B1 : Owner
-        B2 : Editor
-        B3 : Observe
-
-
-Shipment1
-
-    Owner   Member
-    A       A , B
-
-    Editable 
-
-
-Note - One Chatroom can have many Organ ?
-     - Organ C can invate ? 
++NonUserInvite
+    >NonUserInviteKey
+        ShipmentKey (string)
+        ChatRoomKey (string)
+        CompanyKey (string)
+        NonUserInviteEmail (string)
+        NonUserInviteRecruiterUserKey (string)
+        NonUserInviteRecruiterProfileKey (string)
+        NonUserInviteRecruiterProfileFirstName (string)
+        NonUserInviteRecruiterProfileSurName (string)
