@@ -734,7 +734,6 @@ class TableShipment extends React.Component {
     input = _.map(collection, (item, index) => {
       const etd = _.get(item, 'ShipperETDDate', 0);
       const eta = _.get(item, 'ConsigneeETAPortDate', 0);
-      console.log(item)
 
       if (this.state.isEdit) {
         return {
