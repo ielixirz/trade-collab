@@ -300,6 +300,7 @@
         ShipmentKey (string)
         ChatRoomKey (string)
         CompanyKey (string)
+        NonUserInviteType (string)
         NonUserInviteEmail (string)
         NonUserInviteRecruiterUserKey (string)
         NonUserInviteRecruiterProfileKey (string)
