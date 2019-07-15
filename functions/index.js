@@ -7,6 +7,8 @@ const admin = require('firebase-admin');
 
 const sgMail = require('@sendgrid/mail');
 
+const SHA256 = require('crypto-js/sha256');
+
 var serviceAccount = require('./weeklyorder0-firebase-adminsdk-aruhg-0fd4837a53.json');
 
 admin.initializeApp({
@@ -1585,4 +1587,62 @@ exports.CheckMultipleProfile = CloudFunctionsRegionsAsia.firestore
         .doc(context.params.UserKey)
         .set({ UserInfoIsMultipleProfile: true }, { merge: true });
     }
+  });
+
+exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
+  .document('NonUserInvite/{NonUserInviteKey}')
+  .onCreate(async (snapshot, context) => {
+    const NonUserInviteEmail = snapshot.data().NonUserInviteEmail;
+    const NonUserInviteRecruiterProfileFirstName = snapshot.data()
+      .NonUserInviteRecruiterProfileFirstName;
+    const NonUserInviteRecruiterProfileSurName = snapshot.data()
+      .NonUserInviteRecruiterProfileSurName;
+    const NonUserInviteRecruiterCompanyName = snapshot.data().NonUserInviteRecruiterCompanyName;
+    const ShipmentProductName = snapshot.data().ShipmentProductName;
+    const ShipmentReferenceID = snapshot.data().ShipmentReferenceID;
+
+    const DocumentKeyEncoder = SHA256(context.params.NonUserInviteKey, 'redroylkeew').toString();
+
+    const HeaderText = `Join ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} on a shipment`;
+    const HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName}</span> on a shipment</h2>`;
+
+    let Content;
+
+    if (NonUserInviteRecruiterCompanyName && ShipmentReferenceID && ShipmentProductName) {
+      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} </span> from <span style="color: rgba(234, 70, 70, 1);"> ${NonUserInviteRecruiterCompanyName} </span> has invited you to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReferenceID} ${ShipmentProductName} </span> </p>`;
+    } else if (ShipmentReferenceID && ShipmentProductName) {
+      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} </span> has invited you to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReferenceID} ${ShipmentProductName} </span> </p>`;
+    } else if (NonUserInviteRecruiterCompanyName && ShipmentReferenceID) {
+      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${NonUserInviteRecruiterCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReferenceID} </span> </p>`;
+    } else {
+      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> a shipment </span> </p>`;
+    }
+
+    const ContentDescription = `<br><p> In weeklyorders you get a live snapshot of all your shipments. Shipments in planning, confirmed or completed. You can easily inform your company or your external supply chain <span style="color: rgba(234, 70, 70, 1);">(Exporter, Importer, Forwarder Custom Broker)</span> about the shipment. So everyone is on the same page. Here all your files, communications are organized by shipment. <a><u>Learn more...</u></a> </p>`;
+
+    Content = Content + ContentDescription;
+
+    const ButtonRedirect = `<a style="width: 400px;
+      font-size:14px;
+      font-weight:500;
+      letter-spacing:0.25px;
+      text-decoration:none;
+      text-transform:none;
+      display:inline-block;
+      border-radius:8px;
+      padding:18px 0;
+      background-color:rgba(255, 90 , 95, 1);
+      color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/register-non-system-user/${DocumentKeyEncoder}'>Join Now - Free</a>`;
+
+    const SendInviteIntoShipment = await SendEmail(
+      InviteIntoShipmentTemplate(
+        NonUserInviteEmail,
+        HeaderText,
+        HeaderHtml,
+        Content,
+        ButtonRedirect
+      )
+    );
+
+    return SendInviteIntoShipment;
   });
