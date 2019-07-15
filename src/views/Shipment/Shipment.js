@@ -157,7 +157,7 @@ class Shipment extends Component {
         parameter.ShipmentCreatorType = `Outbound ${parameter.ShipmentCreatorType}`;
       }
     }
-    if (isValidEmail(input.to)) {
+    if (isValidEmail(input.to) && this.props.user.email !== input.to) {
       parameter.ShipmentPartnerEmail = input.to;
     }
     parameter.ShipmentCreatorProfileFirstName = this.props.sender.ProfileFirstname;
