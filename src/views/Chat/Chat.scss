@@ -460,3 +460,12 @@ h2.time-background:before {
   font-size: 1em;
   font-weight: bold;
 }
+
+.card-chat-side {
+  box-shadow: none !important;
+  transition: none !important;
+  border-radius: none !important;
+  &:hover {
+    box-shadow: none !important;
+  }
+}

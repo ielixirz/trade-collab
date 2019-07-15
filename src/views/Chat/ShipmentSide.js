@@ -79,7 +79,7 @@ class ShipmentSide extends Component {
   render() {
     return (
       <div>
-        <Card onClick={this.triggerCollapse} style={styles.card}>
+        <Card className="card-chat-side" onClick={this.triggerCollapse} style={styles.card}>
           <CardBody style={{ paddingRight: 10 }}>
             <Row style={{ marginBottom: '10px', paddingRight: 15 }}>
               <Col xs="10" className="text-left">

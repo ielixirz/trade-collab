@@ -76,7 +76,7 @@ const FileSide = (props) => {
 
   return (
     <div>
-      <Card onClick={triggerCollapse} style={styles.card}>
+      <Card className="card-chat-side" onClick={triggerCollapse} style={styles.card}>
         <CardBody style={{ paddingRight: 10 }}>
           <Row style={{ marginBottom: '10px', paddingRight: 20 }}>
             <Col xs="10" className="text-left">

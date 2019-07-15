@@ -96,13 +96,15 @@ const ShipmentList = () => {
                   )}
                   <br />
                   <b>
-                    {data.ShipperETDDate === null || data.ShipperETDDate === undefined ? (
-                      <span style={{ color: '#B3B3B3' }}>Est. Time of Departure from Port</span>
-                    ) : (
-                      `Port ETD: ${moment(data.ShipperETDDate.seconds * 1000).format(
-                        'DD MMM YYYY',
-                      )}`
-                    )}
+                    {data.ShipperETDDate === null
+                      || data.ShipperETDDate === undefined
+                      || data.ShipperETDDate === '' ? (
+                        <span style={{ color: '#B3B3B3' }}>Est. Time of Departure from Port</span>
+                      ) : (
+                        `Port ETD: ${moment(data.ShipperETDDate.seconds * 1000).format(
+                          'DD MMM YYYY',
+                        )}`
+                      )}
                   </b>
                 </Col>
               </Row>
@@ -166,28 +168,35 @@ const ShipmentList = () => {
                   )}
                   <br />
                   <b>
-                    {data.ConsigneeETAPortDate === null || data.ConsigneeETAPortDate === undefined ? (
-                      <span style={{ color: '#B3B3B3' }}>Est. Time of Arrive to Port</span>
-                    ) : (
-                      `Port ETA: ${moment(data.ConsigneeETAPortDate.seconds * 1000).format(
-                        'DD MMM YYYY',
-                      )}`
-                    )}
+                    {data.ConsigneeETAPortDate === null
+                      || data.ConsigneeETAPortDate === undefined
+                      || data.ConsigneeETAPortDate === '' ? (
+                        <span style={{ color: '#B3B3B3' }}>Est. Time of Arrive to Port</span>
+                      ) : (
+                        `Port ETA: ${moment(data.ConsigneeETAPortDate.seconds * 1000).format(
+                          'DD MMM YYYY',
+                        )}`
+                      )}
                   </b>
                   <br />
                   <b>
-                    {data.ConsigneeETAWarehouseDate === null || data.ConsigneeETAWarehouseDate === undefined ? (
-                      <span style={{ color: '#B3B3B3' }}>Est. Time of Arrive to Warehouse</span>
-                    ) : (
-                      `Warehouse ETA: ${moment(
-                        data.ConsigneeETAWarehouseDate.seconds * 1000,
-                      ).format('DD MMM YYYY')}`
-                    )}
+                    {data.ConsigneeETAWarehouseDate === null
+                      || data.ConsigneeETAWarehouseDate === undefined
+                      || data.ConsigneeETAWarehouseDate === '' ? (
+                        <span style={{ color: '#B3B3B3' }}>Est. Time of Arrive to Warehouse</span>
+                      ) : (
+                        `Warehouse ETA: ${moment(
+                          data.ConsigneeETAWarehouseDate.seconds * 1000,
+                        ).format('DD MMM YYYY')}`
+                      )}
                   </b>
                   {' '}
                   {data.ShipperETDDate === null
                     || data.ConsigneeETAPortDate === null
                     || data.ConsigneeETAWarehouseDate === null
+                    || data.ShipperETDDate === ''
+                    || data.ConsigneeETAPortDate === ''
+                    || data.ConsigneeETAWarehouseDate === ''
                     ? ''
                     : `+${GetDiffDay(
                       data.ConsigneeETAWarehouseDate.seconds * 1000,
