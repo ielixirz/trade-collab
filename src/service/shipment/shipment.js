@@ -1,7 +1,7 @@
-import { collection, doc } from 'rxfire/firestore';
+import { collection, doc, collectionData } from 'rxfire/firestore';
 import { from, combineLatest, merge } from 'rxjs';
 import {
-  take, concatMap, map, tap, mergeMap, toArray,
+  take, concatMap, map, tap, mergeMap, toArray, switchMap,
 } from 'rxjs/operators';
 import _ from 'lodash';
 import { FirebaseApp } from '../firebase';
@@ -61,16 +61,27 @@ export const GetShipmentList = (
     .orderBy('ShipmentCreateTimestamp', 'desc');
 
   if (QueryStatus && QueryFieldName) {
-    return collection(
+    return collectionData(
       DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection)
         .where('ShipmentStatus', '==', QueryStatus)
         .limit(LimitNumber),
+      'ShipmentID',
     );
   }
-  if (QueryStatus) return collection(DefaultQuery.where('ShipmentStatus', '==', QueryStatus).limit(LimitNumber));
+  if (QueryStatus) {
+    return collectionData(
+      DefaultQuery.where('ShipmentStatus', '==', QueryStatus).limit(LimitNumber),
+      'ShipmentID',
+    );
+  }
   // eslint-disable-next-line max-len
-  if (QueryFieldName) return collection(DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection).limit(LimitNumber));
-  return collection(DefaultQuery.limit(LimitNumber));
+  if (QueryFieldName) {
+    return collectionData(
+      DefaultQuery.orderBy(QueryFieldName, QueryFieldDirection).limit(LimitNumber),
+      'ShipmentID',
+    );
+  }
+  return collectionData(DefaultQuery.limit(LimitNumber), 'ShipmentID');
 };
 
 export const GetShipmentDetail = ShipmentKey => doc(ShipmentRefPath().doc(ShipmentKey));
@@ -108,7 +119,7 @@ export const GetShipmentFileList = ShipmentKey => collection(ShipmentFileRefPath
 export const CreateShipmentReference = (ShipmentKey, Data) => from(ShipmentReferenceRefPath(ShipmentKey).add(Data));
 
 // eslint-disable-next-line max-len
-export const GetShipmentReferenceList = ShipmentKey => collection(ShipmentReferenceRefPath(ShipmentKey));
+export const GetShipmentReferenceList = ShipmentKey => collectionData(ShipmentReferenceRefPath(ShipmentKey), 'ShipmentReferenceKey');
 
 export const UpdateShipmentReference = (ShipmentKey, ShipmentReferenceKey, Data) => from(
   ShipmentReferenceRefPath(ShipmentKey)
@@ -140,41 +151,12 @@ export const CombineShipmentAndShipmentReference = (
     ShipmentMemberUserKey,
   );
 
-  const ShipmentKeyListSource = ShipmentListSource.pipe(
-    map(ShipmentList => ShipmentList.map(ShipmentItem => ShipmentItem.id)),
-  );
-
-  const ShipmentReferenceListSource = combineLatest(ShipmentKeyListSource.pipe(take(1))).pipe(
-    concatMap(ShipmentKeyList => combineLatest(ShipmentKeyList)),
-    concatMap(ShipmentKeyItem => ShipmentKeyItem),
-    mergeMap(ShipmentKey => GetShipmentReferenceList(ShipmentKey).pipe(
-      map(RefData => ({ ...RefData, ShipmentKey })),
-      take(1),
+  return ShipmentListSource.pipe(
+    switchMap(ShipmentList => combineLatest(
+      ...ShipmentList.map(ShipmentDoc => GetShipmentReferenceList(ShipmentDoc.ShipmentID).pipe(
+        map(ShipmentReferenceList => ({ ShipmentReferenceList, ...ShipmentDoc })),
+      )),
     )),
-    toArray(),
-  );
-
-  return combineLatest(ShipmentListSource, ShipmentReferenceListSource).pipe(
-    map((CombineResult) => {
-      console.log('fetch REF', CombineResult[0], CombineResult[1]);
-      return CombineResult[0].map((Item, Index) => {
-        const ShipmentData = Item.data();
-        const ShipmentID = Item.id;
-        // console.log(CombineResult[1]);
-        const ShipmentReferenceList = _.find(CombineResult[1], ['ShipmentKey', ShipmentID]);
-
-        if (ShipmentReferenceList) {
-          if (ShipmentReferenceList.ShipmentKey) delete ShipmentReferenceList.ShipmentKey;
-        }
-
-        // const ShipmentReferenceList = _.reverse(CombineResult[1][Index]);
-
-        // console.warn(`${ShipmentData.ShipmentProductName}`, CombineResult[1]);
-        console.warn({ ...ShipmentData, ShipmentID, ShipmentReferenceList });
-
-        return { ...ShipmentData, ShipmentID, ShipmentReferenceList };
-      });
-    }),
   );
 };
 
@@ -202,40 +184,23 @@ export const SearchShipment = (
     ShipmentMemberUserKey,
   );
 
-  let ShipmentListSource = collection(
+  let ShipmentListSource = collectionData(
     DefaultQuery.where(SearchTitle, '>=', SearchText)
       .orderBy(SearchTitle, 'asc')
       .limit(LimitNumber),
+    'ShipmentID',
   );
 
   if (SearchTitle === 'ShipmentReferenceList') {
-    ShipmentListSource = collection(DefaultQuery);
+    ShipmentListSource = collectionData(DefaultQuery, 'ShipmentID');
   }
 
-  const ShipmentKeyListSource = ShipmentListSource.pipe(
-    map(ShipmentList => ShipmentList.map(ShipmentItem => ShipmentItem.id)),
-  );
-
-  const ShipmentReferenceListSource = combineLatest(ShipmentKeyListSource.pipe(take(1))).pipe(
-    concatMap(ShipmentKeyList => combineLatest(ShipmentKeyList)),
-    concatMap(ShipmentKeyItem => ShipmentKeyItem),
-    mergeMap(ShipmentKey => GetShipmentReferenceList(ShipmentKey).pipe(
-      map(RefData => ({ ...RefData, ShipmentKey })),
-      take(1),
+  return ShipmentListSource.pipe(
+    switchMap(ShipmentList => combineLatest(
+      ...ShipmentList.map(ShipmentDoc => GetShipmentReferenceList(ShipmentDoc.ShipmentID).pipe(
+        map(ShipmentReferenceList => ({ ShipmentReferenceList, ...ShipmentDoc })),
+      )),
     )),
-    toArray(),
-  );
-
-  return combineLatest(ShipmentListSource, ShipmentReferenceListSource).pipe(
-    map(CombineResult => CombineResult[0].map((Item) => {
-      const ShipmentData = Item.data();
-      const ShipmentID = Item.id;
-      const ShipmentReferenceList = _.find(CombineResult[1], ['ShipmentKey', ShipmentID]);
-
-      if (ShipmentReferenceList.ShipmentKey) delete ShipmentReferenceList.ShipmentKey;
-
-      return { ...ShipmentData, ShipmentID, ShipmentReferenceList };
-    })),
   );
 };
 

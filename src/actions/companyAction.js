@@ -3,7 +3,8 @@ import { configureStore } from '../utils/configureStore';
 import {
   FETCH_COMPANY_DETAIL,
   FETCH_COMPANY_USER,
-  FETCH_NETWORK_EMAIL
+  FETCH_NETWORK_EMAIL,
+  SET_QUERY
 } from '../constants/constants';
 import { GetCompanyDetail, GetCompanyMember } from '../service/company/company';
 
@@ -26,6 +27,13 @@ export const getCompanyDetail = companyKey => dispatch => {
       alert(err.message);
     },
     complete: () => {}
+  });
+};
+
+export const setQuery = query => async (dispatch, getState) => {
+  dispatch({
+    type: SET_QUERY,
+    payload: query
   });
 };
 
