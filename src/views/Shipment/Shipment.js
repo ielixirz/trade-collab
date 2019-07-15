@@ -52,7 +52,7 @@ import './Shipment.css';
 import { GetUserCompany } from '../../service/user/user';
 import { GetShipmentTotalCount } from '../../service/personalize/personalize';
 import _ from 'lodash';
-import { fetchCompany } from '../../actions/companyAction';
+import { fetchCompany, setQuery } from '../../actions/companyAction';
 import { AddChatRoomMember, CreateChatRoom } from '../../service/chat/chat';
 import Select from 'react-select';
 import DatePicker from 'react-date-picker';
@@ -68,7 +68,6 @@ class Shipment extends Component {
     this.state = {
       keyword: '',
       activeTab: '1',
-      typeShipment: '',
       filterKeyword: 'ShipmentProductName',
       input: {
         role: 1,
@@ -204,7 +203,7 @@ class Shipment extends Component {
           this.props.user.uid
         ).subscribe({
           next: shipment => {
-            const { typeShipment } = this.state;
+            const { query: typeShipment } = this.props;
             const result = _.filter(shipment, item => {
               let keyword = '';
               if (_.isEmpty(typeShipment)) {
@@ -261,7 +260,7 @@ class Shipment extends Component {
           this.props.user.uid
         ).subscribe({
           next: shipment => {
-            const { typeShipment } = this.state;
+            const { query: typeShipment } = this.props;
             console.log('typeShipment', typeShipment);
             const result = _.filter(shipment, item => {
               let keyword = '';
@@ -315,7 +314,8 @@ class Shipment extends Component {
             // Active : Order Confirmed, In Transit, Delayed
             // Complete: Delivered, Completed
             // Cancel: Cancelled
-            const { typeShipment } = this.state;
+            const { query: typeShipment } = this.props;
+            console.log('typeShipment', typeShipment);
             const result = _.filter(shipment, item => {
               let keyword = '';
               if (_.isEmpty(typeShipment)) {
@@ -514,6 +514,7 @@ class Shipment extends Component {
                   return true;
                 }
                 console.log('shipment', item);
+
                 switch (typeShipment) {
                   case 'Plan':
                     keyword = ['Planning', 'Order Confirmed'];
@@ -610,7 +611,8 @@ class Shipment extends Component {
 
   render() {
     const { role, bound, method, type } = this.state.input;
-    console.log(this.props.user);
+    const { query: typeShipment } = this.props;
+    console.log('Query', this.props);
     return (
       <div className="shipment-table-main-container">
         <Modal isOpen={this.state.modal} toggle={this.modal} className="create-shipment">
@@ -920,10 +922,10 @@ class Shipment extends Component {
         <Nav className="shipment-navbar">
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.typeShipment === '' })}
+              className={classnames({ active: typeShipment === '' })}
               onClick={() => {
                 this.toggle('1');
-                this.setState({ typeShipment: '' });
+                this.props.setQuery('');
                 this.fetchShipmentReload();
               }}
             >
@@ -932,10 +934,11 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.typeShipment === 'Plan' })}
+              className={classnames({ active: typeShipment === 'Plan' })}
               onClick={() => {
                 this.toggle('1');
-                this.setState({ typeShipment: 'Plan' });
+                this.props.setQuery('Plan');
+
                 this.fetchShipmentReload();
               }}
             >
@@ -944,10 +947,10 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.typeShipment === 'Active' })}
+              className={classnames({ active: typeShipment === 'Active' })}
               onClick={() => {
                 this.toggle('1');
-                this.setState({ typeShipment: 'Active' });
+                this.props.setQuery('Active');
                 this.fetchShipmentReload();
               }}
             >
@@ -956,10 +959,10 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.typeShipment === 'Complete' })}
+              className={classnames({ active: typeShipment === 'Complete' })}
               onClick={() => {
                 this.toggle('1');
-                this.setState({ typeShipment: 'Complete' });
+                this.props.setQuery('Complete');
                 this.fetchShipmentReload();
               }}
             >
@@ -968,10 +971,10 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.typeShipment === 'Cancel' })}
+              className={classnames({ active: typeShipment === 'Cancel' })}
               onClick={() => {
                 this.toggle('1');
-                this.setState({ typeShipment: 'Cancel' });
+                this.props.setQuery('Cancel');
                 this.fetchShipmentReload();
               }}
             >
@@ -996,7 +999,7 @@ class Shipment extends Component {
                 <TableShipment
                   companies={this.props.companies}
                   input={{ ...this.props.shipments }}
-                  typeShipment={this.state.typeShipment}
+                  typeShipment={this.props.query}
                   toggleBlock={this.toggleBlocking}
                   fetchMoreShipment={this.fetchMoreShipment}
                   fetchShipment={this.fetchShipment}
@@ -1028,8 +1031,8 @@ const styles = {
 };
 
 const mapStateToProps = state => {
-  const { ChatReducer, authReducer, profileReducer, companyReducer } = state;
-
+  const { ChatReducer, authReducer, profileReducer, companyReducer, shipmentReducer } = state;
+  const { query = '' } = shipmentReducer;
   const sender = _.find(
     profileReducer.ProfileList,
     item => item.id === profileReducer.ProfileDetail.id
@@ -1039,11 +1042,12 @@ const mapStateToProps = state => {
     shipments: state.shipmentReducer.Shipments,
     user: state.authReducer.user,
     sender,
-    companies: companyReducer.UserCompany
+    companies: companyReducer.UserCompany,
+    query
   };
 };
 
 export default connect(
   mapStateToProps,
-  { fetchShipments, fetchMoreShipments, fetchCompany }
+  { fetchShipments, fetchMoreShipments, fetchCompany, setQuery }
 )(Shipment);
