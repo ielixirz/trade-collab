@@ -5,6 +5,7 @@
 import React from 'react';
 import { Row, Col } from 'reactstrap';
 import _ from 'lodash';
+import ReactHtmlParser from "react-html-parser";
 
 const PreMessage = ({ message, callback }) => {
   const { ChatRoomMessageContext = 'Test message' } = message;
@@ -17,7 +18,7 @@ const PreMessage = ({ message, callback }) => {
             <span className="time_date">{status(message, sendMessage)}</span>
           </div>
           <div>
-            <p>{ChatRoomMessageContext}</p>
+            <p className={'textP'}>{ReactHtmlParser(ChatRoomMessageContext)}</p>
           </div>
         </div>
       </div>
