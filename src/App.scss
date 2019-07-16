@@ -52,3 +52,8 @@ Not supports in Firefox and IE */
 img.img-avatar {
   border-radius: 50% !important;
 }
+
+/* Override Core UI Nav Bar*/
+.app-header.navbar {
+  border-bottom: 1px solid #ededed !important;
+}

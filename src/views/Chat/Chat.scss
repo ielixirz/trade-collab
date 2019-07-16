@@ -43,7 +43,6 @@ img {
 }
 
 .inbox_msg {
-  border: 1px solid #c4c4c4;
   clear: both;
   overflow: hidden;
   border-top: 0px;
@@ -188,7 +187,7 @@ img {
   float: left;
   padding: 30px 15px 0 25px;
   width: 100%;
-  height: 81vh;
+  height: 82vh;
 }
 
 .system-message {
@@ -215,7 +214,8 @@ img {
   word-break: break-word;
 }
 
-.sent_msg p {
+.tab-content {
+  border: 1px solid #ededed;
 }
 
 .outgoing_msg {
@@ -334,7 +334,6 @@ img {
 
 .react-tabs-container {
   background-color: #ffffff !important;
-  margin-top: 0.5rem !important;
   padding-top: 0.5rem !important;
   border: 0px !important;
   overflow-x: auto !important;
@@ -353,9 +352,9 @@ img {
 .react-tabs-tab {
   background-color: #f0f3f5b5 !important;
   color: #000000 !important;
-  border-top: 1px solid #c8ced3 !important;
-  border-right: 1px solid #c8ced3 !important;
-  border-left: 1px solid #c8ced3 !important;
+  border-top: 1px solid #ededed !important;
+  border-right: 1px solid #ededed !important;
+  border-left: 1px solid #ededed !important;
   border-top-left-radius: 10px !important;
   border-top-right-radius: 10px !important;
   max-width: 350px !important;
@@ -401,6 +400,7 @@ img {
 ol.breadcrumb {
   padding-bottom: 0.5rem;
   padding-top: 0.5rem;
+  border-bottom: 1px solid #ededed;
 }
 
 .time-seperation {
@@ -482,6 +482,8 @@ h2.time-background:before {
   box-shadow: none !important;
   transition: none !important;
   border-radius: none !important;
+  border: 1px solid #ededed;
+  border-bottom: none;
   width: none !important;
   &:hover {
     box-shadow: none !important;

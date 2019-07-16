@@ -201,11 +201,6 @@ div.seenby {
   width: 100%;
 }
 
-/* Override Core UI Nav Bar*/
-.app-header.navbar {
-  border-bottom: 2px solid #ededed;
-}
-
 /* Shipment DataTable */
 
 .table.shipment-table {
