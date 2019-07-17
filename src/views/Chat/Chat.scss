@@ -261,11 +261,7 @@ img {
 .user-name {
   font-weight: bolder;
 }
-.textInput{
- width: 600px;
-  border: 0.5px;
 
-}
 .type_msg {
   position: relative;
   margin-bottom: 10px;
@@ -273,7 +269,7 @@ img {
 }
 div[contenteditable]{
   border: 1px solid black;
-  max-height: 20vh;
+  max-height: 200px;
   overflow: auto;
 }
 
