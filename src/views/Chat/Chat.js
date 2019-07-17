@@ -83,7 +83,8 @@ class Chat extends Component {
         const data = result.path.split('/');
         const chatkey = result.id;
 
-        this.props.toggleLoading(true);
+        this.props.toggleCreateChat(true);
+
         const ChatRoomMember = AddChatRoomMember(shipmentkey, result.id, {
           ChatRoomMemberUserKey: user.uid,
           ChatRoomMemberEmail: user.email,
@@ -95,6 +96,7 @@ class Chat extends Component {
           next: (res) => {
             fetchChatMessage(data[data.length - 1], shipmentkey, chatkey);
             this.props.newChat(chatkey);
+            this.props.toggleCreateChat(false);
 
             ChatRoomMember.unsubscribe();
           },
