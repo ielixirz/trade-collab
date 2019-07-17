@@ -93,6 +93,7 @@ class Shipment extends Component {
     this.renderSearch = this.renderSearch.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.fetchShipment = {};
+    this.combineShipment = {};
     this.timeout = null;
 
     this.toggleBlocking = this.toggleBlocking.bind(this);
@@ -192,10 +193,16 @@ class Shipment extends Component {
   }
 
   fetchMoreShipment() {
-    this.fetchShipment.unsubscribe();
+    if(!_.isEmpty(this.fetchShipment)){
+      this.fetchShipment.unsubscribe();
+      if(!_.isEmpty(this.combineShipment)){
+        this.combineShipment.unsubscribe();
+
+      }
+    }
     this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
       next: notification => {
-        CombineShipmentAndShipmentReference(
+        this.combineShipment=CombineShipmentAndShipmentReference(
           '',
           '',
           'asc',
@@ -249,10 +256,16 @@ class Shipment extends Component {
   }
 
   fetchShipmentReload() {
-    this.fetchShipment.unsubscribe();
+    if(!_.isEmpty(this.fetchShipment)){
+      this.fetchShipment.unsubscribe();
+      if(!_.isEmpty(this.combineShipment)){
+        this.combineShipment.unsubscribe();
+
+      }
+    }
     this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
       next: notification => {
-        CombineShipmentAndShipmentReference(
+        this.combineShipment=CombineShipmentAndShipmentReference(
           '',
           '',
           'asc',
@@ -306,7 +319,7 @@ class Shipment extends Component {
   componentDidMount() {
     this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
       next: notification => {
-        CombineShipmentAndShipmentReference('', '', 'asc', 20, this.props.user.uid).subscribe({
+        this.combineShipment=CombineShipmentAndShipmentReference('', '', 'asc', 20, this.props.user.uid).subscribe({
           next: shipment => {
             console.log('FETCH SHIPMENT', shipment);
             // Alert : All Status
