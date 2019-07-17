@@ -7,7 +7,6 @@ import React from 'react';
 import { Row, Col, Button, UncontrolledCollapse, Card, CardBody } from 'reactstrap';
 import _ from 'lodash';
 import moment from 'moment';
-import ReactHtmlParser from 'react-html-parser';
 
 const getSystemTitle = title => {
   switch (title) {
@@ -61,16 +60,14 @@ const ChatMessage = ({ message, i }) => {
             <div className="received_withd_msg">
               <Row className="flex-nowrap">
                 <div className="sender">
-                  <p className={type === 'System' ? 'system-message' : ''}>
+                  <p className={type === 'System' ? 'system-message' : 'textP'}>
                     {type !== 'System' ? (
                       <div>
                         <span className="user-name">{name}</span>
                         <br />
                         {hasFile ? (
                           <Row style={{ margin: 'auto' }}>
-                            <span style={text === '' ? {} : { marginRight: 100 }}>
-                              {ReactHtmlParser(text)}
-                            </span>
+                            <span style={text === '' ? {} : { marginRight: 100 }}>{text}</span>
                           </Row>
                         ) : (
                           text
@@ -94,9 +91,7 @@ const ChatMessage = ({ message, i }) => {
                           <i className="fa fa-angle-double-down" />
                         </a>
                         <br />
-                        <UncontrolledCollapse toggler={`#toggler${i}`}>
-                          {ReactHtmlParser(text)}
-                        </UncontrolledCollapse>
+                        <UncontrolledCollapse toggler={`#toggler${i}`}>{text}</UncontrolledCollapse>
                       </div>
                     )}
                     {hasFile ? (
@@ -211,13 +206,13 @@ const ChatMessage = ({ message, i }) => {
             {moment(status).format('hh:mm a')}
           </span>
 
-          <p className="textP">
+          <p className={'textP'}>
             {hasFile ? (
               <Row style={{ margin: 'auto' }}>
-                <span style={text === '' ? {} : { marginRight: 100 }}>{ReactHtmlParser(text)}</span>
+                <span style={text === '' ? {} : { marginRight: 100 }}>{text}</span>
               </Row>
             ) : (
-              ReactHtmlParser(text)
+              text
             )}
             {hasFile ? (
               <Row style={{ textAlign: 'left', marginTop: 7 }}>
