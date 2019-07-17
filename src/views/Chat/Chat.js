@@ -24,7 +24,7 @@ import {
   getChatRoomList,
   toggleLoading,
   newChat,
-  selectChatRoom
+  selectChatRoom, toggleCreateChat
 } from '../../actions/chatActions';
 
 import ChatWithHeader from './components/ChatWithHeader';
@@ -59,6 +59,7 @@ class Chat extends Component {
       blocking: false,
     };
     this.toggleBlocking = this.toggleBlocking.bind(this);
+    this.toggleCreateChat = this.toggleCreateChat.bind(this);
     this.uploadModalRef = React.createRef();
     this.fileInput = React.createRef();
   }
@@ -66,6 +67,10 @@ class Chat extends Component {
   toggleBlocking = (toggle) => {
     console.log('Toggle block ui', toggle);
     this.props.toggleLoading(toggle);
+  };
+  toggleCreateChat= (toggle) => {
+    console.log('Toggle block ui', toggle);
+    this.props.toggleCreateChat(toggle);
   };
 
   createChatRoom(fetchChatMessage, param, room, user) {
@@ -78,7 +83,8 @@ class Chat extends Component {
         const data = result.path.split('/');
         const chatkey = result.id;
 
-        this.props.toggleLoading(true);
+        this.props.toggleCreateChat(true);
+
         const ChatRoomMember = AddChatRoomMember(shipmentkey, result.id, {
           ChatRoomMemberUserKey: user.uid,
           ChatRoomMemberEmail: user.email,
@@ -90,6 +96,7 @@ class Chat extends Component {
           next: (res) => {
             fetchChatMessage(data[data.length - 1], shipmentkey, chatkey);
             this.props.newChat(chatkey);
+            this.props.toggleCreateChat(false);
 
             ChatRoomMember.unsubscribe();
           },
@@ -146,6 +153,7 @@ class Chat extends Component {
         typing={onTyping}
         members={member}
         toggleBlocking={this.toggleBlocking}
+        toggleCreateChat={this.toggleCreateChat}
         uploadModalRef={this.uploadModalRef}
         fileInputRef={this.fileInput}
         ShipmentData={this.state.shipments}
@@ -420,6 +428,7 @@ class Chat extends Component {
     tabs = _.sortBy(tabs, 'position');
     const activeTab = tabs.filter(tab => tab.active === true);
     const toggle = this.props.ChatReducer.toggle;
+    const createChat = this.props.ChatReducer.createChat || false;
     return (
       <div className="animated fadeIn chatbox">
         <Tabs
@@ -431,7 +440,7 @@ class Chat extends Component {
           tabs={tabs}
         />
         <TabContent>
-          <BlockUi tag="div" blocking={toggle} style={{ height: '100%' }}>
+          <BlockUi tag="div" blocking={toggle || createChat} style={{ height: '100%' }}>
             {activeTab.length !== 0 ? (
               this.renderChat(activeTab[0].ChatRoomKey, activeTab[0].ShipmentKey)
             ) : (
@@ -448,7 +457,7 @@ class Chat extends Component {
 
 const mapStateToProps = (state) => {
   const {
- ChatReducer, authReducer, profileReducer, companyReducer, shipmentReducer 
+ ChatReducer, authReducer, profileReducer, companyReducer, shipmentReducer
 } = state;
 
   const sender = _.find(
@@ -476,6 +485,7 @@ export default connect(
     onFetchMoreMessage: fetchMoreMessage,
     onSendMessage: sendMessage,
     toggleLoading,
+    toggleCreateChat,
     moveTab,
     selectTab,
     selectChat: selectChatRoom,

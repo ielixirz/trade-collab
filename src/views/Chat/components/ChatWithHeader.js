@@ -116,6 +116,7 @@ class ChatWithHeader extends Component {
           });
           console.log('inviteMember', inviteMember);
           if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
+            this.props.toggleCreateChat(true)
             const invite = CreateChatMultipleInvitation(
               inviteMember,
               ShipmentKey,
@@ -159,7 +160,7 @@ class ChatWithHeader extends Component {
                 });
               },
               complete: result => {
-                console.log(result);
+                this.props.toggleCreateChat(false)
               }
             });
             getCompany.unsubscribe();

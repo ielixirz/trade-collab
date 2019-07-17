@@ -7,7 +7,7 @@ import {
   SEND_MESSAGE,
   FETCH_CHAT_MEMBER,
   TOGGLE_LOAD,
-  SELECT_ROOM
+  SELECT_ROOM, TOGGLE_CHAT
 } from '../constants/constants';
 import {
   GetChatMessage,
@@ -430,6 +430,19 @@ export const toggleLoading = toggle => (dispatch, getState) => {
     type: TOGGLE_LOAD,
     payload: toggle
   });
+};
+export const toggleCreateChat = toggle => (dispatch, getState) => {
+  dispatch({
+    type: TOGGLE_CHAT,
+    payload: toggle
+  });
+
+  setTimeout(()=>{
+    dispatch({
+      type: TOGGLE_CHAT,
+      payload: false
+    });
+  },3000)
 };
 
 export const newChat = chatkey => (dispatch, getState) => {
