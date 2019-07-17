@@ -283,7 +283,8 @@ class TableShipment extends React.Component {
     const { user, companies } = this.props;
     const userCompany = [];
     let refs = [];
-    refs = _.filter(ref, refItem =>
+    refs = _.map(ref,item=>item);
+   let userrefs = _.filter(ref, refItem =>
       _.some(companies, item => _.includes(refItem.ShipmentReferenceCompanyKey, item.CompanyKey))
     );
 
@@ -294,8 +295,8 @@ class TableShipment extends React.Component {
       return (
         <div>
           <p id={`popover${index}`} className="text-yterminal">
-            {refs.length > 0 ? (
-              refs[0].ShipmentReferenceID
+            {userrefs.length > 0 ? (
+              userrefs[0].ShipmentReferenceID
             ) : _.isEmpty(companies) ? (
               <TableLoading />
             ) : (
