@@ -60,7 +60,10 @@ class ChatWithHeader extends Component {
 
   componentDidMount() {
     console.log('This.props', this.props);
-    const { ShipmentKey, ChatRoomKey } = this.props;
+    const { ShipmentKey, ChatRoomKey ,sender} = this.props;
+    ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
+      next: res => {}
+    });
   }
 
   UpdateReader(ShipmentKey, ChatRoomKey, sender, data) {
