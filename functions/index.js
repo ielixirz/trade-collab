@@ -1605,7 +1605,6 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
     const DocumentKeyEncoder = SHA256(context.params.NonUserInviteKey, 'redroylkeew').toString();
 
     if (NonUserInviteType === 'Shipment') {
-      
       const HeaderText = `Join ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} on a shipment`;
       const HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName}</span> on a shipment</h2>`;
 
@@ -1648,15 +1647,11 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
       );
 
       return SendInviteIntoShipment;
-    }
-
-    else if (NonUserInviteType === 'Company') {
+    } else if (NonUserInviteType === 'Company') {
       const HeaderText = `Invited to join ${NonUserInviteRecruiterCompanyName}`;
       const HeaderHtml = `<h2>Invited to join ${NonUserInviteRecruiterCompanyName}</h2>`;
 
-      let Content = `<p> ${NonUserInviteRecruiterProfileFirstName} ${
-        NonUserInviteRecruiterProfileSurName
-      } has invited you to join ${NonUserInviteRecruiterCompanyName} </p>`;
+      let Content = `<p> ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} has invited you to join ${NonUserInviteRecruiterCompanyName} </p>`;
 
       const ContentDescription = `<br><p> In weeklyorders you get a live snapshot of all your shipments. Shipments in planning, confirmed or completed. You can easily inform your company or your external supply chain <span style="color: rgba(234, 70, 70, 1);">(Exporter, Importer, Forwarder Custom Broker)</span> about the shipment. So everyone is on the same page. Here all your files, communications are organized by shipment. <a><u>Learn more...</u></a> </p>`;
 
@@ -1674,12 +1669,36 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
         background-color:rgba(255, 90 , 95, 1);
         color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/register-non-system-user/${DocumentKeyEncoder}'>Join Now - Free</a>`;
 
-      const SendInviteIntoCompany = await SendEmail(InviteToJoinCompanyTemplate(NonUserInviteEmail, HeaderText, HeaderHtml, Content, ButtonRedirect));
+      const SendInviteIntoCompany = await SendEmail(
+        InviteToJoinCompanyTemplate(
+          NonUserInviteEmail,
+          HeaderText,
+          HeaderHtml,
+          Content,
+          ButtonRedirect
+        )
+      );
 
       return SendInviteIntoCompany;
     }
-
-    
   });
 
-exports.
+exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
+  .document('UserInfo/{UserInfoKey}')
+  .onCreate(async (snapshot, context) => {
+
+    const UserKey = context.params.UserInfoKey
+    const UserInfoIsInviteFromEmail = snapshot.data().UserInfoIsInviteFromEmail
+    const UserInfoInviteDocumentKey = snapshot.data().UserInfoInviteDocumentKey
+
+    if (UserInfoIsInviteFromEmail && UserInfoInviteDocumentKey) {
+      const GetNonUserInvite = await admin.firestore().collection('NonUserInvite').doc(UserInfoInviteDocumentKey).get()
+      const NonUserInviteData = GetNonUserInvite.data()
+
+      if ( NonUserInviteData.NonUserInviteType === 'Shipment') {
+        
+      }
+
+    }
+
+  });
