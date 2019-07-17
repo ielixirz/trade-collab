@@ -661,6 +661,10 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
         type: FETCH_CHAT_ROOMS,
         payload: originalReducer
       });
+      dispatch({
+        type: TOGGLE_CHAT,
+        payload: false
+      });
     },
     error: err => {
       console.log(err);

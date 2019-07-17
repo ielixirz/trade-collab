@@ -23,7 +23,7 @@ const composeEnhancers = composeWithDevTools({});
 const authPersistConfig = {
   key: 'auth',
   storage: storage,
-  blacklist: ['shipmentReducer', 'companyReducer']
+  blacklist: ['shipmentReducer', 'companyReducer','ChatReducer']
 };
 
 export const configureStore = () => {
