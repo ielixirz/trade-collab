@@ -314,13 +314,8 @@ class TableShipment extends React.Component {
                   <Col xs={1} />
                   <Col xs={5} style={{ paddingTop: 5 }}>
                     <Label check>
-                      <Input
-                        style={{ paddingTop: 5 }}
-                        type="radio"
-                        name={`shipmentRef${refIndex}`}
-                        value={refItem.ShipmentReferenceKey}
-                      />
-                      Ref #{refIndex + 1}: ({refItem.ShipmentReferenceCompanyName})
+
+                      ({refItem.ShipmentReferenceCompanyName})
                     </Label>
                   </Col>
                   <Col xs={5}>
@@ -370,13 +365,8 @@ class TableShipment extends React.Component {
                   <Col xs={1} />
                   <Col xs={5} style={{ paddingTop: 5 }}>
                     <Label check>
-                      <Input
-                        style={{ paddingTop: 5 }}
-                        type="radio"
-                        name={`shipmentRef${ref.length}`}
-                        value
-                      />
-                      Ref #{refs.length + 1}: {hasCompany.ShipmentMemberCompanyName}
+
+                       {hasCompany.ShipmentMemberCompanyName}
                     </Label>
                   </Col>
                   <Col xs={5}>
