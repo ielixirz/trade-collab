@@ -60,7 +60,10 @@ class ChatWithHeader extends Component {
 
   componentDidMount() {
     console.log('This.props', this.props);
-    const { ShipmentKey, ChatRoomKey } = this.props;
+    const { ShipmentKey, ChatRoomKey ,sender} = this.props;
+    ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
+      next: res => {}
+    });
   }
 
   UpdateReader(ShipmentKey, ChatRoomKey, sender, data) {
@@ -638,7 +641,7 @@ class ChatWithHeader extends Component {
                 )}
                 <div className="msg_history-cover-bar" />
               </div>
-              <div className="type_msg">
+              <div className="type_msg" contenteditable>
                 <UploadModal
                   chatFile={ChatRoomFileLink}
                   sendMessage={sendMessage}
