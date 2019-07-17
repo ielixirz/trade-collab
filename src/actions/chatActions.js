@@ -436,6 +436,13 @@ export const toggleCreateChat = toggle => (dispatch, getState) => {
     type: TOGGLE_CHAT,
     payload: toggle
   });
+
+  setTimeout(()=>{
+    dispatch({
+      type: TOGGLE_CHAT,
+      payload: false
+    });
+  },3000)
 };
 
 export const newChat = chatkey => (dispatch, getState) => {
