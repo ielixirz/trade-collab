@@ -7,7 +7,7 @@ import {
   SEND_MESSAGE,
   FETCH_CHAT_MEMBER,
   TOGGLE_LOAD,
-  SELECT_ROOM
+  SELECT_ROOM, TOGGLE_CHAT
 } from '../constants/constants';
 import {
   GetChatMessage,
@@ -428,6 +428,12 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
 export const toggleLoading = toggle => (dispatch, getState) => {
   dispatch({
     type: TOGGLE_LOAD,
+    payload: toggle
+  });
+};
+export const toggleCreateChat = toggle => (dispatch, getState) => {
+  dispatch({
+    type: TOGGLE_CHAT,
     payload: toggle
   });
 };
