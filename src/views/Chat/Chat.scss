@@ -267,6 +267,11 @@ img {
   margin-bottom: 10px;
   height: 10vh;
 }
+div[contenteditable]{
+  border: 1px solid black;
+  max-height: 200px;
+  overflow: auto;
+}
 
 .msg_send_btn {
   background: #05728f none repeat scroll 0 0;

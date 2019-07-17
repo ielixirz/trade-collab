@@ -638,7 +638,7 @@ class ChatWithHeader extends Component {
                 )}
                 <div className="msg_history-cover-bar" />
               </div>
-              <div className="type_msg">
+              <div className="type_msg" contenteditable>
                 <UploadModal
                   chatFile={ChatRoomFileLink}
                   sendMessage={sendMessage}
