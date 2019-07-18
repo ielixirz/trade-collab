@@ -1696,7 +1696,31 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
       const NonUserInviteData = GetNonUserInvite.data()
 
       if ( NonUserInviteData.NonUserInviteType === 'Shipment') {
-        
+
+        const ShipmentKey = NonUserInviteData.ShipmentKey
+        const ChatRoomKey = NonUserInviteData.ChatRoomKey
+
+        ChatRoomMemberPayloadObject = {
+          ChatRoomMemberUserKey: UserKey,
+          ChatRoomMemberEmail: NonUserInviteData.NonUserInviteEmail
+        }
+
+        return admin.firestore().collection('Shipment').doc(ShipmentKey).collection('ChatRoom').doc(ChatRoomKey).collection('ChatRoomMember').add(ChatRoomMemberPayloadObject)
+      }
+
+      if ( NonUserInviteData.NonUserInviteType === 'Company' ) {
+        const CompanyKey = NonUserInviteData.CompanyKey
+
+        CompanyMemberPayloadObject = {
+          UserMemberEmail: UserInfoIsInviteFromEmail,
+          UserMemberPosition: NonUserInviteData.CompanyMemberPosition,
+          UserMemberRoleName: NonUserInviteData.CompanyMemberRoleName,
+          CompanyUserAccessibilityRolePermissionCode: NonUserInviteData.CompanyUserAccessibilityRolePermissionCode,
+          UserMemberCompanyStandingStatus: 'Active',
+          UserMemberJoinedTimestamp: admin.firestore.FieldValue.serverTimestamp()
+        }
+
+        return admin.firestore().collection('Company').doc(CompanyKey).collection('CompanyMember').doc(UserKey).set(CompanyMemberPayloadObject)
       }
 
     }
