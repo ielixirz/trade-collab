@@ -588,7 +588,7 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
   const tabs = [];
 
   if (_.get(chatroomList, 'selectedShipment', shipmentKey) !== shipmentKey) {
-    chatroomList[shipmentKey].unsubscribe();
+    chatroomList[_.get(chatroomList, 'selectedShipment', shipmentKey)].unsubscribe();
   } else {
     if (!_.isEmpty(chatroomList[shipmentKey])) {
       chatroomList[shipmentKey].unsubscribe();
