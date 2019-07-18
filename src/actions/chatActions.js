@@ -102,7 +102,7 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
   if (!_.isEmpty(ChatKey)) {
     const chats = getState().ChatReducer.chatrooms;
     const tabs = [];
-    _.forEach(chats, item => {
+    _.forEach(chats, (item, index) => {
       tabs.push({
         id: tabs.length + 1,
         roomName: item.roomName,
@@ -110,7 +110,7 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
         ChatRoomKey: item.ChatRoomKey,
         ShipmentKey: item.ShipmentKey,
         ChatRoomData: item.ChatRoomData,
-        position: item.index
+        position: _.get(chats, `${item.ChatRoomKey}.position`, _.size(chats))
       });
     });
 
@@ -126,7 +126,7 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
         roomName: item.roomName,
         active: item.active,
         ChatRoomData: item.ChatRoomData,
-        position: index
+        position: item.position
       };
     });
     dispatch({ type: MOVE_TAB, payload: originalReducer });
@@ -202,7 +202,7 @@ export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
       ChatRoomData: item.ChatRoomData,
-      position: item.position,
+      position: _.get(chats, `${item.ChatRoomKey}.position`, _.size(chats)),
       member: item.member
     });
   });
@@ -220,7 +220,7 @@ export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
       chatMsg: item.chatMsg,
       active: item.active,
       ChatRoomData: item.ChatRoomData,
-      position: index,
+      position: item.position,
       member: item.member
     };
   });
@@ -232,7 +232,7 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
   const chats = getState().ChatReducer.chatrooms;
   const tabs = [];
 
-  _.forEach(chats, item => {
+  _.forEach(chats, (item, index) => {
     tabs.push({
       id: tabs.length + 1,
       roomName: item.roomName,
@@ -240,7 +240,8 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
       ChatRoomData: item.ChatRoomData,
-      position: item.index,
+      position: _.get(chats, `${item.ChatRoomKey}.position`, _.size(chats)),
+
       member: item.member
     });
   });
@@ -281,7 +282,7 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
         roomName: item.roomName,
         active: item.active,
         ChatRoomData: item.ChatRoomData,
-        position: index,
+        position: item.position,
         member: item.member
       };
       const { ChatRoomKey, ShipmentKey } = item;
@@ -360,7 +361,8 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
       ChatRoomData: item.ChatRoomData,
-      position: item.index,
+      position: _.get(chats, `${item.ChatRoomKey}.position`, _.size(chats)),
+
       member: item.member
     });
   });
@@ -604,20 +606,19 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
         const chatRoomKey = d.id;
 
         const data = d.data();
-
         chatrooms.push({
           id: index + 1,
           active: index === 0,
           ChatRoomKey: chatRoomKey,
           ShipmentKey: shipmentKey,
-          ChatRoomData: data
+          ChatRoomData: data,
+          position: _.get(chats, `${chatRoomKey}.position`, _.size(chats))
         });
         return true;
       });
 
       _.forEach(chatrooms, (c, index) => {
         originalReducer[c.ChatRoomKey] = {
-          position: (chats, `${c.ChatRoomKey}.position`, chatrooms.length),
           ..._.get(chats, c.ChatRoomKey, {}),
           ChatRoomKey: c.ChatRoomKey,
           ShipmentKey: c.ShipmentKey,
