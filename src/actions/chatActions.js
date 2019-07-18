@@ -269,6 +269,14 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
         newTabs.push(newTabs.splice(x, 1)[0]);
       }
     });
+    console.log('Before mapping', newTabs);
+    newTabs = _.map(newTabs, (item, index) => {
+      return {
+        ...item,
+        position: index
+      };
+    });
+    console.log('After mapping', newTabs);
 
     dispatch({
       type: SELECT_ROOM,
@@ -277,12 +285,12 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
     const originalReducer = [];
     _.forEach(newTabs, (item, index) => {
       originalReducer[item.ChatRoomKey] = {
+        ...item,
         ChatRoomKey: item.ChatRoomKey,
         ShipmentKey: item.ShipmentKey,
         roomName: item.roomName,
         active: item.active,
         ChatRoomData: item.ChatRoomData,
-        position: item.position,
         member: item.member
       };
       const { ChatRoomKey, ShipmentKey } = item;
@@ -612,7 +620,7 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
           ChatRoomKey: chatRoomKey,
           ShipmentKey: shipmentKey,
           ChatRoomData: data,
-          position: _.get(chats, `${chatRoomKey}.position`, _.size(chats))
+          position: _.get(chats, `${chatRoomKey}.position`, index)
         });
         return true;
       });
@@ -624,6 +632,7 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
           ShipmentKey: c.ShipmentKey,
           roomName: c.ChatRoomData.ChatRoomName,
           active: c.active,
+          position: c.position,
           ChatRoomData: c.ChatRoomData
         };
         const { ChatRoomKey, ShipmentKey } = c;
