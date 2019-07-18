@@ -283,8 +283,8 @@ class TableShipment extends React.Component {
     const { user, companies } = this.props;
     const userCompany = [];
     let refs = [];
-    refs = _.map(ref,item=>item);
-   let userrefs = _.filter(ref, refItem =>
+    refs = _.map(ref, item => item);
+    let userrefs = _.filter(ref, refItem =>
       _.some(companies, item => _.includes(refItem.ShipmentReferenceCompanyKey, item.CompanyKey))
     );
 
@@ -314,10 +314,7 @@ class TableShipment extends React.Component {
                 <Row key={refIndex}>
                   <Col xs={1} />
                   <Col xs={5} style={{ paddingTop: 5 }}>
-                    <Label check>
-
-                      ({refItem.ShipmentReferenceCompanyName})
-                    </Label>
+                    <Label check>({refItem.ShipmentReferenceCompanyName})</Label>
                   </Col>
                   <Col xs={5}>
                     <Input
@@ -365,10 +362,7 @@ class TableShipment extends React.Component {
                 <Row>
                   <Col xs={1} />
                   <Col xs={5} style={{ paddingTop: 5 }}>
-                    <Label check>
-
-                       {hasCompany.ShipmentMemberCompanyName}
-                    </Label>
+                    <Label check>{hasCompany.ShipmentMemberCompanyName}</Label>
                   </Col>
                   <Col xs={5}>
                     <Input
@@ -734,7 +728,15 @@ class TableShipment extends React.Component {
       });
       return output;
     });
-    const collection = _.orderBy(filtered, ['PIN'], ['desc']);
+    let collection = _.orderBy(filtered, ['PIN'], ['desc']);
+    collection = _.map(collection, item => {
+      const notifications = _.get(this.props, `notification.${item.ShipmentID}`, 0);
+      return {
+        notifications,
+        ...item
+      };
+    });
+    collection = _.orderBy(collection, ['PIN', 'notifications'], ['desc', 'desc']);
 
     input = _.map(collection, (item, index) => {
       const etd = _.get(item, 'ShipperETDDate', 0);
@@ -808,8 +810,14 @@ class TableShipment extends React.Component {
           _.get(item, 'ConsigneePort', undefined)
         ),
         Product: _.get(item, 'ShipmentProductName', ''),
-        ETD: etd === null || etd === '' ? 'Not Available' : moment(etd.seconds * 1000).format('DD MMM YYYY'),
-        ETA: eta === null || eta === '' ? 'Not Available' : moment(eta.seconds * 1000).format('DD MMM YYYY'),
+        ETD:
+          etd === null || etd === ''
+            ? 'Not Available'
+            : moment(etd.seconds * 1000).format('DD MMM YYYY'),
+        ETA:
+          eta === null || eta === ''
+            ? 'Not Available'
+            : moment(eta.seconds * 1000).format('DD MMM YYYY'),
         '': this.renderDescription(index, item),
         Status: this.renderStatusComponent(item),
         ShipmentStatus: item.ShipmentStatus,
