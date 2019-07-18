@@ -221,7 +221,7 @@
             >UserKey
                 UserMemberEmail (string)
                 UserMemberPosition (string)
-                CompanyUserAccessibilityRoleName (string) 
+                UserMemberRoleName (string) 
                 CompanyUserAccessibilityRolePermissionCode (string) (Binary number)
                 UserMemberCompanyStandingStatus (string)
                 UserMemberJoinedTimestamp (timestamp)
