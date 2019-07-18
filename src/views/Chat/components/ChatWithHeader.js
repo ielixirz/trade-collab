@@ -60,7 +60,7 @@ class ChatWithHeader extends Component {
 
   componentDidMount() {
     console.log('This.props', this.props);
-    const { ShipmentKey, ChatRoomKey ,sender} = this.props;
+    const { ShipmentKey, ChatRoomKey, sender } = this.props;
     ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
       next: res => {}
     });
@@ -119,7 +119,7 @@ class ChatWithHeader extends Component {
           });
           console.log('inviteMember', inviteMember);
           if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
-            this.props.toggleCreateChat(true)
+            this.props.toggleCreateChat(true);
             const invite = CreateChatMultipleInvitation(
               inviteMember,
               ShipmentKey,
@@ -163,7 +163,7 @@ class ChatWithHeader extends Component {
                 });
               },
               complete: result => {
-                this.props.toggleCreateChat(false)
+                this.props.toggleCreateChat(false);
               }
             });
             getCompany.unsubscribe();
@@ -647,7 +647,7 @@ class ChatWithHeader extends Component {
                   sendMessage={sendMessage}
                   ref={uploadModalRef}
                 />
-                <InputGroup >
+                <InputGroup>
                   <InputGroupAddon addonType="prepend">
                     <Button
                       color="default"
