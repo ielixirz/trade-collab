@@ -262,15 +262,18 @@ img {
   font-weight: bolder;
 }
 
-.type_msg {
+.inputBox {
   position: relative;
   margin-bottom: 10px;
-  height: 10vh;
+  width: auto;
 }
-div[contenteditable]{
-  border: 1px solid black;
-  max-height: 200px;
-  overflow: auto;
+
+.type_msg {
+  position: absolute;
+  bottom: -60px;
+}
+textarea {
+  width: 600px;
 }
 
 .msg_send_btn {
@@ -293,9 +296,10 @@ div[contenteditable]{
 }
 
 .msg_history {
-  height: 90%;
+  height: 85%;
   overflow: auto;
   padding-right: 10px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
 }
@@ -492,6 +496,21 @@ h2.time-background:before {
   border-bottom: none;
   width: none !important;
   &:hover {
+    box-shadow: none !important;
+  }
+}
+
+.chat-message-input {
+  padding: 1;
+  overflow: hidden;
+  resize: none;
+  padding: 10px;
+  border-color: #e4e7ea;
+  outline: none !important;
+  &:hover {
+    box-shadow: none !important;
+  }
+  &:focus {
     box-shadow: none !important;
   }
 }

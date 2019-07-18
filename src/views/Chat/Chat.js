@@ -8,7 +8,7 @@ import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 
 import {
- TabContent, Input, TabPane, Badge,
+  TabContent, Input, TabPane, Badge,
 } from 'reactstrap';
 import _ from 'lodash';
 import { connect } from 'react-redux';
@@ -24,7 +24,8 @@ import {
   getChatRoomList,
   toggleLoading,
   newChat,
-  selectChatRoom, toggleCreateChat
+  selectChatRoom,
+  toggleCreateChat,
 } from '../../actions/chatActions';
 
 import ChatWithHeader from './components/ChatWithHeader';
@@ -57,20 +58,35 @@ class Chat extends Component {
       shipments: {},
       chatAlert: [],
       blocking: false,
+      toggleChat: false,
     };
     this.toggleBlocking = this.toggleBlocking.bind(this);
     this.toggleCreateChat = this.toggleCreateChat.bind(this);
     this.uploadModalRef = React.createRef();
     this.fileInput = React.createRef();
+    this.chatWithHeader = React.createRef();
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.state.roomeditor.ShipmentKey) {
+      console.log('Focus', this.nameInput);
+      this.nameInput.focus(true);
+    }
+    console.log('chat has update', this.props);
+    const hasNewChat = _.get(this.props, 'ChatReducer.selectedChat', '');
+    if (_.size(hasNewChat) > 2) {
+      this.props.selectChat(hasNewChat);
+    }
   }
 
   toggleBlocking = (toggle) => {
     console.log('Toggle block ui', toggle);
     this.props.toggleLoading(toggle);
   };
-  toggleCreateChat= (toggle) => {
+
+  toggleCreateChat = (toggle) => {
     console.log('Toggle block ui', toggle);
-    this.props.toggleCreateChat(toggle);
+    this.setState({ toggleChat: toggle });
   };
 
   createChatRoom(fetchChatMessage, param, room, user) {
@@ -141,6 +157,7 @@ class Chat extends Component {
 
     return (
       <ChatWithHeader
+        ref={this.chatWithHeader}
         alert={this.state.chatAlert}
         network={this.props.network}
         msg={msg}
@@ -166,7 +183,6 @@ class Chat extends Component {
         sendMessage={onSendMessage}
         fetchMoreMessage={onFetchMoreMessage}
         browseFile={this.browseFile}
-        scrollChatToBottom={this.scrollChatToBottom}
         //   Event
         onDropChatStyle={this.state.onDropChatStyle}
         onDragOver={this.onDragOver}
@@ -198,6 +214,10 @@ class Chat extends Component {
     });
   };
 
+  scrollChildChatToBottom = () => {
+    this.chatWithHeader.current.scrollChatToBottom();
+  };
+
   onDragOver = (event) => {
     event.stopPropagation();
     event.preventDefault();
@@ -216,14 +236,6 @@ class Chat extends Component {
 
   onDragEnter = (event) => {
     event.preventDefault();
-  };
-
-  scrollChatToBottom = () => {
-    try {
-      this.msgChatRef.scrollTop = this.msgChatRef.scrollHeight;
-    } catch (e) {
-      console.log('is custom tab or something went wrong', e.message);
-    }
   };
 
   closedTab(removedIndex) {
@@ -272,18 +284,6 @@ class Chat extends Component {
     );
   }
 
-  componentDidUpdate() {
-    if (this.state.roomeditor.ShipmentKey) {
-      console.log('Focus', this.nameInput);
-      this.nameInput.focus(true);
-    }
-    console.log('chat has update', this.props);
-    const hasNewChat = _.get(this.props, 'ChatReducer.selectedChat', '');
-    if (_.size(hasNewChat) > 2) {
-      this.props.selectChat(hasNewChat);
-    }
-  }
-
   componentDidMount() {
     const {
       match: { params },
@@ -319,11 +319,10 @@ class Chat extends Component {
     });
     _.forEach(tabs, (tab) => {
       console.log('fetch', tab);
-      this.props.fetchChatMessage(tab.ChatRoomKey, tab.ShipmentKey);
+      this.props.fetchChatMessage(tab.ChatRoomKey, tab.ShipmentKey, this.scrollChildChatToBottom);
     });
     GetUserCompany(this.props.user.uid).subscribe({
       next: (res) => {
-        console.log('Fetched Company is', res);
         this.props.fetchCompany(res);
       },
     });
@@ -440,7 +439,7 @@ class Chat extends Component {
           tabs={tabs}
         />
         <TabContent>
-          <BlockUi tag="div" blocking={toggle || createChat} style={{ height: '100%' }}>
+          <BlockUi tag="div" blocking={toggle || this.state.toggleChat} style={{ height: '100%' }}>
             {activeTab.length !== 0 ? (
               this.renderChat(activeTab[0].ChatRoomKey, activeTab[0].ShipmentKey)
             ) : (
@@ -457,8 +456,8 @@ class Chat extends Component {
 
 const mapStateToProps = (state) => {
   const {
- ChatReducer, authReducer, profileReducer, companyReducer, shipmentReducer
-} = state;
+    ChatReducer, authReducer, profileReducer, companyReducer, shipmentReducer,
+  } = state;
 
   const sender = _.find(
     profileReducer.ProfileList,

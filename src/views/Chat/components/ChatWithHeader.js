@@ -6,9 +6,13 @@
 /* eslint-disable filenames/match-regex */
 import _ from 'lodash';
 import React, { Component } from 'react';
-import { Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
+import {
+  Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input,
+} from 'reactstrap';
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
+import CKEditor from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import MemberModal from '../../../component/MemberModal';
 import MemberInviteModal from '../../../component/MemberInviteModal';
 import UploadModal from '../../../component/UploadModal';
@@ -17,14 +21,12 @@ import FileSide from '../FileSide';
 import ShipmentSide from '../ShipmentSide';
 import ChatMessage from './ChatMessage';
 import PreMessage from './PreMessage';
-import CKEditor from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import {
   AddChatRoomMember,
   CreateChatRoom,
   GetChatRoomMemberList,
   UpdateChatRoomMember,
-  UpdateChatRoomMessageReader
+  UpdateChatRoomMessageReader,
 } from '../../../service/chat/chat';
 import { GetCompanyMember } from '../../../service/company/company';
 import { CreateChatMultipleInvitation } from '../../../service/join/invite';
@@ -36,7 +38,7 @@ import { ClearUnReadChatMessage } from '../../../service/personalize/personalize
 
 const AVAILABLE_ROLES = {
   Importer: 'Exporter',
-  Exporter: 'Importer'
+  Exporter: 'Importer',
 };
 
 class ChatWithHeader extends Component {
@@ -47,24 +49,35 @@ class ChatWithHeader extends Component {
       company: '',
       email: '',
       companies: [],
-      members: []
+      members: [],
     };
-  }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps.chatMsg.length !== this.props.chatMsg.length) {
-      const objDiv = document.getElementById('chathistory');
-      objDiv.scrollTop = objDiv.scrollHeight;
-    }
+    this.msgChatRef = React.createRef();
   }
 
   componentDidMount() {
-    console.log('This.props', this.props);
-    const { ShipmentKey, ChatRoomKey ,sender} = this.props;
+    const { ShipmentKey, ChatRoomKey, sender } = this.props;
+    if (this.multilineTextarea) {
+      this.multilineTextarea.style.height = 'auto';
+    }
     ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
-      next: res => {}
+      next: (res) => {},
     });
   }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.chatMsg.length !== this.props.chatMsg.length || prevProps.msg !== this.props.msg) {
+      this.scrollChatToBottom();
+    }
+  }
+
+  scrollChatToBottom = () => {
+    try {
+      this.msgChatRef.scrollTop = this.msgChatRef.scrollHeight;
+    } catch (e) {
+      console.log('is custom tab or something went wrong', e.message);
+    }
+  };
 
   UpdateReader(ShipmentKey, ChatRoomKey, sender, data) {
     const refresh = _.debounce(() => {
@@ -74,25 +87,27 @@ class ChatWithHeader extends Component {
   }
 
   handleAssignCompany(e, role, userRole) {
-    const { ShipmentKey, ChatRoomKey, members, user } = this.props;
+    const {
+      ShipmentKey, ChatRoomKey, members, user,
+    } = this.props;
     const { companies } = this.props;
 
     const memberData = _.find(members, (item, index) => index === user.uid);
     const pickedCompany = _.find(companies, item => item.CompanyKey === e.value);
     if (pickedCompany) {
       const getCompany = GetCompanyMember(e.value).subscribe({
-        next: res => {
+        next: (res) => {
           const CompanyMember = _.map(res, item => ({
-            ...item.data()
+            ...item.data(),
           }));
           const inviteRole = userRole;
           console.log('CompanyMember', CompanyMember);
           console.log('members', members);
           const inviteMember = [];
-          _.forEach(CompanyMember, memberItem => {
+          _.forEach(CompanyMember, (memberItem) => {
             const chatMember = _.find(
               members,
-              item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail
+              item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail,
             );
 
             if (chatMember) {
@@ -103,8 +118,8 @@ class ChatWithHeader extends Component {
                 {
                   ...chatMember,
                   ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
-                }
+                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
+                },
               );
               console.log(result);
             } else {
@@ -113,43 +128,43 @@ class ChatWithHeader extends Component {
                 Image: '',
                 Role: inviteRole,
                 ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
               });
             }
           });
           console.log('inviteMember', inviteMember);
           if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
-            this.props.toggleCreateChat(true)
+            this.props.toggleCreateChat(true);
             const invite = CreateChatMultipleInvitation(
               inviteMember,
               ShipmentKey,
               ChatRoomKey,
-              this.props.sender
+              this.props.sender,
             ).subscribe({
-              next: res => {
+              next: (res) => {
                 console.log(res);
                 invite.unsubscribe();
                 this.props.fetchMoreMessage(ChatRoomKey, ShipmentKey);
-              }
+              },
             });
             CreateChatRoom(ShipmentKey, {
               ChatRoomType: 'Internal',
-              ChatRoomName: 'Internal'
+              ChatRoomName: 'Internal',
             }).subscribe({
-              next: result => {
+              next: (result) => {
                 const data = result.path.split('/');
                 const chatkey = result.id;
                 const invite = CreateChatMultipleInvitation(
                   inviteMember,
                   ShipmentKey,
                   chatkey,
-                  this.props.sender
+                  this.props.sender,
                 ).subscribe({
-                  next: res => {
+                  next: (res) => {
                     console.log(res);
                     invite.unsubscribe();
                     this.props.fetchMoreMessage(chatkey, ShipmentKey);
-                  }
+                  },
                 });
                 const ChatRoomMember = AddChatRoomMember(ShipmentKey, chatkey, {
                   ChatRoomMemberUserKey: this.props.user.uid,
@@ -157,20 +172,20 @@ class ChatWithHeader extends Component {
                   ChatRoomMemberImageUrl: '',
                   ChatRoomMemberRole: inviteRole,
                   ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
                 }).subscribe({
-                  next: result => {}
+                  next: (result) => {},
                 });
               },
-              complete: result => {
-                this.props.toggleCreateChat(false)
-              }
+              complete: (result) => {
+                this.props.toggleCreateChat(false);
+              },
             });
             getCompany.unsubscribe();
           } else {
             window.alert('You has been remove from the chat');
           }
-        }
+        },
       });
     }
   }
@@ -182,7 +197,7 @@ class ChatWithHeader extends Component {
       ShipmentData,
       ShipmentKey,
       ChatRoomKey,
-      members: member
+      members: member,
     } = this.props;
 
     const members = ShipmentData.ShipmentMember;
@@ -195,7 +210,7 @@ class ChatWithHeader extends Component {
     let options = [];
     options = _.map(companies, item => ({
       value: item.CompanyKey,
-      label: item.CompanyName
+      label: item.CompanyName,
     }));
     let output = '';
 
@@ -211,16 +226,20 @@ class ChatWithHeader extends Component {
                   height: 'auto',
                   padding: '10px',
                   borderRadius: '5px',
-                  zIndex: '100'
+                  zIndex: '100',
                 }}
               >
                 <p
                   style={{
                     fontWeight: 700,
-                    color: '#000000'
+                    color: '#000000',
                   }}
                 >
-                  You have assigned your self as an {_.join(memberData.ShipmentMemberRole, ',')} for
+                  You have assigned your self as an
+                  {' '}
+                  {_.join(memberData.ShipmentMemberRole, ',')}
+                  {' '}
+for
                   this shipment
                 </p>
                 <p>Select a company, to inform your team about this shipment</p>
@@ -228,7 +247,7 @@ class ChatWithHeader extends Component {
                 <Row>
                   <Col xs={6}>
                     <Select
-                      onChange={e => {
+                      onChange={(e) => {
                         this.setState({ company: e });
                       }}
                       name="company"
@@ -243,13 +262,13 @@ class ChatWithHeader extends Component {
                         marginLeft: '2rem',
                         marginRight: '1rem',
                         color: 'white',
-                        backgroundColor: '#16A085'
+                        backgroundColor: '#16A085',
                       }}
                       onClick={() => {
                         this.handleAssignCompany(
                           this.state.company,
                           ChatRoomType,
-                          memberData.ShipmentMemberRole
+                          memberData.ShipmentMemberRole,
                         );
                       }}
                     >
@@ -268,24 +287,28 @@ class ChatWithHeader extends Component {
                 height: 'auto',
                 padding: '10px',
                 borderRadius: '5px',
-                zIndex: '100'
+                zIndex: '100',
               }}
             >
               <p
                 style={{
                   fontWeight: 700,
-                  color: '#000000'
+                  color: '#000000',
                 }}
               >
-                {user.email} has been invited as
-                {_.join(memberData.ShipmentMemberRole, ',')} for this shipment
+                {user.email}
+                {' '}
+has been invited as
+                {_.join(memberData.ShipmentMemberRole, ',')}
+                {' '}
+for this shipment
               </p>
               <p>Select a company, to inform your team about this shipment</p>
 
               <Row>
                 <Col xs={6}>
                   <Select
-                    onChange={e => {
+                    onChange={(e) => {
                       this.setState({ company: e });
                     }}
                     name="company"
@@ -300,13 +323,13 @@ class ChatWithHeader extends Component {
                       marginLeft: '2rem',
                       marginRight: '1rem',
                       color: 'white',
-                      backgroundColor: '#16A085'
+                      backgroundColor: '#16A085',
                     }}
                     onClick={() => {
                       this.handleAssignCompany(
                         this.state.company,
                         ChatRoomType,
-                        memberData.ShipmentMemberRole
+                        memberData.ShipmentMemberRole,
                       );
                     }}
                   >
@@ -322,7 +345,7 @@ class ChatWithHeader extends Component {
     }
     const suggestion = _.map(this.props.network, item => ({
       id: item.UserMemberEmail,
-      label: item.UserMemberEmail
+      label: item.UserMemberEmail,
     }));
     if (_.size(member) < 2) {
       return (
@@ -332,16 +355,20 @@ class ChatWithHeader extends Component {
             height: 'auto',
             padding: '10px',
             borderRadius: '5px',
-            zIndex: '100'
+            zIndex: '100',
           }}
         >
           <p
             style={{
               fontWeight: 700,
-              color: '#000000'
+              color: '#000000',
             }}
           >
-            Input your {this.props.ChatRoomData.ChatRoomType} e-mail address only for this shipment
+            Input your
+            {' '}
+            {this.props.ChatRoomData.ChatRoomType}
+            {' '}
+e-mail address only for this shipment
           </p>
 
           <Row>
@@ -351,16 +378,15 @@ class ChatWithHeader extends Component {
                   <input
                     {...props}
                     style={{
-                      width: '100%'
+                      width: '100%',
                     }}
                   />
                 )}
                 wrapperStyle={{
-                  width: '100%'
+                  width: '100%',
                 }}
                 items={suggestion}
-                shouldItemRender={(item, value) =>
-                  item.label.toLowerCase().indexOf(value.toLowerCase()) > -1
+                shouldItemRender={(item, value) => item.label.toLowerCase().indexOf(value.toLowerCase()) > -1
                 }
                 getItemValue={item => item.label}
                 renderItem={(item, highlighted) => (
@@ -384,7 +410,7 @@ class ChatWithHeader extends Component {
                   marginLeft: '2rem',
                   marginRight: '1rem',
                   color: 'white',
-                  backgroundColor: '#16A085'
+                  backgroundColor: '#16A085',
                 }}
                 onClick={() => {
                   const inviteMember = [];
@@ -395,7 +421,7 @@ class ChatWithHeader extends Component {
                     Image: '',
                     Role: role,
                     ChatRoomMemberCompanyName: '',
-                    ChatRoomMemberCompanyKey: ''
+                    ChatRoomMemberCompanyKey: '',
                   });
                   console.log(inviteMember);
                   if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
@@ -403,12 +429,12 @@ class ChatWithHeader extends Component {
                       inviteMember,
                       ShipmentKey,
                       ChatRoomKey,
-                      this.props.sender
+                      this.props.sender,
                     ).subscribe({
-                      next: res => {
+                      next: (res) => {
                         console.log(res);
                         invite.unsubscribe();
-                      }
+                      },
                     });
                   } else {
                     window.alert('You has been remove from the chat');
@@ -449,13 +475,12 @@ class ChatWithHeader extends Component {
       sendMessage,
       fetchMoreMessage,
       browseFile,
-      scrollChatToBottom,
       //   Event
       onDropChatStyle,
       onDragOver,
       onDragLeave,
       onFileDrop,
-      shipments
+      shipments,
     } = this.props;
     let lastkey = '';
     const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
@@ -467,7 +492,7 @@ class ChatWithHeader extends Component {
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
         ref = _.find(
           ship.ShipmentReferenceList,
-          item => item.ShipmentReferenceCompanyKey === isInvited.ChatRoomMemberCompanyKey
+          item => item.ShipmentReferenceCompanyKey === isInvited.ChatRoomMemberCompanyKey,
         );
       }
     } else {
@@ -479,7 +504,7 @@ class ChatWithHeader extends Component {
         <Row
           style={{
             backgroundColor: 'white',
-            borderBottom: '1px solid #707070'
+            borderBottom: '1px solid #707070',
           }}
         >
           <Breadcrumb className="chat-toolbar">
@@ -519,7 +544,7 @@ class ChatWithHeader extends Component {
         </Row>
         <Row
           style={{
-            height: 'auto'
+            height: 'auto',
           }}
         >
           <Col
@@ -527,7 +552,7 @@ class ChatWithHeader extends Component {
             style={{
               backgroundColor: 'white',
               marginTop: '0.5rem',
-              paddingRight: '5px'
+              paddingRight: '5px',
             }}
           >
             <div
@@ -549,9 +574,9 @@ class ChatWithHeader extends Component {
                       ChatRoomMessageReaderProfileImageUrl: _.get(
                         sender,
                         'UserInfoProfileImageLink',
-                        ''
+                        '',
                       ),
-                      ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+                      ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
                     });
                   }
                   lastkey = chatMsg[chatMsg.length - 1].id;
@@ -567,18 +592,18 @@ class ChatWithHeader extends Component {
                     fetchMoreMessage(ChatRoomKey, ShipmentKey);
                   }
                 }}
-                ref={el => {
+                ref={(el) => {
                   this.msgChatRef = el;
                 }}
               >
                 {_.get(this.props.ShipmentData, 'ShipmentCreatorUserKey', false) === user.uid
                   ? this.renderAssignCompany(this.props.ShipmentData.ShipmentCreatorType)
                   : isInvited
-                  ? this.renderAssignCompany(
+                    ? this.renderAssignCompany(
                       isInvited.ChatRoomMemberRole[0],
-                      _.get(isInvited, 'ChatRoomMemberCompanyKey', false)
+                      _.get(isInvited, 'ChatRoomMemberCompanyKey', false),
                     )
-                  : ''}
+                    : ''}
                 {chatMsg.map((msg, i) => {
                   const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = _.get(msg, 'ChatRoomMessageType', 'sender');
@@ -601,7 +626,7 @@ class ChatWithHeader extends Component {
                       prev: chatMsg[i - 1],
                       isLast: chatMsg.length - 1 === i,
                       hasFile: true,
-                      files: msgJson.files
+                      files: msgJson.files,
                     };
                   } else {
                     message = {
@@ -612,7 +637,7 @@ class ChatWithHeader extends Component {
                       readers: msg.ChatRoomMessageReader,
                       prev: chatMsg[i - 1],
                       isLast: chatMsg.length - 1 === i,
-                      hasFile: false
+                      hasFile: false,
                     };
                   }
 
@@ -620,7 +645,7 @@ class ChatWithHeader extends Component {
                     <div
                       style={{
                         padding: '20px',
-                        marginBottom: '-70px'
+                        marginBottom: '-70px',
                       }}
                     >
                       <ChatMessage message={message} i={i} />
@@ -628,12 +653,17 @@ class ChatWithHeader extends Component {
                   );
                 })}
                 {_.isEmpty(sending) ? (
-                  ''
+                  <div
+                    style={{
+                      padding: '20px',
+                      marginBottom: '-70px',
+                    }}
+                  />
                 ) : (
                   <div
                     style={{
                       padding: '20px',
-                      marginBottom: '-70px'
+                      marginBottom: '-70px',
                     }}
                   >
                     <PreMessage message={sending} callback={sendMessage} />
@@ -641,132 +671,150 @@ class ChatWithHeader extends Component {
                 )}
                 <div className="msg_history-cover-bar" />
               </div>
-              <div className="type_msg" contenteditable>
-                <UploadModal
-                  chatFile={ChatRoomFileLink}
-                  sendMessage={sendMessage}
-                  ref={uploadModalRef}
-                />
-                <InputGroup >
-                  <InputGroupAddon addonType="prepend">
-                    <Button
-                      color="default"
-                      onClick={() => {
-                        if (_.get(isInvited, 'ChatRoomMemberIsLeave', false) === false) {
-                          browseFile(ShipmentKey);
-                        } else {
-                          window.alert('You has been remove from the chat');
-                        }
-                      }}
-                    >
-                      {' '}
-                      <i className="fa fa-plus fa-lg" />
-                    </Button>
-                    <input
-                      type="file"
-                      id="file"
-                      multiple
-                      ref={fileInputRef}
-                      style={{ display: 'none' }}
-                      onChange={event =>
-                        uploadModalRef.current.triggerUploading(
+              <div className="inputBox">
+                <div className="type_msg" contentEditable>
+                  <UploadModal
+                    chatFile={ChatRoomFileLink}
+                    sendMessage={sendMessage}
+                    ref={uploadModalRef}
+                  />
+                  <InputGroup>
+                    <InputGroupAddon addonType="prepend">
+                      <Button
+                        color="default"
+                        onClick={() => {
+                          if (_.get(isInvited, 'ChatRoomMemberIsLeave', false) === false) {
+                            browseFile(ShipmentKey);
+                          } else {
+                            window.alert('You has been remove from the chat');
+                          }
+                        }}
+                      >
+                        {' '}
+                        <i className="fa fa-plus fa-lg" />
+                      </Button>
+                      <input
+                        type="file"
+                        id="file"
+                        multiple
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                        onChange={event => uploadModalRef.current.triggerUploading(
                           event.target.files,
                           ShipmentKey,
-                          ChatRoomKey
+                          ChatRoomKey,
                         )
-                      }
-                    />
-                  </InputGroupAddon>
+                        }
+                      />
+                    </InputGroupAddon>
 
-                  <Input
-                    placeholder={
-                      _.get(isInvited, 'ChatRoomMemberIsLeave', false)
-                        ? 'You has been remove from the chat'
-                        : 'type...'
-                    }
-                    type="textarea"
-                    value={text}
-                    disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}
-                    onMouseEnter={() => {
-                      ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
-                        next: res => {}
-                      });
-                      if (chatMsg.length > 0) {
-                        if (chatMsg[chatMsg.length - 1].id !== lastkey) {
-                          this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
-                            ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
-                            ChatRoomMessageReaderSurName: sender.ProfileSurname,
-                            ChatRoomMessageReaderProfileImageUrl: _.get(
-                              sender,
-                              'UserInfoProfileImageLink',
-                              ''
-                            ),
-                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
-                          });
-                        }
-                        lastkey = chatMsg[chatMsg.length - 1].id;
+                    <textarea
+                      className="chat-message-input"
+                      placeholder={
+                        _.get(isInvited, 'ChatRoomMemberIsLeave', false)
+                          ? 'You has been remove from the chat'
+                          : 'type...'
                       }
-                    }}
-                    onChange={e => {
-                      ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
-                        next: res => {}
-                      });
-                      if (chatMsg.length > 0) {
-                        if (chatMsg[chatMsg.length - 1].id !== lastkey) {
-                          this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
-                            ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
-                            ChatRoomMessageReaderSurName: sender.ProfileSurname,
-                            ChatRoomMessageReaderProfileImageUrl: _.get(
-                              sender,
-                              'UserInfoProfileImageLink',
-                              ''
-                            ),
-                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
-                          });
-                        }
-                        lastkey = chatMsg[chatMsg.length - 1].id;
-                      }
-                      typing(e.target.value);
-                    }}
-                    onKeyPress={event => {
-                      if (event.which == 13 && event.shiftKey) {
-                      } else if (event.which == 13) {
-                        event.preventDefault(); // Stops enter from creating a new line
-                        if (
-                          !_.isEmpty(_.trim(text)) &&
-                          _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
-                        ) {
-                          sendMessage(ChatRoomKey, ShipmentKey, text);
-                          scrollChatToBottom();
-                        }
-                      }
-                    }}
-                  />
-                  <InputGroupAddon addonType="append">
-                    <Button color="default1"> @</Button>
-                    <Button color="default1">
-                      {' '}
-                      <i className="fa fa-smile-o fa-lg" />
-                    </Button>
-                    <Button
-                      color="default1"
-                      onClick={() => {
-                        console.log('Input text is size', _.size(text));
-
-                        if (
-                          !_.isEmpty(_.trim(text)) &&
-                          _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
-                        ) {
-                          sendMessage(ChatRoomKey, ShipmentKey, text);
-                          scrollChatToBottom();
+                      ref={ref => (this.multilineTextarea = ref)}
+                      type="textarea"
+                      value={text}
+                      disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}
+                      onMouseEnter={() => {
+                        ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
+                          next: (res) => {},
+                        });
+                        if (chatMsg.length > 0) {
+                          if (chatMsg[chatMsg.length - 1].id !== lastkey) {
+                            this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
+                              ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
+                              ChatRoomMessageReaderSurName: sender.ProfileSurname,
+                              ChatRoomMessageReaderProfileImageUrl: _.get(
+                                sender,
+                                'UserInfoProfileImageLink',
+                                '',
+                              ),
+                              ChatRoomMessageReaderLastestMessageKey:
+                                chatMsg[chatMsg.length - 1].id,
+                            });
+                          }
+                          lastkey = chatMsg[chatMsg.length - 1].id;
                         }
                       }}
-                    >
-                      {' '}
-                      <i className="fa fa-paper-plane-o fa-lg" />
-                    </Button>
-                  </InputGroupAddon>
-                </InputGroup>
+                      onChange={(e) => {
+                        this.multilineTextarea.style.height = 'auto';
+                        this.multilineTextarea.style.height = `${this.multilineTextarea.scrollHeight}px`;
+
+                        ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
+                          next: (res) => {},
+                        });
+                        if (chatMsg.length > 0) {
+                          if (chatMsg[chatMsg.length - 1].id !== lastkey) {
+                            this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
+                              ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
+                              ChatRoomMessageReaderSurName: sender.ProfileSurname,
+                              ChatRoomMessageReaderProfileImageUrl: _.get(
+                                sender,
+                                'UserInfoProfileImageLink',
+                                '',
+                              ),
+                              ChatRoomMessageReaderLastestMessageKey:
+                                chatMsg[chatMsg.length - 1].id,
+                            });
+                          }
+                          lastkey = chatMsg[chatMsg.length - 1].id;
+                        }
+                        typing(e.target.value);
+                      }}
+                      onKeyPress={(event) => {
+                        if (event.which == 13 && event.shiftKey) {
+                        } else if (event.which == 13) {
+                          event.preventDefault(); // Stops enter from creating a new line
+                          if (
+                            !_.isEmpty(_.trim(text))
+                            && _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
+                          ) {
+                            sendMessage(
+                              ChatRoomKey,
+                              ShipmentKey,
+                              text,
+                              undefined,
+                              this.scrollChatToBottom,
+                            );
+                          }
+                        }
+                      }}
+                    />
+                    <InputGroupAddon addonType="append">
+                      <Button color="default1"> @</Button>
+                      <Button color="default1">
+                        {' '}
+                        <i className="fa fa-smile-o fa-lg" />
+                      </Button>
+                      <Button
+                        color="default1"
+                        onClick={() => {
+                          console.log('Input text is size', _.size(text));
+
+                          if (
+                            !_.isEmpty(_.trim(text))
+                            && _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
+                          ) {
+                            sendMessage(
+                              ChatRoomKey,
+                              ShipmentKey,
+                              text,
+                              undefined,
+                              this.scrollChatToBottom,
+                            );
+                          }
+                        }}
+                      >
+                        {' '}
+                        <i className="fa fa-paper-plane-o fa-lg" />
+                      </Button>
+                    </InputGroupAddon>
+                  </InputGroup>
+                </div>
               </div>
             </div>
           </Col>
