@@ -582,10 +582,20 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch
     alert('please Sign in');
   }
 };
-
+let chatroomList = {};
 export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
-  const selectRoom = getState().ChatReducer.selectedChat || '';
-  GetChatRoomList(shipmentKey, uid).subscribe({
+  const chats = getState().ChatReducer.chatrooms;
+  const tabs = [];
+
+  if (_.get(chatroomList, 'selectedShipment', shipmentKey) !== shipmentKey) {
+    chatroomList[shipmentKey].unsubscribe();
+  } else {
+    if (!_.isEmpty(chatroomList[shipmentKey])) {
+      chatroomList[shipmentKey].unsubscribe();
+    }
+    chatroomList['selectedShipment'] = shipmentKey;
+  }
+  chatroomList[shipmentKey] = GetChatRoomList(shipmentKey, uid).subscribe({
     next: snapshot => {
       const originalReducer = [];
       let chatrooms = [];
@@ -600,20 +610,20 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
           active: index === 0,
           ChatRoomKey: chatRoomKey,
           ShipmentKey: shipmentKey,
-          ChatRoomData: data,
-          position: index
+          ChatRoomData: data
         });
         return true;
       });
 
       _.forEach(chatrooms, (c, index) => {
         originalReducer[c.ChatRoomKey] = {
+          position: (chats, `${c.ChatRoomKey}.position`, chatrooms.length),
+          ..._.get(chats, c.ChatRoomKey, {}),
           ChatRoomKey: c.ChatRoomKey,
           ShipmentKey: c.ShipmentKey,
           roomName: c.ChatRoomData.ChatRoomName,
           active: c.active,
-          ChatRoomData: c.ChatRoomData,
-          position: index
+          ChatRoomData: c.ChatRoomData
         };
         const { ChatRoomKey, ShipmentKey } = c;
         const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.message`, false);
