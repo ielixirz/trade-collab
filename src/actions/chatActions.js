@@ -7,7 +7,8 @@ import {
   SEND_MESSAGE,
   FETCH_CHAT_MEMBER,
   TOGGLE_LOAD,
-  SELECT_ROOM, TOGGLE_CHAT
+  SELECT_ROOM,
+  TOGGLE_CHAT
 } from '../constants/constants';
 import {
   GetChatMessage,
@@ -89,7 +90,12 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
         console.log(err);
         alert(err.message);
       },
-      complete: () => {}
+      complete: () => {
+        dispatch({
+          type: TOGGLE_LOAD,
+          payload: false
+        });
+      }
     })
   );
 
@@ -161,10 +167,7 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
                   ...item.data()
                 };
               });
-              dispatch({
-                type: TOGGLE_LOAD,
-                payload: false
-              });
+
               dispatch({
                 type: FETCH_CHAT_MEMBER,
                 id: ChatRoomKey,
@@ -178,7 +181,12 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
         console.log(err);
         alert(err.message);
       },
-      complete: () => {}
+      complete: () => {
+        dispatch({
+          type: TOGGLE_LOAD,
+          payload: false
+        });
+      }
     })
   );
 };
@@ -327,7 +335,12 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
             console.log(err);
             alert(err.message);
           },
-          complete: () => {}
+          complete: () => {
+            dispatch({
+              type: TOGGLE_LOAD,
+              payload: false
+            });
+          }
         })
       );
     });
@@ -418,7 +431,12 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
           console.log(err);
           alert(err.message);
         },
-        complete: () => {}
+        complete: () => {
+          dispatch({
+            type: TOGGLE_LOAD,
+            payload: false
+          });
+        }
       })
     );
   });
@@ -437,12 +455,12 @@ export const toggleCreateChat = toggle => (dispatch, getState) => {
     payload: toggle
   });
 
-  setTimeout(()=>{
+  setTimeout(() => {
     dispatch({
       type: TOGGLE_CHAT,
       payload: false
     });
-  },3000)
+  }, 3000);
 };
 
 export const newChat = chatkey => (dispatch, getState) => {
@@ -546,7 +564,12 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch
             console.log(err);
             alert(err.message);
           },
-          complete: () => {}
+          complete: () => {
+            dispatch({
+              type: TOGGLE_LOAD,
+              payload: false
+            });
+          }
         });
       }, 1000);
     }
@@ -661,15 +684,20 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
         type: FETCH_CHAT_ROOMS,
         payload: originalReducer
       });
-      dispatch({
-        type: TOGGLE_CHAT,
-        payload: false
-      });
     },
     error: err => {
       console.log(err);
       alert(err.message);
     },
-    complete: () => {}
+    complete: () => {
+      dispatch({
+        type: TOGGLE_CHAT,
+        payload: false
+      });
+      dispatch({
+        type: TOGGLE_LOAD,
+        payload: false
+      });
+    }
   });
 };
