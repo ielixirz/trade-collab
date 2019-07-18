@@ -262,15 +262,20 @@ img {
   font-weight: bolder;
 }
 
-.type_msg {
+.inputBox{
   position: relative;
   margin-bottom: 10px;
-  height: 10vh;
+  width: auto;
 }
-div[contenteditable]{
-  border: 1px solid black;
-  max-height: 200px;
-  overflow: auto;
+
+.type_msg {
+  position: absolute;
+
+  margin-bottom: 10px;
+  bottom: 0;
+}
+textarea{
+width: 600px;
 }
 
 .msg_send_btn {
@@ -296,6 +301,7 @@ div[contenteditable]{
   height: 90%;
   overflow: auto;
   padding-right: 10px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
 }

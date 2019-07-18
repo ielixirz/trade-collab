@@ -61,6 +61,10 @@ class ChatWithHeader extends Component {
   componentDidMount() {
     console.log('This.props', this.props);
     const { ShipmentKey, ChatRoomKey, sender } = this.props;
+    if (this.multilineTextarea) {
+      console.log('This ref', this.multilineTextarea);
+      this.multilineTextarea.style.height = 'auto';
+    }
     ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
       next: res => {}
     });
@@ -641,132 +645,139 @@ class ChatWithHeader extends Component {
                 )}
                 <div className="msg_history-cover-bar" />
               </div>
-              <div className="type_msg" contenteditable>
-                <UploadModal
-                  chatFile={ChatRoomFileLink}
-                  sendMessage={sendMessage}
-                  ref={uploadModalRef}
-                />
-                <InputGroup>
-                  <InputGroupAddon addonType="prepend">
-                    <Button
-                      color="default"
-                      onClick={() => {
-                        if (_.get(isInvited, 'ChatRoomMemberIsLeave', false) === false) {
-                          browseFile(ShipmentKey);
-                        } else {
-                          window.alert('You has been remove from the chat');
-                        }
-                      }}
-                    >
-                      {' '}
-                      <i className="fa fa-plus fa-lg" />
-                    </Button>
-                    <input
-                      type="file"
-                      id="file"
-                      multiple
-                      ref={fileInputRef}
-                      style={{ display: 'none' }}
-                      onChange={event =>
-                        uploadModalRef.current.triggerUploading(
-                          event.target.files,
-                          ShipmentKey,
-                          ChatRoomKey
-                        )
-                      }
-                    />
-                  </InputGroupAddon>
-
-                  <Input
-                    placeholder={
-                      _.get(isInvited, 'ChatRoomMemberIsLeave', false)
-                        ? 'You has been remove from the chat'
-                        : 'type...'
-                    }
-                    type="textarea"
-                    value={text}
-                    disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}
-                    onMouseEnter={() => {
-                      ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
-                        next: res => {}
-                      });
-                      if (chatMsg.length > 0) {
-                        if (chatMsg[chatMsg.length - 1].id !== lastkey) {
-                          this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
-                            ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
-                            ChatRoomMessageReaderSurName: sender.ProfileSurname,
-                            ChatRoomMessageReaderProfileImageUrl: _.get(
-                              sender,
-                              'UserInfoProfileImageLink',
-                              ''
-                            ),
-                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
-                          });
-                        }
-                        lastkey = chatMsg[chatMsg.length - 1].id;
-                      }
-                    }}
-                    onChange={e => {
-                      ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
-                        next: res => {}
-                      });
-                      if (chatMsg.length > 0) {
-                        if (chatMsg[chatMsg.length - 1].id !== lastkey) {
-                          this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
-                            ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
-                            ChatRoomMessageReaderSurName: sender.ProfileSurname,
-                            ChatRoomMessageReaderProfileImageUrl: _.get(
-                              sender,
-                              'UserInfoProfileImageLink',
-                              ''
-                            ),
-                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
-                          });
-                        }
-                        lastkey = chatMsg[chatMsg.length - 1].id;
-                      }
-                      typing(e.target.value);
-                    }}
-                    onKeyPress={event => {
-                      if (event.which == 13 && event.shiftKey) {
-                      } else if (event.which == 13) {
-                        event.preventDefault(); // Stops enter from creating a new line
-                        if (
-                          !_.isEmpty(_.trim(text)) &&
-                          _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
-                        ) {
-                          sendMessage(ChatRoomKey, ShipmentKey, text);
-                          scrollChatToBottom();
-                        }
-                      }
-                    }}
+              <div className={'inputBox'}>
+                <div className="type_msg" contenteditable>
+                  <UploadModal
+                    chatFile={ChatRoomFileLink}
+                    sendMessage={sendMessage}
+                    ref={uploadModalRef}
                   />
-                  <InputGroupAddon addonType="append">
-                    <Button color="default1"> @</Button>
-                    <Button color="default1">
-                      {' '}
-                      <i className="fa fa-smile-o fa-lg" />
-                    </Button>
-                    <Button
-                      color="default1"
-                      onClick={() => {
-                        console.log('Input text is size', _.size(text));
+                  <InputGroup>
+                    <InputGroupAddon addonType="prepend">
+                      <Button
+                        color="default"
+                        onClick={() => {
+                          if (_.get(isInvited, 'ChatRoomMemberIsLeave', false) === false) {
+                            browseFile(ShipmentKey);
+                          } else {
+                            window.alert('You has been remove from the chat');
+                          }
+                        }}
+                      >
+                        {' '}
+                        <i className="fa fa-plus fa-lg" />
+                      </Button>
+                      <input
+                        type="file"
+                        id="file"
+                        multiple
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                        onChange={event =>
+                          uploadModalRef.current.triggerUploading(
+                            event.target.files,
+                            ShipmentKey,
+                            ChatRoomKey
+                          )
+                        }
+                      />
+                    </InputGroupAddon>
 
-                        if (
-                          !_.isEmpty(_.trim(text)) &&
-                          _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
-                        ) {
-                          sendMessage(ChatRoomKey, ShipmentKey, text);
-                          scrollChatToBottom();
+                    <textarea
+                      placeholder={
+                        _.get(isInvited, 'ChatRoomMemberIsLeave', false)
+                          ? 'You has been remove from the chat'
+                          : 'type...'
+                      }
+                      ref={ref => (this.multilineTextarea = ref)}
+                      type="textarea"
+                      value={text}
+                      disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}
+                      onMouseEnter={() => {
+                        ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
+                          next: res => {}
+                        });
+                        if (chatMsg.length > 0) {
+                          if (chatMsg[chatMsg.length - 1].id !== lastkey) {
+                            this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
+                              ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
+                              ChatRoomMessageReaderSurName: sender.ProfileSurname,
+                              ChatRoomMessageReaderProfileImageUrl: _.get(
+                                sender,
+                                'UserInfoProfileImageLink',
+                                ''
+                              ),
+                              ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+                            });
+                          }
+                          lastkey = chatMsg[chatMsg.length - 1].id;
                         }
                       }}
-                    >
-                      {' '}
-                      <i className="fa fa-paper-plane-o fa-lg" />
-                    </Button>
-                  </InputGroupAddon>
-                </InputGroup>
+                      onChange={e => {
+                        this.multilineTextarea.style.height = 'auto';
+                        this.multilineTextarea.style.height =
+                          this.multilineTextarea.scrollHeight + 'px';
+
+                        ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
+                          next: res => {}
+                        });
+                        if (chatMsg.length > 0) {
+                          if (chatMsg[chatMsg.length - 1].id !== lastkey) {
+                            this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
+                              ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
+                              ChatRoomMessageReaderSurName: sender.ProfileSurname,
+                              ChatRoomMessageReaderProfileImageUrl: _.get(
+                                sender,
+                                'UserInfoProfileImageLink',
+                                ''
+                              ),
+                              ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+                            });
+                          }
+                          lastkey = chatMsg[chatMsg.length - 1].id;
+                        }
+                        typing(e.target.value);
+                      }}
+                      onKeyPress={event => {
+                        if (event.which == 13 && event.shiftKey) {
+                        } else if (event.which == 13) {
+                          event.preventDefault(); // Stops enter from creating a new line
+                          if (
+                            !_.isEmpty(_.trim(text)) &&
+                            _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
+                          ) {
+                            sendMessage(ChatRoomKey, ShipmentKey, text);
+                            scrollChatToBottom();
+                          }
+                        }
+                      }}
+                    />
+                    <InputGroupAddon addonType="append">
+                      <Button color="default1"> @</Button>
+                      <Button color="default1">
+                        {' '}
+                        <i className="fa fa-smile-o fa-lg" />
+                      </Button>
+                      <Button
+                        color="default1"
+                        onClick={() => {
+                          console.log('Input text is size', _.size(text));
+
+                          if (
+                            !_.isEmpty(_.trim(text)) &&
+                            _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
+                          ) {
+                            sendMessage(ChatRoomKey, ShipmentKey, text);
+                            scrollChatToBottom();
+                          }
+                        }}
+                      >
+                        {' '}
+                        <i className="fa fa-paper-plane-o fa-lg" />
+                      </Button>
+                    </InputGroupAddon>
+                  </InputGroup>
+                </div>
               </div>
             </div>
           </Col>
