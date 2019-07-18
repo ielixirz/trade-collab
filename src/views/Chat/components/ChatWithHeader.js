@@ -684,6 +684,7 @@ class ChatWithHeader extends Component {
                     </InputGroupAddon>
 
                     <textarea
+                    className="chat-message-input"
                       placeholder={
                         _.get(isInvited, 'ChatRoomMemberIsLeave', false)
                           ? 'You has been remove from the chat'

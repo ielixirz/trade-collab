@@ -262,7 +262,7 @@ img {
   font-weight: bolder;
 }
 
-.inputBox{
+.inputBox {
   position: relative;
   margin-bottom: 10px;
   width: auto;
@@ -274,8 +274,8 @@ img {
   margin-bottom: 10px;
   bottom: 0;
 }
-textarea{
-width: 600px;
+textarea {
+  width: 600px;
 }
 
 .msg_send_btn {
@@ -498,6 +498,21 @@ h2.time-background:before {
   border-bottom: none;
   width: none !important;
   &:hover {
+    box-shadow: none !important;
+  }
+}
+
+.chat-message-input {
+  padding: 1;
+  overflow: hidden;
+  resize: none;
+  padding: 10px;
+  border-color: #e4e7ea;
+  outline: none !important;
+  &:hover {
+    box-shadow: none !important;
+  }
+  &:focus {
     box-shadow: none !important;
   }
 }
