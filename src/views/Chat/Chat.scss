@@ -270,9 +270,7 @@ img {
 
 .type_msg {
   position: absolute;
-
-  margin-bottom: 10px;
-  bottom: 0;
+  bottom: -60px;
 }
 textarea {
   width: 600px;
@@ -298,7 +296,7 @@ textarea {
 }
 
 .msg_history {
-  height: 90%;
+  height: 85%;
   overflow: auto;
   padding-right: 10px;
   margin-bottom: 20px;
