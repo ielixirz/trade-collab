@@ -288,9 +288,10 @@ class TableShipment extends React.Component {
       _.some(companies, item => _.includes(refItem.ShipmentReferenceCompanyKey, item.CompanyKey))
     );
 
+    console.log('user refs', userrefs);
     const hasCompany = _.get(ShipmentMember, `${user.uid}`, {});
 
-    const alreadyHave = refs.length > 0;
+    const alreadyHave = !_.isEmpty(userrefs);
     if (!_.isEmpty(hasCompany.ShipmentMemberCompanyName)) {
       return (
         <div>
