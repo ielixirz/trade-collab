@@ -47,7 +47,8 @@ class ChatWithHeader extends Component {
       company: '',
       email: '',
       companies: [],
-      members: []
+      members: [],
+      isAssign: false
     };
 
     this.msgChatRef = React.createRef();
@@ -268,7 +269,9 @@ class ChatWithHeader extends Component {
                         color: 'white',
                         backgroundColor: '#16A085'
                       }}
+                      disabled={this.state.isAssign}
                       onClick={() => {
+                        this.setState({ isAssign: true });
                         this.handleAssignCompany(
                           this.state.company,
                           ChatRoomType,
