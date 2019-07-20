@@ -64,7 +64,7 @@ const ChatMessage = ({ message, i }) => {
                   <p className={type === 'System' ? 'system-message' : 'textP'}>
                     {type !== 'System' ? (
                       <div>
-                        <span className="user-name">{name}</span>
+                        <span className="user-name-inc">{name}</span>
                         <br />
                         {hasFile ? (
                           <Row style={{ margin: 'auto' }}>
