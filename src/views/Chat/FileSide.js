@@ -77,7 +77,7 @@ const FileSide = (props) => {
     <div>
       <Card className="card-chat-side" onClick={triggerCollapse} style={styles.card}>
         <CardBody style={{ paddingRight: 10 }}>
-          <Row style={{ marginBottom: '10px', paddingRight: 20 }}>
+          <Row style={{ paddingRight: 20 }}>
             <Col xs="10" className="text-left">
               <span style={styles.boxColor}>
                 <svg

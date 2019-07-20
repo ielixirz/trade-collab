@@ -996,7 +996,7 @@ class Shipment extends Component {
               onClick={this.modal}
             >
               <i className="fa fa-plus-circle" style={{ color: 'white' }} />
-              <span style={{ fontWeight: 'bold', color: 'white' }}>Create New Shipment</span>
+              <span style={{ fontWeight: 'bold', color: 'white', marginLeft: 5 }}>Create New Shipment</span>
             </Button>
           </Col>
         </Nav>
