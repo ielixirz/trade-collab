@@ -175,7 +175,7 @@ const ChatMessage = ({ message, i }) => {
                     )}
                   </p>
                 </div>
-                <div>
+                <div className={'time_date_leftComponent'}>
                   <span className="time_date_left">{moment(status).format('hh:mm a')}</span>
                 </div>
               </Row>

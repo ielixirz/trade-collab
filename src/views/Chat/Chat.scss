@@ -172,6 +172,8 @@ img {
 }
 .time-component{
   position: relative;
+}.time_date_leftComponent{
+  position: relative;
 }
 .time_date {
   position: absolute;
@@ -193,6 +195,9 @@ img {
   padding-right: 10px;
   width: 120px;
   text-align: left;
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
 
 .received_withd_msg {
