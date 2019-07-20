@@ -59,7 +59,6 @@ class DefaultLayout extends Component {
                       exact={route.exact}
                       name={route.name}
                       render={(props) => {
-                        console.log(props);
                         return route.validation(
                           route.isProfileRequired,
                           this.props,

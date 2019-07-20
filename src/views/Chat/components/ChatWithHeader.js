@@ -56,7 +56,7 @@ class ChatWithHeader extends Component {
   componentDidMount() {
     const { ShipmentKey, ChatRoomKey, sender, chatMsg } = this.props;
     if (this.multilineTextarea) {
-      this.multilineTextarea.style.height = '50px';
+      this.multilineTextarea.style.height = '50px ';
     }
     ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
       next: res => {}
@@ -113,8 +113,6 @@ class ChatWithHeader extends Component {
             ...item.data()
           }));
           const inviteRole = userRole;
-          console.log('CompanyMember', CompanyMember);
-          console.log('members', members);
           const inviteMember = [];
           _.forEach(CompanyMember, memberItem => {
             const chatMember = _.find(
@@ -133,7 +131,6 @@ class ChatWithHeader extends Component {
                   ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
                 }
               );
-              console.log(result);
             } else {
               inviteMember.push({
                 Email: memberItem.UserMemberEmail,
@@ -144,7 +141,6 @@ class ChatWithHeader extends Component {
               });
             }
           });
-          console.log('inviteMember', inviteMember);
           if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
             this.props.toggleCreateChat(true);
             const invite = CreateChatMultipleInvitation(

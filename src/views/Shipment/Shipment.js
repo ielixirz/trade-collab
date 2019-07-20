@@ -164,7 +164,6 @@ class Shipment extends Component {
     parameter.ShipmentCreatorProfileFirstName = this.props.sender.ProfileFirstname;
 
     parameter.ShipmentCreateTimestamp = new Date().getTime();
-    console.log('Parameter ', parameter);
     CreateShipment(parameter).subscribe({
       next: createdShipment => {
         this.fetchShipmentReload();
@@ -216,7 +215,6 @@ class Shipment extends Component {
               if (_.isEmpty(typeShipment)) {
                 return true;
               }
-              console.log('shipment', item);
               //
               // Alert : All Status
               // Plan : Planning, Order Confirmed
@@ -248,7 +246,6 @@ class Shipment extends Component {
             this.setState({ blocking: false });
           },
           complete: () => {
-            console.log('Hello World');
           }
         });
       }
@@ -274,13 +271,11 @@ class Shipment extends Component {
         ).subscribe({
           next: shipment => {
             const { query: typeShipment } = this.props;
-            console.log('typeShipment', typeShipment);
             const result = _.filter(shipment, item => {
               let keyword = '';
               if (_.isEmpty(typeShipment)) {
                 return true;
               }
-              console.log('shipment', item);
               switch (typeShipment) {
                 case 'Plan':
                   keyword = ['Planning', 'Order Confirmed'];
@@ -305,7 +300,6 @@ class Shipment extends Component {
             this.setState({ blocking: false });
           },
           complete: () => {
-            console.log('Hello World');
           }
         });
       }
@@ -321,14 +315,12 @@ class Shipment extends Component {
       next: notification => {
         this.combineShipment=CombineShipmentAndShipmentReference('', '', 'asc', 20, this.props.user.uid).subscribe({
           next: shipment => {
-            console.log('FETCH SHIPMENT', shipment);
             // Alert : All Status
             // Plan : Planning, Order Confirmed
             // Active : Order Confirmed, In Transit, Delayed
             // Complete: Delivered, Completed
             // Cancel: Cancelled
             const { query: typeShipment } = this.props;
-            console.log('typeShipment', typeShipment);
             const result = _.filter(shipment, item => {
               let keyword = '';
               if (_.isEmpty(typeShipment)) {
@@ -354,11 +346,9 @@ class Shipment extends Component {
             this.props.fetchShipments(result, notification);
           },
           error: err => {
-            console.log(err);
             this.setState({ blocking: false });
           },
           complete: () => {
-            console.log('Hello World');
           }
         });
       }
@@ -366,16 +356,13 @@ class Shipment extends Component {
 
     GetUserCompany(this.props.user.uid).subscribe({
       next: res => {
-        console.log('Fetched Company is', res);
         this.props.fetchCompany(res);
       }
     });
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('has Update State', this.state);
     if (prevState.activeTab !== this.state.activeTab) {
-      console.log('reFetch');
     }
   }
 

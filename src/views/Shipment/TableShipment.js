@@ -245,7 +245,6 @@ class TableShipment extends React.Component {
 
   filterShipmentStatus = (status, shipment) => {
     let filterShipment = shipment;
-    console.log('Status is', status, 'Shipments', shipment);
     if (status !== 'ALL') {
       filterShipment = shipment.filter(s => {
         if (s.ShipmentStatus !== null) {
@@ -288,122 +287,128 @@ class TableShipment extends React.Component {
       _.some(companies, item => _.includes(refItem.ShipmentReferenceCompanyKey, item.CompanyKey))
     );
 
-    console.log('user refs', userrefs);
     const hasCompany = _.get(ShipmentMember, `${user.uid}`, {});
 
     const alreadyHave = !_.isEmpty(userrefs);
-    if (!_.isEmpty(hasCompany.ShipmentMemberCompanyName)) {
-      return (
-        <div>
-          <p id={`popover${index}`} className="text-yterminal">
-            {userrefs.length > 0 ? (
-              userrefs[0].ShipmentReferenceID
-            ) : _.isEmpty(companies) ? (
-              <TableLoading />
-            ) : (
-              'Input your Ref#!'
-            )}
-          </p>
-          <UncontrolledPopover
-            trigger="legacy"
-            placement="bottom"
-            className="yterminalRef"
-            target={`popover${index}`}
-          >
-            <PopoverBody>
-              {refs.map((refItem, refIndex) => (
-                <Row key={refIndex}>
-                  <Col xs={1} />
-                  <Col xs={5} style={{ paddingTop: 5 }}>
-                    <Label check>({refItem.ShipmentReferenceCompanyName})</Label>
-                  </Col>
-                  <Col xs={5}>
-                    <Input
-                      type="text"
-                      name={`shipmentRefID${refIndex}`}
-                      id={`shipmentRefID${refIndex}`}
-                      value={refItem.ShipmentReferenceIDInput}
-                      onChange={e => {
-                        const value = e.target.value;
-                        // (ShipmentKey, refKey, Data)
-                        this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
-                          ...refItem,
-                          ShipmentReferenceIDInput: value,
-                          ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
-                          ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
-                          ShipmentKey: shipmentKey
-                        });
-                      }}
-                      onKeyPress={event => {
-                        if (event.key === 'Enter') {
-                          const update = UpdateShipmentReference(
-                            shipmentKey,
-                            refItem.ShipmentReferenceKey,
-                            {
-                              ...refItem,
-                              ShipmentReferenceID: refItem.ShipmentReferenceIDInput
-                            }
-                          ).subscribe({
-                            complete: res => {
-                              update.unsubscribe();
-                            }
-                          });
-                        }
-                      }}
-                      maxLength={50}
-                      bsSize="sm"
-                      disabled={
-                        hasCompany.ShipmentMemberCompanyKey !== refItem.ShipmentReferenceCompanyKey
-                      }
-                    />
-                  </Col>
-                </Row>
-              ))}
-              {!alreadyHave ? (
-                <Row>
-                  <Col xs={1} />
-                  <Col xs={5} style={{ paddingTop: 5 }}>
-                    <Label check>{hasCompany.ShipmentMemberCompanyName}</Label>
-                  </Col>
-                  <Col xs={5}>
-                    <Input
-                      type="text"
-                      name={`shipmentRefID${ref.length + 1}`}
-                      id={`shipmentRefID${ref.length + 1}`}
-                      value={this.state.input.newRef.ShipmentReferenceID}
-                      onChange={e => {
-                        const value = e.target.value;
-                        this.setState({
-                          input: {
-                            newRef: {
-                              ...this.state.input.newRef,
-                              ShipmentReferenceID: value,
-                              ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
-                              ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
-                              ShipmentKey: shipmentKey
-                            }
+    return (
+      <div>
+        <p id={`popover${index}`} className="text-yterminal">
+          {userrefs.length > 0 ? (
+            userrefs[0].ShipmentReferenceID
+          ) : _.isEmpty(companies) ? (
+            <TableLoading />
+          ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (
+            'Input your Ref#!'
+          ) : (
+            'See Ref'
+          )}
+        </p>
+        <UncontrolledPopover
+          trigger="legacy"
+          placement="bottom"
+          className="yterminalRef"
+          target={`popover${index}`}
+        >
+          <PopoverBody>
+            {refs.map((refItem, refIndex) => (
+              <Row key={refIndex}>
+                <Col xs={1} />
+                <Col xs={5} style={{ paddingTop: 5 }}>
+                  <Label check>({refItem.ShipmentReferenceCompanyName})</Label>
+                </Col>
+                <Col xs={5}>
+                  <Input
+                    type="text"
+                    name={`shipmentRefID${refIndex}`}
+                    id={`shipmentRefID${refIndex}`}
+                    value={refItem.ShipmentReferenceIDInput}
+                    onChange={e => {
+                      const value = e.target.value;
+                      // (ShipmentKey, refKey, Data)
+                      this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
+                        ...refItem,
+                        ShipmentReferenceIDInput: value,
+                        ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
+                        ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
+                        ShipmentKey: shipmentKey
+                      });
+                    }}
+                    onKeyPress={event => {
+                      if (event.key === 'Enter') {
+                        const update = UpdateShipmentReference(
+                          shipmentKey,
+                          refItem.ShipmentReferenceKey,
+                          {
+                            ...refItem,
+                            ShipmentReferenceID: refItem.ShipmentReferenceIDInput
+                          }
+                        ).subscribe({
+                          complete: res => {
+                            update.unsubscribe();
                           }
                         });
-                      }}
-                      onKeyPress={_.debounce(
-                        event => {
-                          if (event.key === 'Enter') {
-                            if (
-                              _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) ===
-                              false
-                            ) {
-                              this.setState({
-                                submiting: {
-                                  ...this.state.submiting,
-                                  [shipmentKey]: {
-                                    isSubmit: true
-                                  }
+                      }
+                    }}
+                    maxLength={50}
+                    bsSize="sm"
+                    disabled={
+                      hasCompany.ShipmentMemberCompanyKey !== refItem.ShipmentReferenceCompanyKey
+                    }
+                  />
+                </Col>
+              </Row>
+            ))}
+            {!alreadyHave ? (
+              <Row>
+                <Col xs={1} />
+                <Col xs={5} style={{ paddingTop: 5 }}>
+                  <Label check>
+                    {_.isEmpty(hasCompany.ShipmentMemberCompanyName)
+                      ? 'Please Assign Company'
+                      : hasCompany.ShipmentMemberCompanyName}
+                  </Label>
+                </Col>
+                <Col xs={5}>
+                  <Input
+                    type="text"
+                    name={`shipmentRefID${ref.length + 1}`}
+                    id={`shipmentRefID${ref.length + 1}`}
+                    disabled={_.isEmpty(hasCompany.ShipmentMemberCompanyName)}
+                    value={
+                      _.isEmpty(hasCompany.ShipmentMemberCompanyName)
+                        ? 'Please Assign Company'
+                        : this.state.input.newRef.ShipmentReferenceID
+                    }
+                    onChange={e => {
+                      const value = e.target.value;
+                      this.setState({
+                        input: {
+                          newRef: {
+                            ...this.state.input.newRef,
+                            ShipmentReferenceID: value,
+                            ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
+                            ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
+                            ShipmentKey: shipmentKey
+                          }
+                        }
+                      });
+                    }}
+                    onKeyPress={_.debounce(
+                      event => {
+                        if (event.key === 'Enter') {
+                          if (
+                            _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) === false
+                          ) {
+                            this.setState({
+                              submiting: {
+                                ...this.state.submiting,
+                                [shipmentKey]: {
+                                  isSubmit: true
                                 }
-                              });
-                              CreateShipmentReference(
-                                shipmentKey,
-                                this.state.input.newRef
-                              ).subscribe({
+                              }
+                            });
+                            CreateShipmentReference(shipmentKey, this.state.input.newRef).subscribe(
+                              {
                                 next: res => {
                                   this.setState({
                                     submiting: {
@@ -415,37 +420,35 @@ class TableShipment extends React.Component {
                                     }
                                   });
                                 }
-                              });
-                            } else if (
-                              _.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0
-                            ) {
-                              UpdateShipmentReference(
-                                shipmentKey,
-                                _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
-                                this.state.input.newRef
-                              );
-                            }
+                              }
+                            );
+                          } else if (_.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0) {
+                            UpdateShipmentReference(
+                              shipmentKey,
+                              _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
+                              this.state.input.newRef
+                            );
                           }
-                        },
-                        2000,
-                        {
-                          leading: true,
-                          trailing: false
                         }
-                      )}
-                      maxLength={50}
-                      bsSize="sm"
-                    />
-                  </Col>
-                </Row>
-              ) : (
-                ''
-              )}
-            </PopoverBody>
-          </UncontrolledPopover>
-        </div>
-      );
-    }
+                      },
+                      2000,
+                      {
+                        leading: true,
+                        trailing: false
+                      }
+                    )}
+                    maxLength={50}
+                    bsSize="sm"
+                  />
+                </Col>
+              </Row>
+            ) : (
+              ''
+            )}
+          </PopoverBody>
+        </UncontrolledPopover>
+      </div>
+    );
     return <span style={{ color: '#b5b2b2', fontStyle: 'italic' }}>Please Assign company</span>;
   }
 
@@ -713,7 +716,6 @@ class TableShipment extends React.Component {
       );
     }
     // _.orderBy(myArr, [columnName], ['asc'])
-    console.log('this.props.input', this.props.input);
     const filtered = _.map(this.props.input, shipment => {
       let output = {
         ...shipment,
