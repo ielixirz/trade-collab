@@ -173,11 +173,12 @@ img {
 
 .time_date {
   color: #747474;
-  font-size: 12px;
+  font-size: 10px;
   align-items: center;
   display: inline-block;
   padding-right: 10px;
   width: 120px;
+  text-align: end;
 }
 
 .received_withd_msg {
@@ -418,8 +419,7 @@ ol.breadcrumb {
 }
 
 .time-seperation {
-  font-size: large;
-  font-weight: bold;
+  font-size: small;
   margin-bottom: 2rem;
   background: #fff;
   padding: 0 15px;
@@ -439,7 +439,7 @@ h2.time-background:before {
   /* this centers the line to the full width specified */
   position: absolute;
   /* positioning must be absolute here, and relative positioning must be applied to the parent */
-  top: 19px;
+  top: 22px;
   left: 0;
   right: 0;
   bottom: 0;
