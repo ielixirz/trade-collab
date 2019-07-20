@@ -56,7 +56,7 @@ class ChatWithHeader extends Component {
   componentDidMount() {
     const { ShipmentKey, ChatRoomKey, sender, chatMsg } = this.props;
     if (this.multilineTextarea) {
-      this.multilineTextarea.style.height = 'auto';
+      this.multilineTextarea.style.height = '50px';
     }
     ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
       next: res => {}
@@ -737,7 +737,7 @@ class ChatWithHeader extends Component {
                         }
                       }}
                       onChange={e => {
-                        this.multilineTextarea.style.height = 'auto';
+                        this.multilineTextarea.style.height = '50px';
                         if (this.multilineTextarea.scrollHeight > 280) {
                           this.multilineTextarea.style.height = '280px';
                         } else {
@@ -781,7 +781,7 @@ class ChatWithHeader extends Component {
                               undefined,
                               this.scrollChatToBottom
                             );
-                            this.multilineTextarea.style.height = 'auto';
+                            this.multilineTextarea.style.height = '50px';
                           }
                         }
                       }}
@@ -808,7 +808,7 @@ class ChatWithHeader extends Component {
                               undefined,
                               this.scrollChatToBottom
                             );
-                            this.multilineTextarea.style.height = 'auto';
+                            this.multilineTextarea.style.height = '50px';
                           }
                         }}
                       >
