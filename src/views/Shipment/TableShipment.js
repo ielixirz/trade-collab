@@ -664,6 +664,7 @@ class TableShipment extends React.Component {
                 >
                   {this.state.isEdit ? (
                     <Button
+                      hidden
                       style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 15 }}
                       onClick={() => {
                         this.editShipment();
@@ -676,6 +677,7 @@ class TableShipment extends React.Component {
                     </Button>
                   ) : (
                     <Button
+                      hidden
                       style={{ backgroundColor: 'white', marginTop: 2, marginRight: 15 }}
                       onClick={() => {
                         this.setState({
@@ -956,6 +958,7 @@ class TableShipment extends React.Component {
                 >
                   {this.state.isEdit ? (
                     <Button
+                      hidden
                       style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 15 }}
                       onClick={() => {
                         this.editShipment();
@@ -968,6 +971,7 @@ class TableShipment extends React.Component {
                     </Button>
                   ) : (
                     <Button
+                      hidden
                       style={{ backgroundColor: 'white', marginTop: 2, marginRight: 15 }}
                       onClick={() => {
                         this.setState({
@@ -1104,6 +1108,7 @@ class TableShipment extends React.Component {
               <Col xs="2" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
                 {this.state.isEdit ? (
                   <Button
+                    hidden
                     style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 15 }}
                     onClick={() => {
                       this.editShipment();
@@ -1116,6 +1121,7 @@ class TableShipment extends React.Component {
                   </Button>
                 ) : (
                   <Button
+                    hidden
                     style={{ backgroundColor: 'white', marginTop: 2, marginRight: 15 }}
                     onClick={() => {
                       this.setState({
