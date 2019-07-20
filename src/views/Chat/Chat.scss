@@ -170,8 +170,15 @@ img {
 
   text-overflow: ellipsis;
 }
-
+.time-component{
+  position: relative;
+}.time_date_leftComponent{
+  position: relative;
+}
 .time_date {
+  position: absolute;
+  bottom: 0;
+  right: 0;
   color: #747474;
   font-size: 10px;
   align-items: center;
@@ -179,6 +186,18 @@ img {
   padding-right: 10px;
   width: 120px;
   text-align: end;
+}
+.time_date_left {
+  color: #747474;
+  font-size: 10px;
+  align-items: center;
+  display: inline-block;
+  padding-right: 10px;
+  width: 120px;
+  text-align: left;
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
 
 .received_withd_msg {
