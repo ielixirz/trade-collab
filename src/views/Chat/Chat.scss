@@ -325,7 +325,8 @@ textarea {
 
 .msg_history {
   height: 85%;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 10px;
   margin-bottom: 20px;
   display: flex;
