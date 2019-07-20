@@ -315,3 +315,10 @@ tbody > tr:hover {
     border: 0;
   }
 }
+
+.status-filter-select {
+  .select__control {
+    min-height: 40px;
+    border-color: hsl(0, 0%, 80%);
+  }
+}

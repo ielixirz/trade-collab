@@ -655,7 +655,7 @@ class TableShipment extends React.Component {
                   <Select
                     name="colors"
                     id="role-filter"
-                    className="basic-multi-select role-filter-select"
+                    className="basic-multi-select status-filter-select"
                     classNamePrefix="select"
                     placeholder="Filter Status"
                     styles={{ control: styles => ({ ...styles, width: '250px' }) }}
@@ -950,7 +950,7 @@ class TableShipment extends React.Component {
                   <Select
                     name="colors"
                     id="role-filter"
-                    className="basic-multi-select role-filter-select"
+                    className="basic-multi-select status-filter-select"
                     classNamePrefix="select"
                     placeholder="Filter Status"
                     styles={{ control: styles => ({ ...styles, width: '250px' }) }}
@@ -1102,7 +1102,7 @@ class TableShipment extends React.Component {
                 <Select
                   name="colors"
                   id="role-filter"
-                  className="basic-multi-select role-filter-select"
+                  className="basic-multi-select status-filter-select"
                   classNamePrefix="select"
                   placeholder="Filter Status"
                   styles={{ control: styles => ({ ...styles, width: '250px' }) }}
