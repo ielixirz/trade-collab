@@ -103,7 +103,9 @@ const renderStatus = (status, data, listener) => {
   return '';
 };
 
-const ProfilePanel = ({ currentProfile, auth, user, history }) => {
+const ProfilePanel = ({
+  currentProfile, auth, user, history,
+}) => {
   const [userProfile, setUserProfile] = useState({});
   const [companyList, setCompanyList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -196,6 +198,7 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
             status: renderStatus(item.UserMemberCompanyStandingStatus),
             button: (
               <ThreeDotDropdown
+                style={{ bottom: 5 }}
                 options={[
                   {
                     text: 'Leave',
@@ -256,6 +259,7 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
         status: renderStatus('Active', undefined, undefined),
         button: (
           <ThreeDotDropdown
+            style={{ bottom: 5 }}
             options={[
               {
                 text: 'Leave',
@@ -516,7 +520,7 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
                   )}
                 </Col>
               </Row>
-              <Row style={{ marginTop: '20px' }}>
+              <Row style={{ marginTop: '10px' }}>
                 <Col xs={1} />
                 <Col xs={4}>
                   <span

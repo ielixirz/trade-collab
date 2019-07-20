@@ -31,7 +31,6 @@ export const profileColumns = [
     headerStyle: {
       width: '20%',
     },
-    align: 'center',
   },
   {
     dataField: 'status',

@@ -86,8 +86,8 @@
 }
 
 .profile-btn.create {
-  height: 5vh;
   color: white;
+  border-color: #16a085;
   background-color: #16a085;
 }
 
@@ -216,6 +216,7 @@ tbody tr {
 
 .table.profile-table > tbody > tr > td {
   border: none;
+  padding: 0.75rem 0.75rem 0.1rem 0.75rem;
 }
 
 /* Company DataTable */
@@ -291,6 +292,7 @@ tbody tr {
 
 .table.company-table > tbody > tr > td {
   border: none;
+  padding: 0.75rem 0.75rem 0.1rem 0.75rem;
 }
 
 /* Setting DataTable */
@@ -381,4 +383,8 @@ tbody tr {
   font-size: 0.8em;
   font-weight: bold;
   color: #b90e0e;
+}
+
+.dot-dropdown-table {
+  bottom: 5px;
 }

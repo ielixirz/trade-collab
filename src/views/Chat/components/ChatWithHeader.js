@@ -557,7 +557,7 @@ class ChatWithHeader extends Component {
             xs="8"
             style={{
               backgroundColor: 'white',
-              marginTop: '0.5rem',
+              marginTop: '16px',
               paddingRight: '5px'
             }}
           >
@@ -827,7 +827,7 @@ class ChatWithHeader extends Component {
               </div>
             </div>
           </Col>
-          <Col xs="4" style={{ paddingLeft: '2px', paddingTop: '2.5px' }}>
+          <Col xs="4" style={{ paddingLeft: '2px', paddingTop: '14.5px' }}>
             <FileSide
               chatFile={ChatRoomFileLink}
               shipmentKey={ShipmentKey}
