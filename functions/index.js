@@ -1601,8 +1601,10 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
     const ShipmentProductName = snapshot.data().ShipmentProductName;
     const ShipmentReferenceID = snapshot.data().ShipmentReferenceID;
     const NonUserInviteType = snapshot.data().NonUserInviteType;
+    const NonUserInviteExpiryDate = snapshot.data().NonUserInviteExpiryDate;
 
     const DocumentKeyEncoder = SHA256(context.params.NonUserInviteKey, 'redroylkeew').toString();
+    const ExpiryDateEncoder = SHA256(NonUserInviteExpiryDate, 'redroylkeew').toString();
 
     if (NonUserInviteType === 'Shipment') {
       const HeaderText = `Join ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} on a shipment`;
@@ -1634,7 +1636,7 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
         border-radius:8px;
         padding:18px 0;
         background-color:rgba(255, 90 , 95, 1);
-        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/register-non-system-user/${DocumentKeyEncoder}'>Join Now - Free</a>`;
+        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}'>Join Now - Free</a>`;
 
       const SendInviteIntoShipment = await SendEmail(
         InviteIntoShipmentTemplate(
@@ -1667,7 +1669,7 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
         border-radius:8px;
         padding:18px 0;
         background-color:rgba(255, 90 , 95, 1);
-        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/nu/?dke=${DocumentKeyEncoder}'>Join Now - Free</a>`;
+        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}'>Join Now - Free</a>`;
 
       const SendInviteIntoCompany = await SendEmail(
         InviteToJoinCompanyTemplate(
@@ -1686,43 +1688,57 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
 exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
   .document('UserInfo/{UserInfoKey}')
   .onCreate(async (snapshot, context) => {
-
-    const UserKey = context.params.UserInfoKey
-    const UserInfoIsInviteFromEmail = snapshot.data().UserInfoIsInviteFromEmail
-    const UserInfoInviteDocumentKey = snapshot.data().UserInfoInviteDocumentKey
+    const UserKey = context.params.UserInfoKey;
+    const UserInfoIsInviteFromEmail = snapshot.data().UserInfoIsInviteFromEmail;
+    const UserInfoInviteDocumentKey = snapshot.data().UserInfoInviteDocumentKey;
 
     if (UserInfoIsInviteFromEmail && UserInfoInviteDocumentKey) {
-      const GetNonUserInvite = await admin.firestore().collection('NonUserInvite').doc(UserInfoInviteDocumentKey).get()
-      const NonUserInviteData = GetNonUserInvite.data()
+      const GetNonUserInvite = await admin
+        .firestore()
+        .collection('NonUserInvite')
+        .doc(UserInfoInviteDocumentKey)
+        .get();
+      const NonUserInviteData = GetNonUserInvite.data();
 
-      if ( NonUserInviteData.NonUserInviteType === 'Shipment') {
-
-        const ShipmentKey = NonUserInviteData.ShipmentKey
-        const ChatRoomKey = NonUserInviteData.ChatRoomKey
+      if (NonUserInviteData.NonUserInviteType === 'Shipment') {
+        const ShipmentKey = NonUserInviteData.ShipmentKey;
+        const ChatRoomKey = NonUserInviteData.ChatRoomKey;
 
         ChatRoomMemberPayloadObject = {
           ChatRoomMemberUserKey: UserKey,
           ChatRoomMemberEmail: NonUserInviteData.NonUserInviteEmail
-        }
+        };
 
-        return admin.firestore().collection('Shipment').doc(ShipmentKey).collection('ChatRoom').doc(ChatRoomKey).collection('ChatRoomMember').add(ChatRoomMemberPayloadObject)
+        return admin
+          .firestore()
+          .collection('Shipment')
+          .doc(ShipmentKey)
+          .collection('ChatRoom')
+          .doc(ChatRoomKey)
+          .collection('ChatRoomMember')
+          .add(ChatRoomMemberPayloadObject);
       }
 
-      if ( NonUserInviteData.NonUserInviteType === 'Company' ) {
-        const CompanyKey = NonUserInviteData.CompanyKey
+      if (NonUserInviteData.NonUserInviteType === 'Company') {
+        const CompanyKey = NonUserInviteData.CompanyKey;
 
         CompanyMemberPayloadObject = {
           UserMemberEmail: UserInfoIsInviteFromEmail,
           UserMemberPosition: NonUserInviteData.CompanyMemberPosition,
           UserMemberRoleName: NonUserInviteData.CompanyMemberRoleName,
-          CompanyUserAccessibilityRolePermissionCode: NonUserInviteData.CompanyUserAccessibilityRolePermissionCode,
+          CompanyUserAccessibilityRolePermissionCode:
+            NonUserInviteData.CompanyUserAccessibilityRolePermissionCode,
           UserMemberCompanyStandingStatus: 'Active',
           UserMemberJoinedTimestamp: admin.firestore.FieldValue.serverTimestamp()
-        }
+        };
 
-        return admin.firestore().collection('Company').doc(CompanyKey).collection('CompanyMember').doc(UserKey).set(CompanyMemberPayloadObject)
+        return admin
+          .firestore()
+          .collection('Company')
+          .doc(CompanyKey)
+          .collection('CompanyMember')
+          .doc(UserKey)
+          .set(CompanyMemberPayloadObject);
       }
-
     }
-
   });
