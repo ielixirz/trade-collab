@@ -324,7 +324,7 @@ class TableShipment extends React.Component {
                     disabled={_.isEmpty(hasCompany.ShipmentMemberCompanyName)}
                     value={
                       _.isEmpty(hasCompany.ShipmentMemberCompanyName)
-                        ? 'Please Assign Company'
+                        ? 'N/A'
                         : this.state.input.newRef.ShipmentReferenceID
                     }
                     onChange={(e) => {
@@ -1071,6 +1071,7 @@ class TableShipment extends React.Component {
           && e.target.tagName !== 'BUTTON'
           && e.target.tagName !== 'path'
           && e.target.tagName !== 'svg'
+          && e.target.tagName !== 'B'
         ) {
           window.location.href = `#/chat/${row.uid}`;
         }
