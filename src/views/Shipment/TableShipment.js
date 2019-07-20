@@ -6,8 +6,6 @@
 /* eslint-disable import/order */
 /* eslint-disable filenames/match-regex */
 import React from 'react';
-import './Shipment.css';
-
 import _ from 'lodash';
 import Select from 'react-select';
 import BootstrapTable from 'react-bootstrap-table-next';
@@ -286,7 +284,7 @@ class TableShipment extends React.Component {
       <div>
         <p id={`popover${index}`} className="text-yterminal">
           {userrefs.length > 0 ? (
-            <b>{userrefs[0].ShipmentReferenceID}</b>
+            <b style={{ color: 'black' }}>{userrefs[0].ShipmentReferenceID}</b>
           ) : _.isEmpty(companies) ? (
             <TableLoading />
           ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (

@@ -141,7 +141,7 @@ input {
   border-bottom-color: rgba(6, 207, 168, 1) !important;
 }
 
-.popover. .active_chat {
+.popover .active_chat {
   background: #ebebeb;
 }
 
@@ -286,4 +286,31 @@ tbody > tr:hover {
 .react-bootstrap-table-sort-order > .caret {
   margin: 0 !important;
   margin-left: 5px !important;
+}
+
+.search-filter-select {
+  margin-top: 1px;
+  margin-right: 2px;
+  .select__control {
+    min-height: 35px;
+    border: 0;
+    border-color: #e4e7ea;
+  }
+}
+
+.search-filter-select-input {
+  border: 0;
+}
+
+.search-filter-select-container {
+  border-color: hsl(0, 0%, 80%);
+  border-radius: 4px;
+  border-style: solid;
+  border-width: 1px;
+}
+
+.search-filter-select-date {
+  .react-date-picker__wrapper {
+    border: 0;
+  }
 }
