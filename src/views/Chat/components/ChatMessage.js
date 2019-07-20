@@ -176,7 +176,7 @@ const ChatMessage = ({ message, i }) => {
                   </p>
                 </div>
                 <div>
-                  <span className="time_date">{moment(status).format('hh:mm a')}</span>
+                  <span className="time_date_left">{moment(status).format('hh:mm a')}</span>
                 </div>
               </Row>
             </div>
@@ -199,11 +199,13 @@ const ChatMessage = ({ message, i }) => {
 
       <div className="outgoing_msg">
         <div className="sent_msg">
-          <span className="time_date">
-            {readers.length > 1 ? `Read ${readers.length - 1}` : 'Sent'}
-            <br />
-            {moment(status).format('hh:mm a')}
-          </span>
+          <div className="time-component">
+            <span className="time_date">
+              {readers.length > 1 ? `Read ${readers.length - 1}` : 'Sent'}
+              <br />
+              {moment(status).format('hh:mm a')}
+            </span>
+          </div>
 
           <p className={'textP'}>
             {hasFile ? (
