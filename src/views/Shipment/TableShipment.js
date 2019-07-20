@@ -486,11 +486,11 @@ class TableShipment extends React.Component {
   }
 
   renderDescription(index, item) {
-    const role = _.get(item, `ShipmentMember.${this.props.user.uid}.ShipmentMemberRole`, []);
-    const keyword = ['Importer', 'Exporter'];
-    const canseeNote = _.some(keyword, item => _.includes(role, item));
+    return <NoteShipment key={index} item={item} id={index} />;
+    // const keyword = ['Importer', 'Exporter'];
+    // const canseeNote = _.some(keyword, item => _.includes(role, item));
 
-    return <div>{canseeNote ? <NoteShipment key={index} item={item} id={index} /> : ''}</div>;
+    // return <div>{canseeNote ? <NoteShipment key={index} item={item} id={index} /> : ''}</div>;
   }
 
   renderAlertComponent(index, item, shipmentkey) {
