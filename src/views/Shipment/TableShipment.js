@@ -300,7 +300,7 @@ class TableShipment extends React.Component {
           ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (
             'Input your Ref#!'
           ) : (
-            'See Ref'
+            'See Refs'
           )}
         </p>
         <UncontrolledPopover
