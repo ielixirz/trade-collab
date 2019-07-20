@@ -229,7 +229,7 @@ class Shipment extends Component {
                 case 'Active':
                   keyword = ['In Transit', 'Order Confirmed', 'Delayed'];
                   return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
-                case 'Complete':
+                case 'Delivered':
                   keyword = ['Delivered', 'Completed'];
                   return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                 case 'Cancel':
@@ -966,7 +966,7 @@ class Shipment extends Component {
                 this.fetchShipmentReload();
               }}
             >
-              <span style={styles.title}>Complete</span> <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Delivered</span> <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -983,7 +983,7 @@ class Shipment extends Component {
           </NavItem>
           <Col>
             <Button
-              style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 10 }}
+              style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 29 }}
               className="float-right"
               onClick={this.modal}
             >

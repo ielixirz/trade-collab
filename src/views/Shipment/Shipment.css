@@ -277,3 +277,17 @@ tbody > tr:hover {
   border-right: 10px solid transparent;
   border-bottom: 10px solid white;
 }
+
+.dropup > .caret {
+  margin: 0 !important;
+}
+
+.dropdown > .caret {
+  margin: 0 !important;
+  margin-left: 5px !important;
+}
+
+.react-bootstrap-table-sort-order > .caret {
+  margin: 0 !important;
+  margin-left: 5px !important;
+}

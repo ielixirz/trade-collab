@@ -157,8 +157,14 @@
 }
 
 .role-filter-select {
+  font-size: small;
   margin-left: 0.8rem;
   width: 70%;
+  .select__control {
+    min-height: 35px;
+    height: 35px;
+    border-color: #e4e7ea;
+  }
 }
 
 .incoming-request-container {

@@ -92,12 +92,6 @@ const SHIPMENT_STATUS_UPDATE_OPTIONS = [
       status: 'Cancelled'
     },
     label: 'Cancelled'
-  },
-  {
-    value: {
-      status: 'Completed'
-    },
-    label: 'Completed'
   }
 ];
 
@@ -669,7 +663,7 @@ class TableShipment extends React.Component {
                 >
                   {this.state.isEdit ? (
                     <Button
-                      style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 10 }}
+                      style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 15 }}
                       onClick={() => {
                         this.editShipment();
                         this.setState({
@@ -681,7 +675,7 @@ class TableShipment extends React.Component {
                     </Button>
                   ) : (
                     <Button
-                      style={{ backgroundColor: 'white', marginTop: 2, marginRight: 10 }}
+                      style={{ backgroundColor: 'white', marginTop: 2, marginRight: 15 }}
                       onClick={() => {
                         this.setState({
                           isEdit: true
@@ -962,7 +956,7 @@ class TableShipment extends React.Component {
                 >
                   {this.state.isEdit ? (
                     <Button
-                      style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 10 }}
+                      style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 15 }}
                       onClick={() => {
                         this.editShipment();
                         this.setState({
@@ -974,7 +968,7 @@ class TableShipment extends React.Component {
                     </Button>
                   ) : (
                     <Button
-                      style={{ backgroundColor: 'white', marginTop: 2, marginRight: 10 }}
+                      style={{ backgroundColor: 'white', marginTop: 2, marginRight: 15 }}
                       onClick={() => {
                         this.setState({
                           isEdit: true
@@ -1108,7 +1102,7 @@ class TableShipment extends React.Component {
               <Col xs="2" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
                 {this.state.isEdit ? (
                   <Button
-                    style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 10 }}
+                    style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 15 }}
                     onClick={() => {
                       this.editShipment();
                       this.setState({
@@ -1120,7 +1114,7 @@ class TableShipment extends React.Component {
                   </Button>
                 ) : (
                   <Button
-                    style={{ backgroundColor: 'white', marginTop: 2, marginRight: 10 }}
+                    style={{ backgroundColor: 'white', marginTop: 2, marginRight: 15 }}
                     onClick={() => {
                       this.setState({
                         isEdit: true
