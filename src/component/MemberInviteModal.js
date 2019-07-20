@@ -131,6 +131,7 @@ class MemberInviteModal extends React.Component {
         <Button
           className="invite-btn"
           style={{
+            marginTop: 5,
             marginLeft: '2rem',
             marginRight: '1rem',
             color: 'white',
