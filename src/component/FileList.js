@@ -9,6 +9,7 @@ import {
   ListGroup, ListGroupItem, Row, Col, Input,
 } from 'reactstrap';
 import _ from 'lodash';
+import moment from 'moment';
 import ThreeDotDropdown from './ThreeDotDropdown';
 import CopyModal from './CopyModal';
 import EditFileModal from './EditFileModal';
@@ -117,7 +118,7 @@ const FileList = forwardRef(
           {_.map(chatFile, (s, index) => (
             <ListGroupItem className="file-row" tag="a">
               <span style={fileListDateStyle}>
-                {new Date(s.FileCreateTimestamp).toDateString()}
+                {moment(new Date(s.FileCreateTimestamp)).format('D-M-YYYY HH:mm:ss')}
               </span>
               <Row
                 onMouseOver={() => onFileHover(index)}

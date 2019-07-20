@@ -13,6 +13,10 @@
 /* Customize website's scrollbar like Mac OS
 Not supports in Firefox and IE */
 
+* {
+  font-family: Muli;
+}
+
 /* total width */
 ::-webkit-scrollbar {
   background-color: #fff;
@@ -55,5 +59,5 @@ img.img-avatar {
 
 /* Override Core UI Nav Bar*/
 .app-header.navbar {
-  border-bottom: 1px solid #ededed !important;
+  border-bottom: 0px solid #ededed !important;
 }

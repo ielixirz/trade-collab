@@ -13,6 +13,7 @@ import '../../scss/ResetPassword.scss';
 import {
   Row, Col, DropdownToggle, Dropdown, Button, Input, ButtonGroup, Badge,
 } from 'reactstrap';
+import { TrimLongText } from '../../utils/string';
 
 import MainDataTable from '../../component/MainDataTable';
 import ThreeDotDropdown from '../../component/ThreeDotDropdown';
@@ -103,7 +104,9 @@ const renderStatus = (status, data, listener) => {
   return '';
 };
 
-const ProfilePanel = ({ currentProfile, auth, user, history }) => {
+const ProfilePanel = ({
+  currentProfile, auth, user, history,
+}) => {
   const [userProfile, setUserProfile] = useState({});
   const [companyList, setCompanyList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -175,7 +178,7 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
           inviteList.push({
             key: item.CompanyInvitationCompanyKey,
             company: item.CompanyInvitationName,
-            position: item.CompanyInvitationPosition,
+            position: TrimLongText(item.CompanyInvitationPosition, 23),
             role: item.CompanyInvitationRole,
             // eslint-disable-next-line no-use-before-define
             status: renderStatus(status, inviteData, responseToInvite),
@@ -190,12 +193,13 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
           joinedList.push({
             key: item.CompanyKey,
             company: item.CompanyName,
-            position: item.UserMemberPosition,
+            position: TrimLongText(item.UserMemberPosition, 23),
             role: item.UserMemberRoleName,
             roleKey: item.CompanyUserAccessibilityRolePermissionCode,
             status: renderStatus(item.UserMemberCompanyStandingStatus),
             button: (
               <ThreeDotDropdown
+                style={{ bottom: 5 }}
                 options={[
                   {
                     text: 'Leave',
@@ -256,6 +260,7 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
         status: renderStatus('Active', undefined, undefined),
         button: (
           <ThreeDotDropdown
+            style={{ bottom: 5 }}
             options={[
               {
                 text: 'Leave',
@@ -516,7 +521,7 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
                   )}
                 </Col>
               </Row>
-              <Row style={{ marginTop: '20px' }}>
+              <Row style={{ marginTop: '10px' }}>
                 <Col xs={1} />
                 <Col xs={4}>
                   <span

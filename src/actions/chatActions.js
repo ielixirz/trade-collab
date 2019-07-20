@@ -54,7 +54,6 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
     `${ShipmentKey}.${ChatRoomKey}.message`,
     GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
       next: res => {
-        console.log(res);
 
         dispatch({
           type: FETCH_CHAT,
@@ -66,7 +65,6 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
           `${ShipmentKey}.${ChatRoomKey}.member`,
           GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
             next: res => {
-              console.log('Respond', res);
               const members = _.map(res, item => {
                 return {
                   ChatRoomMemberKey: item.id,
@@ -147,7 +145,6 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
     `${ShipmentKey}.${ChatRoomKey}.message`,
     GetChatMessage(ShipmentKey, ChatRoomKey, chats + 25).subscribe({
       next: res => {
-        console.log(res);
 
         dispatch({
           type: FETCH_CHAT,
@@ -159,9 +156,7 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
           `${ShipmentKey}.${ChatRoomKey}.member`,
           GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
             next: res => {
-              console.log('Respond', res);
               const members = _.map(res, item => {
-                console.log(item);
                 return {
                   ChatRoomMemberKey: item.id,
                   ...item.data()
@@ -194,7 +189,6 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
 export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
   const tabs = [];
   _.forEach(chats, item => {
-    console.log(item);
     tabs.push({
       id: tabs.length + 1,
       roomName: item.roomName,
@@ -247,13 +241,11 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
   });
   let hasRoom = false;
   if (Chatkey !== '') {
-    console.log('Find Room', Chatkey);
     hasRoom = _.some(tabs, {
       ChatRoomKey: Chatkey
     });
   }
   if (hasRoom) {
-    console.log('Found Room', Chatkey);
 
     let newTabs = tabs.map(tab => {
       return {
@@ -269,14 +261,12 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
         newTabs.push(newTabs.splice(x, 1)[0]);
       }
     });
-    console.log('Before mapping', newTabs);
     newTabs = _.map(newTabs, (item, index) => {
       return {
         ...item,
         position: index
       };
     });
-    console.log('After mapping', newTabs);
 
     dispatch({
       type: SELECT_ROOM,
@@ -307,7 +297,6 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
         `${ShipmentKey}.${ChatRoomKey}.message`,
         GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
           next: res => {
-            console.log(res);
 
             dispatch({
               type: FETCH_CHAT,
@@ -319,9 +308,7 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
               `${ShipmentKey}.${ChatRoomKey}.member`,
               GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
                 next: res => {
-                  console.log('Respond', res);
                   const members = _.map(res, item => {
-                    console.log(item);
                     return {
                       ChatRoomMemberKey: item.id,
                       ...item.data()
@@ -341,7 +328,6 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
             );
           },
           error: err => {
-            console.log(err);
             alert(err.message);
           },
           complete: () => {
@@ -359,8 +345,6 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
 export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => {
   const chats = getState().ChatReducer.chatrooms;
   const tabs = [];
-  console.log('selectedIndex', selectedIndex);
-  console.log('selectedID', selectedID);
   _.forEach(chats, item => {
     tabs.push({
       id: tabs.length + 1,
@@ -404,7 +388,6 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
       `${ShipmentKey}.${ChatRoomKey}.message`,
       GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
         next: res => {
-          console.log(res);
 
           dispatch({
             type: FETCH_CHAT,
@@ -416,9 +399,7 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
             `${ShipmentKey}.${ChatRoomKey}.member`,
             GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
               next: res => {
-                console.log('Respond', res);
                 const members = _.map(res, item => {
-                  console.log(item);
                   return {
                     ChatRoomMemberKey: item.id,
                     ...item.data()

@@ -72,7 +72,6 @@ class DefaultHeader extends Component {
     const notification = _.map(notifications, (item, index) =>
       notificationTitleHelper(item, index, this.props.user.uid)
     );
-    console.log('notifications===>', notifications);
     return (
       <React.Fragment>
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
@@ -185,7 +184,6 @@ DefaultHeader.propTypes = propTypes;
 DefaultHeader.defaultProps = defaultProps;
 const mapStateToProps = state => {
   const { authReducer, notiReducer } = state;
-  console.log('default header', state);
   return {
     user: authReducer.user,
 

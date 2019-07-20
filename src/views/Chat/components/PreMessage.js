@@ -5,10 +5,25 @@
 import React from 'react';
 import { Row, Col } from 'reactstrap';
 import _ from 'lodash';
-import ReactHtmlParser from "react-html-parser";
+import ReactHtmlParser from 'react-html-parser';
 
 const PreMessage = ({ message, callback }) => {
   const { ChatRoomMessageContext = 'Test message' } = message;
+  let premessage = {};
+
+  if (message.ChatRoomMessageType === 'File') {
+    const msgJson = JSON.parse(message.ChatRoomMessageContext);
+    premessage = {
+      text: msgJson.msg,
+      name: message.ChatRoomMessageSender
+    };
+  } else {
+    premessage = {
+      text: message.ChatRoomMessageContext,
+      name: message.ChatRoomMessageSender
+    };
+  }
+  const { text = '' } = premessage;
   const sendMessage = callback;
   return (
     <div>
@@ -18,7 +33,7 @@ const PreMessage = ({ message, callback }) => {
             <span className="time_date">{status(message, sendMessage)}</span>
           </div>
           <div>
-            <p className={'textP'}>{ReactHtmlParser(ChatRoomMessageContext)}</p>
+            <p className={'textP'}>{ReactHtmlParser(text)}</p>
           </div>
         </div>
       </div>
@@ -27,9 +42,7 @@ const PreMessage = ({ message, callback }) => {
 };
 
 const status = (message, sendMessage) => {
-  const {
-    isSending, isSuccess, ChatRoomMessageContext, ChatRoomKey, ShipmentKey,
-  } = message;
+  const { isSending, isSuccess, ChatRoomMessageContext, ChatRoomKey, ShipmentKey } = message;
   if (isSending) {
     return 'Sending . . .';
   }
@@ -37,7 +50,7 @@ const status = (message, sendMessage) => {
     return (
       <a
         href="#"
-        onClick={(e) => {
+        onClick={e => {
           e.preventDefault();
           sendMessage(ChatRoomKey, ShipmentKey, ChatRoomMessageContext);
         }}
