@@ -245,7 +245,6 @@ class TableShipment extends React.Component {
 
   filterShipmentStatus = (status, shipment) => {
     let filterShipment = shipment;
-    console.log('Status is', status, 'Shipments', shipment);
     if (status !== 'ALL') {
       filterShipment = shipment.filter(s => {
         if (s.ShipmentStatus !== null) {
@@ -288,7 +287,6 @@ class TableShipment extends React.Component {
       _.some(companies, item => _.includes(refItem.ShipmentReferenceCompanyKey, item.CompanyKey))
     );
 
-    console.log('user refs', userrefs);
     const hasCompany = _.get(ShipmentMember, `${user.uid}`, {});
 
     const alreadyHave = !_.isEmpty(userrefs);
@@ -718,7 +716,6 @@ class TableShipment extends React.Component {
       );
     }
     // _.orderBy(myArr, [columnName], ['asc'])
-    console.log('this.props.input', this.props.input);
     const filtered = _.map(this.props.input, shipment => {
       let output = {
         ...shipment,

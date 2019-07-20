@@ -69,10 +69,8 @@ class Chat extends Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.state.roomeditor.ShipmentKey) {
-      console.log('Focus', this.nameInput);
       this.nameInput.focus(true);
     }
-    console.log('chat has update', this.props);
     const hasNewChat = _.get(this.props, 'ChatReducer.selectedChat', '');
     if (_.size(hasNewChat) > 2) {
       this.props.selectChat(hasNewChat);
@@ -80,12 +78,10 @@ class Chat extends Component {
   }
 
   toggleBlocking = (toggle) => {
-    console.log('Toggle block ui', toggle);
     this.props.toggleLoading(toggle);
   };
 
   toggleCreateChat = (toggle) => {
-    console.log('Toggle block ui', toggle);
     this.setState({ toggleChat: toggle });
   };
 
@@ -119,7 +115,6 @@ class Chat extends Component {
         });
       },
       complete: (result) => {
-        console.log(result);
       },
     });
   }
@@ -318,7 +313,6 @@ class Chat extends Component {
       });
     });
     _.forEach(tabs, (tab) => {
-      console.log('fetch', tab);
       this.props.fetchChatMessage(tab.ChatRoomKey, tab.ShipmentKey, this.scrollChildChatToBottom);
     });
     GetUserCompany(this.props.user.uid).subscribe({
@@ -396,7 +390,6 @@ class Chat extends Component {
                 });
               }}
               onBlur={(e) => {
-                console.log('Focus Out', e);
                 EditChatRoom(item.ShipmentKey, item.ChatRoomKey, {
                   ChatRoomName: this.state.roomeditor.roomName,
                 });

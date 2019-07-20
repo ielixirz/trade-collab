@@ -40,7 +40,6 @@ const ChatMessage = ({ message, i }) => {
   } else {
     isFirstMessageOfTheDay = true;
   }
-  console.log('Message', type);
   if (type === 'sender' || type === 'System') {
     return (
       <div key={i}>

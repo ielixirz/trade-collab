@@ -80,7 +80,6 @@ export const createDataTable = input => {
           const RowAETADATA = moment(rowA.ETA, 'DD MMM YYYY');
           const RowBETADATA = moment(rowB.ETA, 'DD MMM YYYY');
           // moment(str, 'YYYY-MM-DD').toDate()
-          console.log(RowAETADATA, RowBETADATA);
           if (order === 'asc') return RowAETADATA - RowBETADATA;
           else return RowBETADATA - RowAETADATA;
         }
@@ -98,7 +97,6 @@ export const createDataTable = input => {
           const RowAETDDATA = moment(rowA.ETD, 'DD MMM YYYY');
           const RowBETDDATA = moment(rowB.ETD, 'DD MMM YYYY');
           // moment(str, 'YYYY-MM-DD').toDate()
-          console.log(RowAETDDATA, RowBETDDATA);
           if (order === 'asc') return RowAETDDATA - RowBETDDATA;
           else return RowBETDDATA - RowAETDDATA;
         }
