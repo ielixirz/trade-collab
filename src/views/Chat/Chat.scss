@@ -170,9 +170,10 @@ img {
 
   text-overflow: ellipsis;
 }
-.time-component{
+.time-component {
   position: relative;
-}.time_date_leftComponent{
+}
+.time_date_leftComponent {
   position: relative;
 }
 .time_date {
@@ -280,7 +281,7 @@ img {
 }
 
 .user-name {
-  font-weight: bolder;
+  font-weight: normal;
 }
 
 .inputBox {
@@ -366,17 +367,15 @@ textarea {
 }
 
 .react-tabs-container {
-  background-color: rgb(247, 247, 247);
-  padding-top: 0.5rem !important;
+  background-color: #ffffff;
   border: 0px !important;
   overflow-x: auto !important;
-  height: 45px !important;
+  height: 36px !important;
   display: -webkit-inline-box;
 }
 
 .react-tabs-tab.react-tabs-active {
   background-color: #ffffff !important;
-  font-weight: bold !important;
 }
 
 .react-tabs-tab:has(div) {

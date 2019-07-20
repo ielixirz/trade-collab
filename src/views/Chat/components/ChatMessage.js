@@ -4,11 +4,13 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable filenames/match-regex */
 import React from 'react';
-import { Row, Col, Button, UncontrolledCollapse, Card, CardBody } from 'reactstrap';
+import {
+  Row, Col, Button, UncontrolledCollapse, Card, CardBody,
+} from 'reactstrap';
 import _ from 'lodash';
 import moment from 'moment';
 
-const getSystemTitle = title => {
+const getSystemTitle = (title) => {
   switch (title) {
     case 'InviteIntoShipment':
       return 'User has been invited';
@@ -25,7 +27,7 @@ const ChatMessage = ({ message, i }) => {
     status = new Date(),
     readers = [],
     hasFile = false,
-    files = [1, 2, 3]
+    files = [1, 2, 3],
   } = message;
   const prev = _.get(message, 'prev', false);
   let isFirstMessageOfTheDay = false;
@@ -75,12 +77,12 @@ const ChatMessage = ({ message, i }) => {
                     ) : (
                       <div>
                         <a
-                          href={'#'}
+                          href="#"
                           style={{
-                            color: 'black'
+                            color: 'grey',
                           }}
                           className="user-name"
-                          onClick={e => {
+                          onClick={(e) => {
                             e.preventDefault();
                           }}
                           id={`toggler${i}`}
@@ -96,7 +98,7 @@ const ChatMessage = ({ message, i }) => {
                     {hasFile ? (
                       <Row>
                         <Col xs="8">
-                          {files.map(item => {
+                          {files.map((item) => {
                             const { filename = 'nameoffile', type = 'pdf' } = item;
                             return (
                               <div style={{ fontSize: '0.8em' }}>
@@ -124,20 +126,20 @@ const ChatMessage = ({ message, i }) => {
                         <Col
                           xs="auto"
                           style={{
-                            marginLeft: '10px'
+                            marginLeft: '10px',
                           }}
                         >
                           <a
                             href=""
-                            onClick={e => {
+                            onClick={(e) => {
                               e.preventDefault();
-                              _.forEach(files, item => {
+                              _.forEach(files, (item) => {
                                 const { link = 'http://example.com/files/myfile.pdf' } = item;
 
                                 window.open(
                                   link,
                                   '_blank',
-                                  'resizable=yes, scrollbars=yes, titlebar=yes, width=800, height=900, top=10, left=10'
+                                  'resizable=yes, scrollbars=yes, titlebar=yes, width=800, height=900, top=10, left=10',
                                 );
                               });
                             }}
@@ -175,7 +177,7 @@ const ChatMessage = ({ message, i }) => {
                     )}
                   </p>
                 </div>
-                <div className={'time_date_leftComponent'}>
+                <div className="time_date_leftComponent">
                   <span className="time_date_left">{moment(status).format('hh:mm a')}</span>
                 </div>
               </Row>
@@ -186,7 +188,7 @@ const ChatMessage = ({ message, i }) => {
     );
   }
   return (
-    <div key={i} className={'rightMessage'}>
+    <div key={i} className="rightMessage">
       {isFirstMessageOfTheDay ? (
         <h2 className="time-background">
           <span className="time-seperation" align="center">
@@ -207,7 +209,7 @@ const ChatMessage = ({ message, i }) => {
             </span>
           </div>
 
-          <p className={'textP'}>
+          <p className="textP">
             {hasFile ? (
               <Row style={{ margin: 'auto' }}>
                 <span style={text === '' ? {} : { marginRight: 100 }}>{text}</span>
@@ -218,7 +220,7 @@ const ChatMessage = ({ message, i }) => {
             {hasFile ? (
               <Row style={{ textAlign: 'left', marginTop: 7 }}>
                 <Col xs="8">
-                  {files.map(item => {
+                  {files.map((item) => {
                     const { filename = 'nameoffile', type = 'pdf' } = item;
                     return (
                       <div style={{ fontSize: '0.8em' }}>
@@ -246,20 +248,20 @@ const ChatMessage = ({ message, i }) => {
                 <Col
                   xs="1"
                   style={{
-                    marginLeft: '10px'
+                    marginLeft: '10px',
                   }}
                 >
                   <a
                     href=""
-                    onClick={e => {
+                    onClick={(e) => {
                       e.preventDefault();
-                      _.forEach(files, item => {
+                      _.forEach(files, (item) => {
                         const { link = 'http://example.com/files/myfile.pdf' } = item;
 
                         window.open(
                           link,
                           '_blank',
-                          'resizable=yes, scrollbars=yes, titlebar=yes, width=800, height=900, top=10, left=10'
+                          'resizable=yes, scrollbars=yes, titlebar=yes, width=800, height=900, top=10, left=10',
                         );
                       });
                     }}
