@@ -38,7 +38,7 @@ const AVAILABLE_ROLES = {
   Importer: 'Exporter',
   Exporter: 'Importer'
 };
-
+let lastkey = '';
 class ChatWithHeader extends Component {
   constructor(props) {
     super(props);
@@ -54,7 +54,7 @@ class ChatWithHeader extends Component {
   }
 
   componentDidMount() {
-    const { ShipmentKey, ChatRoomKey, sender } = this.props;
+    const { ShipmentKey, ChatRoomKey, sender, chatMsg } = this.props;
     if (this.multilineTextarea) {
       this.multilineTextarea.style.height = 'auto';
     }
@@ -69,6 +69,19 @@ class ChatWithHeader extends Component {
       prevProps.msg !== this.props.msg
     ) {
       this.scrollChatToBottom();
+    }
+    const { ShipmentKey, ChatRoomKey, sender, chatMsg } = this.props;
+
+    if (chatMsg.length > 0) {
+      if (chatMsg[chatMsg.length - 1].id !== lastkey) {
+        this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
+          ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
+          ChatRoomMessageReaderSurName: sender.ProfileSurname,
+          ChatRoomMessageReaderProfileImageUrl: _.get(sender, 'UserInfoProfileImageLink', ''),
+          ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+        });
+      }
+      lastkey = chatMsg[chatMsg.length - 1].id;
     }
   }
 
@@ -470,7 +483,6 @@ class ChatWithHeader extends Component {
       onFileDrop,
       shipments
     } = this.props;
-    let lastkey = '';
     const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
     let ref = '';
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
@@ -550,11 +562,7 @@ class ChatWithHeader extends Component {
               onDragLeave={onDragLeave}
               onDrop={event => onFileDrop(event, ShipmentKey, ChatRoomKey)}
               onMouseEnter={() => {
-                console.log('lastkey', lastkey);
-
                 if (chatMsg.length > 0) {
-                  console.log('chatMsg', chatMsg[chatMsg.length - 1].id);
-
                   if (chatMsg[chatMsg.length - 1].id !== lastkey) {
                     this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
                       ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
