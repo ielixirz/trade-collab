@@ -24,6 +24,7 @@ import {
 
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
 import Select from 'react-select';
+import { TrimLongText } from '../../utils/string';
 import ErrorPopup from '../../component/commonPopup/ErrorPopup';
 import MainDataTable from '../../component/MainDataTable';
 import MultiSelectTextInput from '../../component/MultiSelectTextInput';
@@ -230,7 +231,7 @@ const CompanyPanel = (props) => {
           email: member.UserMemberEmail,
           position: (
             <TurnAbleTextLabel
-              text={member.UserMemberPosition}
+              text={TrimLongText(member.UserMemberPosition, 23)}
               turnType="input"
               data={{
                 onChangeFn: null,

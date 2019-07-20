@@ -13,6 +13,7 @@ import '../../scss/ResetPassword.scss';
 import {
   Row, Col, DropdownToggle, Dropdown, Button, Input, ButtonGroup, Badge,
 } from 'reactstrap';
+import { TrimLongText } from '../../utils/string';
 
 import MainDataTable from '../../component/MainDataTable';
 import ThreeDotDropdown from '../../component/ThreeDotDropdown';
@@ -177,7 +178,7 @@ const ProfilePanel = ({
           inviteList.push({
             key: item.CompanyInvitationCompanyKey,
             company: item.CompanyInvitationName,
-            position: item.CompanyInvitationPosition,
+            position: TrimLongText(item.CompanyInvitationPosition, 23),
             role: item.CompanyInvitationRole,
             // eslint-disable-next-line no-use-before-define
             status: renderStatus(status, inviteData, responseToInvite),
@@ -192,7 +193,7 @@ const ProfilePanel = ({
           joinedList.push({
             key: item.CompanyKey,
             company: item.CompanyName,
-            position: item.UserMemberPosition,
+            position: TrimLongText(item.UserMemberPosition, 23),
             role: item.UserMemberRoleName,
             roleKey: item.CompanyUserAccessibilityRolePermissionCode,
             status: renderStatus(item.UserMemberCompanyStandingStatus),
