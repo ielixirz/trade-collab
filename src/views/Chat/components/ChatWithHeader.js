@@ -6,9 +6,7 @@
 /* eslint-disable filenames/match-regex */
 import _ from 'lodash';
 import React, { Component } from 'react';
-import {
-  Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input,
-} from 'reactstrap';
+import { Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
 import CKEditor from '@ckeditor/ckeditor5-react';
@@ -26,7 +24,7 @@ import {
   CreateChatRoom,
   GetChatRoomMemberList,
   UpdateChatRoomMember,
-  UpdateChatRoomMessageReader,
+  UpdateChatRoomMessageReader
 } from '../../../service/chat/chat';
 import { GetCompanyMember } from '../../../service/company/company';
 import { CreateChatMultipleInvitation } from '../../../service/join/invite';
@@ -38,7 +36,7 @@ import { ClearUnReadChatMessage } from '../../../service/personalize/personalize
 
 const AVAILABLE_ROLES = {
   Importer: 'Exporter',
-  Exporter: 'Importer',
+  Exporter: 'Importer'
 };
 
 class ChatWithHeader extends Component {
@@ -49,7 +47,7 @@ class ChatWithHeader extends Component {
       company: '',
       email: '',
       companies: [],
-      members: [],
+      members: []
     };
 
     this.msgChatRef = React.createRef();
@@ -61,12 +59,15 @@ class ChatWithHeader extends Component {
       this.multilineTextarea.style.height = 'auto';
     }
     ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
-      next: (res) => {},
+      next: res => {}
     });
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps.chatMsg.length !== this.props.chatMsg.length || prevProps.msg !== this.props.msg) {
+    if (
+      prevProps.chatMsg.length !== this.props.chatMsg.length ||
+      prevProps.msg !== this.props.msg
+    ) {
       this.scrollChatToBottom();
     }
   }
@@ -87,27 +88,25 @@ class ChatWithHeader extends Component {
   }
 
   handleAssignCompany(e, role, userRole) {
-    const {
-      ShipmentKey, ChatRoomKey, members, user,
-    } = this.props;
+    const { ShipmentKey, ChatRoomKey, members, user } = this.props;
     const { companies } = this.props;
 
     const memberData = _.find(members, (item, index) => index === user.uid);
     const pickedCompany = _.find(companies, item => item.CompanyKey === e.value);
     if (pickedCompany) {
       const getCompany = GetCompanyMember(e.value).subscribe({
-        next: (res) => {
+        next: res => {
           const CompanyMember = _.map(res, item => ({
-            ...item.data(),
+            ...item.data()
           }));
           const inviteRole = userRole;
           console.log('CompanyMember', CompanyMember);
           console.log('members', members);
           const inviteMember = [];
-          _.forEach(CompanyMember, (memberItem) => {
+          _.forEach(CompanyMember, memberItem => {
             const chatMember = _.find(
               members,
-              item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail,
+              item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail
             );
 
             if (chatMember) {
@@ -118,8 +117,8 @@ class ChatWithHeader extends Component {
                 {
                   ...chatMember,
                   ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
-                },
+                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+                }
               );
               console.log(result);
             } else {
@@ -128,7 +127,7 @@ class ChatWithHeader extends Component {
                 Image: '',
                 Role: inviteRole,
                 ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
+                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
               });
             }
           });
@@ -139,32 +138,32 @@ class ChatWithHeader extends Component {
               inviteMember,
               ShipmentKey,
               ChatRoomKey,
-              this.props.sender,
+              this.props.sender
             ).subscribe({
-              next: (res) => {
+              next: res => {
                 console.log(res);
                 invite.unsubscribe();
                 this.props.fetchMoreMessage(ChatRoomKey, ShipmentKey);
-              },
+              }
             });
             CreateChatRoom(ShipmentKey, {
               ChatRoomType: 'Internal',
-              ChatRoomName: 'Internal',
+              ChatRoomName: 'Internal'
             }).subscribe({
-              next: (result) => {
+              next: result => {
                 const data = result.path.split('/');
                 const chatkey = result.id;
                 const invite = CreateChatMultipleInvitation(
                   inviteMember,
                   ShipmentKey,
                   chatkey,
-                  this.props.sender,
+                  this.props.sender
                 ).subscribe({
-                  next: (res) => {
+                  next: res => {
                     console.log(res);
                     invite.unsubscribe();
                     this.props.fetchMoreMessage(chatkey, ShipmentKey);
-                  },
+                  }
                 });
                 const ChatRoomMember = AddChatRoomMember(ShipmentKey, chatkey, {
                   ChatRoomMemberUserKey: this.props.user.uid,
@@ -172,20 +171,20 @@ class ChatWithHeader extends Component {
                   ChatRoomMemberImageUrl: '',
                   ChatRoomMemberRole: inviteRole,
                   ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
+                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
                 }).subscribe({
-                  next: (result) => {},
+                  next: result => {}
                 });
               },
-              complete: (result) => {
+              complete: result => {
                 this.props.toggleCreateChat(false);
-              },
+              }
             });
             getCompany.unsubscribe();
           } else {
             window.alert('You has been remove from the chat');
           }
-        },
+        }
       });
     }
   }
@@ -197,7 +196,7 @@ class ChatWithHeader extends Component {
       ShipmentData,
       ShipmentKey,
       ChatRoomKey,
-      members: member,
+      members: member
     } = this.props;
 
     const members = ShipmentData.ShipmentMember;
@@ -210,7 +209,7 @@ class ChatWithHeader extends Component {
     let options = [];
     options = _.map(companies, item => ({
       value: item.CompanyKey,
-      label: item.CompanyName,
+      label: item.CompanyName
     }));
     let output = '';
 
@@ -226,20 +225,16 @@ class ChatWithHeader extends Component {
                   height: 'auto',
                   padding: '10px',
                   borderRadius: '5px',
-                  zIndex: '100',
+                  zIndex: '100'
                 }}
               >
                 <p
                   style={{
                     fontWeight: 700,
-                    color: '#000000',
+                    color: '#000000'
                   }}
                 >
-                  You have assigned your self as an
-                  {' '}
-                  {_.join(memberData.ShipmentMemberRole, ',')}
-                  {' '}
-for
+                  You have assigned your self as an {_.join(memberData.ShipmentMemberRole, ',')} for
                   this shipment
                 </p>
                 <p>Select a company, to inform your team about this shipment</p>
@@ -247,7 +242,7 @@ for
                 <Row>
                   <Col xs={6}>
                     <Select
-                      onChange={(e) => {
+                      onChange={e => {
                         this.setState({ company: e });
                       }}
                       name="company"
@@ -262,13 +257,13 @@ for
                         marginLeft: '2rem',
                         marginRight: '1rem',
                         color: 'white',
-                        backgroundColor: '#16A085',
+                        backgroundColor: '#16A085'
                       }}
                       onClick={() => {
                         this.handleAssignCompany(
                           this.state.company,
                           ChatRoomType,
-                          memberData.ShipmentMemberRole,
+                          memberData.ShipmentMemberRole
                         );
                       }}
                     >
@@ -287,28 +282,24 @@ for
                 height: 'auto',
                 padding: '10px',
                 borderRadius: '5px',
-                zIndex: '100',
+                zIndex: '100'
               }}
             >
               <p
                 style={{
                   fontWeight: 700,
-                  color: '#000000',
+                  color: '#000000'
                 }}
               >
-                {user.email}
-                {' '}
-has been invited as
-                {_.join(memberData.ShipmentMemberRole, ',')}
-                {' '}
-for this shipment
+                {user.email} has been invited as
+                {_.join(memberData.ShipmentMemberRole, ',')} for this shipment
               </p>
               <p>Select a company, to inform your team about this shipment</p>
 
               <Row>
                 <Col xs={6}>
                   <Select
-                    onChange={(e) => {
+                    onChange={e => {
                       this.setState({ company: e });
                     }}
                     name="company"
@@ -323,13 +314,13 @@ for this shipment
                       marginLeft: '2rem',
                       marginRight: '1rem',
                       color: 'white',
-                      backgroundColor: '#16A085',
+                      backgroundColor: '#16A085'
                     }}
                     onClick={() => {
                       this.handleAssignCompany(
                         this.state.company,
                         ChatRoomType,
-                        memberData.ShipmentMemberRole,
+                        memberData.ShipmentMemberRole
                       );
                     }}
                   >
@@ -345,7 +336,7 @@ for this shipment
     }
     const suggestion = _.map(this.props.network, item => ({
       id: item.UserMemberEmail,
-      label: item.UserMemberEmail,
+      label: item.UserMemberEmail
     }));
     if (_.size(member) < 2) {
       return (
@@ -355,20 +346,16 @@ for this shipment
             height: 'auto',
             padding: '10px',
             borderRadius: '5px',
-            zIndex: '100',
+            zIndex: '100'
           }}
         >
           <p
             style={{
               fontWeight: 700,
-              color: '#000000',
+              color: '#000000'
             }}
           >
-            Input your
-            {' '}
-            {this.props.ChatRoomData.ChatRoomType}
-            {' '}
-e-mail address only for this shipment
+            Input your {this.props.ChatRoomData.ChatRoomType} e-mail address only for this shipment
           </p>
 
           <Row>
@@ -378,15 +365,16 @@ e-mail address only for this shipment
                   <input
                     {...props}
                     style={{
-                      width: '100%',
+                      width: '100%'
                     }}
                   />
                 )}
                 wrapperStyle={{
-                  width: '100%',
+                  width: '100%'
                 }}
                 items={suggestion}
-                shouldItemRender={(item, value) => item.label.toLowerCase().indexOf(value.toLowerCase()) > -1
+                shouldItemRender={(item, value) =>
+                  item.label.toLowerCase().indexOf(value.toLowerCase()) > -1
                 }
                 getItemValue={item => item.label}
                 renderItem={(item, highlighted) => (
@@ -410,7 +398,7 @@ e-mail address only for this shipment
                   marginLeft: '2rem',
                   marginRight: '1rem',
                   color: 'white',
-                  backgroundColor: '#16A085',
+                  backgroundColor: '#16A085'
                 }}
                 onClick={() => {
                   const inviteMember = [];
@@ -421,7 +409,7 @@ e-mail address only for this shipment
                     Image: '',
                     Role: role,
                     ChatRoomMemberCompanyName: '',
-                    ChatRoomMemberCompanyKey: '',
+                    ChatRoomMemberCompanyKey: ''
                   });
                   console.log(inviteMember);
                   if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
@@ -429,12 +417,12 @@ e-mail address only for this shipment
                       inviteMember,
                       ShipmentKey,
                       ChatRoomKey,
-                      this.props.sender,
+                      this.props.sender
                     ).subscribe({
-                      next: (res) => {
+                      next: res => {
                         console.log(res);
                         invite.unsubscribe();
-                      },
+                      }
                     });
                   } else {
                     window.alert('You has been remove from the chat');
@@ -480,7 +468,7 @@ e-mail address only for this shipment
       onDragOver,
       onDragLeave,
       onFileDrop,
-      shipments,
+      shipments
     } = this.props;
     let lastkey = '';
     const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
@@ -492,7 +480,7 @@ e-mail address only for this shipment
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
         ref = _.find(
           ship.ShipmentReferenceList,
-          item => item.ShipmentReferenceCompanyKey === isInvited.ChatRoomMemberCompanyKey,
+          item => item.ShipmentReferenceCompanyKey === isInvited.ChatRoomMemberCompanyKey
         );
       }
     } else {
@@ -504,7 +492,7 @@ e-mail address only for this shipment
         <Row
           style={{
             backgroundColor: 'white',
-            borderBottom: '1px solid #707070',
+            borderBottom: '1px solid #707070'
           }}
         >
           <Breadcrumb className="chat-toolbar">
@@ -544,7 +532,7 @@ e-mail address only for this shipment
         </Row>
         <Row
           style={{
-            height: 'auto',
+            height: 'auto'
           }}
         >
           <Col
@@ -552,7 +540,7 @@ e-mail address only for this shipment
             style={{
               backgroundColor: 'white',
               marginTop: '0.5rem',
-              paddingRight: '5px',
+              paddingRight: '5px'
             }}
           >
             <div
@@ -574,9 +562,9 @@ e-mail address only for this shipment
                       ChatRoomMessageReaderProfileImageUrl: _.get(
                         sender,
                         'UserInfoProfileImageLink',
-                        '',
+                        ''
                       ),
-                      ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id,
+                      ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
                     });
                   }
                   lastkey = chatMsg[chatMsg.length - 1].id;
@@ -592,18 +580,18 @@ e-mail address only for this shipment
                     fetchMoreMessage(ChatRoomKey, ShipmentKey);
                   }
                 }}
-                ref={(el) => {
+                ref={el => {
                   this.msgChatRef = el;
                 }}
               >
                 {_.get(this.props.ShipmentData, 'ShipmentCreatorUserKey', false) === user.uid
                   ? this.renderAssignCompany(this.props.ShipmentData.ShipmentCreatorType)
                   : isInvited
-                    ? this.renderAssignCompany(
+                  ? this.renderAssignCompany(
                       isInvited.ChatRoomMemberRole[0],
-                      _.get(isInvited, 'ChatRoomMemberCompanyKey', false),
+                      _.get(isInvited, 'ChatRoomMemberCompanyKey', false)
                     )
-                    : ''}
+                  : ''}
                 {chatMsg.map((msg, i) => {
                   const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = _.get(msg, 'ChatRoomMessageType', 'sender');
@@ -626,7 +614,7 @@ e-mail address only for this shipment
                       prev: chatMsg[i - 1],
                       isLast: chatMsg.length - 1 === i,
                       hasFile: true,
-                      files: msgJson.files,
+                      files: msgJson.files
                     };
                   } else {
                     message = {
@@ -637,7 +625,7 @@ e-mail address only for this shipment
                       readers: msg.ChatRoomMessageReader,
                       prev: chatMsg[i - 1],
                       isLast: chatMsg.length - 1 === i,
-                      hasFile: false,
+                      hasFile: false
                     };
                   }
 
@@ -645,7 +633,7 @@ e-mail address only for this shipment
                     <div
                       style={{
                         padding: '20px',
-                        marginBottom: '-70px',
+                        marginBottom: '-70px'
                       }}
                     >
                       <ChatMessage message={message} i={i} />
@@ -656,14 +644,14 @@ e-mail address only for this shipment
                   <div
                     style={{
                       padding: '20px',
-                      marginBottom: '-70px',
+                      marginBottom: '-70px'
                     }}
                   />
                 ) : (
                   <div
                     style={{
                       padding: '20px',
-                      marginBottom: '-70px',
+                      marginBottom: '-70px'
                     }}
                   >
                     <PreMessage message={sending} callback={sendMessage} />
@@ -699,11 +687,12 @@ e-mail address only for this shipment
                         multiple
                         ref={fileInputRef}
                         style={{ display: 'none' }}
-                        onChange={event => uploadModalRef.current.triggerUploading(
-                          event.target.files,
-                          ShipmentKey,
-                          ChatRoomKey,
-                        )
+                        onChange={event =>
+                          uploadModalRef.current.triggerUploading(
+                            event.target.files,
+                            ShipmentKey,
+                            ChatRoomKey
+                          )
                         }
                       />
                     </InputGroupAddon>
@@ -721,7 +710,7 @@ e-mail address only for this shipment
                       disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}
                       onMouseEnter={() => {
                         ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
-                          next: (res) => {},
+                          next: res => {}
                         });
                         if (chatMsg.length > 0) {
                           if (chatMsg[chatMsg.length - 1].id !== lastkey) {
@@ -731,21 +720,26 @@ e-mail address only for this shipment
                               ChatRoomMessageReaderProfileImageUrl: _.get(
                                 sender,
                                 'UserInfoProfileImageLink',
-                                '',
+                                ''
                               ),
-                              ChatRoomMessageReaderLastestMessageKey:
-                                chatMsg[chatMsg.length - 1].id,
+                              ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
                             });
                           }
                           lastkey = chatMsg[chatMsg.length - 1].id;
                         }
                       }}
-                      onChange={(e) => {
+                      onChange={e => {
                         this.multilineTextarea.style.height = 'auto';
-                        this.multilineTextarea.style.height = `${this.multilineTextarea.scrollHeight}px`;
+                        if (this.multilineTextarea.scrollHeight > 280) {
+                          this.multilineTextarea.style.height = '280px';
+                        } else {
+                          this.multilineTextarea.style.height = `${
+                            this.multilineTextarea.scrollHeight
+                          }px`;
+                        }
 
                         ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
-                          next: (res) => {},
+                          next: res => {}
                         });
                         if (chatMsg.length > 0) {
                           if (chatMsg[chatMsg.length - 1].id !== lastkey) {
@@ -755,30 +749,29 @@ e-mail address only for this shipment
                               ChatRoomMessageReaderProfileImageUrl: _.get(
                                 sender,
                                 'UserInfoProfileImageLink',
-                                '',
+                                ''
                               ),
-                              ChatRoomMessageReaderLastestMessageKey:
-                                chatMsg[chatMsg.length - 1].id,
+                              ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
                             });
                           }
                           lastkey = chatMsg[chatMsg.length - 1].id;
                         }
                         typing(e.target.value);
                       }}
-                      onKeyPress={(event) => {
+                      onKeyPress={event => {
                         if (event.which == 13 && event.shiftKey) {
                         } else if (event.which == 13) {
                           event.preventDefault(); // Stops enter from creating a new line
                           if (
-                            !_.isEmpty(_.trim(text))
-                            && _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
+                            !_.isEmpty(_.trim(text)) &&
+                            _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
                           ) {
                             sendMessage(
                               ChatRoomKey,
                               ShipmentKey,
                               text,
                               undefined,
-                              this.scrollChatToBottom,
+                              this.scrollChatToBottom
                             );
                           }
                         }
@@ -796,15 +789,15 @@ e-mail address only for this shipment
                           console.log('Input text is size', _.size(text));
 
                           if (
-                            !_.isEmpty(_.trim(text))
-                            && _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
+                            !_.isEmpty(_.trim(text)) &&
+                            _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
                           ) {
                             sendMessage(
                               ChatRoomKey,
                               ShipmentKey,
                               text,
                               undefined,
-                              this.scrollChatToBottom,
+                              this.scrollChatToBottom
                             );
                           }
                         }}
