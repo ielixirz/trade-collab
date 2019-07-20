@@ -49,7 +49,7 @@ class ChatWithHeader extends Component {
       companies: [],
       members: [],
       isAssign: false,
-      sideCollpase: 'SHIPMENT',
+      sideCollpase: 'SHIPMENT'
     };
 
     this.msgChatRef = React.createRef();
@@ -87,11 +87,11 @@ class ChatWithHeader extends Component {
     }
   }
 
-  triggerSideCollapse = (side) => {
+  triggerSideCollapse = side => {
     this.setState({
-      sideCollpase: side,
+      sideCollpase: side
     });
-  }
+  };
 
   scrollChatToBottom = () => {
     try {
@@ -543,7 +543,7 @@ class ChatWithHeader extends Component {
                   Ref is not defined
                 </span>
               ) : (
-                `Ref#${_.get(ref, 'ShipmentReferenceID', '')}`
+                <b>{`Ref#${_.get(ref, 'ShipmentReferenceID', '')}`}</b>
               )}
             </Button>
           </Breadcrumb>
