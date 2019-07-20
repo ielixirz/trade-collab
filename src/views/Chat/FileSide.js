@@ -17,7 +17,7 @@ const styles = {
     fontSize: '1.2em',
     fontWeight: 'bold',
     color: '#707070',
-    marginLeft: 10,
+    marginLeft: 15,
   },
   arrow: {
     fontSize: '1.2em',
@@ -34,7 +34,6 @@ const styles = {
 };
 
 const FileSide = (props) => {
-  const [collapse, setCollapse] = useState(false);
   const [selectedFile, setSelectedFile] = useState([]);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const fileListRef = useRef(null);
@@ -44,7 +43,7 @@ const FileSide = (props) => {
   });
 
   const triggerCollapse = () => {
-    setCollapse(!collapse);
+    props.collapseTrigger('FILE');
   };
 
   const deleteSelectedFile = (e) => {
@@ -165,7 +164,7 @@ const FileSide = (props) => {
               />
             </Col>
             <Col xs="1" className="text-right">
-              {collapse ? (
+              {props.collapse === 'FILE' ? (
                 <span style={styles.arrow}>
                   <i className="fa fa-angle-down" />
                 </span>
@@ -176,7 +175,7 @@ const FileSide = (props) => {
               )}
             </Col>
           </Row>
-          <Collapse isOpen={collapse}>
+          <Collapse isOpen={props.collapse === 'FILE'}>
             <FileList
               chatFiles={props.chatFile}
               shipmentKey={props.shipmentKey}

@@ -48,7 +48,8 @@ class ChatWithHeader extends Component {
       email: '',
       companies: [],
       members: [],
-      isAssign: false
+      isAssign: false,
+      sideCollpase: 'SHIPMENT',
     };
 
     this.msgChatRef = React.createRef();
@@ -84,6 +85,12 @@ class ChatWithHeader extends Component {
       }
       lastkey = chatMsg[chatMsg.length - 1].id;
     }
+  }
+
+  triggerSideCollapse = (side) => {
+    this.setState({
+      sideCollpase: side,
+    });
   }
 
   scrollChatToBottom = () => {
@@ -820,17 +827,21 @@ class ChatWithHeader extends Component {
               </div>
             </div>
           </Col>
-          <Col xs="4" style={{ paddingLeft: '0.3rem', marginTop: '0.6rem' }}>
+          <Col xs="4" style={{ paddingLeft: '2px', paddingTop: '2.5px' }}>
             <FileSide
               chatFile={ChatRoomFileLink}
               shipmentKey={ShipmentKey}
               chatroomKey={ChatRoomKey}
               sendMessage={sendMessage}
+              collapse={this.state.sideCollpase}
+              collapseTrigger={this.triggerSideCollapse}
             />
             <ShipmentSide
               mainData={this.props.ShipmentData}
               shipmentKey={ShipmentKey}
               chatroomKey={ChatRoomKey}
+              collapse={this.state.sideCollpase}
+              collapseTrigger={this.triggerSideCollapse}
             />
           </Col>
         </Row>
