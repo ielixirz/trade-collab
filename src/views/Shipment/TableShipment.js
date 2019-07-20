@@ -533,7 +533,7 @@ class TableShipment extends React.Component {
               Company Unassigned
             </span>
           ) : (
-            <b>{company}</b>
+            company
           )}
         </Row>
         <Row style={{ margin: 'auto', fontSize: '0.8em' }}>
