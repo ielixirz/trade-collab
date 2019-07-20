@@ -56,7 +56,7 @@ class ChatWithHeader extends Component {
   componentDidMount() {
     const { ShipmentKey, ChatRoomKey, sender, chatMsg } = this.props;
     if (this.multilineTextarea) {
-      this.multilineTextarea.style.height = '50px';
+      this.multilineTextarea.style.height = '50px ';
     }
     ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
       next: res => {}
