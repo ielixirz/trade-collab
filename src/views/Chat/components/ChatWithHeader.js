@@ -781,6 +781,7 @@ class ChatWithHeader extends Component {
                               undefined,
                               this.scrollChatToBottom
                             );
+                            this.multilineTextarea.style.height = 'auto';
                           }
                         }
                       }}
@@ -807,6 +808,7 @@ class ChatWithHeader extends Component {
                               undefined,
                               this.scrollChatToBottom
                             );
+                            this.multilineTextarea.style.height = 'auto';
                           }
                         }}
                       >
