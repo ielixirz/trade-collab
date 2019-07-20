@@ -310,56 +310,12 @@ class TableShipment extends React.Component {
           target={`popover${index}`}
         >
           <PopoverBody>
-            {refs.map((refItem, refIndex) => (
-              <Row key={refIndex}>
-                <Col xs={1} />
-                <Col xs={5} style={{ paddingTop: 5 }}>
-                  <Label check>({refItem.ShipmentReferenceCompanyName})</Label>
-                </Col>
-                <Col xs={5}>
-                  <Input
-                    type="text"
-                    name={`shipmentRefID${refIndex}`}
-                    id={`shipmentRefID${refIndex}`}
-                    value={refItem.ShipmentReferenceIDInput}
-                    onChange={e => {
-                      const value = e.target.value;
-                      // (ShipmentKey, refKey, Data)
-                      this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
-                        ...refItem,
-                        ShipmentReferenceIDInput: value,
-                        ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
-                        ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
-                        ShipmentKey: shipmentKey
-                      });
-                    }}
-                    onKeyPress={event => {
-                      if (event.key === 'Enter') {
-                        const update = UpdateShipmentReference(
-                          shipmentKey,
-                          refItem.ShipmentReferenceKey,
-                          {
-                            ...refItem,
-                            ShipmentReferenceID: refItem.ShipmentReferenceIDInput
-                          }
-                        ).subscribe({
-                          complete: res => {
-                            update.unsubscribe();
-                          }
-                        });
-                      }
-                    }}
-                    maxLength={50}
-                    bsSize="sm"
-                    disabled={
-                      hasCompany.ShipmentMemberCompanyKey !== refItem.ShipmentReferenceCompanyKey
-                    }
-                  />
-                </Col>
-              </Row>
-            ))}
             {!alreadyHave ? (
-              <Row>
+              <Row
+                style={{
+                  marginBottom: '5px'
+                }}
+              >
                 <Col xs={1} />
                 <Col xs={5} style={{ paddingTop: 5 }}>
                   <Label check>
@@ -445,6 +401,59 @@ class TableShipment extends React.Component {
             ) : (
               ''
             )}
+            {refs.map((refItem, refIndex) => (
+              <Row
+                key={refIndex}
+                style={{
+                  marginBottom: '5px'
+                }}
+              >
+                <Col xs={1} />
+                <Col xs={5} style={{ paddingTop: 5 }}>
+                  <Label check>({refItem.ShipmentReferenceCompanyName})</Label>
+                </Col>
+                <Col xs={5}>
+                  <Input
+                    type="text"
+                    name={`shipmentRefID${refIndex}`}
+                    id={`shipmentRefID${refIndex}`}
+                    value={refItem.ShipmentReferenceIDInput}
+                    onChange={e => {
+                      const value = e.target.value;
+                      // (ShipmentKey, refKey, Data)
+                      this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
+                        ...refItem,
+                        ShipmentReferenceIDInput: value,
+                        ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
+                        ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
+                        ShipmentKey: shipmentKey
+                      });
+                    }}
+                    onKeyPress={event => {
+                      if (event.key === 'Enter') {
+                        const update = UpdateShipmentReference(
+                          shipmentKey,
+                          refItem.ShipmentReferenceKey,
+                          {
+                            ...refItem,
+                            ShipmentReferenceID: refItem.ShipmentReferenceIDInput
+                          }
+                        ).subscribe({
+                          complete: res => {
+                            update.unsubscribe();
+                          }
+                        });
+                      }
+                    }}
+                    maxLength={50}
+                    bsSize="sm"
+                    disabled={
+                      hasCompany.ShipmentMemberCompanyKey !== refItem.ShipmentReferenceCompanyKey
+                    }
+                  />
+                </Col>
+              </Row>
+            ))}
           </PopoverBody>
         </UncontrolledPopover>
       </div>
