@@ -217,6 +217,7 @@ img {
 
 .tab-content {
   border: 1px solid #ededed;
+  margin-top: -5px !important;
 }
 
 .outgoing_msg {
@@ -253,7 +254,7 @@ img {
   }
   .react-tabs-tab-content {
     margin: auto;
-    width: 50px !important;
+    width: 45px !important;
     font-size: 2em !important;
   }
 }
@@ -345,11 +346,12 @@ textarea {
 }
 
 .react-tabs-container {
-  background-color: #ffffff !important;
+  background-color: rgb(247, 247, 247);
   padding-top: 0.5rem !important;
   border: 0px !important;
   overflow-x: auto !important;
   height: 50px !important;
+  display: -webkit-inline-box;
 }
 
 .react-tabs-tab.react-tabs-active {
@@ -369,8 +371,8 @@ textarea {
   border-left: 1px solid #ededed !important;
   border-top-left-radius: 10px !important;
   border-top-right-radius: 10px !important;
-  max-width: 350px !important;
-  min-width: 200px !important;
+  max-width: 385px !important;
+  min-width: 185px !important;
   position: relative;
 }
 
