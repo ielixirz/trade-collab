@@ -313,3 +313,4 @@
         NonUserInviteRecruiterProfileSurName (string)
         NonUserInviteRecruiterCompanyName (string)
         NonUserInviteRecruiterCompanyKey (string)
+        NonUserInviteExpiryDate (timestamp)
