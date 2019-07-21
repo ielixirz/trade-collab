@@ -375,10 +375,8 @@ textarea {
   background-color: #ffffff !important;
   border: 0px !important;
   overflow-x: auto !important;
-  height: 40px !important;
-  ::-webkit-scrollbar {
-    display: none !important;
-  }
+  height: 36px !important;
+  display: -webkit-inline-box !important;
 }
 
 .react-tabs-tab.react-tabs-active {
