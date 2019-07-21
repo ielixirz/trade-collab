@@ -176,6 +176,7 @@ img {
 .time_date_leftComponent {
   position: relative;
 }
+
 .time_date {
   position: absolute;
   bottom: 0;
@@ -375,7 +376,8 @@ textarea {
   background-color: #ffffff !important;
   border: 0px !important;
   overflow-x: auto !important;
-  height: 36px !important;
+  width: 100%;
+  height: 39px !important;
   display: -webkit-inline-box !important;
 }
 
