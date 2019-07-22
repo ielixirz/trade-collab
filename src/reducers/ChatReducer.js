@@ -6,7 +6,8 @@ import {
   SEND_MESSAGE,
   FETCH_CHAT_MEMBER,
   TOGGLE_LOAD,
-  SELECT_ROOM
+  SELECT_ROOM,
+  TOGGLE_CHAT
 } from '../constants/constants';
 import _ from 'lodash';
 const ShipmentKey = 'HDTPONlnceJeG5yAA1Zy';
@@ -18,7 +19,9 @@ const INITIAL_STATE = {
   chatroomsMsg: {},
   msg: {},
   toggle: true,
-  selectedChat: ''
+  createChat: true,
+  selectedChat: '',
+  chatroomsOrder: {}
 };
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
@@ -31,6 +34,11 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         toggle: action.payload
+      };
+    case TOGGLE_CHAT:
+      return {
+        ...state,
+        createChat: action.payload
       };
     case FETCH_CHAT:
       return {

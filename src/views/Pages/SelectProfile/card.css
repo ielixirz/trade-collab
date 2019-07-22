@@ -3,6 +3,7 @@
   transition: 0.3s;
   width: 100%;
   border-radius: 5px;
+  border: 1px solid #ededed;
 }
 
 .card:hover {

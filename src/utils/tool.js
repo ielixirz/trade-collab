@@ -2,11 +2,11 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 
-import NotificationComponent from '../component/NotificationComponent';
 import moment from 'moment';
+import NotificationComponent from '../component/NotificationComponent';
 
 const LABEL = {
-  id: 'id'
+  id: 'id',
 };
 export const notificationTitleHelper = (item, index, userKey) => {
   const t = new Date(item.UserNotificationTimestamp.seconds * 1000);
@@ -29,11 +29,7 @@ export const notificationTitleHelper = (item, index, userKey) => {
           index={index}
           item={item}
           user={userKey}
-          text={`${item.UserNotificationUserInfoEmail} role in ${
-            item.UserNotificationCompanyName
-          } has been changed from ${item.UserNotificationOldRole} to ${
-            item.UserNotificationNewRole
-          }`}
+          text={`${item.UserNotificationUserInfoEmail} role in ${item.UserNotificationCompanyName} has been changed from ${item.UserNotificationOldRole} to ${item.UserNotificationNewRole}`}
           s
           t={t}
         />
@@ -54,20 +50,18 @@ export const notificationTitleHelper = (item, index, userKey) => {
           index={index}
           item={item}
           user={userKey}
-          text={`${item.UserNotificationFirstname} has has request to join your Company ${
-            item.UserNotificationCompanyName
-          } `}
+          text={`${item.UserNotificationFirstname} has has request to join your Company ${item.UserNotificationCompanyName} `}
           t={t}
         />
       );
   }
 };
-export const createDataTable = input => {
+export const createDataTable = (input) => {
   const data = _.map(input, (item, index) => ({
     id: _.get(item, 'id', index) + 1,
-    ...item
+    ...item,
   }));
-  const columns = _.map(_.keys(data[0]), item => {
+  const columns = _.map(_.keys(data[0]), (item) => {
     if (item === 'ETA') {
       return {
         text: _.get(LABEL, item, item),
@@ -80,10 +74,9 @@ export const createDataTable = input => {
           const RowAETADATA = moment(rowA.ETA, 'DD MMM YYYY');
           const RowBETADATA = moment(rowB.ETA, 'DD MMM YYYY');
           // moment(str, 'YYYY-MM-DD').toDate()
-          console.log(RowAETADATA, RowBETADATA);
           if (order === 'asc') return RowAETADATA - RowBETADATA;
-          else return RowBETADATA - RowAETADATA;
-        }
+          return RowBETADATA - RowAETADATA;
+        },
       };
     }
     if (item === 'ETD') {
@@ -98,10 +91,9 @@ export const createDataTable = input => {
           const RowAETDDATA = moment(rowA.ETD, 'DD MMM YYYY');
           const RowBETDDATA = moment(rowB.ETD, 'DD MMM YYYY');
           // moment(str, 'YYYY-MM-DD').toDate()
-          console.log(RowAETDDATA, RowBETDDATA);
           if (order === 'asc') return RowAETDDATA - RowBETDDATA;
-          else return RowBETDDATA - RowAETDDATA;
-        }
+          return RowBETDDATA - RowAETDDATA;
+        },
       };
     }
     if (item === 'uid') {
@@ -109,7 +101,7 @@ export const createDataTable = input => {
         text: _.get(LABEL, item, item),
         dataField: item,
         sort: true,
-        hidden: true
+        hidden: true,
       };
     }
     if (item === 'ShipmentReferenceList') {
@@ -117,7 +109,7 @@ export const createDataTable = input => {
         text: _.get(LABEL, item, item),
         dataField: item,
         sort: true,
-        hidden: true
+        hidden: true,
       };
     }
     if (item === '') {
@@ -126,12 +118,12 @@ export const createDataTable = input => {
         dataField: item,
         sort: false,
         style: {
-          width: '2.5%'
+          width: '2.5%',
         },
         headerAlign: 'center',
         headerStyle: {
-          width: '2.5%'
-        }
+          width: '2.5%',
+        },
       };
     }
     if (item === 'alert') {
@@ -140,13 +132,13 @@ export const createDataTable = input => {
         dataField: item,
         sort: false,
         style: {
-          width: '5%'
+          width: '5%',
         },
         headerAlign: 'center',
         headerStyle: {
-          width: '5%'
+          width: '5%',
         },
-        classes: 'alert-column'
+        classes: 'alert-column',
       };
     }
     if (item === 'Ref') {
@@ -155,13 +147,13 @@ export const createDataTable = input => {
         dataField: item,
         sort: false,
         style: {
-          width: '12%'
+          width: '14.5%',
         },
         headerAlign: 'left',
         align: 'left',
         headerStyle: {
-          width: '12%'
-        }
+          width: '14.5%',
+        },
       };
     }
     if (item === 'Product') {
@@ -170,13 +162,13 @@ export const createDataTable = input => {
         dataField: item,
         sort: false,
         style: {
-          width: '15%'
+          width: '15%',
         },
-        headerAlign: 'center',
-        align: 'center',
+        headerAlign: 'left',
+        align: 'left',
         headerStyle: {
-          width: '15%'
-        }
+          width: '15%',
+        },
       };
     }
     if (item === 'id') {
@@ -184,7 +176,7 @@ export const createDataTable = input => {
         text: _.get(LABEL, item, item),
         dataField: item,
         sort: true,
-        hidden: true
+        hidden: true,
       };
     }
     if (item === 'ShipmentStatus') {
@@ -192,7 +184,7 @@ export const createDataTable = input => {
         text: _.get(LABEL, item, item),
         dataField: item,
         sort: true,
-        hidden: true
+        hidden: true,
       };
     }
     if (item === 'ShipmentMember') {
@@ -200,7 +192,7 @@ export const createDataTable = input => {
         text: _.get(LABEL, item, item),
         dataField: item,
         sort: true,
-        hidden: true
+        hidden: true,
       };
     }
     if (item === 'Buyer' || item === 'Seller') {
@@ -209,7 +201,7 @@ export const createDataTable = input => {
         dataField: item,
         headerAlign: 'left',
         align: 'left',
-        sort: true
+        sort: true,
       };
     }
     if (item === 'Status') {
@@ -217,13 +209,13 @@ export const createDataTable = input => {
         text: _.get(LABEL, item, item),
         dataField: item,
         style: {
-          width: '15%'
+          width: '12.5%',
         },
         headerAlign: 'center',
         align: 'center',
         headerStyle: {
-          width: '15%'
-        }
+          width: '12.5%',
+        },
       };
     }
     return {
@@ -232,12 +224,12 @@ export const createDataTable = input => {
       sort: true,
       headerAlign: 'center',
       align: 'center',
-      width: '15%'
+      width: '15%',
     };
   });
 
   return {
     columns,
-    data
+    data,
   };
 };

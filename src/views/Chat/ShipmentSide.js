@@ -63,16 +63,13 @@ const ShipmentData = ({
 class ShipmentSide extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      collapse: false,
-    };
     this.triggerCollapse = this.triggerCollapse.bind(this);
   }
 
   triggerCollapse(e) {
     const preventId1 = e.target.parentElement.parentElement.parentElement.id;
     if (preventId1 !== 'master-detail-status-select') {
-      this.setState(state => ({ collapse: !state.collapse }));
+      this.props.collapseTrigger('SHIPMENT');
     }
   }
 
@@ -99,7 +96,7 @@ class ShipmentSide extends Component {
                 </span>
               </Col>
               <Col xs="2" className="text-right">
-                {this.state.collapse ? (
+                {this.props.collapse === 'SHIPMENT' ? (
                   <span style={styles.arrow}>
                     <i className="fa fa-angle-down" />
                   </span>
@@ -110,7 +107,7 @@ class ShipmentSide extends Component {
                 )}
               </Col>
             </Row>
-            <Collapse isOpen={this.state.collapse}>
+            <Collapse isOpen={this.props.collapse === 'SHIPMENT'}>
               <ShipmentData
                 shipmentKey={this.props.shipmentKey}
                 chatroomKey={this.props.chatroomKey}

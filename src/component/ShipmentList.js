@@ -14,7 +14,7 @@ import { GetMasterDataChatRoom } from '../service/masterdata/masterdata';
 import { GetDiffDay } from '../utils/date';
 
 const shipmentListGroupStyle = {
-  maxHeight: '40vh',
+  maxHeight: '60vh',
   overflow: 'scroll',
   overflowX: 'hidden',
   fontSize: '0.9em',

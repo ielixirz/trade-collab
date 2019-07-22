@@ -10,8 +10,14 @@
 // Import Main styles for this application
 @import './scss/style.scss';
 
+@import url('https://fonts.googleapis.com/css?family=Muli');
+
 /* Customize website's scrollbar like Mac OS
 Not supports in Firefox and IE */
+
+* {
+  font-family: 'Muli';
+}
 
 /* total width */
 ::-webkit-scrollbar {
@@ -51,4 +57,9 @@ Not supports in Firefox and IE */
 
 img.img-avatar {
   border-radius: 50% !important;
+}
+
+/* Override Core UI Nav Bar*/
+.app-header.navbar {
+  border-bottom: 0px solid #ededed !important;
 }
