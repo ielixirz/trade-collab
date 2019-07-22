@@ -10,11 +10,13 @@
 // Import Main styles for this application
 @import './scss/style.scss';
 
+@import url('https://fonts.googleapis.com/css?family=Muli');
+
 /* Customize website's scrollbar like Mac OS
 Not supports in Firefox and IE */
 
 * {
-  font-family: Muli;
+  font-family: 'Muli';
 }
 
 /* total width */
