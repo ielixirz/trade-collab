@@ -267,8 +267,8 @@ img {
 }
 
 .react-tabs-child {
-  margin-left: 0;
-  padding-left: 0;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
 
   .react-tabs-tab {
     max-width: 120px !important;
