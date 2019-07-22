@@ -545,8 +545,9 @@ exports.AddShipmentMember = CloudFunctionsRegionsAsia.firestore
           SnapshotDataObject['ChatRoomMemberEmail'];
 
       if (SnapshotDataObject['ChatRoomMemberRole'])
-        PayloadObject[ShipmentMemberUserKey]['ShipmentMemberRole'] =
-          SnapshotDataObject['ChatRoomMemberRole'];
+        PayloadObject[ShipmentMemberUserKey][
+          'ShipmentMemberRole'
+        ] = admin.firestore.FieldValue.arrayUnion(...SnapshotDataObject['ChatRoomMemberRole']);
 
       if (SnapshotDataObject['ChatRoomMemberCompanyName'])
         PayloadObject[ShipmentMemberUserKey]['ShipmentMemberCompanyName'] =

@@ -11,7 +11,7 @@ import {
 } from '../../../service/shipment/shipment';
 
 const ChatCreateRoom = ({ createChatRoom, param, fetchChatMessage, user }) => (
-  <Card>
+  <Card className="card-chat-side">
     <CardBody>
       <Row style={{ marginTop: '30px' }}>
         <Col xs={3} />

@@ -6,20 +6,20 @@ export const profileColumns = [
     dataField: 'company',
     text: 'Company Name',
     style: {
-      width: '30%',
+      width: '25%',
     },
     headerStyle: {
-      width: '30%',
+      width: '25%',
     },
   },
   {
     dataField: 'position',
     text: 'Position:',
     style: {
-      width: '20%',
+      width: '25%',
     },
     headerStyle: {
-      width: '20%',
+      width: '25%',
     },
   },
   {
@@ -31,7 +31,6 @@ export const profileColumns = [
     headerStyle: {
       width: '20%',
     },
-    align: 'center',
   },
   {
     dataField: 'status',
@@ -121,30 +120,30 @@ export const memberDataColumns = [
     dataField: 'name',
     text: 'Name',
     style: {
-      width: '30%',
+      width: '20%',
     },
     headerStyle: {
-      width: '30%',
+      width: '20%',
     },
   },
   {
     dataField: 'email',
     text: 'Email',
     style: {
-      width: '20%',
+      width: '25%',
     },
     headerStyle: {
-      width: '20%',
+      width: '25%',
     },
   },
   {
     dataField: 'position',
     text: 'Position',
     style: {
-      width: '20%',
+      width: '25%',
     },
     headerStyle: {
-      width: '20%',
+      width: '25%',
     },
   },
   {

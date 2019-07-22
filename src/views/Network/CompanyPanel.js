@@ -24,6 +24,7 @@ import {
 
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
 import Select from 'react-select';
+import { TrimLongText } from '../../utils/string';
 import ErrorPopup from '../../component/commonPopup/ErrorPopup';
 import MainDataTable from '../../component/MainDataTable';
 import MultiSelectTextInput from '../../component/MultiSelectTextInput';
@@ -230,7 +231,7 @@ const CompanyPanel = (props) => {
           email: member.UserMemberEmail,
           position: (
             <TurnAbleTextLabel
-              text={member.UserMemberPosition}
+              text={TrimLongText(member.UserMemberPosition, 23)}
               turnType="input"
               data={{
                 onChangeFn: null,
@@ -555,88 +556,90 @@ const CompanyPanel = (props) => {
             </Col>
             <Col xs={6} style={{ marginTop: '1.5rem' }}>
               <Row>
-                {isEdit ? (
-                  <div>
-                    <Input
-                      style={{ width: '100%', marginBottom: '0.5rem', paddingRight: '5rem' }}
-                      type="text"
-                      id="name"
-                      value={company.CompanyName}
-                      onChange={handleCompanyInputChange}
-                    />
-                  </div>
-                ) : (
-                  <h4>{company.CompanyName}</h4>
-                )}
-                {isMember ? (
-                  isEdit ? (
-                    <Badge
-                      className="mr-1"
-                      color="info"
-                      onClick={toggleEdit}
-                      style={{
-                        cursor: 'pointer',
-                        height: '100%',
-                        padding: 5,
-                        marginTop: '5px',
-                        marginLeft: '10px',
-                      }}
-                    >
-                      Save
-                    </Badge>
+                <Col xs={1} style={{ paddingLeft: '0px', paddingRight: '0px', textAlign: 'right' }}>
+                  {isMember ? (
+                    isEdit ? (
+                      <Badge
+                        className="mr-1"
+                        color="info"
+                        onClick={toggleEdit}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        Save
+                      </Badge>
+                    ) : (
+                      <i
+                        className="cui-pencil icons"
+                        role="button"
+                        style={{ cursor: 'pointer' }}
+                        onClick={toggleEdit}
+                        onKeyDown={null}
+                        tabIndex="-1"
+                      />
+                    )
                   ) : (
-                    <i
-                      className="cui-pencil icons"
-                      role="button"
-                      style={{
-                        marginLeft: '1rem',
-                        marginTop: '0.1rem',
-                        fontSize: 'medium',
-                        cursor: 'pointer',
-                      }}
-                      onClick={toggleEdit}
-                      onKeyDown={null}
-                      tabIndex="-1"
-                    />
-                  )
-                ) : (
-                  ''
-                )}
+                    ''
+                  )}
+                </Col>
+                <Col xs={5}>
+                  {isEdit ? (
+                    <div>
+                      <Input
+                        style={{ width: '100%', marginBottom: '0.5rem', paddingRight: '5rem' }}
+                        type="text"
+                        id="name"
+                        value={company.CompanyName}
+                        onChange={handleCompanyInputChange}
+                      />
+                    </div>
+                  ) : (
+                    <h4>{company.CompanyName}</h4>
+                  )}
+                </Col>
               </Row>
               <Row>
-                {isEdit ? (
-                  <div>
+                <Col xs={1} />
+                <Col xs={5}>
+                  {isEdit ? (
+                    <div>
+                      <Input
+                        style={{ width: '80%', marginBottom: '0.5rem', marginRight: '5rem' }}
+                        type="text"
+                        id="tel"
+                        placeholder="your company number..."
+                        value={company.CompanyTelNumber}
+                        onChange={handleCompanyInputChange}
+                      />
+                    </div>
+                  ) : (
+                    <p style={{ marginBottom: '0.1rem' }}>{company.CompanyTelNumber}</p>
+                  )}
+                </Col>
+              </Row>
+              <Row>
+                <Col xs={1} />
+                <Col xs={5}>
+                  {isEdit ? (
                     <Input
-                      style={{ width: '80%', marginBottom: '0.5rem', paddingRight: '5rem' }}
-                      type="text"
-                      id="tel"
-                      placeholder="your company number..."
-                      value={company.CompanyTelNumber}
+                      style={{ width: '100%' }}
+                      type="textarea"
+                      id="desc"
+                      placeholder="describe your company here..."
+                      value={company.CompanyAboutUs}
                       onChange={handleCompanyInputChange}
                     />
-                  </div>
-                ) : (
-                  <p style={{ marginBottom: '0.1rem' }}>{company.CompanyTelNumber}</p>
-                )}
-              </Row>
-              <Row>
-                {isEdit ? (
-                  <Input
-                    style={{ width: '50%' }}
-                    type="textarea"
-                    id="desc"
-                    placeholder="describe your company here..."
-                    value={company.CompanyAboutUs}
-                    onChange={handleCompanyInputChange}
-                  />
-                ) : (
-                  <div style={{ height: '50px', width: '50%', wordBreak: 'break-all' }}>
-                    <p>{company.CompanyAboutUs === undefined ? '-' : company.CompanyAboutUs}</p>
-                  </div>
-                )}
+                  ) : (
+                    <div style={{ height: '50px', wordBreak: 'break-all' }}>
+                      <p>{company.CompanyAboutUs === undefined ? '-' : company.CompanyAboutUs}</p>
+                    </div>
+                  )}
+                </Col>
               </Row>
               <Row style={{ paddingTop: '2rem' }}>
-                <a href="/#/network">{company.CompanyWebsiteUrl}</a>
+                <Col xs={1} />
+                <Col xs={5}>
+                  <a href="/#/network">{company.CompanyWebsiteUrl}</a>
+                </Col>
               </Row>
             </Col>
             {isMember ? (
