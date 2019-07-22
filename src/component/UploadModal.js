@@ -61,7 +61,13 @@ const UploadModal = forwardRef((props, ref) => {
     const uploadObs = [];
     const refPaths = [];
     _.forEach(files, (file) => {
-      const storageRefPath = `/Shipment/${sKey}/${file.file.name}_${new Date().valueOf()}`;
+      const fileName = file.file.name.substring(0, file.file.name.lastIndexOf('.'));
+      const ext = file.file.name.substring(
+        file.file.name.lastIndexOf('.'),
+        file.file.name.length + 1,
+      );
+      const uploadFileName = `${fileName}_${new Date().valueOf()}${ext}`;
+      const storageRefPath = `/Shipment/${sKey}/${uploadFileName}`;
       uploadObs.push(PutFile(storageRefPath, file.file));
       refPaths.push(storageRefPath);
     });
