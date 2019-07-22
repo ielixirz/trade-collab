@@ -5,7 +5,8 @@ import React from 'react';
 const MainLogo = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="246.031"
+    style={{ marginLeft: 15 }}
+    width="180"
     height="37.719"
     viewBox="0 0 246.031 37.719"
   >

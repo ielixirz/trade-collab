@@ -6,7 +6,7 @@ import {
 } from 'reactstrap';
 import _ from 'lodash';
 
-const ThreeDotDropdown = ({ options, disable }) => {
+const ThreeDotDropdown = ({ options, disable, style }) => {
   const [open, setOpen] = useState(false);
 
   const toggle = (e) => {
@@ -15,7 +15,7 @@ const ThreeDotDropdown = ({ options, disable }) => {
   };
 
   return (
-    <Dropdown toggle={toggle} isOpen={open}>
+    <Dropdown style={style} toggle={toggle} isOpen={open}>
       <DropdownToggle style={{ background: 'white', border: '0' }}>
         <i className="fa fa-ellipsis-v" />
       </DropdownToggle>

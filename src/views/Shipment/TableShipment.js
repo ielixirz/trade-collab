@@ -6,8 +6,6 @@
 /* eslint-disable import/order */
 /* eslint-disable filenames/match-regex */
 import React from 'react';
-import './Shipment.css';
-
 import _ from 'lodash';
 import Select from 'react-select';
 import BootstrapTable from 'react-bootstrap-table-next';
@@ -59,12 +57,6 @@ import BlockUi from 'react-block-ui';
 const SHIPMENT_STATUS_UPDATE_OPTIONS = [
   {
     value: {
-      status: 'In Transit'
-    },
-    label: 'In Transit'
-  },
-  {
-    value: {
       status: 'Planning'
     },
     label: 'Planning'
@@ -73,13 +65,13 @@ const SHIPMENT_STATUS_UPDATE_OPTIONS = [
     value: {
       status: 'Order Confirmed'
     },
-    label: 'Order Confirmed'
+    label: 'Confirmed'
   },
   {
     value: {
-      status: 'Delayed'
+      status: 'In Transit'
     },
-    label: 'Delayed'
+    label: 'In Transit'
   },
   {
     value: {
@@ -92,12 +84,6 @@ const SHIPMENT_STATUS_UPDATE_OPTIONS = [
       status: 'Cancelled'
     },
     label: 'Cancelled'
-  },
-  {
-    value: {
-      status: 'Completed'
-    },
-    label: 'Completed'
   }
 ];
 
@@ -110,12 +96,6 @@ const SHIPMENT_STATUS_OPTIONS = [
   },
   {
     value: {
-      status: 'In Transit'
-    },
-    label: 'In Transit'
-  },
-  {
-    value: {
       status: 'Planning'
     },
     label: 'Planning'
@@ -124,13 +104,13 @@ const SHIPMENT_STATUS_OPTIONS = [
     value: {
       status: 'Order Confirmed'
     },
-    label: 'Order Confirmed'
+    label: 'Confirmed'
   },
   {
     value: {
-      status: 'Delayed'
+      status: 'In Transit'
     },
-    label: 'Delayed'
+    label: 'In Transit'
   },
   {
     value: {
@@ -143,12 +123,6 @@ const SHIPMENT_STATUS_OPTIONS = [
       status: 'Cancelled'
     },
     label: 'Cancelled'
-  },
-  {
-    value: {
-      status: 'Completed'
-    },
-    label: 'Completed'
   }
 ];
 const { SearchBar } = Search;
@@ -245,7 +219,6 @@ class TableShipment extends React.Component {
 
   filterShipmentStatus = (status, shipment) => {
     let filterShipment = shipment;
-    console.log('Status is', status, 'Shipments', shipment);
     if (status !== 'ALL') {
       filterShipment = shipment.filter(s => {
         if (s.ShipmentStatus !== null) {
@@ -283,141 +256,89 @@ class TableShipment extends React.Component {
     const { user, companies } = this.props;
     const userCompany = [];
     let refs = [];
-    refs = _.filter(ref, refItem =>
+    refs = _.map(ref, item => item);
+    const userrefs = _.filter(ref, refItem =>
       _.some(companies, item => _.includes(refItem.ShipmentReferenceCompanyKey, item.CompanyKey))
     );
 
     const hasCompany = _.get(ShipmentMember, `${user.uid}`, {});
 
-    const alreadyHave = refs.length > 0;
-    if (!_.isEmpty(hasCompany.ShipmentMemberCompanyName)) {
-      return (
-        <div>
-          <p id={`popover${index}`} className="text-yterminal">
-            {refs.length > 0 ? (
-              refs[0].ShipmentReferenceID
-            ) : _.isEmpty(companies) ? (
-              <TableLoading />
-            ) : (
-              'Input your Ref#!'
-            )}
-          </p>
-          <UncontrolledPopover
-            trigger="legacy"
-            placement="bottom"
-            className="yterminalRef"
-            target={`popover${index}`}
-          >
-            <PopoverBody>
-              {refs.map((refItem, refIndex) => (
-                <Row key={refIndex}>
-                  <Col xs={1} />
-                  <Col xs={5} style={{ paddingTop: 5 }}>
-                    <Label check>
-                      <Input
-                        style={{ paddingTop: 5 }}
-                        type="radio"
-                        name={`shipmentRef${refIndex}`}
-                        value={refItem.ShipmentReferenceKey}
-                      />
-                      Ref #{refIndex + 1}: ({refItem.ShipmentReferenceCompanyName})
-                    </Label>
-                  </Col>
-                  <Col xs={5}>
-                    <Input
-                      type="text"
-                      name={`shipmentRefID${refIndex}`}
-                      id={`shipmentRefID${refIndex}`}
-                      value={refItem.ShipmentReferenceIDInput}
-                      onChange={e => {
-                        const value = e.target.value;
-                        // (ShipmentKey, refKey, Data)
-                        this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
-                          ...refItem,
-                          ShipmentReferenceIDInput: value,
-                          ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
-                          ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
-                          ShipmentKey: shipmentKey
-                        });
-                      }}
-                      onKeyPress={event => {
-                        if (event.key === 'Enter') {
-                          const update = UpdateShipmentReference(
-                            shipmentKey,
-                            refItem.ShipmentReferenceKey,
-                            {
-                              ...refItem,
-                              ShipmentReferenceID: refItem.ShipmentReferenceIDInput
-                            }
-                          ).subscribe({
-                            complete: res => {
-                              update.unsubscribe();
-                            }
-                          });
-                        }
-                      }}
-                      maxLength={50}
-                      bsSize="sm"
-                      disabled={
-                        hasCompany.ShipmentMemberCompanyKey !== refItem.ShipmentReferenceCompanyKey
-                      }
-                    />
-                  </Col>
-                </Row>
-              ))}
-              {!alreadyHave ? (
-                <Row>
-                  <Col xs={1} />
-                  <Col xs={5} style={{ paddingTop: 5 }}>
-                    <Label check>
-                      <Input
-                        style={{ paddingTop: 5 }}
-                        type="radio"
-                        name={`shipmentRef${ref.length}`}
-                        value
-                      />
-                      Ref #{refs.length + 1}: {hasCompany.ShipmentMemberCompanyName}
-                    </Label>
-                  </Col>
-                  <Col xs={5}>
-                    <Input
-                      type="text"
-                      name={`shipmentRefID${ref.length + 1}`}
-                      id={`shipmentRefID${ref.length + 1}`}
-                      value={this.state.input.newRef.ShipmentReferenceID}
-                      onChange={e => {
-                        const value = e.target.value;
-                        this.setState({
-                          input: {
-                            newRef: {
-                              ...this.state.input.newRef,
-                              ShipmentReferenceID: value,
-                              ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
-                              ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
-                              ShipmentKey: shipmentKey
-                            }
+    const alreadyHave = !_.isEmpty(userrefs);
+    return (
+      <div>
+        <p id={`popover${index}`} className="text-yterminal">
+          {userrefs.length > 0 ? (
+            <b style={{ color: 'black' }}>{userrefs[0].ShipmentReferenceID}</b>
+          ) : _.isEmpty(companies) ? (
+            <TableLoading />
+          ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (
+            <b>Input your Ref#!</b>
+          ) : (
+            <b>See Refs</b>
+          )}
+        </p>
+        <UncontrolledPopover
+          trigger="legacy"
+          placement="bottom"
+          className="yterminalRef"
+          target={`popover${index}`}
+        >
+          <PopoverBody>
+            {!alreadyHave ? (
+              <Row
+                style={{
+                  marginBottom: '5px'
+                }}
+              >
+                <Col xs={1} />
+                <Col xs={5} style={{ paddingTop: 5 }}>
+                  <Label check>
+                    {_.isEmpty(hasCompany.ShipmentMemberCompanyName)
+                      ? 'Please Assign Company'
+                      : hasCompany.ShipmentMemberCompanyName}
+                  </Label>
+                </Col>
+                <Col xs={5}>
+                  <Input
+                    type="text"
+                    name={`shipmentRefID${ref.length + 1}`}
+                    id={`shipmentRefID${ref.length + 1}`}
+                    disabled={_.isEmpty(hasCompany.ShipmentMemberCompanyName)}
+                    value={
+                      _.isEmpty(hasCompany.ShipmentMemberCompanyName)
+                        ? 'N/A'
+                        : this.state.input.newRef.ShipmentReferenceID
+                    }
+                    onChange={e => {
+                      const value = e.target.value;
+                      this.setState({
+                        input: {
+                          newRef: {
+                            ...this.state.input.newRef,
+                            ShipmentReferenceID: value,
+                            ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
+                            ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
+                            ShipmentKey: shipmentKey
                           }
-                        });
-                      }}
-                      onKeyPress={_.debounce(
-                        event => {
-                          if (event.key === 'Enter') {
-                            if (
-                              _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) ===
-                              false
-                            ) {
-                              this.setState({
-                                submiting: {
-                                  ...this.state.submiting,
-                                  [shipmentKey]: {
-                                    isSubmit: true
-                                  }
+                        }
+                      });
+                    }}
+                    onKeyPress={_.debounce(
+                      event => {
+                        if (event.key === 'Enter') {
+                          if (
+                            _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) === false
+                          ) {
+                            this.setState({
+                              submiting: {
+                                ...this.state.submiting,
+                                [shipmentKey]: {
+                                  isSubmit: true
                                 }
-                              });
-                              CreateShipmentReference(
-                                shipmentKey,
-                                this.state.input.newRef
-                              ).subscribe({
+                              }
+                            });
+                            CreateShipmentReference(shipmentKey, this.state.input.newRef).subscribe(
+                              {
                                 next: res => {
                                   this.setState({
                                     submiting: {
@@ -429,37 +350,88 @@ class TableShipment extends React.Component {
                                     }
                                   });
                                 }
-                              });
-                            } else if (
-                              _.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0
-                            ) {
-                              UpdateShipmentReference(
-                                shipmentKey,
-                                _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
-                                this.state.input.newRef
-                              );
-                            }
+                              }
+                            );
+                          } else if (_.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0) {
+                            UpdateShipmentReference(
+                              shipmentKey,
+                              _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
+                              this.state.input.newRef
+                            );
                           }
-                        },
-                        2000,
-                        {
-                          leading: true,
-                          trailing: false
                         }
-                      )}
-                      maxLength={50}
-                      bsSize="sm"
-                    />
-                  </Col>
-                </Row>
-              ) : (
-                ''
-              )}
-            </PopoverBody>
-          </UncontrolledPopover>
-        </div>
-      );
-    }
+                      },
+                      2000,
+                      {
+                        leading: true,
+                        trailing: false
+                      }
+                    )}
+                    maxLength={50}
+                    bsSize="sm"
+                  />
+                </Col>
+              </Row>
+            ) : (
+              ''
+            )}
+            {refs.map((refItem, refIndex) => (
+              <Row
+                key={refIndex}
+                style={{
+                  marginBottom: '5px'
+                }}
+              >
+                <Col xs={1} />
+                <Col xs={5} style={{ paddingTop: 5 }}>
+                  <Label check>({refItem.ShipmentReferenceCompanyName})</Label>
+                </Col>
+                <Col xs={5}>
+                  <Input
+                    type="text"
+                    name={`shipmentRefID${refIndex}`}
+                    id={`shipmentRefID${refIndex}`}
+                    value={refItem.ShipmentReferenceIDInput}
+                    onChange={e => {
+                      const value = e.target.value;
+                      // (ShipmentKey, refKey, Data)
+                      this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
+                        ...refItem,
+                        ShipmentReferenceIDInput: value,
+                        ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
+                        ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
+                        ShipmentKey: shipmentKey
+                      });
+                    }}
+                    onKeyPress={event => {
+                      if (event.key === 'Enter') {
+                        const update = UpdateShipmentReference(
+                          shipmentKey,
+                          refItem.ShipmentReferenceKey,
+                          {
+                            ...refItem,
+                            ShipmentReferenceID: refItem.ShipmentReferenceIDInput
+                          }
+                        ).subscribe({
+                          complete: res => {
+                            update.unsubscribe();
+                          }
+                        });
+                      }
+                    }}
+                    maxLength={50}
+                    bsSize="sm"
+                    disabled={
+                      hasCompany.ShipmentMemberCompanyKey !== refItem.ShipmentReferenceCompanyKey
+                    }
+                  />
+                </Col>
+              </Row>
+            ))}
+          </PopoverBody>
+        </UncontrolledPopover>
+      </div>
+    );
     return <span style={{ color: '#b5b2b2', fontStyle: 'italic' }}>Please Assign company</span>;
   }
 
@@ -488,11 +460,11 @@ class TableShipment extends React.Component {
   }
 
   renderDescription(index, item) {
-    const role = _.get(item, `ShipmentMember.${this.props.user.uid}.ShipmentMemberRole`, []);
-    const keyword = ['Importer', 'Exporter'];
-    const canseeNote = _.some(keyword, item => _.includes(role, item));
+    return <NoteShipment key={index} item={item} id={index} />;
+    // const keyword = ['Importer', 'Exporter'];
+    // const canseeNote = _.some(keyword, item => _.includes(role, item));
 
-    return <div>{canseeNote ? <NoteShipment key={index} item={item} id={index} /> : ''}</div>;
+    // return <div>{canseeNote ? <NoteShipment key={index} item={item} id={index} /> : ''}</div>;
   }
 
   renderAlertComponent(index, item, shipmentkey) {
@@ -501,9 +473,24 @@ class TableShipment extends React.Component {
 
     return (
       <div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ flexDirection: 'column', alignItems: 'center' }}>
           {_.get(item, 'PIN') && item.PIN === true ? (
-            <i className="fa fa-map-pin" style={{ marginBottom: 5, opacity: 0.8 }} />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ marginRight: 5 }}
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+            >
+              <path
+                id="Path_31"
+                data-name="Path 31"
+                d="M-3149.048-1564.961l-3.291,3.289,3.074,3.072a.224.224,0,0,1,0,.319.223.223,0,0,1-.16.067.222.222,0,0,1-.16-.067l-3.075-3.071-3.3,3.3a.225.225,0,0,1-.16.067.216.216,0,0,1-.046-.005.225.225,0,0,1-.165-.138,5.924,5.924,0,0,1,.07-4.151l-2.883-3.385c-.062.005-.141.01-.234.01a2.444,2.444,0,0,1-1.516-.474.228.228,0,0,1-.085-.165.226.226,0,0,1,.066-.173l3.457-3.453a.235.235,0,0,1,.172-.065.226.226,0,0,1,.164.084,2.527,2.527,0,0,1,.466,1.772l3.371,2.865a5.7,5.7,0,0,1,2.2-.44,5.269,5.269,0,0,1,1.965.375.227.227,0,0,1,.139.164A.228.228,0,0,1-3149.048-1564.961Z"
+                transform="translate(3160.981 1569.988)"
+                fill="#6a6a6a"
+                opacity="0.91"
+              />
+            </svg>
           ) : null}
           {notifications > 0 ? (
             <Badge color="danger" pill style={{ marginBottom: -15 }}>
@@ -535,7 +522,7 @@ class TableShipment extends React.Component {
               Company Unassigned
             </span>
           ) : (
-            <b>{company}</b>
+            company
           )}
         </Row>
         <Row style={{ margin: 'auto', fontSize: '0.8em' }}>
@@ -573,10 +560,10 @@ class TableShipment extends React.Component {
           text: 'Ref',
           dataField: 'Ref',
           sort: false,
-          style: { width: '12%' },
+          style: { width: '17%' },
           headerAlign: 'left',
           align: 'left',
-          headerStyle: { width: '12%' }
+          headerStyle: { width: '17%' }
         },
         {
           text: 'Seller',
@@ -628,10 +615,10 @@ class TableShipment extends React.Component {
         {
           text: 'Status',
           dataField: 'Status',
-          style: { width: '15%' },
+          style: { width: '10%' },
           headerAlign: 'center',
           align: 'center',
-          headerStyle: { width: '15%' }
+          headerStyle: { width: '10%' }
         },
         {
           text: 'uid',
@@ -656,7 +643,7 @@ class TableShipment extends React.Component {
                   <Select
                     name="colors"
                     id="role-filter"
-                    className="basic-multi-select role-filter-select"
+                    className="basic-multi-select status-filter-select"
                     classNamePrefix="select"
                     placeholder="Filter Status"
                     styles={{ control: styles => ({ ...styles, width: '250px' }) }}
@@ -671,7 +658,8 @@ class TableShipment extends React.Component {
                 >
                   {this.state.isEdit ? (
                     <Button
-                      style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 10 }}
+                      hidden
+                      style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 15 }}
                       onClick={() => {
                         this.editShipment();
                         this.setState({
@@ -683,7 +671,8 @@ class TableShipment extends React.Component {
                     </Button>
                   ) : (
                     <Button
-                      style={{ backgroundColor: 'white', marginTop: 2, marginRight: 10 }}
+                      hidden
+                      style={{ backgroundColor: 'white', marginTop: 2, marginRight: 15 }}
                       onClick={() => {
                         this.setState({
                           isEdit: true
@@ -727,7 +716,6 @@ class TableShipment extends React.Component {
       );
     }
     // _.orderBy(myArr, [columnName], ['asc'])
-    console.log('this.props.input', this.props.input);
     const filtered = _.map(this.props.input, shipment => {
       let output = {
         ...shipment,
@@ -743,7 +731,15 @@ class TableShipment extends React.Component {
       });
       return output;
     });
-    const collection = _.orderBy(filtered, ['PIN'], ['desc']);
+    let collection = _.orderBy(filtered, ['PIN'], ['desc']);
+    collection = _.map(collection, item => {
+      const notifications = _.get(this.props, `notification.${item.ShipmentID}`, 0);
+      return {
+        notifications,
+        ...item
+      };
+    });
+    collection = _.orderBy(collection, ['PIN', 'notifications'], ['desc', 'desc']);
 
     input = _.map(collection, (item, index) => {
       const etd = _.get(item, 'ShipperETDDate', 0);
@@ -817,8 +813,14 @@ class TableShipment extends React.Component {
           _.get(item, 'ConsigneePort', undefined)
         ),
         Product: _.get(item, 'ShipmentProductName', ''),
-        ETD: etd === null || etd === '' ? 'Not Available' : moment(etd.seconds * 1000).format('DD MMM YYYY'),
-        ETA: eta === null || eta === '' ? 'Not Available' : moment(eta.seconds * 1000).format('DD MMM YYYY'),
+        ETD:
+          etd === null || etd === ''
+            ? 'Not Available'
+            : moment(etd.seconds * 1000).format('DD MMM YYYY'),
+        ETA:
+          eta === null || eta === ''
+            ? 'Not Available'
+            : moment(eta.seconds * 1000).format('DD MMM YYYY'),
         '': this.renderDescription(index, item),
         Status: this.renderStatusComponent(item),
         ShipmentStatus: item.ShipmentStatus,
@@ -853,10 +855,10 @@ class TableShipment extends React.Component {
           text: 'Ref',
           dataField: 'Ref',
           sort: false,
-          style: { width: '12%' },
+          style: { width: '17%' },
           headerAlign: 'left',
           align: 'left',
-          headerStyle: { width: '12%' }
+          headerStyle: { width: '17%' }
         },
         {
           text: 'Seller',
@@ -908,10 +910,10 @@ class TableShipment extends React.Component {
         {
           text: 'Status',
           dataField: 'Status',
-          style: { width: '15%' },
+          style: { width: '10%' },
           headerAlign: 'center',
           align: 'center',
-          headerStyle: { width: '15%' }
+          headerStyle: { width: '10%' }
         },
         {
           text: 'uid',
@@ -936,7 +938,7 @@ class TableShipment extends React.Component {
                   <Select
                     name="colors"
                     id="role-filter"
-                    className="basic-multi-select role-filter-select"
+                    className="basic-multi-select status-filter-select"
                     classNamePrefix="select"
                     placeholder="Filter Status"
                     styles={{ control: styles => ({ ...styles, width: '250px' }) }}
@@ -951,7 +953,8 @@ class TableShipment extends React.Component {
                 >
                   {this.state.isEdit ? (
                     <Button
-                      style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 10 }}
+                      hidden
+                      style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 15 }}
                       onClick={() => {
                         this.editShipment();
                         this.setState({
@@ -963,7 +966,8 @@ class TableShipment extends React.Component {
                     </Button>
                   ) : (
                     <Button
-                      style={{ backgroundColor: 'white', marginTop: 2, marginRight: 10 }}
+                      hidden
+                      style={{ backgroundColor: 'white', marginTop: 2, marginRight: 15 }}
                       onClick={() => {
                         this.setState({
                           isEdit: true
@@ -1063,7 +1067,8 @@ class TableShipment extends React.Component {
           e.target.tagName !== 'P' &&
           e.target.tagName !== 'BUTTON' &&
           e.target.tagName !== 'path' &&
-          e.target.tagName !== 'svg'
+          e.target.tagName !== 'svg' &&
+          e.target.tagName !== 'B'
         ) {
           window.location.href = `#/chat/${row.uid}`;
         }
@@ -1085,7 +1090,7 @@ class TableShipment extends React.Component {
                 <Select
                   name="colors"
                   id="role-filter"
-                  className="basic-multi-select role-filter-select"
+                  className="basic-multi-select status-filter-select"
                   classNamePrefix="select"
                   placeholder="Filter Status"
                   styles={{ control: styles => ({ ...styles, width: '250px' }) }}
@@ -1097,7 +1102,8 @@ class TableShipment extends React.Component {
               <Col xs="2" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
                 {this.state.isEdit ? (
                   <Button
-                    style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 10 }}
+                    hidden
+                    style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 15 }}
                     onClick={() => {
                       this.editShipment();
                       this.setState({
@@ -1109,7 +1115,8 @@ class TableShipment extends React.Component {
                   </Button>
                 ) : (
                   <Button
-                    style={{ backgroundColor: 'white', marginTop: 2, marginRight: 10 }}
+                    hidden
+                    style={{ backgroundColor: 'white', marginTop: 2, marginRight: 15 }}
                     onClick={() => {
                       this.setState({
                         isEdit: true

@@ -8,7 +8,6 @@ export default ({ index, item, user, t, text }) => (
     key={`notification${index}`}
     className={item.UserNotificationReadStatus ? '' : 'highlight'}
     onClick={() => {
-      console.log('you has been click', item.id);
       SetUserNotificationRead(user, item.id);
       window.location.href = '#/network';
     }}
