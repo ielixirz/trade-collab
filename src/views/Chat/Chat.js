@@ -415,6 +415,8 @@ class Chat extends Component {
       });
     });
     tabs = _.sortBy(tabs, 'position');
+    let createChatIndex = _.find(tabs, (item, index) => item.ShipmentKey === 'custom');
+    tabs.push(tabs.splice(createChatIndex.id - 1, 1)[0]);
     const activeTab = tabs.filter(tab => tab.active === true);
     const toggle = this.props.ChatReducer.toggle;
     const createChat = this.props.ChatReducer.createChat || false;

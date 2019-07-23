@@ -54,7 +54,6 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
     `${ShipmentKey}.${ChatRoomKey}.message`,
     GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
       next: res => {
-
         dispatch({
           type: FETCH_CHAT,
           id: ChatRoomKey,
@@ -145,7 +144,6 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
     `${ShipmentKey}.${ChatRoomKey}.message`,
     GetChatMessage(ShipmentKey, ChatRoomKey, chats + 25).subscribe({
       next: res => {
-
         dispatch({
           type: FETCH_CHAT,
           id: ChatRoomKey,
@@ -246,7 +244,6 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
     });
   }
   if (hasRoom) {
-
     let newTabs = tabs.map(tab => {
       return {
         ...tab,
@@ -297,7 +294,6 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
         `${ShipmentKey}.${ChatRoomKey}.message`,
         GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
           next: res => {
-
             dispatch({
               type: FETCH_CHAT,
               id: ChatRoomKey,
@@ -388,7 +384,6 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
       `${ShipmentKey}.${ChatRoomKey}.message`,
       GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
         next: res => {
-
           dispatch({
             type: FETCH_CHAT,
             id: ChatRoomKey,
