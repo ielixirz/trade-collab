@@ -61,12 +61,21 @@ class MainRegister extends Component {
   };
 
   handleRegisterByInvite = () => {
-    const { Email, Password } = this.state;
-    const { flow } = this.props.inviteData;
+    const data = this.state;
+    const { flow, docKey } = this.props.inviteData;
+    data.NonUserDocumentKey = docKey;
 
     switch (flow) {
       case 'COMPANY_INVITE':
-        // TO-DO
+        RegisterUser(data).subscribe({
+          next: (result) => {},
+          complete: (result) => {
+            console.log(result);
+          },
+          error: (err) => {
+            console.log('err', err);
+          },
+        });
         break;
       case 'SHIPMENT_CHAT_INVITE':
         // TO-DO for fluke
@@ -80,8 +89,8 @@ class MainRegister extends Component {
   render() {
     const { step } = this.state;
     const {
-      Firstname, Surname, Email, Password, AccountType,
-    } = this.state;
+ Firstname, Surname, Email, Password, AccountType,
+} = this.state;
     const values = {
       Firstname,
       Surname,
