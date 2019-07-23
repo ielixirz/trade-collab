@@ -592,13 +592,19 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
         const data = d.data();
         chatrooms.push({
           id: index + 1,
-          active: _.get(chats, `${chatRoomKey}.active`, index),
+          active: _.get(chats, `${chatRoomKey}.active`, false),
           ChatRoomKey: chatRoomKey,
           ShipmentKey: shipmentKey,
           ChatRoomData: data,
           position: _.get(chats, `${chatRoomKey}.position`, index)
         });
         return true;
+      });
+
+      _.forEach(chatrooms, (item, index) => {
+        if (typeof item.active === Number) {
+          chatrooms[index].active = false;
+        }
       });
       if (_.isEmpty(_.find(chatrooms, item => item.active))) {
         chatrooms[0].active = true;
