@@ -592,7 +592,7 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
         const data = d.data();
         chatrooms.push({
           id: index + 1,
-          active: index === 0,
+          active: _.get(chats, `${chatRoomKey}.active`, index),
           ChatRoomKey: chatRoomKey,
           ShipmentKey: shipmentKey,
           ChatRoomData: data,
@@ -600,7 +600,9 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
         });
         return true;
       });
-
+      if (_.isEmpty(_.find(chatrooms, item => item.active))) {
+        chatrooms[0].active = true;
+      }
       _.forEach(chatrooms, (c, index) => {
         originalReducer[c.ChatRoomKey] = {
           ..._.get(chats, c.ChatRoomKey, {}),
