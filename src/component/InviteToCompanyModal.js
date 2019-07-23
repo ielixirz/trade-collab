@@ -3,7 +3,7 @@
 /* eslint-disable filenames/match-regex */
 /* as it is component */
 import React, {
-  useState, forwardRef, useImperativeHandle, useEffect, useRef,
+ useState, forwardRef, useImperativeHandle, useEffect, useRef,
 } from 'react';
 import {
   Label,
@@ -26,6 +26,7 @@ import MainDataTable from './MainDataTable';
 
 import { inviteToCompanyColumns } from '../constants/network';
 import { GetUserInfoFromEmail } from '../service/user/user';
+import { CreateNonUserInvite } from '../service/inviteNonSystemUser/inviteNonSystemUser';
 import { GetCompanyUserAccessibility, IsCompanyMember } from '../service/company/company';
 import { GetProlfileList } from '../service/user/profile';
 import { CreateCompanyMultipleInvitation } from '../service/join/invite';
@@ -74,7 +75,10 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
 
   const handleRoleInputChange = (input, email) => {
     const temp = updateRole;
-    temp[email] = input.value.role;
+    temp[email] = {
+      role: input.value.role,
+      code: input.value.code,
+    };
     setUpdateRole(temp);
   };
 
@@ -84,17 +88,6 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
 
   const handleInviteInputChange = (emails) => {
     setinvitedEmails(emails);
-  };
-
-  const removeInvite = (email) => {
-    const tempExist = existingInvited;
-    const tempNonExist = nonExistingInvited;
-
-    tempExist.filter(entry => entry.email !== email);
-    tempNonExist.filter(entry => entry.email !== email);
-
-    setExistingInvited(tempExist);
-    setNonExistingInvited(tempNonExist);
   };
 
   const fetchInvitedUserDetail = (emails, companyKey) => {
@@ -125,6 +118,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
         const roles = userMatrix.map(matrix => ({
           value: {
             role: matrix.CompanyUserAccessibilityRoleName,
+            code: matrix.CompanyUserAccessibilityRolePermissionCode,
           },
           label: matrix.CompanyUserAccessibilityRoleName,
         }));
@@ -143,11 +137,11 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
               profileObs.push(
                 GetProlfileList(userKey).pipe(
                   map(docs => docs.map((d) => {
-                    const profile = d.data();
-                    profile.email = data.UserInfoEmail;
-                    profile.key = userKey;
-                    return profile;
-                  })),
+                      const profile = d.data();
+                      profile.email = data.UserInfoEmail;
+                      profile.key = userKey;
+                      return profile;
+                    })),
                 ),
               );
             } else {
@@ -175,16 +169,6 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
                     placeholder="Choose Role"
                   />
                 ),
-                // remove: (
-                //   <i
-                //     className="cui-trash icons"
-                //     role="button"
-                //     style={{ cursor: 'pointer' }}
-                //     onClick={removeInvite(result.email)}
-                //     onKeyDown={null}
-                //     tabIndex="-1"
-                //   />
-                // ),
               };
               inviteNotExistEntities.push(inviteEntity);
               n += 1;
@@ -218,16 +202,6 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
                     email: firstProfile.email,
                     position: '-',
                     role: '-',
-                    // remove: (
-                    //   <i
-                    //     className="cui-trash icons"
-                    //     role="button"
-                    //     style={{ cursor: 'pointer' }}
-                    //     onClick={removeInvite(result.email)}
-                    //     onKeyDown={null}
-                    //     tabIndex="-1"
-                    //   />
-                    // ),
                   };
                   inviteAlreadyMemberEntities.push(inviteEntity);
                 } else if (isPendingList[index]) {
@@ -237,16 +211,6 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
                     email: firstProfile.email,
                     position: '-',
                     role: '-',
-                    // remove: (
-                    //   <i
-                    //     className="cui-trash icons"
-                    //     role="button"
-                    //     style={{ cursor: 'pointer' }}
-                    //     onClick={removeInvite(result.email)}
-                    //     onKeyDown={null}
-                    //     tabIndex="-1"
-                    //   />
-                    // ),
                   };
                   inviteAlreadyPendingEntities.push(inviteEntity);
                 } else {
@@ -274,16 +238,6 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
                         placeholder="Choose Role"
                       />
                     ),
-                    // remove: (
-                    //   <i
-                    //     className="cui-trash icons"
-                    //     role="button"
-                    //     style={{ cursor: 'pointer' }}
-                    //     onClick={() => removeInvite(firstProfile.email)}
-                    //     onKeyDown={null}
-                    //     tabIndex="-1"
-                    //   />
-                    // ),
                   };
                   inviteExistEntities.push(inviteEntity);
                 }
@@ -361,6 +315,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
 
   const invite = () => {
     const inviteDataList = [];
+    const nonUserInviteDataList = [];
     const recruiter = {
       CompanyInvitationRecruiterUserKey: props.recruiter.uid,
       CompanyInvitationRecruiterProfileKey: props.recruiter.profile.id,
@@ -369,24 +324,53 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
     };
     const role = updateRole;
     const position = updatePosition;
-    const invites = existingInvited.concat(nonExistingInvited);
-    invites.forEach((item) => {
+    existingInvited.forEach((item) => {
       // eslint-disable-next-line prefer-destructuring
       const email = item.email;
       const inviteData = {
         Email: email,
-        Role: role[email],
+        Role: role[email].role,
+        RoleCode: role[email].code,
         Position: position[email] === undefined ? '' : position[email],
       };
       inviteDataList.push(inviteData);
     });
-    if (validateRoleSelection(inviteDataList)) {
+    nonExistingInvited.forEach((item) => {
+      // eslint-disable-next-line prefer-destructuring
+      const email = item.email;
+      const inviteData = {
+        Email: email,
+        Role: role[email].role,
+        RoleCode: role[email].code,
+        Position: position[email] === undefined ? '' : position[email],
+      };
+      nonUserInviteDataList.push(inviteData);
+    });
+    if (validateRoleSelection(inviteDataList) && validateRoleSelection(nonUserInviteDataList)) {
       CreateCompanyMultipleInvitation(
         inviteDataList,
         company.key,
         company.companyName,
         recruiter,
       ).subscribe(() => {});
+      nonUserInviteDataList.forEach((i) => {
+        CreateNonUserInvite({
+          CompanyKey: company.key,
+          CompanyMemberRoleName: i.Role,
+          CompanyMemberPosition: i.Position,
+          CompanyUserAccessibilityRolePermissionCode: i.RoleCode,
+          NonUserInviteType: 'Company',
+          NonUserInviteEmail: i.Email,
+          NonUserInviteRecruiterUserKey: recruiter.CompanyInvitationRecruiterUserKey,
+          NonUserInviteRecruiterProfileKey: recruiter.CompanyInvitationRecruiterProfileKey,
+          NonUserInviteRecruiterProfileFirstName:
+            recruiter.CompanyInvitationRecruiterProfileFirstName,
+          NonUserInviteRecruiterProfileSurName: recruiter.CompanyInvitationRecruiterProfileSurName,
+          NonUserInviteRecruiterCompanyName: company.companyName,
+          NonUserInviteRecruiterCompanyKey: company.key,
+          NonUserInviteExpiryDate: '',
+        });
+      });
       if (props.clearInput !== undefined) {
         props.clearInput();
       }
