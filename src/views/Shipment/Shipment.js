@@ -31,7 +31,7 @@ import {
   ModalFooter,
   InputGroupAddon,
   InputGroupText,
-  InputGroup
+  InputGroup,
 } from 'reactstrap';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -45,14 +45,14 @@ import {
   CreateShipmentReference,
   EditShipment,
   SearchShipment,
-  UpdateShipmentReference
+  UpdateShipmentReference,
 } from '../../service/shipment/shipment';
 import { UpdateMasterData } from '../../service/masterdata/masterdata';
-import './Shipment.css';
+import './Shipment.scss';
 import { GetUserCompany } from '../../service/user/user';
 import { GetShipmentTotalCount } from '../../service/personalize/personalize';
 import _ from 'lodash';
-import { fetchCompany } from '../../actions/companyAction';
+import { fetchCompany, setQuery } from '../../actions/companyAction';
 import { AddChatRoomMember, CreateChatRoom } from '../../service/chat/chat';
 import Select from 'react-select';
 import DatePicker from 'react-date-picker';
@@ -68,7 +68,6 @@ class Shipment extends Component {
     this.state = {
       keyword: '',
       activeTab: '1',
-      typeShipment: '',
       filterKeyword: 'ShipmentProductName',
       input: {
         role: 1,
@@ -78,12 +77,12 @@ class Shipment extends Component {
         ref: '',
         bound: '',
         method: '',
-        type: ''
+        type: '',
       },
       companies: {},
       modal: false,
       dropdownOpen: false,
-      blocking: true
+      blocking: true,
     };
     this.fetchMoreShipment = this.fetchMoreShipment.bind(this);
     this.toggle = this.toggle.bind(this);
@@ -94,6 +93,7 @@ class Shipment extends Component {
     this.renderSearch = this.renderSearch.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.fetchShipment = {};
+    this.combineShipment = {};
     this.timeout = null;
 
     this.toggleBlocking = this.toggleBlocking.bind(this);
@@ -107,7 +107,7 @@ class Shipment extends Component {
 
   modal() {
     this.setState(prevState => ({
-      modal: !prevState.modal
+      modal: !prevState.modal,
     }));
   }
 
@@ -158,59 +158,62 @@ class Shipment extends Component {
         parameter.ShipmentCreatorType = `Outbound ${parameter.ShipmentCreatorType}`;
       }
     }
-    if (isValidEmail(input.to)) {
+    if (isValidEmail(input.to) && this.props.user.email !== input.to) {
       parameter.ShipmentPartnerEmail = input.to;
     }
     parameter.ShipmentCreatorProfileFirstName = this.props.sender.ProfileFirstname;
 
     parameter.ShipmentCreateTimestamp = new Date().getTime();
-    console.log('Parameter ', parameter);
     CreateShipment(parameter).subscribe({
-      next: createdShipment => {
+      next: (createdShipment) => {
         this.fetchShipmentReload();
         const shipmentKey = createdShipment.id;
-        let inviteMember = [];
+        const inviteMember = [];
 
         UpdateMasterData(createdShipment.id, 'DefaultTemplate', {
-          ShipmentDetailProduct: parameter.ShipmentProductName
+          ShipmentDetailProduct: parameter.ShipmentProductName,
         }).subscribe(() => {
           this.props.history.push(`/chat/${shipmentKey}`);
         });
       },
-      error: () => {}
+      error: () => {},
     });
 
     this.setState(prevState => ({
       modal: !prevState.modal,
-      input: {}
+      input: {},
     }));
   }
 
   dropdown() {
     this.setState(prevState => ({
-      dropdownOpen: !prevState.dropdownOpen
+      dropdownOpen: !prevState.dropdownOpen,
     }));
   }
 
   fetchMoreShipment() {
-    this.fetchShipment.unsubscribe();
+    if (!_.isEmpty(this.fetchShipment)) {
+      this.fetchShipment.unsubscribe();
+      if (!_.isEmpty(this.combineShipment)) {
+        this.combineShipment.unsubscribe();
+      }
+    }
     this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
-      next: notification => {
-        CombineShipmentAndShipmentReference(
+      next: (notification) => {
+        this.combineShipment = CombineShipmentAndShipmentReference(
           '',
           '',
           'asc',
           _.size(this.props.shipments) + 10,
-          this.props.user.uid
+          this.props.user.uid,
         ).subscribe({
-          next: shipment => {
-            const { typeShipment } = this.state;
-            const result = _.filter(shipment, item => {
+          next: (shipment) => {
+            const { query: typeShipment } = this.props;
+            const result = _.filter(shipment, (item) => {
               let keyword = '';
               if (_.isEmpty(typeShipment)) {
                 return true;
               }
-              console.log('shipment', item);
               //
               // Alert : All Status
               // Plan : Planning, Order Confirmed
@@ -225,7 +228,7 @@ class Shipment extends Component {
                 case 'Active':
                   keyword = ['In Transit', 'Order Confirmed', 'Delayed'];
                   return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
-                case 'Complete':
+                case 'Delivered':
                   keyword = ['Delivered', 'Completed'];
                   return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
                 case 'Cancel':
@@ -237,38 +240,39 @@ class Shipment extends Component {
 
             this.props.fetchShipments(result, notification);
           },
-          error: err => {
+          error: (err) => {
             console.log(err);
             this.setState({ blocking: false });
           },
-          complete: () => {
-            console.log('Hello World');
-          }
+          complete: () => {},
         });
-      }
+      },
     });
   }
 
   fetchShipmentReload() {
-    this.fetchShipment.unsubscribe();
+    if (!_.isEmpty(this.fetchShipment)) {
+      this.fetchShipment.unsubscribe();
+      if (!_.isEmpty(this.combineShipment)) {
+        this.combineShipment.unsubscribe();
+      }
+    }
     this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
-      next: notification => {
-        CombineShipmentAndShipmentReference(
+      next: (notification) => {
+        this.combineShipment = CombineShipmentAndShipmentReference(
           '',
           '',
           'asc',
           _.size(this.props.shipments) + 10,
-          this.props.user.uid
+          this.props.user.uid,
         ).subscribe({
-          next: shipment => {
-            const { typeShipment } = this.state;
-            console.log('typeShipment', typeShipment);
-            const result = _.filter(shipment, item => {
+          next: (shipment) => {
+            const { query: typeShipment } = this.props;
+            const result = _.filter(shipment, (item) => {
               let keyword = '';
               if (_.isEmpty(typeShipment)) {
                 return true;
               }
-              console.log('shipment', item);
               switch (typeShipment) {
                 case 'Plan':
                   keyword = ['Planning', 'Order Confirmed'];
@@ -288,15 +292,13 @@ class Shipment extends Component {
 
             this.props.fetchShipments(result, notification);
           },
-          error: err => {
+          error: (err) => {
             console.log(err);
             this.setState({ blocking: false });
           },
-          complete: () => {
-            console.log('Hello World');
-          }
+          complete: () => {},
         });
-      }
+      },
     });
   }
 
@@ -306,17 +308,22 @@ class Shipment extends Component {
 
   componentDidMount() {
     this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
-      next: notification => {
-        CombineShipmentAndShipmentReference('', '', 'asc', 20, this.props.user.uid).subscribe({
-          next: shipment => {
-            console.log('FETCH SHIPMENT', shipment);
+      next: (notification) => {
+        this.combineShipment = CombineShipmentAndShipmentReference(
+          '',
+          '',
+          'asc',
+          20,
+          this.props.user.uid,
+        ).subscribe({
+          next: (shipment) => {
             // Alert : All Status
             // Plan : Planning, Order Confirmed
             // Active : Order Confirmed, In Transit, Delayed
             // Complete: Delivered, Completed
             // Cancel: Cancelled
-            const { typeShipment } = this.state;
-            const result = _.filter(shipment, item => {
+            const { query: typeShipment } = this.props;
+            const result = _.filter(shipment, (item) => {
               let keyword = '';
               if (_.isEmpty(typeShipment)) {
                 return true;
@@ -340,36 +347,30 @@ class Shipment extends Component {
 
             this.props.fetchShipments(result, notification);
           },
-          error: err => {
-            console.log(err);
+          error: (err) => {
             this.setState({ blocking: false });
           },
-          complete: () => {
-            console.log('Hello World');
-          }
+          complete: () => {},
         });
-      }
+      },
     });
 
     GetUserCompany(this.props.user.uid).subscribe({
-      next: res => {
-        console.log('Fetched Company is', res);
+      next: (res) => {
         this.props.fetchCompany(res);
-      }
+      },
     });
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('has Update State', this.state);
     if (prevState.activeTab !== this.state.activeTab) {
-      console.log('reFetch');
     }
   }
 
   toggle(tab) {
     if (this.state.activeTab !== tab) {
       this.setState({
-        activeTab: tab
+        activeTab: tab,
       });
     }
   }
@@ -378,8 +379,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        role
-      }
+        role,
+      },
     });
   }
 
@@ -387,8 +388,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        bound
-      }
+        bound,
+      },
     });
   }
 
@@ -396,8 +397,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        method
-      }
+        method,
+      },
     });
   }
 
@@ -405,8 +406,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        type
-      }
+        type,
+      },
     });
   }
 
@@ -416,18 +417,18 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        [name]: value
-      }
+        [name]: value,
+      },
     });
   }
 
-  handleChange = selectedOption => {
+  handleChange = (selectedOption) => {
     console.log(selectedOption);
     this.setState({
       input: {
         ...this.state.input,
-        role: selectedOption.value
-      }
+        role: selectedOption.value,
+      },
     });
   };
 
@@ -484,36 +485,34 @@ class Shipment extends Component {
       this.fetchShipmentReload();
     } else {
       this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
-        next: notification => {
+        next: (notification) => {
           SearchShipment(this.props.user.uid, search, this.state.filterKeyword, 15).subscribe({
-            next: res => {
+            next: (res) => {
               let shipment = _.map(res, item => ({
                 id: item.ShipmentID,
-                ...item
+                ...item,
               }));
               console.log('Search Result ', shipment);
               if (_.includes(this.state.filterKeyword, 'Date')) {
                 shipment = _.filter(
                   shipment,
-                  item =>
-                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName') >= search
+                  item => _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName') >= search,
                 );
               } else if (this.state.filterKeyword !== 'ShipmentReferenceList') {
-                shipment = _.filter(shipment, item => {
-                  return _.includes(
-                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName').toLowerCase(),
-                    search.toLowerCase()
-                  );
-                });
+                shipment = _.filter(shipment, item => _.includes(
+                  _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName').toLowerCase(),
+                  search.toLowerCase(),
+                ));
               }
 
               console.log('Search Result Filtered', shipment);
-              const result = _.filter(shipment, item => {
+              const result = _.filter(shipment, (item) => {
                 let keyword = '';
                 if (_.isEmpty(typeShipment)) {
                   return true;
                 }
                 console.log('shipment', item);
+
                 switch (typeShipment) {
                   case 'Plan':
                     keyword = ['Planning', 'Order Confirmed'];
@@ -532,9 +531,9 @@ class Shipment extends Component {
               this.setState({ blocking: false });
 
               this.props.fetchShipments(result, notification);
-            }
+            },
           });
-        }
+        },
       });
     }
   }
@@ -550,23 +549,20 @@ class Shipment extends Component {
       { value: 'ShipmentBuyerCompanyName', label: 'Buyer' },
       { value: 'ShipmentSellerCompanyName', label: 'Seller' },
       // { value: 'ShipmentStatus', label: 'Status' },
-      { value: 'ShipmentReferenceList', label: 'Ref' }
+      { value: 'ShipmentReferenceList', label: 'Ref' },
     ];
 
-    const MyComponent = () => (
+    const SearchShipmentFilter = () => (
       <Select
         options={options}
-        defaultValue={_.find(options, option => {
-          return option.value === 'ShipmentProductName';
-        })}
-        value={_.find(options, option => {
-          return option.value === this.state.filterKeyword;
-        })}
-        onChange={option => {
-          console.log('Selected Filtered is', option);
+        className="basic-multi-select search-filter-select"
+        classNamePrefix="select"
+        defaultValue={_.find(options, option => option.value === 'ShipmentProductName')}
+        value={_.find(options, option => option.value === this.state.filterKeyword)}
+        onChange={(option) => {
           this.setState({
             filterKeyword: option.value,
-            keyword: ''
+            keyword: '',
           });
         }}
       />
@@ -574,29 +570,28 @@ class Shipment extends Component {
 
     return (
       <div
+        className="search-filter-select-container"
         style={{
-          width: 400
+          width: 400,
         }}
       >
         <InputGroup>
           <InputGroupAddon
             style={{
-              width: 150,
-              marginRight: '10px'
+              width: 120,
             }}
           >
-            {MyComponent()}
+            {SearchShipmentFilter()}
           </InputGroupAddon>
           {_.includes(this.state.filterKeyword, 'Date') ? (
-            <DatePicker onChange={this.handleSearchChange} value={keyword} locale="en-GB" />
+            <DatePicker className="search-filter-select-date" onChange={this.handleSearchChange} value={keyword} locale="en-GB" />
           ) : (
             <Input
               placeholder={` Search by ${
-                _.find(options, option => {
-                  return option.value === this.state.filterKeyword;
-                }).label
+                _.find(options, option => option.value === this.state.filterKeyword).label
               }`}
               type="text"
+              className="search-filter-select-input"
               style={{ height: 38 }}
               onChange={this.handleSearchChange}
               onKeyDown={this.handleKeyDown}
@@ -609,8 +604,11 @@ class Shipment extends Component {
   }
 
   render() {
-    const { role, bound, method, type } = this.state.input;
-    console.log(this.props.user);
+    const {
+      role, bound, method, type,
+    } = this.state.input;
+    const { query: typeShipment } = this.props;
+    console.log('Query', this.props);
     return (
       <div className="shipment-table-main-container">
         <Modal isOpen={this.state.modal} toggle={this.modal} className="create-shipment">
@@ -826,31 +824,33 @@ class Shipment extends Component {
                         this.setMethod(1);
                       }}
                       style={{
-                        marginRight: '5px'
+                        marginRight: '5px',
                       }}
                       disabled={method === 1}
                     >
                       Ocean Freight
-                    </Button>{' '}
+                    </Button>
+                    {' '}
                     <Button
                       color="yterminal"
                       onClick={() => {
                         this.setMethod(2);
                       }}
                       style={{
-                        marginRight: '5px'
+                        marginRight: '5px',
                       }}
                       disabled={method === 2}
                     >
                       Show Both
-                    </Button>{' '}
+                    </Button>
+                    {' '}
                     <Button
                       color="yterminal"
                       onClick={() => {
                         this.setMethod(3);
                       }}
                       style={{
-                        marginRight: '5px'
+                        marginRight: '5px',
                       }}
                       disabled={method === 3}
                     >
@@ -862,7 +862,7 @@ class Shipment extends Component {
                         this.setMethod(4);
                       }}
                       style={{
-                        marginRight: '5px'
+                        marginRight: '5px',
                       }}
                       disabled={method === 4}
                     >
@@ -920,72 +920,83 @@ class Shipment extends Component {
         <Nav className="shipment-navbar">
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.typeShipment === '' })}
+              className={classnames({ active: typeShipment === '' })}
               onClick={() => {
                 this.toggle('1');
-                this.setState({ typeShipment: '' });
+                this.props.setQuery('');
                 this.fetchShipmentReload();
               }}
             >
-              <span style={styles.title}>Alert</span> <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Alert</span>
+              {' '}
+              <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.typeShipment === 'Plan' })}
+              className={classnames({ active: typeShipment === 'Plan' })}
               onClick={() => {
                 this.toggle('1');
-                this.setState({ typeShipment: 'Plan' });
+                this.props.setQuery('Plan');
+
                 this.fetchShipmentReload();
               }}
             >
-              <span style={styles.title}>Plan</span> <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Plan</span>
+              {' '}
+              <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.typeShipment === 'Active' })}
+              className={classnames({ active: typeShipment === 'Active' })}
               onClick={() => {
                 this.toggle('1');
-                this.setState({ typeShipment: 'Active' });
+                this.props.setQuery('Active');
                 this.fetchShipmentReload();
               }}
             >
-              <span style={styles.title}>Active</span> <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Active</span>
+              {' '}
+              <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.typeShipment === 'Complete' })}
+              className={classnames({ active: typeShipment === 'Complete' })}
               onClick={() => {
                 this.toggle('1');
-                this.setState({ typeShipment: 'Complete' });
+                this.props.setQuery('Complete');
                 this.fetchShipmentReload();
               }}
             >
-              <span style={styles.title}>Complete</span> <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Delivered</span>
+              {' '}
+              <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.typeShipment === 'Cancel' })}
+              className={classnames({ active: typeShipment === 'Cancel' })}
               onClick={() => {
                 this.toggle('1');
-                this.setState({ typeShipment: 'Cancel' });
+                this.props.setQuery('Cancel');
                 this.fetchShipmentReload();
               }}
             >
-              <i className="icon-close" /> <span style={styles.title}>Cancel</span>
+              <i className="icon-close" />
+              {' '}
+              <span style={styles.title}>Cancel</span>
             </NavLink>
           </NavItem>
           <Col>
             <Button
-              style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 10 }}
+              style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 29 }}
               className="float-right"
               onClick={this.modal}
             >
               <i className="fa fa-plus-circle" style={{ color: 'white' }} />
-              <span style={{ fontWeight: 'bold', color: 'white' }}>Create New Shipment</span>
+              <span style={{ fontWeight: 'bold', color: 'white', marginLeft: 5 }}>Create New Shipment</span>
             </Button>
           </Col>
         </Nav>
@@ -996,7 +1007,7 @@ class Shipment extends Component {
                 <TableShipment
                   companies={this.props.companies}
                   input={{ ...this.props.shipments }}
-                  typeShipment={this.state.typeShipment}
+                  typeShipment={this.props.query}
                   toggleBlock={this.toggleBlocking}
                   fetchMoreShipment={this.fetchMoreShipment}
                   fetchShipment={this.fetchShipment}
@@ -1018,32 +1029,37 @@ const styles = {
   title: {
     fontSize: 16,
     color: '#707070',
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
   lineTab: {
     color: '#EAEAEA',
     opacity: 0.8,
-    marginLeft: 20
-  }
+    marginLeft: 20,
+  },
 };
 
-const mapStateToProps = state => {
-  const { ChatReducer, authReducer, profileReducer, companyReducer } = state;
-
+const mapStateToProps = (state) => {
+  const {
+    ChatReducer, authReducer, profileReducer, companyReducer, shipmentReducer,
+  } = state;
+  const { query = '' } = shipmentReducer;
   const sender = _.find(
     profileReducer.ProfileList,
-    item => item.id === profileReducer.ProfileDetail.id
+    item => item.id === profileReducer.ProfileDetail.id,
   );
 
   return {
     shipments: state.shipmentReducer.Shipments,
     user: state.authReducer.user,
     sender,
-    companies: companyReducer.UserCompany
+    companies: companyReducer.UserCompany,
+    query,
   };
 };
 
 export default connect(
   mapStateToProps,
-  { fetchShipments, fetchMoreShipments, fetchCompany }
+  {
+    fetchShipments, fetchMoreShipments, fetchCompany, setQuery,
+  },
 )(Shipment);

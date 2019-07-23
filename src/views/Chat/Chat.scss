@@ -6,6 +6,34 @@
 img {
   max-width: 100%;
 }
+.ck.ck-reset,
+.ck.ck-reset_all,
+.ck.ck-reset_all * {
+  width: 75%;
+}
+
+.ck.ck-toolbar {
+  display: none !important;
+}
+
+.ck {
+  border-color: #e4e7ea !important;
+  box-shadow: none !important;
+}
+
+.textP {
+  background: rgba(102, 209, 188, 0.3);
+  border-radius: 3px;
+  font-size: 14px;
+  margin: 0;
+  color: black;
+  padding: 5px 10px 5px 12px;
+  text-align: left;
+  float: right;
+  width: 100%;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
 
 .inbox_people {
   background: #f8f8f8 none repeat scroll 0 0;
@@ -16,7 +44,6 @@ img {
 }
 
 .inbox_msg {
-  border: 1px solid #c4c4c4;
   clear: both;
   overflow: hidden;
   border-top: 0px;
@@ -143,14 +170,36 @@ img {
 
   text-overflow: ellipsis;
 }
+.time-component {
+  position: relative;
+}
+.time_date_leftComponent {
+  position: relative;
+}
 
 .time_date {
+  position: absolute;
+  bottom: 0;
+  right: 0;
   color: #747474;
-  font-size: 12px;
+  font-size: 10px;
   align-items: center;
   display: inline-block;
   padding-right: 10px;
   width: 120px;
+  text-align: end;
+}
+.time_date_left {
+  color: #747474;
+  font-size: 10px;
+  align-items: center;
+  display: inline-block;
+  padding-right: 10px;
+  width: 120px;
+  text-align: left;
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
 
 .received_withd_msg {
@@ -161,7 +210,7 @@ img {
   float: left;
   padding: 30px 15px 0 25px;
   width: 100%;
-  height: 81vh;
+  height: 82vh;
 }
 
 .system-message {
@@ -170,13 +219,13 @@ img {
 
 .notibadge {
   position: absolute;
-  right: -10px;
+  right: 3px;
   bottom: 20px;
   background: red;
   text-align: center;
   border-radius: 30px 30px 30px 30px;
   color: white;
-  padding: 5px 10px;
+  padding: 1px 5px;
   z-index: 1;
 }
 .rightMessage {
@@ -188,17 +237,9 @@ img {
   word-break: break-word;
 }
 
-.sent_msg p {
-  background: rgba(102, 209, 188, 0.3);
-  border-radius: 3px;
-  font-size: 14px;
-  margin: 0;
-  color: black;
-  padding: 5px 10px 5px 12px;
-  text-align: right;
-  float: right;
-  width: 100%;
-  word-break: break-word;
+.tab-content {
+  border: 1px solid #ededed;
+  margin-top: -5px !important;
 }
 
 .outgoing_msg {
@@ -226,8 +267,8 @@ img {
 }
 
 .react-tabs-child {
-  margin-left: 0;
-  padding-left: 0;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
 
   .react-tabs-tab {
     max-width: 120px !important;
@@ -241,13 +282,27 @@ img {
 }
 
 .user-name {
-  font-weight: bolder;
+  font-weight: normal;
+}
+
+.user-name-inc {
+  font-weight: bold;
+}
+
+.inputBox {
+  position: relative;
+  margin-bottom: 10px;
+  width: auto;
 }
 
 .type_msg {
-  position: relative;
-  margin-bottom: 10px;
-  height: 10vh;
+  position: absolute;
+  padding-bottom: 20px;
+  bottom: -60px;
+}
+textarea {
+  width: 600px;
+  z-index: 0;
 }
 
 .msg_send_btn {
@@ -270,9 +325,11 @@ img {
 }
 
 .msg_history {
-  height: 90%;
-  overflow: auto;
+  height: 85%;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 10px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
 }
@@ -317,16 +374,15 @@ img {
 
 .react-tabs-container {
   background-color: #ffffff !important;
-  margin-top: 0.5rem !important;
-  padding-top: 0.5rem !important;
   border: 0px !important;
   overflow-x: auto !important;
-  height: 50px !important;
+  width: 100%;
+  height: 39px !important;
+  display: -webkit-inline-box !important;
 }
 
 .react-tabs-tab.react-tabs-active {
   background-color: #ffffff !important;
-  font-weight: bold !important;
 }
 
 .react-tabs-tab:has(div) {
@@ -336,13 +392,13 @@ img {
 .react-tabs-tab {
   background-color: #f0f3f5b5 !important;
   color: #000000 !important;
-  border-top: 1px solid #c8ced3 !important;
-  border-right: 1px solid #c8ced3 !important;
-  border-left: 1px solid #c8ced3 !important;
+  border-top: 1px solid #ededed !important;
+  border-right: 1px solid #ededed !important;
+  border-left: 1px solid #ededed !important;
   border-top-left-radius: 10px !important;
   border-top-right-radius: 10px !important;
-  max-width: 350px !important;
-  min-width: 200px !important;
+  max-width: 385px !important;
+  min-width: 185px !important;
   position: relative;
 }
 
@@ -352,7 +408,7 @@ img {
 }
 
 .create-new-chat-tab {
-  font-size: 125%;
+  font-size: 100%;
   font-weight: bold;
 }
 
@@ -384,11 +440,11 @@ img {
 ol.breadcrumb {
   padding-bottom: 0.5rem;
   padding-top: 0.5rem;
+  border-bottom: 1px solid #ededed;
 }
 
 .time-seperation {
-  font-size: large;
-  font-weight: bold;
+  font-size: small;
   margin-bottom: 2rem;
   background: #fff;
   padding: 0 15px;
@@ -408,7 +464,7 @@ h2.time-background:before {
   /* this centers the line to the full width specified */
   position: absolute;
   /* positioning must be absolute here, and relative positioning must be applied to the parent */
-  top: 19px;
+  top: 22px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -459,4 +515,35 @@ h2.time-background:before {
 .create-chat-button {
   font-size: 1em;
   font-weight: bold;
+}
+
+.card-chat-side {
+  box-shadow: none !important;
+  transition: none !important;
+  border-radius: none !important;
+  border: 1px solid #ededed;
+  border-bottom: none;
+  width: none !important;
+  &:hover {
+    box-shadow: none !important;
+  }
+
+  .card-body {
+    padding: 0.9rem;
+  }
+}
+
+.chat-message-input {
+  padding: 1;
+  overflow: hidden;
+  resize: none;
+  padding: 10px;
+  border-color: #e4e7ea;
+  outline: none !important;
+  &:hover {
+    box-shadow: none !important;
+  }
+  &:focus {
+    box-shadow: none !important;
+  }
 }

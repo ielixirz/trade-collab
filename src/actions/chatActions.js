@@ -7,7 +7,8 @@ import {
   SEND_MESSAGE,
   FETCH_CHAT_MEMBER,
   TOGGLE_LOAD,
-  SELECT_ROOM
+  SELECT_ROOM,
+  TOGGLE_CHAT
 } from '../constants/constants';
 import {
   GetChatMessage,
@@ -18,8 +19,8 @@ import {
 import { ClearUnReadChatMessage } from '../service/personalize/personalize';
 
 export const typing = data => dispatch => {
-  const text = data.target.value;
-  console.log(text);
+  const text = data;
+
   dispatch({
     type: TYPING_TEXT,
     text
@@ -53,7 +54,6 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
     `${ShipmentKey}.${ChatRoomKey}.message`,
     GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
       next: res => {
-        console.log(res);
 
         dispatch({
           type: FETCH_CHAT,
@@ -65,7 +65,6 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
           `${ShipmentKey}.${ChatRoomKey}.member`,
           GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
             next: res => {
-              console.log('Respond', res);
               const members = _.map(res, item => {
                 return {
                   ChatRoomMemberKey: item.id,
@@ -89,14 +88,19 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
         console.log(err);
         alert(err.message);
       },
-      complete: () => {}
+      complete: () => {
+        dispatch({
+          type: TOGGLE_LOAD,
+          payload: false
+        });
+      }
     })
   );
 
   if (!_.isEmpty(ChatKey)) {
     const chats = getState().ChatReducer.chatrooms;
     const tabs = [];
-    _.forEach(chats, item => {
+    _.forEach(chats, (item, index) => {
       tabs.push({
         id: tabs.length + 1,
         roomName: item.roomName,
@@ -104,7 +108,7 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
         ChatRoomKey: item.ChatRoomKey,
         ShipmentKey: item.ShipmentKey,
         ChatRoomData: item.ChatRoomData,
-        position: item.index
+        position: _.get(chats, `${item.ChatRoomKey}.position`, _.size(chats))
       });
     });
 
@@ -120,7 +124,7 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
         roomName: item.roomName,
         active: item.active,
         ChatRoomData: item.ChatRoomData,
-        position: index
+        position: item.position
       };
     });
     dispatch({ type: MOVE_TAB, payload: originalReducer });
@@ -141,7 +145,6 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
     `${ShipmentKey}.${ChatRoomKey}.message`,
     GetChatMessage(ShipmentKey, ChatRoomKey, chats + 25).subscribe({
       next: res => {
-        console.log(res);
 
         dispatch({
           type: FETCH_CHAT,
@@ -153,18 +156,13 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
           `${ShipmentKey}.${ChatRoomKey}.member`,
           GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
             next: res => {
-              console.log('Respond', res);
               const members = _.map(res, item => {
-                console.log(item);
                 return {
                   ChatRoomMemberKey: item.id,
                   ...item.data()
                 };
               });
-              dispatch({
-                type: TOGGLE_LOAD,
-                payload: false
-              });
+
               dispatch({
                 type: FETCH_CHAT_MEMBER,
                 id: ChatRoomKey,
@@ -178,7 +176,12 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
         console.log(err);
         alert(err.message);
       },
-      complete: () => {}
+      complete: () => {
+        dispatch({
+          type: TOGGLE_LOAD,
+          payload: false
+        });
+      }
     })
   );
 };
@@ -186,7 +189,6 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
 export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
   const tabs = [];
   _.forEach(chats, item => {
-    console.log(item);
     tabs.push({
       id: tabs.length + 1,
       roomName: item.roomName,
@@ -194,7 +196,7 @@ export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
       ChatRoomData: item.ChatRoomData,
-      position: item.position,
+      position: _.get(chats, `${item.ChatRoomKey}.position`, _.size(chats)),
       member: item.member
     });
   });
@@ -212,7 +214,7 @@ export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
       chatMsg: item.chatMsg,
       active: item.active,
       ChatRoomData: item.ChatRoomData,
-      position: index,
+      position: item.position,
       member: item.member
     };
   });
@@ -224,7 +226,7 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
   const chats = getState().ChatReducer.chatrooms;
   const tabs = [];
 
-  _.forEach(chats, item => {
+  _.forEach(chats, (item, index) => {
     tabs.push({
       id: tabs.length + 1,
       roomName: item.roomName,
@@ -232,19 +234,18 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
       ChatRoomData: item.ChatRoomData,
-      position: item.index,
+      position: _.get(chats, `${item.ChatRoomKey}.position`, _.size(chats)),
+
       member: item.member
     });
   });
   let hasRoom = false;
   if (Chatkey !== '') {
-    console.log('Find Room', Chatkey);
     hasRoom = _.some(tabs, {
       ChatRoomKey: Chatkey
     });
   }
   if (hasRoom) {
-    console.log('Found Room', Chatkey);
 
     let newTabs = tabs.map(tab => {
       return {
@@ -260,6 +261,12 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
         newTabs.push(newTabs.splice(x, 1)[0]);
       }
     });
+    newTabs = _.map(newTabs, (item, index) => {
+      return {
+        ...item,
+        position: index
+      };
+    });
 
     dispatch({
       type: SELECT_ROOM,
@@ -268,12 +275,12 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
     const originalReducer = [];
     _.forEach(newTabs, (item, index) => {
       originalReducer[item.ChatRoomKey] = {
+        ...item,
         ChatRoomKey: item.ChatRoomKey,
         ShipmentKey: item.ShipmentKey,
         roomName: item.roomName,
         active: item.active,
         ChatRoomData: item.ChatRoomData,
-        position: index,
         member: item.member
       };
       const { ChatRoomKey, ShipmentKey } = item;
@@ -290,7 +297,6 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
         `${ShipmentKey}.${ChatRoomKey}.message`,
         GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
           next: res => {
-            console.log(res);
 
             dispatch({
               type: FETCH_CHAT,
@@ -302,9 +308,7 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
               `${ShipmentKey}.${ChatRoomKey}.member`,
               GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
                 next: res => {
-                  console.log('Respond', res);
                   const members = _.map(res, item => {
-                    console.log(item);
                     return {
                       ChatRoomMemberKey: item.id,
                       ...item.data()
@@ -324,10 +328,14 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
             );
           },
           error: err => {
-            console.log(err);
             alert(err.message);
           },
-          complete: () => {}
+          complete: () => {
+            dispatch({
+              type: TOGGLE_LOAD,
+              payload: false
+            });
+          }
         })
       );
     });
@@ -337,8 +345,6 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
 export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => {
   const chats = getState().ChatReducer.chatrooms;
   const tabs = [];
-  console.log('selectedIndex', selectedIndex);
-  console.log('selectedID', selectedID);
   _.forEach(chats, item => {
     tabs.push({
       id: tabs.length + 1,
@@ -347,7 +353,8 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
       ChatRoomData: item.ChatRoomData,
-      position: item.index,
+      position: _.get(chats, `${item.ChatRoomKey}.position`, _.size(chats)),
+
       member: item.member
     });
   });
@@ -381,7 +388,6 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
       `${ShipmentKey}.${ChatRoomKey}.message`,
       GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
         next: res => {
-          console.log(res);
 
           dispatch({
             type: FETCH_CHAT,
@@ -393,9 +399,7 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
             `${ShipmentKey}.${ChatRoomKey}.member`,
             GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
               next: res => {
-                console.log('Respond', res);
                 const members = _.map(res, item => {
-                  console.log(item);
                   return {
                     ChatRoomMemberKey: item.id,
                     ...item.data()
@@ -418,7 +422,12 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
           console.log(err);
           alert(err.message);
         },
-        complete: () => {}
+        complete: () => {
+          dispatch({
+            type: TOGGLE_LOAD,
+            payload: false
+          });
+        }
       })
     );
   });
@@ -430,6 +439,19 @@ export const toggleLoading = toggle => (dispatch, getState) => {
     type: TOGGLE_LOAD,
     payload: toggle
   });
+};
+export const toggleCreateChat = toggle => (dispatch, getState) => {
+  dispatch({
+    type: TOGGLE_CHAT,
+    payload: toggle
+  });
+
+  setTimeout(() => {
+    dispatch({
+      type: TOGGLE_CHAT,
+      payload: false
+    });
+  }, 3000);
 };
 
 export const newChat = chatkey => (dispatch, getState) => {
@@ -533,7 +555,12 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch
             console.log(err);
             alert(err.message);
           },
-          complete: () => {}
+          complete: () => {
+            dispatch({
+              type: TOGGLE_LOAD,
+              payload: false
+            });
+          }
         });
       }, 1000);
     }
@@ -546,10 +573,20 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch
     alert('please Sign in');
   }
 };
-
+let chatroomList = {};
 export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
-  const selectRoom = getState().ChatReducer.selectedChat || '';
-  GetChatRoomList(shipmentKey, uid).subscribe({
+  const chats = getState().ChatReducer.chatrooms;
+  const tabs = [];
+
+  if (_.get(chatroomList, 'selectedShipment', shipmentKey) !== shipmentKey) {
+    chatroomList[_.get(chatroomList, 'selectedShipment', shipmentKey)].unsubscribe();
+  } else {
+    if (!_.isEmpty(chatroomList[shipmentKey])) {
+      chatroomList[shipmentKey].unsubscribe();
+    }
+    chatroomList['selectedShipment'] = shipmentKey;
+  }
+  chatroomList[shipmentKey] = GetChatRoomList(shipmentKey, uid).subscribe({
     next: snapshot => {
       const originalReducer = [];
       let chatrooms = [];
@@ -558,26 +595,26 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
         const chatRoomKey = d.id;
 
         const data = d.data();
-
         chatrooms.push({
           id: index + 1,
           active: index === 0,
           ChatRoomKey: chatRoomKey,
           ShipmentKey: shipmentKey,
           ChatRoomData: data,
-          position: index
+          position: _.get(chats, `${chatRoomKey}.position`, index)
         });
         return true;
       });
 
       _.forEach(chatrooms, (c, index) => {
         originalReducer[c.ChatRoomKey] = {
+          ..._.get(chats, c.ChatRoomKey, {}),
           ChatRoomKey: c.ChatRoomKey,
           ShipmentKey: c.ShipmentKey,
           roomName: c.ChatRoomData.ChatRoomName,
           active: c.active,
-          ChatRoomData: c.ChatRoomData,
-          position: index
+          position: c.position,
+          ChatRoomData: c.ChatRoomData
         };
         const { ChatRoomKey, ShipmentKey } = c;
         const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.message`, false);
@@ -653,6 +690,15 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
       console.log(err);
       alert(err.message);
     },
-    complete: () => {}
+    complete: () => {
+      dispatch({
+        type: TOGGLE_CHAT,
+        payload: false
+      });
+      dispatch({
+        type: TOGGLE_LOAD,
+        payload: false
+      });
+    }
   });
 };

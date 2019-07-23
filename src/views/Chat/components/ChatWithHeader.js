@@ -9,6 +9,8 @@ import React, { Component } from 'react';
 import { Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
+import CKEditor from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import MemberModal from '../../../component/MemberModal';
 import MemberInviteModal from '../../../component/MemberInviteModal';
 import UploadModal from '../../../component/UploadModal';
@@ -17,7 +19,6 @@ import FileSide from '../FileSide';
 import ShipmentSide from '../ShipmentSide';
 import ChatMessage from './ChatMessage';
 import PreMessage from './PreMessage';
-
 import {
   AddChatRoomMember,
   CreateChatRoom,
@@ -37,7 +38,7 @@ const AVAILABLE_ROLES = {
   Importer: 'Exporter',
   Exporter: 'Importer'
 };
-
+let lastkey = '';
 class ChatWithHeader extends Component {
   constructor(props) {
     super(props);
@@ -46,21 +47,62 @@ class ChatWithHeader extends Component {
       company: '',
       email: '',
       companies: [],
-      members: []
+      members: [],
+      isAssign: false,
+      sideCollpase: 'SHIPMENT'
     };
-  }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps.chatMsg.length !== this.props.chatMsg.length) {
-      const objDiv = document.getElementById('chathistory');
-      objDiv.scrollTop = objDiv.scrollHeight;
-    }
+    this.msgChatRef = React.createRef();
   }
 
   componentDidMount() {
-    console.log('This.props', this.props);
-    const { ShipmentKey, ChatRoomKey } = this.props;
+    const { ShipmentKey, ChatRoomKey, sender, chatMsg } = this.props;
+    if (this.multilineTextarea) {
+      this.multilineTextarea.style.height = '50px ';
+    }
+    ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
+      next: res => {}
+    });
   }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (
+      prevProps.chatMsg.length !== this.props.chatMsg.length ||
+      prevProps.msg !== this.props.msg
+    ) {
+      this.scrollChatToBottom();
+    }
+    const { ShipmentKey, ChatRoomKey, sender, chatMsg } = this.props;
+
+    if (chatMsg.length > 0) {
+      if (chatMsg[chatMsg.length - 1].id !== lastkey) {
+        this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
+          ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
+          ChatRoomMessageReaderSurName: sender.ProfileSurname,
+          ChatRoomMessageReaderProfileImageUrl: _.get(sender, 'UserInfoProfileImageLink', ''),
+          ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+        });
+        ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
+          next: res => {}
+        });
+      }
+      lastkey = chatMsg[chatMsg.length - 1].id;
+    }
+  }
+
+  triggerSideCollapse = side => {
+    this.setState({
+      sideCollpase: side
+    });
+  };
+
+  scrollChatToBottom = () => {
+    try {
+      this.msgChatRef.scrollTop = this.msgChatRef.scrollHeight;
+    } catch (e) {
+      console.log('is custom tab or something went wrong', e.message);
+    }
+  };
 
   UpdateReader(ShipmentKey, ChatRoomKey, sender, data) {
     const refresh = _.debounce(() => {
@@ -82,8 +124,6 @@ class ChatWithHeader extends Component {
             ...item.data()
           }));
           const inviteRole = userRole;
-          console.log('CompanyMember', CompanyMember);
-          console.log('members', members);
           const inviteMember = [];
           _.forEach(CompanyMember, memberItem => {
             const chatMember = _.find(
@@ -102,7 +142,6 @@ class ChatWithHeader extends Component {
                   ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
                 }
               );
-              console.log(result);
             } else {
               inviteMember.push({
                 Email: memberItem.UserMemberEmail,
@@ -113,8 +152,8 @@ class ChatWithHeader extends Component {
               });
             }
           });
-          console.log('inviteMember', inviteMember);
           if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
+            this.props.toggleCreateChat(true);
             const invite = CreateChatMultipleInvitation(
               inviteMember,
               ShipmentKey,
@@ -158,7 +197,7 @@ class ChatWithHeader extends Component {
                 });
               },
               complete: result => {
-                console.log(result);
+                this.props.toggleCreateChat(false);
               }
             });
             getCompany.unsubscribe();
@@ -240,7 +279,9 @@ class ChatWithHeader extends Component {
                         color: 'white',
                         backgroundColor: '#16A085'
                       }}
+                      disabled={this.state.isAssign}
                       onClick={() => {
+                        this.setState({ isAssign: true });
                         this.handleAssignCompany(
                           this.state.company,
                           ChatRoomType,
@@ -444,7 +485,6 @@ class ChatWithHeader extends Component {
       sendMessage,
       fetchMoreMessage,
       browseFile,
-      scrollChatToBottom,
       //   Event
       onDropChatStyle,
       onDragOver,
@@ -452,7 +492,6 @@ class ChatWithHeader extends Component {
       onFileDrop,
       shipments
     } = this.props;
-    let lastkey = '';
     const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
     let ref = '';
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
@@ -478,44 +517,59 @@ class ChatWithHeader extends Component {
           }}
         >
           <Breadcrumb className="chat-toolbar">
-            <MemberInviteModal
-              {...this.props}
-              ShipmentKey={ShipmentKey}
-              ChatRoomKey={ChatRoomKey}
-              member={member}
-              usersRole={isInvited}
-              sender={this.props.sender}
-            />
-            <Button className="btn-chat-label">|</Button>
-            <MemberModal
-              {...this.props}
-              count={
-                _.filter(member, item => _.get(item, 'ChatRoomMemberIsLeave', false) === false)
-                  .length
-              }
-              toggleBlocking={toggleBlocking}
-              list={member}
-              network={network}
-            />
-
-            <Button className="btn-chat-label">|</Button>
-            <Button className="btn-chat-label">
-              {ref === 'loading' ? (
-                <TextLoading />
-              ) : _.get(ref, 'ShipmentReferenceID', '') === '' ? (
-                <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>
-                  Ref is not defined
-                </span>
-              ) : (
-                `Ref#${_.get(ref, 'ShipmentReferenceID', '')}`
-              )}
-            </Button>
+            <Row style={{ width: '100%', marginLeft: 20 }}>
+              <Col>
+                <Button className="btn-chat-label" style={{ fontSize: 'x-large' }}>
+                  {ref === 'loading' ? (
+                    <TextLoading />
+                  ) : _.get(ref, 'ShipmentReferenceID', '') === '' ? (
+                    <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>
+                      Ref is not defined
+                    </span>
+                  ) : (
+                    <b>{`${_.get(ref, 'ShipmentReferenceID', '')}`}</b>
+                  )}
+                </Button>
+              </Col>
+              <Col>
+                <Row>
+                  <MemberModal
+                    {...this.props}
+                    count={
+                      _.filter(
+                        member,
+                        item => _.get(item, 'ChatRoomMemberIsLeave', false) === false
+                      ).length
+                    }
+                    toggleBlocking={toggleBlocking}
+                    list={member}
+                    network={network}
+                  />
+                  <MemberInviteModal
+                    {...this.props}
+                    ShipmentKey={ShipmentKey}
+                    ChatRoomKey={ChatRoomKey}
+                    member={member}
+                    usersRole={isInvited}
+                    sender={this.props.sender}
+                  />
+                </Row>
+              </Col>
+            </Row>
           </Breadcrumb>
         </Row>
-        <Row>
+        <Row
+          style={{
+            height: 'auto'
+          }}
+        >
           <Col
             xs="8"
-            style={{ backgroundColor: 'white', marginTop: '0.5rem', paddingRight: '5px' }}
+            style={{
+              backgroundColor: 'white',
+              marginTop: '16px',
+              paddingRight: '5px'
+            }}
           >
             <div
               className="mesgs"
@@ -524,11 +578,7 @@ class ChatWithHeader extends Component {
               onDragLeave={onDragLeave}
               onDrop={event => onFileDrop(event, ShipmentKey, ChatRoomKey)}
               onMouseEnter={() => {
-                console.log('lastkey', lastkey);
-
                 if (chatMsg.length > 0) {
-                  console.log('chatMsg', chatMsg[chatMsg.length - 1].id);
-
                   if (chatMsg[chatMsg.length - 1].id !== lastkey) {
                     this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
                       ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
@@ -615,7 +665,12 @@ class ChatWithHeader extends Component {
                   );
                 })}
                 {_.isEmpty(sending) ? (
-                  ''
+                  <div
+                    style={{
+                      padding: '20px',
+                      marginBottom: '-70px'
+                    }}
+                  />
                 ) : (
                   <div
                     style={{
@@ -628,145 +683,175 @@ class ChatWithHeader extends Component {
                 )}
                 <div className="msg_history-cover-bar" />
               </div>
-              <div className="type_msg">
-                <UploadModal
-                  chatFile={ChatRoomFileLink}
-                  sendMessage={sendMessage}
-                  ref={uploadModalRef}
-                />
-                <InputGroup>
-                  <InputGroupAddon addonType="prepend">
-                    <Button
-                      color="default"
-                      onClick={() => {
-                        if (_.get(isInvited, 'ChatRoomMemberIsLeave', false) === false) {
-                          browseFile(ShipmentKey);
-                        } else {
-                          window.alert('You has been remove from the chat');
-                        }
-                      }}
-                    >
-                      {' '}
-                      <i className="fa fa-plus fa-lg" />
-                    </Button>
-                    <input
-                      type="file"
-                      id="file"
-                      multiple
-                      ref={fileInputRef}
-                      style={{ display: 'none' }}
-                      onChange={event =>
-                        uploadModalRef.current.triggerUploading(
-                          event.target.files,
-                          ShipmentKey,
-                          ChatRoomKey
-                        )
-                      }
-                    />
-                  </InputGroupAddon>
-                  <Input
-                    placeholder={
-                      _.get(isInvited, 'ChatRoomMemberIsLeave', false)
-                        ? 'You has been remove from the chat'
-                        : 'type...'
-                    }
-                    type="textarea"
-                    value={text}
-                    disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}
-                    onMouseEnter={() => {
-                      ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
-                        next: res => {}
-                      });
-                      if (chatMsg.length > 0) {
-                        if (chatMsg[chatMsg.length - 1].id !== lastkey) {
-                          this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
-                            ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
-                            ChatRoomMessageReaderSurName: sender.ProfileSurname,
-                            ChatRoomMessageReaderProfileImageUrl: _.get(
-                              sender,
-                              'UserInfoProfileImageLink',
-                              ''
-                            ),
-                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
-                          });
-                        }
-                        lastkey = chatMsg[chatMsg.length - 1].id;
-                      }
-                    }}
-                    onChange={e => {
-                      ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
-                        next: res => {}
-                      });
-                      if (chatMsg.length > 0) {
-                        if (chatMsg[chatMsg.length - 1].id !== lastkey) {
-                          this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
-                            ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
-                            ChatRoomMessageReaderSurName: sender.ProfileSurname,
-                            ChatRoomMessageReaderProfileImageUrl: _.get(
-                              sender,
-                              'UserInfoProfileImageLink',
-                              ''
-                            ),
-                            ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
-                          });
-                        }
-                        lastkey = chatMsg[chatMsg.length - 1].id;
-                      }
-                      typing(e);
-                    }}
-                    onKeyPress={event => {
-                      if (event.which == 13 && event.shiftKey) {
-                      } else if (event.which == 13) {
-                        event.preventDefault(); // Stops enter from creating a new line
-                        if (
-                          !_.isEmpty(_.trim(text)) &&
-                          _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
-                        ) {
-                          sendMessage(ChatRoomKey, ShipmentKey, text);
-                          scrollChatToBottom();
-                        }
-                      }
-                    }}
+              <div className="inputBox">
+                <div className="type_msg" contentEditable>
+                  <UploadModal
+                    chatFile={ChatRoomFileLink}
+                    sendMessage={sendMessage}
+                    ref={uploadModalRef}
                   />
-                  <InputGroupAddon addonType="append">
-                    <Button color="default1"> @</Button>
-                    <Button color="default1">
-                      {' '}
-                      <i className="fa fa-smile-o fa-lg" />
-                    </Button>
-                    <Button
-                      color="default1"
-                      onClick={() => {
-                        console.log('Input text is size', _.size(text));
+                  <InputGroup>
+                    <InputGroupAddon addonType="prepend">
+                      <Button
+                        color="default"
+                        onClick={() => {
+                          if (_.get(isInvited, 'ChatRoomMemberIsLeave', false) === false) {
+                            browseFile(ShipmentKey);
+                          } else {
+                            window.alert('You has been remove from the chat');
+                          }
+                        }}
+                      >
+                        {' '}
+                        <i className="fa fa-plus" />
+                      </Button>
+                      <input
+                        type="file"
+                        id="file"
+                        multiple
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                        onChange={event =>
+                          uploadModalRef.current.triggerUploading(
+                            event.target.files,
+                            ShipmentKey,
+                            ChatRoomKey
+                          )
+                        }
+                      />
+                    </InputGroupAddon>
 
-                        if (
-                          !_.isEmpty(_.trim(text)) &&
-                          _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
-                        ) {
-                          sendMessage(ChatRoomKey, ShipmentKey, text);
-                          scrollChatToBottom();
+                    <textarea
+                      className="chat-message-input"
+                      placeholder={
+                        _.get(isInvited, 'ChatRoomMemberIsLeave', false)
+                          ? 'You has been remove from the chat'
+                          : 'type...'
+                      }
+                      ref={ref => (this.multilineTextarea = ref)}
+                      type="textarea"
+                      value={text}
+                      disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}
+                      onMouseEnter={() => {
+                        ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
+                          next: res => {}
+                        });
+                        if (chatMsg.length > 0) {
+                          if (chatMsg[chatMsg.length - 1].id !== lastkey) {
+                            this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
+                              ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
+                              ChatRoomMessageReaderSurName: sender.ProfileSurname,
+                              ChatRoomMessageReaderProfileImageUrl: _.get(
+                                sender,
+                                'UserInfoProfileImageLink',
+                                ''
+                              ),
+                              ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+                            });
+                          }
+                          lastkey = chatMsg[chatMsg.length - 1].id;
                         }
                       }}
-                    >
-                      {' '}
-                      <i className="fa fa-paper-plane-o fa-lg" />
-                    </Button>
-                  </InputGroupAddon>
-                </InputGroup>
+                      onChange={e => {
+                        this.multilineTextarea.style.height = '50px';
+                        if (this.multilineTextarea.scrollHeight > 280) {
+                          this.multilineTextarea.style.height = '280px';
+                        } else {
+                          this.multilineTextarea.style.height = `${
+                            this.multilineTextarea.scrollHeight
+                          }px`;
+                        }
+
+                        ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
+                          next: res => {}
+                        });
+                        if (chatMsg.length > 0) {
+                          if (chatMsg[chatMsg.length - 1].id !== lastkey) {
+                            this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
+                              ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
+                              ChatRoomMessageReaderSurName: sender.ProfileSurname,
+                              ChatRoomMessageReaderProfileImageUrl: _.get(
+                                sender,
+                                'UserInfoProfileImageLink',
+                                ''
+                              ),
+                              ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+                            });
+                          }
+                          lastkey = chatMsg[chatMsg.length - 1].id;
+                        }
+                        typing(e.target.value);
+                      }}
+                      onKeyPress={event => {
+                        if (event.which == 13 && event.shiftKey) {
+                        } else if (event.which == 13) {
+                          event.preventDefault(); // Stops enter from creating a new line
+                          if (
+                            !_.isEmpty(_.trim(text)) &&
+                            _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
+                          ) {
+                            sendMessage(
+                              ChatRoomKey,
+                              ShipmentKey,
+                              text,
+                              undefined,
+                              this.scrollChatToBottom
+                            );
+                            this.multilineTextarea.style.height = '50px';
+                          }
+                        }
+                      }}
+                    />
+                    <InputGroupAddon addonType="append">
+                      <Button color="default1"> @</Button>
+                      <Button color="default1">
+                        {' '}
+                        <i className="fa fa-smile-o fa-lg" />
+                      </Button>
+                      <Button
+                        color="default1"
+                        onClick={() => {
+                          console.log('Input text is size', _.size(text));
+
+                          if (
+                            !_.isEmpty(_.trim(text)) &&
+                            _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
+                          ) {
+                            sendMessage(
+                              ChatRoomKey,
+                              ShipmentKey,
+                              text,
+                              undefined,
+                              this.scrollChatToBottom
+                            );
+                            this.multilineTextarea.style.height = '50px';
+                          }
+                        }}
+                      >
+                        {' '}
+                        <i className="fa fa-paper-plane-o fa-lg" />
+                      </Button>
+                    </InputGroupAddon>
+                  </InputGroup>
+                </div>
               </div>
             </div>
           </Col>
-          <Col xs="4" style={{ paddingLeft: '0.3rem', marginTop: '0.6rem' }}>
+          <Col xs="4" style={{ paddingLeft: '2px', paddingTop: '14.5px' }}>
             <FileSide
               chatFile={ChatRoomFileLink}
               shipmentKey={ShipmentKey}
               chatroomKey={ChatRoomKey}
               sendMessage={sendMessage}
+              collapse={this.state.sideCollpase}
+              collapseTrigger={this.triggerSideCollapse}
             />
             <ShipmentSide
               mainData={this.props.ShipmentData}
               shipmentKey={ShipmentKey}
               chatroomKey={ChatRoomKey}
+              collapse={this.state.sideCollpase}
+              collapseTrigger={this.triggerSideCollapse}
             />
           </Col>
         </Row>

@@ -123,18 +123,28 @@ class MemberModal extends React.Component {
                       ChatRoomMemberCompanyName: '',
                       ChatRoomMemberCompanyKey: ''
                     });
+
+                    const hasMember = _.find(
+                      member,
+                      (item, index) => item.ChatRoomMemberEmail === this.state.value
+                    );
+
                     if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
-                      const invite = CreateChatMultipleInvitation(
-                        inviteMember,
-                        ShipmentKey,
-                        ChatRoomKey,
-                        this.props.sender
-                      ).subscribe({
-                        next: res => {
-                          console.log(res);
-                          invite.unsubscribe();
-                        }
-                      });
+                      if (_.isEmpty(hasMember)) {
+                        const invite = CreateChatMultipleInvitation(
+                          inviteMember,
+                          ShipmentKey,
+                          ChatRoomKey,
+                          this.props.sender
+                        ).subscribe({
+                          next: res => {
+                            console.log(res);
+                            invite.unsubscribe();
+                          }
+                        });
+                      } else {
+                        window.alert('already in chatroom');
+                      }
                     } else {
                       window.alert('You has been remove from the chat');
                     }

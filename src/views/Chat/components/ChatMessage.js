@@ -40,7 +40,6 @@ const ChatMessage = ({ message, i }) => {
   } else {
     isFirstMessageOfTheDay = true;
   }
-  console.log('Message', type);
   if (type === 'sender' || type === 'System') {
     return (
       <div key={i}>
@@ -60,10 +59,10 @@ const ChatMessage = ({ message, i }) => {
             <div className="received_withd_msg">
               <Row className="flex-nowrap">
                 <div className="sender">
-                  <p className={type === 'System' ? 'system-message' : ''}>
+                  <p className={type === 'System' ? 'system-message' : 'textP'}>
                     {type !== 'System' ? (
                       <div>
-                        <span className="user-name">{name}</span>
+                        <span className="user-name-inc">{name}</span>
                         <br />
                         {hasFile ? (
                           <Row style={{ margin: 'auto' }}>
@@ -76,9 +75,9 @@ const ChatMessage = ({ message, i }) => {
                     ) : (
                       <div>
                         <a
-                          href={'#'}
+                          href="#"
                           style={{
-                            color: 'black'
+                            color: 'grey'
                           }}
                           className="user-name"
                           onClick={e => {
@@ -176,8 +175,8 @@ const ChatMessage = ({ message, i }) => {
                     )}
                   </p>
                 </div>
-                <div>
-                  <span className="time_date">{moment(status).format('hh:mm a')}</span>
+                <div className="time_date_leftComponent">
+                  <span className="time_date_left">{moment(status).format('hh:mm a')}</span>
                 </div>
               </Row>
             </div>
@@ -187,7 +186,7 @@ const ChatMessage = ({ message, i }) => {
     );
   }
   return (
-    <div key={i} className={'rightMessage'}>
+    <div key={i} className="rightMessage">
       {isFirstMessageOfTheDay ? (
         <h2 className="time-background">
           <span className="time-seperation" align="center">
@@ -200,13 +199,15 @@ const ChatMessage = ({ message, i }) => {
 
       <div className="outgoing_msg">
         <div className="sent_msg">
-          <span className="time_date">
-            {readers.length > 1 ? `Read ${readers.length - 1}` : 'Sent'}
-            <br />
-            {moment(status).format('hh:mm a')}
-          </span>
+          <div className="time-component">
+            <span className="time_date">
+              {readers.length > 1 ? `Read ${readers.length - 1}` : 'Sent'}
+              <br />
+              {moment(status).format('hh:mm a')}
+            </span>
+          </div>
 
-          <p>
+          <p className="textP">
             {hasFile ? (
               <Row style={{ margin: 'auto' }}>
                 <span style={text === '' ? {} : { marginRight: 100 }}>{text}</span>

@@ -2,14 +2,15 @@ import {
   EDIT_SHIPMENT_REF,
   FETCH_SHIPMENT_LIST_DATA,
   FETCH_SHIPMENT_REF_LIST,
-  NOTIFICATIONS,
+  NOTIFICATIONS, SET_QUERY,
   UPDATE_SHIPMENT_REF
 } from '../constants/constants';
 
 const INITIAL_STATE = {
   Shipments: {},
   ShipmentRefs: {},
-  notification: {}
+  notification: {},
+  query:''
 };
 type Props = {
   Shipments: Object,
@@ -33,6 +34,11 @@ export default function reducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         ShipmentRefs: action.payload
+      };
+      case SET_QUERY:
+      return {
+        ...state,
+        query: action.payload
       };
 
 
