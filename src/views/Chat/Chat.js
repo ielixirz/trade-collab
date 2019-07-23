@@ -415,6 +415,16 @@ class Chat extends Component {
       });
     });
     tabs = _.sortBy(tabs, 'position');
+    let itemToReplace = {};
+    let createChatIndex = _.find(tabs, (item, index) => {
+      if (item.ShipmentKey === 'custom') {
+        itemToReplace = tabs.splice(index, 1);
+        return true;
+      }
+      return false;
+    });
+    tabs = tabs.concat(itemToReplace);
+    console.log('Tabs list is', tabs);
     const activeTab = tabs.filter(tab => tab.active === true);
     const toggle = this.props.ChatReducer.toggle;
     const createChat = this.props.ChatReducer.createChat || false;
