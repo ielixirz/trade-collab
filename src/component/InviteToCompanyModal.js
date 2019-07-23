@@ -314,6 +314,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
   };
 
   const invite = () => {
+    setBlocking(true);
     const inviteDataList = [];
     const nonUserInviteDataList = [];
     const recruiter = {
@@ -371,6 +372,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
           NonUserInviteExpiryDate: '',
         });
       });
+      setBlocking(false);
       if (props.clearInput !== undefined) {
         props.clearInput();
       }
