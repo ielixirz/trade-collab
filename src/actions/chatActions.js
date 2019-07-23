@@ -600,6 +600,12 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
         });
         return true;
       });
+
+      _.forEach(chatrooms, (item, index) => {
+        if (typeof item.active === Number) {
+          chatrooms[index].active = false;
+        }
+      });
       if (_.isEmpty(_.find(chatrooms, item => item.active))) {
         chatrooms[0].active = true;
       }
