@@ -592,7 +592,7 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
         const data = d.data();
         chatrooms.push({
           id: index + 1,
-          active: _.get(chats, `${chatRoomKey}.active`, index),
+          active: _.get(chats, `${chatRoomKey}.active`, false),
           ChatRoomKey: chatRoomKey,
           ShipmentKey: shipmentKey,
           ChatRoomData: data,
