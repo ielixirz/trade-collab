@@ -308,6 +308,12 @@ class Shipment extends Component {
 
   componentDidMount() {
     const { search } = this.props;
+    if (!_.isEmpty(this.fetchShipment)) {
+      this.fetchShipment.unsubscribe();
+      if (!_.isEmpty(this.combineShipment)) {
+        this.combineShipment.unsubscribe();
+      }
+    }
     if (_.isEmpty(search)) {
       this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
         next: notification => {
