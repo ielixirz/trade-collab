@@ -457,6 +457,10 @@ export const newChat = chatkey => (dispatch, getState) => {
 };
 
 export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch, getState) => {
+  dispatch({
+    type: SELECT_ROOM,
+    payload: ChatRoomKey
+  });
   // ShipmentKey,ChatRoomKey,Data
   // {
   //   ChatRoomMessageSender : ProfileKey,
