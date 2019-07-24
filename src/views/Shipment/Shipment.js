@@ -638,6 +638,7 @@ class Shipment extends Component {
                   }}
                   onClick={() => {
                     this.setState({ keyword: '', blocking: true });
+                    this.props.searching('');
                     this.fetchShipmentReload();
                   }}
                 >
