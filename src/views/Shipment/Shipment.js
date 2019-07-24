@@ -192,6 +192,7 @@ class Shipment extends Component {
   }
 
   fetchMoreShipment() {
+    this.toggleBlocking(true);
     if (!_.isEmpty(this.fetchShipment)) {
       this.fetchShipment.unsubscribe();
       if (!_.isEmpty(this.combineShipment)) {
@@ -416,6 +417,8 @@ class Shipment extends Component {
     }
 
     const { typeShipment } = this.state;
+    this.toggleBlocking(true);
+
     if (_.isEmpty(search)) {
       console.log('normal fetch');
       this.fetchShipmentReload();
