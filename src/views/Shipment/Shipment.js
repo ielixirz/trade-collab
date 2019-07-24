@@ -38,7 +38,7 @@ import { connect } from 'react-redux';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 import TableShipment from './TableShipment';
-import { fetchShipments, fetchMoreShipments } from '../../actions/shipmentActions';
+import { fetchShipments, fetchMoreShipments, searching } from '../../actions/shipmentActions';
 import {
   CombineShipmentAndShipmentReference,
   CreateShipment,
@@ -199,30 +199,74 @@ class Shipment extends Component {
         this.combineShipment.unsubscribe();
       }
     }
-    this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
-      next: notification => {
-        this.combineShipment = CombineShipmentAndShipmentReference(
-          '',
-          '',
-          'asc',
-          _.size(this.props.shipments) + 10,
-          this.props.user.uid
-        ).subscribe({
-          next: shipment => {
-            const { query: typeShipment } = this.props;
-            const result = shipment;
-            this.setState({ blocking: false });
+    const { search } = this.props;
 
-            this.props.fetchShipments(result, notification);
-          },
-          error: err => {
-            console.log(err);
-            this.setState({ blocking: false });
-          },
-          complete: () => {}
-        });
-      }
-    });
+    if (_.isEmpty(search)) {
+      console.log('normal fetch');
+      this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
+        next: notification => {
+          this.combineShipment = CombineShipmentAndShipmentReference(
+            '',
+            '',
+            'asc',
+            _.size(this.props.shipments) + 10,
+            this.props.user.uid
+          ).subscribe({
+            next: shipment => {
+              const { query: typeShipment } = this.props;
+              const result = shipment;
+              this.setState({ blocking: false });
+
+              this.props.fetchShipments(result, notification);
+            },
+            error: err => {
+              console.log(err);
+              this.setState({ blocking: false });
+            },
+            complete: () => {}
+          });
+        }
+      });
+    } else {
+      this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
+        next: notification => {
+          this.combineShipment = SearchShipment(
+            this.props.user.uid,
+            search,
+            this.state.filterKeyword,
+            _.size(this.props.shipments) + 10
+          ).subscribe({
+            next: res => {
+              let shipment = _.map(res, item => ({
+                id: item.ShipmentID,
+                ...item
+              }));
+              console.log('Search Result ', shipment);
+              if (_.includes(this.state.filterKeyword, 'Date')) {
+                shipment = _.filter(
+                  shipment,
+                  item =>
+                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName') >= search
+                );
+              } else if (this.state.filterKeyword !== 'ShipmentReferenceList') {
+                shipment = _.filter(shipment, item =>
+                  _.includes(
+                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName').toLowerCase(),
+                    search.toLowerCase()
+                  )
+                );
+              }
+
+              console.log('Search Result Filtered', shipment);
+              const result = shipment;
+              this.setState({ blocking: false });
+
+              this.props.fetchShipments(result, notification);
+            }
+          });
+        }
+      });
+    }
   }
 
   fetchShipmentReload() {
@@ -263,34 +307,76 @@ class Shipment extends Component {
   }
 
   componentDidMount() {
-    this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
-      next: notification => {
-        this.combineShipment = CombineShipmentAndShipmentReference(
-          '',
-          '',
-          'asc',
-          20,
-          this.props.user.uid
-        ).subscribe({
-          next: shipment => {
-            // Alert : All Status
-            // Plan : Planning, Order Confirmed
-            // Active : Order Confirmed, In Transit, Delayed
-            // Complete: Delivered, Completed
-            // Cancel: Cancelled
-            const { query: typeShipment } = this.props;
-            const result = shipment;
-            this.setState({ blocking: false });
+    const { search } = this.props;
+    if (_.isEmpty(search)) {
+      this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
+        next: notification => {
+          this.combineShipment = CombineShipmentAndShipmentReference(
+            '',
+            '',
+            'asc',
+            20,
+            this.props.user.uid
+          ).subscribe({
+            next: shipment => {
+              // Alert : All Status
+              // Plan : Planning, Order Confirmed
+              // Active : Order Confirmed, In Transit, Delayed
+              // Complete: Delivered, Completed
+              // Cancel: Cancelled
+              const { query: typeShipment } = this.props;
+              const result = shipment;
+              this.setState({ blocking: false });
 
-            this.props.fetchShipments(result, notification);
-          },
-          error: err => {
-            this.setState({ blocking: false });
-          },
-          complete: () => {}
-        });
-      }
-    });
+              this.props.fetchShipments(result, notification);
+            },
+            error: err => {
+              this.setState({ blocking: false });
+            },
+            complete: () => {}
+          });
+        }
+      });
+    } else {
+      this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
+        next: notification => {
+          this.combineShipment = SearchShipment(
+            this.props.user.uid,
+            search,
+            this.state.filterKeyword,
+            15
+          ).subscribe({
+            next: res => {
+              let shipment = _.map(res, item => ({
+                id: item.ShipmentID,
+                ...item
+              }));
+              console.log('Search Result ', shipment);
+              if (_.includes(this.state.filterKeyword, 'Date')) {
+                shipment = _.filter(
+                  shipment,
+                  item =>
+                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName') >= search
+                );
+              } else if (this.state.filterKeyword !== 'ShipmentReferenceList') {
+                shipment = _.filter(shipment, item =>
+                  _.includes(
+                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName').toLowerCase(),
+                    search.toLowerCase()
+                  )
+                );
+              }
+
+              console.log('Search Result Filtered', shipment);
+              const result = shipment;
+              this.setState({ blocking: false });
+
+              this.props.fetchShipments(result, notification);
+            }
+          });
+        }
+      });
+    }
 
     GetUserCompany(this.props.user.uid).subscribe({
       next: res => {
@@ -395,8 +481,11 @@ class Shipment extends Component {
       console.log(e, this.timer);
     }
     if (evt instanceof Date) {
+      this.props.searching(evt);
       this.setState({ keyword: evt, blocking: true });
     } else {
+      this.props.searching(evt.target.value);
+
       this.setState({ keyword: evt.target.value, blocking: true });
     }
     this.timer = setTimeout(this.triggerChange, WAIT_INTERVAL);
@@ -415,7 +504,12 @@ class Shipment extends Component {
       search = firebase.firestore.Timestamp.fromDate(moment(search).toDate());
       console.log(search);
     }
-
+    if (!_.isEmpty(this.fetchShipment)) {
+      this.fetchShipment.unsubscribe();
+      if (!_.isEmpty(this.combineShipment)) {
+        this.combineShipment.unsubscribe();
+      }
+    }
     const { typeShipment } = this.state;
     this.toggleBlocking(true);
 
@@ -425,7 +519,12 @@ class Shipment extends Component {
     } else {
       this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
         next: notification => {
-          SearchShipment(this.props.user.uid, search, this.state.filterKeyword, 15).subscribe({
+          this.combineShipment = SearchShipment(
+            this.props.user.uid,
+            search,
+            this.state.filterKeyword,
+            15
+          ).subscribe({
             next: res => {
               let shipment = _.map(res, item => ({
                 id: item.ShipmentID,
@@ -460,7 +559,7 @@ class Shipment extends Component {
   }
 
   renderSearch() {
-    const { keyword } = this.state;
+    const { search: keyword } = this.props;
 
     const options = [
       { value: 'ShipperETDDate', label: 'ETD' },
@@ -485,6 +584,7 @@ class Shipment extends Component {
             filterKeyword: option.value,
             keyword: ''
           });
+          this.props.searching('');
         }}
       />
     );
@@ -980,7 +1080,7 @@ const styles = {
 
 const mapStateToProps = state => {
   const { ChatReducer, authReducer, profileReducer, companyReducer, shipmentReducer } = state;
-  const { query = '' } = shipmentReducer;
+  const { query = '', search = '' } = shipmentReducer;
   const sender = _.find(
     profileReducer.ProfileList,
     item => item.id === profileReducer.ProfileDetail.id
@@ -991,13 +1091,15 @@ const mapStateToProps = state => {
     user: state.authReducer.user,
     sender,
     companies: companyReducer.UserCompany,
-    query
+    query,
+    search
   };
 };
 
 export default connect(
   mapStateToProps,
   {
+    searching,
     fetchShipments,
     fetchMoreShipments,
     fetchCompany,
