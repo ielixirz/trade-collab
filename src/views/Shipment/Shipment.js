@@ -512,17 +512,33 @@ class Shipment extends Component {
               locale="en-GB"
             />
           ) : (
-            <Input
-              placeholder={` Search by ${
-                _.find(options, option => option.value === this.state.filterKeyword).label
-              }`}
-              type="text"
-              className="search-filter-select-input"
-              style={{ height: 38 }}
-              onChange={this.handleSearchChange}
-              onKeyDown={this.handleKeyDown}
-              value={keyword}
-            />
+            <>
+              <Input
+                placeholder={` Search by ${
+                  _.find(options, option => option.value === this.state.filterKeyword).label
+                }`}
+                type="text"
+                className="search-filter-select-input"
+                style={{ height: 38 }}
+                onChange={this.handleSearchChange}
+                onKeyDown={this.handleKeyDown}
+                value={keyword}
+              />
+              <InputGroupAddon addonType="append">
+                <Button
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: 0
+                  }}
+                  onClick={() => {
+                    this.setState({ keyword: '', blocking: true });
+                    this.fetchShipmentReload();
+                  }}
+                >
+                  x
+                </Button>
+              </InputGroupAddon>
+            </>
           )}
         </InputGroup>
       </div>
@@ -536,7 +552,7 @@ class Shipment extends Component {
     const result = _.filter(shipments, item => {
       let keyword = '';
       if (_.isEmpty(typeShipment)) {
-        return true;
+        return item.ShipmentStatus !== 'Cancelled';
       }
       //
       // Alert : All Status
@@ -545,6 +561,17 @@ class Shipment extends Component {
       // Complete: Delivered, Completed
       // Cancel: Cancelled
       switch (typeShipment) {
+        case 'All':
+          keyword = [
+            'Planning',
+            'Order Confirmed',
+            'In Transit',
+            'Delayed',
+            'Delivered',
+            'Completed',
+            'Cancelled'
+          ];
+          return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
         case 'Plan':
           keyword = ['Planning', 'Order Confirmed'];
           return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
@@ -882,34 +909,13 @@ class Shipment extends Component {
               className={classnames({ active: typeShipment === 'Plan' })}
               onClick={() => {
                 this.toggle('1');
-                this.props.setQuery('Plan');
+                this.props.setQuery('All');
               }}
             >
-              <span style={styles.title}>Plan</span> <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>All</span> <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
-          <NavItem>
-            <NavLink
-              className={classnames({ active: typeShipment === 'Active' })}
-              onClick={() => {
-                this.toggle('1');
-                this.props.setQuery('Active');
-              }}
-            >
-              <span style={styles.title}>Active</span> <span style={styles.lineTab}>|</span>
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink
-              className={classnames({ active: typeShipment === 'Complete' })}
-              onClick={() => {
-                this.toggle('1');
-                this.props.setQuery('Complete');
-              }}
-            >
-              <span style={styles.title}>Delivered</span> <span style={styles.lineTab}>|</span>
-            </NavLink>
-          </NavItem>
+
           <NavItem>
             <NavLink
               className={classnames({ active: typeShipment === 'Cancel' })}
