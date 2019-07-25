@@ -7,7 +7,7 @@ const admin = require('firebase-admin');
 
 const sgMail = require('@sendgrid/mail');
 
-const SHA256 = require('crypto-js/sha256');
+const AES = require('crypto-js/aes');
 
 var serviceAccount = require('./weeklyorder0-firebase-adminsdk-aruhg-0fd4837a53.json');
 
@@ -1604,8 +1604,8 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
     const NonUserInviteType = snapshot.data().NonUserInviteType;
     const NonUserInviteExpiryDate = snapshot.data().NonUserInviteExpiryDate;
 
-    const DocumentKeyEncoder = SHA256(context.params.NonUserInviteKey, 'redroylkeew').toString();
-    const ExpiryDateEncoder = SHA256(NonUserInviteExpiryDate, 'redroylkeew').toString();
+    const DocumentKeyEncoder = AES.encrypt(context.params.NonUserInviteKey, 'redroylkeew').toString();
+    const ExpiryDateEncoder = AES.encrypt(NonUserInviteExpiryDate, 'redroylkeew').toString();
 
     if (NonUserInviteType === 'Shipment') {
       const HeaderText = `Join ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} on a shipment`;
