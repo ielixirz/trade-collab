@@ -33,6 +33,7 @@ build:
     - dev_integration
     - staging
   script:
+    - npm rebuild node-sass
     - CI=false npm run build
   dependencies:
     - install
