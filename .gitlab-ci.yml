@@ -33,7 +33,7 @@ build:
     - dev_integration
     - staging
   script:
-    - npm run build
+    - CI=false npm run build
   dependencies:
     - install
   artifacts:
