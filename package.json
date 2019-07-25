@@ -65,7 +65,8 @@
     "redux-thunk": "^2.3.0",
     "rxfire": "^3.3.7",
     "rxjs": "^6.4.0",
-    "simple-line-icons": "^2.4.1"
+    "simple-line-icons": "^2.4.1",
+    "webpack": "4.28.3"
   },
   "devDependencies": {
     "eslint": "5.12.0",
