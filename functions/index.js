@@ -1686,7 +1686,7 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
     }
   });
 
-exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
+exports.CreateMemberFromNonSystemUser = CloudFunctionsRegionsAsia.firestore
   .document('UserInfo/{UserInfoKey}')
   .onCreate(async (snapshot, context) => {
     const UserKey = context.params.UserInfoKey;
