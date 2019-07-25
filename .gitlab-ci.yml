@@ -9,6 +9,7 @@ stages:
   - install
   - build
   - deploy
+  - job
 
 install:
   before_script:
