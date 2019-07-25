@@ -9,7 +9,7 @@ stages:
   - install
   - build
   - deploy
-  - job
+
 
 install:
   before_script:
@@ -20,8 +20,9 @@ install:
     - staging
     - production
   script:
-    - npm install -g firebase-tools --cache-folder node_modules
     - npm install
+    - npm install -g firebase-tools --cache-folder node_modules
+
   artifacts:
     paths:
       - node_modules
@@ -38,11 +39,6 @@ build:
   artifacts:
     paths:
       - build
-
-
-job:
-  stage: job
-  script: echo 'test'
 
 
 
