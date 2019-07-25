@@ -457,6 +457,10 @@ export const newChat = chatkey => (dispatch, getState) => {
 };
 
 export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch, getState) => {
+  dispatch({
+    type: SELECT_ROOM,
+    payload: ChatRoomKey
+  });
   // ShipmentKey,ChatRoomKey,Data
   // {
   //   ChatRoomMessageSender : ProfileKey,
@@ -591,7 +595,7 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
 
         const data = d.data();
         chatrooms.push({
-          id: index + 1,
+          id: chatrooms.length + 1,
           active: _.get(chats, `${chatRoomKey}.active`, false),
           ChatRoomKey: chatRoomKey,
           ShipmentKey: shipmentKey,
