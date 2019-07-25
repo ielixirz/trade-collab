@@ -1609,7 +1609,7 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
       'redroylkeew'
     ).toString();
     const ExpiryDateEncoder = AES.encrypt(
-      new Date(NonUserInviteExpiryDate).toString(),
+      new Date(NonUserInviteExpiryDate).getTime().toString(),
       'redroylkeew'
     ).toString();
 
