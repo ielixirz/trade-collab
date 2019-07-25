@@ -38,6 +38,14 @@ build:
     paths:
       - build
 
+
+job:
+  script: echo 'test'
+  only:
+    - branches@SetupCICD
+
+
+
 build-production:
   stage: build
   only:
