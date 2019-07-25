@@ -1,0 +1,94 @@
+image: node:latest
+
+cache:
+  key: node_modules
+  paths:
+    - node_modules
+
+stages:
+  - install
+  - build
+  - deploy
+  - job
+
+install:
+  before_script:
+    - rm -f build
+  stage: install
+  only:
+    - dev_integration
+    - staging
+    - production
+  script:
+    - npm install -g firebase-tools --cache-folder node_modules
+    - npm install
+  artifacts:
+    paths:
+      - node_modules
+
+build:
+  stage: build
+  only:
+    - dev_integration
+    - staging
+  script:
+    - npm run build
+  dependencies:
+    - install
+  artifacts:
+    paths:
+      - build
+
+
+job:
+  stage: job
+  script: echo 'test'
+
+
+
+
+build-production:
+  stage: build
+  only:
+    - production
+  script:
+    - npm run build --prod
+    - cp -r build ./build-production
+  dependencies:
+    - install
+  artifacts:
+    paths:
+      - ./build-production
+
+deploy-develop:
+  stage: deploy
+  only:
+    - dev_integration
+  script:
+    - cp -r build ./build-dev
+    - firebase deploy --only hosting:develop -m "Pipeline $CI_PIPELINE_ID, build $CI_BUILD_ID" --non-interactive --token $FIREBASE_DEPLOY_KEY --project $FIREBASE_PROJECT
+  dependencies:
+    - install
+    - build
+
+deploy-staging:
+  stage: deploy
+  only:
+    - staging
+  script:
+    - cp -r build ./build-staging
+    - firebase deploy --only hosting:staging -m "Pipeline $CI_PIPELINE_ID, build $CI_BUILD_ID" --non-interactive --token $FIREBASE_DEPLOY_KEY --project $FIREBASE_PROJECT
+  dependencies:
+    - install
+    - build
+
+deploy-production:
+  stage: deploy
+  only:
+    - production
+  script:
+    - cp build ./build-production
+    - firebase deploy --only hosting:production -m "Pipeline $CI_PIPELINE_ID, build $CI_BUILD_ID" --non-interactive --token $FIREBASE_DEPLOY_KEY --project $FIREBASE_PROJECT
+  dependencies:
+    - install
+    - build-production
