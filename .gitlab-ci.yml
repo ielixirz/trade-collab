@@ -27,8 +27,7 @@ install:
 
 build:
   stage: build
-  tags:
-    - docker
+
   only:
     - dev_integration
     - staging
