@@ -43,8 +43,7 @@ build:
 job:
   stage: job
   script: echo 'test'
-  only:
-    - SetupCICD
+
 
 
 
