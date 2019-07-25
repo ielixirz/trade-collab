@@ -1,4 +1,4 @@
-image: node:latest
+image: jorrite/docker-firebase
 
 cache:
   key: node_modules
