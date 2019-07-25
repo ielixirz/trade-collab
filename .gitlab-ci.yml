@@ -27,7 +27,6 @@ install:
 
 build:
   stage: build
-
   only:
     - dev_integration
     - staging
