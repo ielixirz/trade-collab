@@ -20,8 +20,8 @@ install:
     - staging
     - production
   script:
+    - npm install -g firebase-tools
     - npm install
-    - npm install -g firebase-tools --cache-folder node_modules
 
   artifacts:
     paths:
