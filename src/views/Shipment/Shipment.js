@@ -486,14 +486,18 @@ class Shipment extends Component {
     } catch (e) {
       console.log(e, this.timer);
     }
-    if (evt instanceof Date) {
-      this.props.searching(evt);
-      this.setState({ keyword: evt, blocking: true });
+    if (evt === null) {
+      this.props.searching('');
     } else {
-      this.props.searching(evt.target.value);
-
-      this.setState({ keyword: evt.target.value, blocking: true });
+      if (evt instanceof Date) {
+        this.props.searching(evt);
+        this.setState({ keyword: evt, blocking: true });
+      } else {
+        this.props.searching(evt.target.value);
+        this.setState({ keyword: evt.target.value, blocking: true });
+      }
     }
+
     this.timer = setTimeout(this.triggerChange, WAIT_INTERVAL);
   }
 
@@ -505,24 +509,24 @@ class Shipment extends Component {
 
   triggerChange() {
     this.props.fetchShipments({}, []);
-    let { keyword: search } = this.state;
-    if (_.includes(this.state.filterKeyword, 'Date')) {
-      search = firebase.firestore.Timestamp.fromDate(moment(search).toDate());
-      console.log(search);
-    }
-    if (!_.isEmpty(this.fetchShipment)) {
-      this.fetchShipment.unsubscribe();
-      if (!_.isEmpty(this.combineShipment)) {
-        this.combineShipment.unsubscribe();
-      }
-    }
-    const { typeShipment } = this.state;
-    this.toggleBlocking(true);
-
+    let { search } = this.props;
     if (_.isEmpty(search)) {
       console.log('normal fetch');
       this.fetchShipmentReload();
     } else {
+      if (_.includes(this.state.filterKeyword, 'Date')) {
+        search = firebase.firestore.Timestamp.fromDate(moment(search).toDate());
+        console.log(search);
+      }
+      if (!_.isEmpty(this.fetchShipment)) {
+        this.fetchShipment.unsubscribe();
+        if (!_.isEmpty(this.combineShipment)) {
+          this.combineShipment.unsubscribe();
+        }
+      }
+      const { typeShipment } = this.state;
+      this.toggleBlocking(true);
+
       this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
         next: notification => {
           this.combineShipment = SearchShipment(
@@ -581,7 +585,7 @@ class Shipment extends Component {
     const SearchShipmentFilter = () => (
       <Select
         options={options}
-        className="basic-multi-select search-filter-select"
+        className="basic-multi-select search-filter-select selectfilter"
         classNamePrefix="select"
         defaultValue={_.find(options, option => option.value === 'ShipmentProductName')}
         value={_.find(options, option => option.value === this.state.filterKeyword)}
@@ -599,17 +603,11 @@ class Shipment extends Component {
       <div
         className="search-filter-select-container"
         style={{
-          width: 400
+          width: 'auto'
         }}
       >
         <InputGroup>
-          <InputGroupAddon
-            style={{
-              width: 120
-            }}
-          >
-            {SearchShipmentFilter()}
-          </InputGroupAddon>
+          <InputGroupAddon addonType={'prepend'}>{SearchShipmentFilter()}</InputGroupAddon>
           {_.includes(this.state.filterKeyword, 'Date') ? (
             <DatePicker
               className="search-filter-select-date"
@@ -634,7 +632,10 @@ class Shipment extends Component {
                 <Button
                   style={{
                     backgroundColor: 'transparent',
-                    border: 0
+                    borderWidth: 0,
+                    borderLeft: 1,
+                    borderColor: ' #cccccc',
+                    borderStyle: 'solid'
                   }}
                   onClick={() => {
                     this.setState({ keyword: '', blocking: true });

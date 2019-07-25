@@ -1088,7 +1088,15 @@ class TableShipment extends React.Component {
         {props => (
           <div>
             <Row>
-              <Col xs="4">{shipmentsProps.searchInput()}</Col>
+              <Col
+                xs="auto"
+                style={{
+                  marginRight: '10px'
+                }}
+              >
+                {' '}
+                {shipmentsProps.searchInput()}
+              </Col>
               <Col xs="3">
                 <Select
                   name="colors"
