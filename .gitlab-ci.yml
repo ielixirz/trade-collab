@@ -44,7 +44,7 @@ job:
   stage: job
   script: echo 'test'
   only:
-    - branches@SetupCICD
+    - SetupCICD
 
 
 
