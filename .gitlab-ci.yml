@@ -48,6 +48,7 @@ build-production:
   only:
     - production
   script:
+    - npm rebuild node-sass
     - npm run build --prod
     - cp -r build ./build-production
   dependencies:
