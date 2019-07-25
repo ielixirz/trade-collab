@@ -1604,8 +1604,14 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
     const NonUserInviteType = snapshot.data().NonUserInviteType;
     const NonUserInviteExpiryDate = snapshot.data().NonUserInviteExpiryDate;
 
-    const DocumentKeyEncoder = AES.encrypt(context.params.NonUserInviteKey, 'redroylkeew').toString();
-    const ExpiryDateEncoder = AES.encrypt(NonUserInviteExpiryDate, 'redroylkeew').toString();
+    const DocumentKeyEncoder = AES.encrypt(
+      context.params.NonUserInviteKey,
+      'redroylkeew'
+    ).toString();
+    const ExpiryDateEncoder = AES.encrypt(
+      JSON.stringify(NonUserInviteExpiryDate),
+      'redroylkeew'
+    ).toString();
 
     if (NonUserInviteType === 'Shipment') {
       const HeaderText = `Join ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} on a shipment`;
