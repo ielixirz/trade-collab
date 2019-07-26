@@ -209,6 +209,7 @@ const Register = (props) => {
                       className="register-form"
                       invalid={invalid.Email.isInvalid || isDuplicate}
                       valid={invalid.Email.isInvalid === false}
+                      disabled={props.invite}
                     />
                   </div>
 

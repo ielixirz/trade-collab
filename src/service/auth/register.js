@@ -24,13 +24,20 @@ export const RegisterWithEmail = (Email, Password) => from(FirebaseApp.auth().cr
 
 export const RegisterUser = (Data) => {
   const {
-    Email, Password, Firstname, Surname, AccountType,
-  } = Data;
+ Email, Password, Firstname, Surname, AccountType, NonUserDocumentKey,
+} = Data;
 
-  const UserInfoData = {
-    UserInfoEmail: Email,
-    UserInfoAccountType: AccountType,
-  };
+  const UserInfoData = NonUserDocumentKey === undefined
+      ? {
+          UserInfoEmail: Email,
+          UserInfoAccountType: AccountType,
+        }
+      : {
+          UserInfoEmail: Email,
+          UserInfoAccountType: AccountType,
+          UserInfoIsInviteFromEmail: true,
+          UserInfoInviteDocumentKey: NonUserDocumentKey,
+        };
 
   const ProfileData = {
     ProfileFirstname: Firstname,
