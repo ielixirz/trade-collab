@@ -1,3 +1,5 @@
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable import/no-extraneous-dependencies */
@@ -6,6 +8,8 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import queryString from 'query-string';
+
 import { Col, Container, Row } from 'reactstrap';
 import './card.css';
 import BlockUi from 'react-block-ui';
@@ -44,10 +48,32 @@ class SelectProfile extends Component {
     }, 2000);
   };
 
+  goToCompany = (profile, companyKey) => {
+    const { user, history, fetchProfile } = this.props;
+    fetchProfile(user.uid, profile.id, history);
+    this.setState({
+      blocking: true,
+    });
+    // using timeout rightnow for workaround
+    setTimeout(() => {
+      history.push(`/network/company/${companyKey}`);
+    }, 2000);
+  };
+
+  getIn = (profile) => {
+    const parsed = queryString.parse(this.props.location.search);
+    const { rc } = parsed;
+    if (rc !== undefined) {
+      this.goToCompany(profile, rc);
+    } else {
+      this.goToShipment(profile);
+    }
+  };
+
   renderProfile = profile => (
     <div
       className="cardSelect"
-      onClick={() => this.goToShipment(profile)}
+      onClick={() => this.getIn(profile)}
       role="button"
       tabIndex={0}
       key={profile.id}

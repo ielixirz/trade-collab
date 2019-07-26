@@ -3,7 +3,7 @@ import {
   FETCH_SHIPMENT_LIST_DATA,
   FETCH_USER_DETAIL,
   FILL_CREDENCIAL,
-  SAVE_CREDENCIAL
+  SAVE_CREDENCIAL,
 } from '../constants/constants';
 import { LoginWithEmail } from '../service/auth/login';
 import { getUserInfoDetail } from './userActions';
@@ -11,37 +11,37 @@ import 'firebase/auth';
 import { FirebaseApp } from '../service/firebase';
 import { GetUserCompany, GetUserInfoDetail } from '../service/user/user';
 
-export const typinglogin = data => dispatch => {
+export const typinglogin = data => (dispatch) => {
   // eslint-disable-next-line prefer-destructuring
   const value = data.target.value;
   const payload = data.target.id;
   dispatch({
     type: FILL_CREDENCIAL,
     payload,
-    value
+    value,
   });
 };
 
-export const setDefault = () => dispatch => {
+export const setDefault = () => (dispatch) => {
   dispatch({
     type: SAVE_CREDENCIAL,
-    payload: {}
+    payload: {},
   });
 };
-export const login = (data, callback) => dispatch => {
+export const login = (data, callback, redirectUrl) => (dispatch) => {
   const { email, password } = data;
   dispatch({
     type: FETCH_COMPANY_USER,
-    payload: {}
+    payload: {},
   });
   LoginWithEmail(email, password).subscribe({
-    next: res => {
+    next: (res) => {
       dispatch({
         type: SAVE_CREDENCIAL,
-        payload: res.user
+        payload: res.user,
       });
       GetUserInfoDetail(res.user.uid).subscribe({
-        next: snapshot => {
+        next: (snapshot) => {
           const SnapshotData = snapshot.data();
           let originalReducer = {};
           if (SnapshotData) {
@@ -53,53 +53,53 @@ export const login = (data, callback) => dispatch => {
               UserInfoCreateTimestamp: SnapshotData.UserInfoCreateTimestamp,
               UserInfoAccountType: SnapshotData.UserInfoAccountType,
               UserInfoCompanyName: SnapshotData.UserInfoCompanyName,
-              UserInfoCompanyRelate: SnapshotData.UserInfoCompanyRelate
+              UserInfoCompanyRelate: SnapshotData.UserInfoCompanyRelate,
             };
             dispatch({
               type: FETCH_USER_DETAIL,
-              payload: originalReducer
+              payload: originalReducer,
             });
             dispatch({
               type: FETCH_SHIPMENT_LIST_DATA,
-              payload: {}
+              payload: {},
             });
           } else {
             console.error('Error from system : User data not found');
           }
         },
-        error: err => {
+        error: (err) => {
           console.log(err);
           callback(err);
         },
-        complete: () => {}
+        complete: () => {},
       });
 
-      window.location.replace('#/selectprofile');
+      window.location.replace(redirectUrl);
     },
-    error: err => {
+    error: (err) => {
       console.log(err);
       callback(err);
     },
-    complete: () => {}
+    complete: () => {},
   });
 };
 
-export const logout = callback => dispatch => {
+export const logout = callback => (dispatch) => {
   FirebaseApp.auth()
     .signOut()
     .then(() => {
       dispatch({
         type: SAVE_CREDENCIAL,
-        payload: {}
+        payload: {},
       });
 
       dispatch({
         type: FETCH_SHIPMENT_LIST_DATA,
-        payload: {}
+        payload: {},
       });
       dispatch({
         type: FETCH_COMPANY_USER,
-        payload: {}
+        payload: {},
       });
       if (callback) callback();
     });
