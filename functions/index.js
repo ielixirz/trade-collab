@@ -1607,23 +1607,28 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
     const ShipmentKey = snapshot.data().ShipmentKey;
     const ChatRoomKey = snapshot.data().ChatRoomKey;
 
-    const DocumentKeyEncoder = AES.encrypt(
-      context.params.NonUserInviteKey,
-      'redroylkeew'
-    ).toString();
-    const ExpiryDateEncoder = AES.encrypt(
-      String(NonUserInviteExpiryDate.seconds),
-      'redroylkeew'
-    ).toString();
-    const EmailEncoder = AES.encrypt(NonUserInviteEmail, 'redroylkeew').toString();
-    const InviteTypeEncoder = AES.encrypt(NonUserInviteType, 'redroylkeew').toString();
-    const InviteRecruiterCompanyKeyEncoder = AES.encrypt(
-      NonUserInviteRecruiterCompanyKey,
-      'redroylkeew'
-    ).toString();
+    const DocumentKeyEncoder = encodeURIComponent(
+      AES.encrypt(context.params.NonUserInviteKey, 'redroylkeew').toString()
+    );
+    const ExpiryDateEncoder = encodeURIComponent(
+      AES.encrypt(String(NonUserInviteExpiryDate.seconds), 'redroylkeew').toString()
+    );
+    const EmailEncoder = encodeURIComponent(
+      AES.encrypt(NonUserInviteEmail, 'redroylkeew').toString()
+    );
+    const InviteTypeEncoder = encodeURIComponent(
+      AES.encrypt(NonUserInviteType, 'redroylkeew').toString()
+    );
+    const InviteRecruiterCompanyKeyEncoder = encodeURIComponent(
+      AES.encrypt(NonUserInviteRecruiterCompanyKey, 'redroylkeew').toString()
+    );
 
-    const ShipmentKeyEncoder = AES.encrypt(ShipmentKey, 'redroylkeew').toString();
-    const ChatRoomKeyEncoder = AES.encrypt(ChatRoomKey, 'redroylkeew').toString();
+    const ShipmentKeyEncoder = encodeURIComponent(
+      AES.encrypt(ShipmentKey, 'redroylkeew').toString()
+    );
+    const ChatRoomKeyEncoder = encodeURIComponent(
+      AES.encrypt(ChatRoomKey, 'redroylkeew').toString()
+    );
 
     if (NonUserInviteType === 'Shipment') {
       const HeaderText = `Join ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} on a shipment`;
