@@ -4,10 +4,14 @@
 /* eslint-disable filenames/match-regex */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import BlockUi from 'react-block-ui';
+import 'react-block-ui/style.css';
+
 import Register from '../Register/Register';
 import SelectRole from '../SelectProfile/SelectRole';
 import Confirmation from '../SelectProfile/Confirmation';
 import { RegisterUser } from '../../../service/auth/register';
+import { KeepIsCompanyMember } from '../../../service/company/company';
 import { login, setDefault } from '../../../actions/loginActions';
 
 class MainRegister extends Component {
@@ -20,6 +24,7 @@ class MainRegister extends Component {
       Email: '',
       Password: '',
       AccountType: '',
+      blocking: true,
     };
   }
 
@@ -48,7 +53,7 @@ class MainRegister extends Component {
     RegisterUser(this.state).subscribe({
       next: (result) => {
         this.props.setDefault();
-        this.props.login({ email: Email, password: Password });
+        this.props.login({ email: Email, password: Password }, null, '#/selectprofile');
       },
       complete: (result) => {
         console.log(result);
@@ -62,13 +67,30 @@ class MainRegister extends Component {
 
   handleRegisterByInvite = () => {
     const data = this.state;
-    const { flow, docKey } = this.props.inviteData;
+    const { flow, docKey, dataKey } = this.props.inviteData;
     data.NonUserDocumentKey = docKey;
 
     switch (flow) {
-      case 'COMPANY_INVITE':
+      case 'Company':
         RegisterUser(data).subscribe({
-          next: (result) => {},
+          next: (result) => {
+            this.props.setDefault();
+            const checkingMembership = KeepIsCompanyMember(dataKey.companyKey, result).subscribe({
+              next: (isMember) => {
+                if (isMember) {
+                  checkingMembership.unsubscribe();
+                  this.props.login(
+                    { email: data.Email, password: data.Password },
+                    null,
+                    `#/selectprofile/?rc=${dataKey.companyKey}`,
+                  );
+                }
+              },
+              error: (err) => {
+                console.log('err', err);
+              },
+            });
+          },
           complete: (result) => {
             console.log(result);
           },
@@ -122,7 +144,11 @@ class MainRegister extends Component {
         } else {
           this.handleRegister();
         }
-        return '';
+        return (
+          <BlockUi tag="div" blocking={this.state.blocking} style={{ height: '100%' }}>
+            <div style={{ width: 400, height: 400 }} />
+          </BlockUi>
+        );
       default:
         return (
           <Register nextStep={this.nextStep} handleChange={this.handleChange} values={values} />
