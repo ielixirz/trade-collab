@@ -32,6 +32,7 @@ import { GetProlfileList } from '../service/user/profile';
 import { CreateCompanyMultipleInvitation } from '../service/join/invite';
 import { CombineIsExistInvitationRequest } from '../service/join/utiljoin';
 import { DeepCopyArray } from '../utils/parsing';
+import { AddDay } from '../utils/date';
 
 const InviteToCompanyModal = forwardRef((props, ref) => {
   const [modal, setModal] = useState(false);
@@ -369,7 +370,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
           NonUserInviteRecruiterProfileSurName: recruiter.CompanyInvitationRecruiterProfileSurName,
           NonUserInviteRecruiterCompanyName: company.companyName,
           NonUserInviteRecruiterCompanyKey: company.key,
-          NonUserInviteExpiryDate: '',
+          NonUserInviteExpiryDate: AddDay(new Date(), 28).toDate(),
         });
       });
       setBlocking(false);
