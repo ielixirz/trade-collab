@@ -1612,10 +1612,8 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
       String(NonUserInviteExpiryDate.seconds),
       'redroylkeew'
     ).toString();
-    const EmailEncoder = AES.encrypt(
-      NonUserInviteEmail,
-      'redroylkeew'
-    ).toString();
+    const EmailEncoder = AES.encrypt(NonUserInviteEmail, 'redroylkeew').toString();
+    const InviteTypeEncoder = AES.encrypt(NonUserInviteType, 'redroylkeew').toString();
 
     if (NonUserInviteType === 'Shipment') {
       const HeaderText = `Join ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} on a shipment`;
@@ -1647,7 +1645,7 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
         border-radius:8px;
         padding:18px 0;
         background-color:rgba(255, 90 , 95, 1);
-        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}'>Join Now - Free</a>`;
+        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}'>Join Now - Free</a>`;
 
       const SendInviteIntoShipment = await SendEmail(
         InviteIntoShipmentTemplate(
@@ -1680,7 +1678,7 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
         border-radius:8px;
         padding:18px 0;
         background-color:rgba(255, 90 , 95, 1);
-        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}'>Join Now - Free</a>`;
+        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}'>Join Now - Free</a>`;
 
       const SendInviteIntoCompany = await SendEmail(
         InviteToJoinCompanyTemplate(
