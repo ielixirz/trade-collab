@@ -1607,7 +1607,7 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
     const ShipmentKey = snapshot.data().ShipmentKey;
     const ChatRoomKey = snapshot.data().ChatRoomKey;
 
-    const isUsed = snapshot.data().isUsed ? snapshot.data().isUsed : false ;
+    const isUsed = snapshot.data().isUsed ? snapshot.data().isUsed : 'N' ;
 
     const Encoder = (stringtext) => encodeURIComponent(
       AES.encrypt(stringtext, 'redroylkeew').toString()
@@ -1712,7 +1712,7 @@ exports.CreateMemberFromNonSystemUser = CloudFunctionsRegionsAsia.firestore
         .firestore()
         .collection('NonUserInvite')
         .doc(UserInfoInviteDocumentKey)
-        .set({ isUsed: true }, { merge: true });
+        .set({ isUsed: 'Y' }, { merge: true });
 
     if (UserInfoIsInviteFromEmail && UserInfoInviteDocumentKey) {
       const GetNonUserInvite = await admin
