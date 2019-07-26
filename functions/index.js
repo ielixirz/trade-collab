@@ -1603,6 +1603,9 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
     const ShipmentReferenceID = snapshot.data().ShipmentReferenceID;
     const NonUserInviteType = snapshot.data().NonUserInviteType;
     const NonUserInviteExpiryDate = snapshot.data().NonUserInviteExpiryDate;
+    const NonUserInviteRecruiterCompanyKey = snapshot.data().NonUserInviteRecruiterCompanyKey;
+    const ShipmentKey = snapshot.data().ShipmentKey;
+    const ChatRoomKey = snapshot.data().ChatRoomKey;
 
     const DocumentKeyEncoder = AES.encrypt(
       context.params.NonUserInviteKey,
@@ -1614,6 +1617,13 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
     ).toString();
     const EmailEncoder = AES.encrypt(NonUserInviteEmail, 'redroylkeew').toString();
     const InviteTypeEncoder = AES.encrypt(NonUserInviteType, 'redroylkeew').toString();
+    const InviteRecruiterCompanyKeyEncoder = AES.encrypt(
+      NonUserInviteRecruiterCompanyKey,
+      'redroylkeew'
+    ).toString();
+
+    const ShipmentKeyEncoder = AES.encrypt(ShipmentKey, 'redroylkeew').toString();
+    const ChatRoomKeyEncoder = AES.encrypt(ChatRoomKey, 'redroylkeew').toString();
 
     if (NonUserInviteType === 'Shipment') {
       const HeaderText = `Join ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} on a shipment`;
@@ -1645,7 +1655,7 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
         border-radius:8px;
         padding:18px 0;
         background-color:rgba(255, 90 , 95, 1);
-        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}'>Join Now - Free</a>`;
+        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&sk=${ShipmentKeyEncoder}&crk=${ChatRoomKeyEncoder}'>Join Now - Free</a>`;
 
       const SendInviteIntoShipment = await SendEmail(
         InviteIntoShipmentTemplate(
@@ -1678,7 +1688,7 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
         border-radius:8px;
         padding:18px 0;
         background-color:rgba(255, 90 , 95, 1);
-        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}'>Join Now - Free</a>`;
+        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&ck=${InviteRecruiterCompanyKeyEncoder}'>Join Now - Free</a>`;
 
       const SendInviteIntoCompany = await SendEmail(
         InviteToJoinCompanyTemplate(
@@ -1732,7 +1742,7 @@ exports.CreateMemberFromNonSystemUser = CloudFunctionsRegionsAsia.firestore
         const CompanyKey = NonUserInviteData.CompanyKey;
 
         CompanyMemberPayloadObject = {
-          UserMemberEmail: UserInfoIsInviteFromEmail,
+          UserMemberEmail: NonUserInviteData.NonUserInviteEmail,
           UserMemberPosition: NonUserInviteData.CompanyMemberPosition,
           UserMemberRoleName: NonUserInviteData.CompanyMemberRoleName,
           CompanyUserAccessibilityRolePermissionCode:
