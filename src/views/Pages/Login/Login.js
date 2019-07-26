@@ -162,7 +162,11 @@ class Login extends Component {
                             width: '300px',
                           }}
                           onClick={() => {
-                            this.props.login(this.props.loginForm, this.displayError);
+                            this.props.login(
+                              this.props.loginForm,
+                              this.displayError,
+                              '#/selectprofile',
+                            );
                           }}
                           className="px-4"
                         >
