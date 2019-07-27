@@ -25,6 +25,7 @@ import {
   GetURLFromStorageRefPath,
   GetURLFromStorageRefString,
   DeleteFileFromStorageRefPath,
+  UpdateMetaData,
 } from '../service/storage/managestorage';
 import { EditChatRoomFileLink } from '../service/chat/chat';
 
@@ -152,6 +153,9 @@ const UploadModal = forwardRef((props, ref) => {
     setConfirming(true);
     setIsUploading(true);
     _.forEach(uploadedFiles, (file) => {
+      UpdateMetaData(file.refPath, {
+        contentDisposition: `attachment; filename="${file.file.name}"`,
+      }).then();
       GetMetaDataFromStorageRefPath(file.refPath).subscribe({
         next: (metaData) => {
           CreateShipmentFile(shipmentKey, {
