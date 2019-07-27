@@ -1607,20 +1607,19 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
     const ShipmentKey = snapshot.data().ShipmentKey;
     const ChatRoomKey = snapshot.data().ChatRoomKey;
 
-    const isUsed = snapshot.data().isUsed ? snapshot.data().isUsed : 'N' ;
+    const isUsed = snapshot.data().isUsed ? snapshot.data().isUsed : 'N';
 
-    const Encoder = (stringtext) => encodeURIComponent(
-      AES.encrypt(stringtext, 'redroylkeew').toString()
-    );
+    const Encoder = stringtext =>
+      encodeURIComponent(AES.encrypt(stringtext, 'redroylkeew').toString());
 
-    const DocumentKeyEncoder = Encoder(context.params.NonUserInviteKey)
-    const ExpiryDateEncoder = Encoder(String(NonUserInviteExpiryDate.seconds))
-    const EmailEncoder = Encoder(NonUserInviteEmail)
-    const InviteTypeEncoder = Encoder(NonUserInviteType)
-    const InviteRecruiterCompanyKeyEncoder = Encoder(NonUserInviteRecruiterCompanyKey)
-    const ShipmentKeyEncoder = Encoder(ShipmentKey) 
-    const ChatRoomKeyEncoder = Encoder(ChatRoomKey)
-    const isUsedEncoder = Encoder(isUsed)
+    const DocumentKeyEncoder = Encoder(context.params.NonUserInviteKey);
+    const ExpiryDateEncoder = Encoder(String(NonUserInviteExpiryDate.seconds));
+    const EmailEncoder = Encoder(NonUserInviteEmail);
+    const InviteTypeEncoder = Encoder(NonUserInviteType);
+    const InviteRecruiterCompanyKeyEncoder = Encoder(NonUserInviteRecruiterCompanyKey);
+    const ShipmentKeyEncoder = Encoder(ShipmentKey);
+    const ChatRoomKeyEncoder = Encoder(ChatRoomKey);
+    const isUsedEncoder = Encoder(isUsed);
 
     if (NonUserInviteType === 'Shipment') {
       const HeaderText = `Join ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} on a shipment`;
@@ -1709,10 +1708,10 @@ exports.CreateMemberFromNonSystemUser = CloudFunctionsRegionsAsia.firestore
     const UserInfoInviteDocumentKey = snapshot.data().UserInfoInviteDocumentKey;
 
     const SetUsedUrlLink = await admin
-        .firestore()
-        .collection('NonUserInvite')
-        .doc(UserInfoInviteDocumentKey)
-        .set({ isUsed: 'Y' }, { merge: true });
+      .firestore()
+      .collection('NonUserInvite')
+      .doc(UserInfoInviteDocumentKey)
+      .set({ isUsed: 'Y' }, { merge: true });
 
     if (UserInfoIsInviteFromEmail && UserInfoInviteDocumentKey) {
       const GetNonUserInvite = await admin
@@ -1740,7 +1739,7 @@ exports.CreateMemberFromNonSystemUser = CloudFunctionsRegionsAsia.firestore
           .collection('ChatRoomMember')
           .add(ChatRoomMemberPayloadObject);
 
-        return SetUsedUrlLink
+        return SetUsedUrlLink;
       }
 
       if (NonUserInviteData.NonUserInviteType === 'Company') {
@@ -1764,7 +1763,20 @@ exports.CreateMemberFromNonSystemUser = CloudFunctionsRegionsAsia.firestore
           .doc(UserKey)
           .set(CompanyMemberPayloadObject);
 
-        return SetUsedUrlLink
+        await admin
+          .firestore()
+          .collection('UserInfo')
+          .doc(UserKey)
+          .collection('UserCompany')
+          .add({
+            UserCompanyReference: admin
+              .firestore()
+              .collection('Company')
+              .doc(CompanyKey),
+            UserCompanyTimestamp: admin.firestore.FieldValue.serverTimestamp()
+          });
+
+        return SetUsedUrlLink;
       }
     }
   });
