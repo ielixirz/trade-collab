@@ -163,6 +163,7 @@ class Shipment extends Component {
     }
     parameter.ShipmentCreatorProfileFirstName = this.props.sender.ProfileFirstname;
     parameter.ShipmentCreatorProfileSurName = this.props.sender.ProfileSurname;
+    parameter.ShipmentCreatorProfileKey = this.props.sender.id;
 
     parameter.ShipmentCreateTimestamp = new Date().getTime();
     CreateShipment(parameter).subscribe({
