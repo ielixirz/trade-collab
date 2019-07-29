@@ -164,7 +164,7 @@ class ChatWithHeader extends Component {
                 ChatRoomMemberCompanyName: pickedCompany.CompanyName,
                 ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
               });
-
+            }
           });
           if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
             this.props.toggleCreateChat(true);
@@ -176,7 +176,7 @@ class ChatWithHeader extends Component {
                 const data = result.path.split('/');
                 const chatkey = result.id;
                 const invite = CreateChatMultipleInvitation(
-                  _.filter(inviteMember,item=>item.Email!==user.email),
+                  _.filter(inviteMember, item => item.Email !== user.email),
                   ShipmentKey,
                   chatkey,
                   this.props.sender
