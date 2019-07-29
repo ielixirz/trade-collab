@@ -141,6 +141,7 @@ class TableShipment extends React.Component {
           ShipmentReferenceCompanyKey: ''
         }
       },
+
       submiting: {},
       shipments: [],
       inlineUpdate: {},
@@ -148,6 +149,8 @@ class TableShipment extends React.Component {
       companies: [],
       filterStatus: undefined
     };
+
+    this.tableRef = React.createRef();
   }
 
   componentDidMount() {
@@ -1085,7 +1088,15 @@ class TableShipment extends React.Component {
         {props => (
           <div>
             <Row>
-              <Col xs="4">{shipmentsProps.searchInput()}</Col>
+              <Col
+                xs="auto"
+                style={{
+                  marginRight: '10px'
+                }}
+              >
+                {' '}
+                {shipmentsProps.searchInput()}
+              </Col>
               <Col xs="3">
                 <Select
                   name="colors"
@@ -1131,11 +1142,15 @@ class TableShipment extends React.Component {
             </Row>
             <div
               className="table"
+              ref={el => {
+                this.tableRef = el;
+              }}
               onScroll={e => {
                 const obj = e.target;
                 const isTrigger = obj.scrollTop === obj.scrollHeight - obj.offsetHeight;
                 if (isTrigger) {
                   this.props.fetchMoreShipment();
+                  this.tableRef.scrollTop = this.tableRef.scrollHeight;
                 }
               }}
             >

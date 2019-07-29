@@ -54,7 +54,6 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
     `${ShipmentKey}.${ChatRoomKey}.message`,
     GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
       next: res => {
-
         dispatch({
           type: FETCH_CHAT,
           id: ChatRoomKey,
@@ -145,7 +144,6 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
     `${ShipmentKey}.${ChatRoomKey}.message`,
     GetChatMessage(ShipmentKey, ChatRoomKey, chats + 25).subscribe({
       next: res => {
-
         dispatch({
           type: FETCH_CHAT,
           id: ChatRoomKey,
@@ -246,7 +244,6 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
     });
   }
   if (hasRoom) {
-
     let newTabs = tabs.map(tab => {
       return {
         ...tab,
@@ -297,7 +294,6 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
         `${ShipmentKey}.${ChatRoomKey}.message`,
         GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
           next: res => {
-
             dispatch({
               type: FETCH_CHAT,
               id: ChatRoomKey,
@@ -388,7 +384,6 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
       `${ShipmentKey}.${ChatRoomKey}.message`,
       GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
         next: res => {
-
           dispatch({
             type: FETCH_CHAT,
             id: ChatRoomKey,
@@ -462,6 +457,10 @@ export const newChat = chatkey => (dispatch, getState) => {
 };
 
 export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch, getState) => {
+  dispatch({
+    type: SELECT_ROOM,
+    payload: ChatRoomKey
+  });
   // ShipmentKey,ChatRoomKey,Data
   // {
   //   ChatRoomMessageSender : ProfileKey,
@@ -596,8 +595,8 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
 
         const data = d.data();
         chatrooms.push({
-          id: index + 1,
-          active: index === 0,
+          id: chatrooms.length + 1,
+          active: _.get(chats, `${chatRoomKey}.active`, false),
           ChatRoomKey: chatRoomKey,
           ShipmentKey: shipmentKey,
           ChatRoomData: data,
@@ -606,6 +605,14 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
         return true;
       });
 
+      _.forEach(chatrooms, (item, index) => {
+        if (typeof item.active === Number) {
+          chatrooms[index].active = false;
+        }
+      });
+      if (_.isEmpty(_.find(chatrooms, item => item.active))) {
+        chatrooms[0].active = true;
+      }
       _.forEach(chatrooms, (c, index) => {
         originalReducer[c.ChatRoomKey] = {
           ..._.get(chats, c.ChatRoomKey, {}),

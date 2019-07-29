@@ -327,13 +327,30 @@ class Chat extends Component {
     const {
       match: { params }
     } = this.props;
-
-    const chats = _.filter(this.props.ChatReducer.chatrooms, item => {
+    let chats = _.filter(this.props.ChatReducer.chatrooms, item => {
       if (item.ShipmentKey === 'custom') {
         return true;
       }
       return item.ShipmentKey === params.shipmentkey;
     });
+    const hasNewChat = _.get(this.props, 'ChatReducer.selectedChat', '');
+    if (_.size(hasNewChat) > 2) {
+      if (_.find(chats, item => item.ChatRoomKey === hasNewChat)) {
+        chats = _.map(chats, (item, index) => {
+          if (item.ChatRoomKey === hasNewChat) {
+            return {
+              ...item,
+              active: true
+            };
+          } else {
+            return {
+              ...item,
+              active: false
+            };
+          }
+        });
+      }
+    }
 
     let tabs = [];
 
@@ -415,6 +432,16 @@ class Chat extends Component {
       });
     });
     tabs = _.sortBy(tabs, 'position');
+    let itemToReplace = {};
+    let createChatIndex = _.find(tabs, (item, index) => {
+      if (item.ShipmentKey === 'custom') {
+        itemToReplace = tabs.splice(index, 1);
+        return true;
+      }
+      return false;
+    });
+    tabs = tabs.concat(itemToReplace);
+    console.log('Tabs list is', tabs);
     const activeTab = tabs.filter(tab => tab.active === true);
     const toggle = this.props.ChatReducer.toggle;
     const createChat = this.props.ChatReducer.createChat || false;
