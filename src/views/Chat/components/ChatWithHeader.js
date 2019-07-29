@@ -126,7 +126,7 @@ class ChatWithHeader extends Component {
           }));
           const inviteRole = userRole;
           const inviteMember = [];
-
+          const userMember = [];
           if (memberData) {
             const result = UpdateChatRoomMember(
               ShipmentKey,
@@ -156,14 +156,15 @@ class ChatWithHeader extends Component {
                   ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
                 }
               );
+
+              inviteMember.push({
+                Email: memberItem.UserMemberEmail,
+                Image: '',
+                Role: inviteRole,
+                ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+              });
             }
-            inviteMember.push({
-              Email: memberItem.UserMemberEmail,
-              Image: '',
-              Role: inviteRole,
-              ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-              ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
-            });
           });
           if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
             this.props.toggleCreateChat(true);
@@ -175,7 +176,7 @@ class ChatWithHeader extends Component {
                 const data = result.path.split('/');
                 const chatkey = result.id;
                 const invite = CreateChatMultipleInvitation(
-                  inviteMember,
+                  _.filter(inviteMember, item => item.Email !== user.email),
                   ShipmentKey,
                   chatkey,
                   this.props.sender
