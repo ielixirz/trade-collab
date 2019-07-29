@@ -156,14 +156,15 @@ class ChatWithHeader extends Component {
                   ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
                 }
               );
+            } else {
+              inviteMember.push({
+                Email: memberItem.UserMemberEmail,
+                Image: '',
+                Role: inviteRole,
+                ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+              });
             }
-            inviteMember.push({
-              Email: memberItem.UserMemberEmail,
-              Image: '',
-              Role: inviteRole,
-              ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-              ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
-            });
           });
           if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
             this.props.toggleCreateChat(true);
