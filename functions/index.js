@@ -379,6 +379,9 @@ exports.OnCreateShipment = CloudFunctionsRegionsAsia.firestore
         });
 
       const ShipmentPartnerEmail = snapshot.data().ShipmentPartnerEmail;
+      const ShipmentCreatorProfileFirstName = snapshot.data().ShipmentCreatorProfileFirstName;
+      const ShipmentCreatorProfileSurName = snapshot.data().ShipmentCreatorProfileSurName;
+      const ShipmentCreatorProfileKey = snapshot.data().ShipmentCreatorProfileKey;
 
       const FindPartnerUserKey = await admin
         .firestore()
@@ -418,10 +421,13 @@ exports.OnCreateShipment = CloudFunctionsRegionsAsia.firestore
           .add({
             ChatRoomMemberUserKey: PartnerUID,
             ChatRoomMemberEmail: ShipmentPartnerEmail,
-            ChatRoomMemberRole: [ShipmetPartnerRole]
+            ChatRoomMemberRole: [ShipmetPartnerRole],
+            ChatRoomMemberRecruiterProfileFirstName: ShipmentCreatorProfileFirstName,
+            ChatRoomMemberRecruiterProfileSurName: ShipmentCreatorProfileSurName,
+            ChatRoomMemberRecruiterProfileKey: ShipmentCreatorProfileKey,
+            ChatRoomMemberRecruiterUserKey: ShipmentMemberUserKey
           });
       }
-
       return Promise.all([
         CreateShipmentShareData,
         AddShipmentShareList,

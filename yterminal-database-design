@@ -17,7 +17,8 @@
         ShipmentMemberList (array <string>)
         ShipmentPartnerEmail (string)
         ShipmentCreatorProfileFirstName (string)
-        ShipmentCreatorProfileSurName (string) 
+        ShipmentCreatorProfileSurName (string)
+        ShipmentCreatorProfileKey (string)
         ShipmentMember (object<object>)
             {
                 ShipmentMemberUserKey : 

@@ -117,6 +117,7 @@ class ChatWithHeader extends Component {
 
     const memberData = _.find(members, (item, index) => index === user.uid);
     const pickedCompany = _.find(companies, item => item.CompanyKey === e.value);
+
     if (pickedCompany) {
       const getCompany = GetCompanyMember(e.value).subscribe({
         next: res => {
@@ -125,6 +126,19 @@ class ChatWithHeader extends Component {
           }));
           const inviteRole = userRole;
           const inviteMember = [];
+
+          if (memberData) {
+            const result = UpdateChatRoomMember(
+              ShipmentKey,
+              ChatRoomKey,
+              memberData.ChatRoomMemberKey,
+              {
+                ...memberData,
+                ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+              }
+            );
+          }
           _.forEach(CompanyMember, memberItem => {
             const chatMember = _.find(
               members,
@@ -142,30 +156,17 @@ class ChatWithHeader extends Component {
                   ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
                 }
               );
-            } else {
-              inviteMember.push({
-                Email: memberItem.UserMemberEmail,
-                Image: '',
-                Role: inviteRole,
-                ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
-              });
             }
+            inviteMember.push({
+              Email: memberItem.UserMemberEmail,
+              Image: '',
+              Role: inviteRole,
+              ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+              ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+            });
           });
           if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
             this.props.toggleCreateChat(true);
-            const invite = CreateChatMultipleInvitation(
-              inviteMember,
-              ShipmentKey,
-              ChatRoomKey,
-              this.props.sender
-            ).subscribe({
-              next: res => {
-                console.log(res);
-                invite.unsubscribe();
-                this.props.fetchMoreMessage(ChatRoomKey, ShipmentKey);
-              }
-            });
             CreateChatRoom(ShipmentKey, {
               ChatRoomType: 'Internal',
               ChatRoomName: 'Internal'
@@ -757,9 +758,7 @@ class ChatWithHeader extends Component {
                         if (this.multilineTextarea.scrollHeight > 280) {
                           this.multilineTextarea.style.height = '280px';
                         } else {
-                          this.multilineTextarea.style.height = `${
-                            this.multilineTextarea.scrollHeight
-                          }px`;
+                          this.multilineTextarea.style.height = `${this.multilineTextarea.scrollHeight}px`;
                         }
 
                         ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
