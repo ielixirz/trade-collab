@@ -29,7 +29,7 @@ const NewUser = (props) => {
   useEffect(() => {
     const parsed = queryString.parse(props.location.search);
     const {
- dke, ed, e, f, ck, u,
+ dke, ed, e, f, ck, u, cr, s,
 } = parsed;
     // ---- TO-DO secret key need to be stored securely
     const bytesUsed = CryptoJS.AES.decrypt(u, 'redroylkeew');
@@ -50,13 +50,20 @@ const NewUser = (props) => {
 
       const dataKey = {};
       let decryptedCompanyKey;
-      // let decrypted???Key ---> for invite to shipment/chat case
+      let decryptedChatroomKey;
+      let decryptedShipmentKey;
       if (decryptedFlow === 'Company') {
         const bytesCompany = CryptoJS.AES.decrypt(ck, 'redroylkeew');
         decryptedCompanyKey = bytesCompany.toString(CryptoJS.enc.Utf8);
         dataKey.companyKey = decryptedCompanyKey;
-      } else {
-        // data.chatKey???? = decrypted???Key;
+      } else if (decryptedFlow === 'Chat') {
+        const bytesChatroom = CryptoJS.AES.decrypt(cr, 'redroylkeew');
+        decryptedChatroomKey = bytesChatroom.toString(CryptoJS.enc.Utf8);
+        dataKey.chatroomKey = decryptedChatroomKey;
+
+        const bytesShipment = CryptoJS.AES.decrypt(s, 'redroylkeew');
+        decryptedShipmentKey = bytesShipment.toString(CryptoJS.enc.Utf8);
+        dataKey.shipmentKey = decryptedShipmentKey;
       }
 
       if (!verifyExpiration(decryptedED)) {
