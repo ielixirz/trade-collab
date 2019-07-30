@@ -186,10 +186,10 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
 };
 
 export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
-  const tabs = [];
-  _.forEach(chats, item => {
+  let tabs = [];
+  _.forEach(chats, (item, index) => {
     tabs.push({
-      id: tabs.length + 1,
+      id: index + 1,
       roomName: item.roomName,
       active: item.active,
       ChatRoomKey: item.ChatRoomKey,
@@ -203,6 +203,12 @@ export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
   const movingItem = tabs[dragIndex];
   tabs.splice(dragIndex, 1);
   tabs.splice(hoverIndex, 0, movingItem);
+  tabs = _.map(tabs, (item, index) => {
+    return {
+      ...item,
+      position: index
+    };
+  });
 
   const originalReducer = [];
   _.forEach(tabs, (item, index) => {
@@ -322,9 +328,6 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
   }
 };
 export const selectTab = (selectedIndex, selectedID, tabs) => (dispatch, getState) => {
-  console.log('Tabs', tabs);
-  console.log('Select', selectedIndex, selectedID);
-
   const newTabs = _.map(tabs, (item, index) => {
     if (index === selectedIndex) {
       dispatch({
@@ -337,7 +340,6 @@ export const selectTab = (selectedIndex, selectedID, tabs) => (dispatch, getStat
       active: index === selectedIndex
     };
   });
-  console.log('newTab', newTabs);
 
   const originalReducer = [];
   _.forEach(newTabs, (item, index) => {
@@ -565,7 +567,6 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
               ...item,
               position: index
             }));
-            console.log(chatrooms, 'newChatRoom');
           }
         });
       }

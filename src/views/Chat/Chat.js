@@ -355,7 +355,6 @@ class Chat extends Component {
     if (hasNewCreateChat === hasNewChat) {
       if (_.size(hasNewCreateChat) > 2) {
         chats = _.orderBy(chats, ['active'], ['asc']);
-        console.log('Before', chats);
         _.forEach(chats, (item, x) => {
           if (item.ChatRoomKey === 'custom') {
             chats.push(chats.splice(x, 1)[0]);
@@ -449,7 +448,6 @@ class Chat extends Component {
       });
     });
     tabs = _.orderBy(tabs, ['position'], ['asc']);
-    console.log('Tab', tabs);
     const activeTab = tabs.filter(tab => tab.active === true);
     const toggle = this.props.ChatReducer.toggle;
     const createChat = this.props.ChatReducer.createChat || false;
@@ -461,7 +459,6 @@ class Chat extends Component {
             this.props.moveTab(hoverIndex, dragIndex, chats);
           }}
           selectTab={(selectedIndex, selectedID, chats) => {
-            console.log('Sele', selectedIndex, selectedID);
             this.props.selectTab(selectedIndex, selectedID, newChat);
           }}
           tabs={tabs}
