@@ -70,9 +70,6 @@ class Chat extends Component {
       this.nameInput.focus(true);
     }
     const hasNewChat = _.get(this.props, 'ChatReducer.selectedChat', '');
-    if (_.size(hasNewChat) > 2) {
-      this.props.selectChat(hasNewChat);
-    }
   }
 
   toggleBlocking = toggle => {

@@ -265,10 +265,6 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
       };
     });
 
-    dispatch({
-      type: SELECT_ROOM,
-      payload: ''
-    });
     const originalReducer = [];
     _.forEach(newTabs, (item, index) => {
       originalReducer[item.ChatRoomKey] = {
@@ -354,10 +350,18 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
       member: item.member
     });
   });
-  const newTabs = tabs.map(tab => ({
-    ...tab,
-    active: tab.id === selectedID
-  }));
+  const newTabs = tabs.map(tab => {
+    if (tab.id === selectedID) {
+      dispatch({
+        type: SELECT_ROOM,
+        payload: tab.ChatRoomKey
+      });
+    }
+    return {
+      ...tab,
+      active: tab.id === selectedID
+    };
+  });
 
   const originalReducer = [];
   _.forEach(newTabs, (item, index) => {
@@ -575,6 +579,7 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch
 let chatroomList = {};
 export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
   const chats = getState().ChatReducer.chatrooms;
+  const selectedChat = getState().ChatReducer.selectedChat;
   const tabs = [];
 
   if (_.get(chatroomList, 'selectedShipment', shipmentKey) !== shipmentKey) {
@@ -606,7 +611,9 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
       });
 
       _.forEach(chatrooms, (item, index) => {
-        if (typeof item.active === Number) {
+        if (item.ChatRoomKey === selectedChat) {
+          chatrooms[index].active = true;
+        } else {
           chatrooms[index].active = false;
         }
       });
