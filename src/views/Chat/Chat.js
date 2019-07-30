@@ -331,6 +331,7 @@ class Chat extends Component {
       }
       return item.ShipmentKey === params.shipmentkey;
     });
+
     const hasNewChat = _.get(this.props, 'ChatReducer.selectedChat', '');
     const hasNewCreateChat = _.get(this.props, 'ChatReducer.lastCreatedChat', '');
     if (_.size(hasNewChat) > 2) {
@@ -350,6 +351,7 @@ class Chat extends Component {
         });
       }
     }
+
     if (hasNewCreateChat === hasNewChat) {
       if (_.size(hasNewCreateChat) > 2) {
         chats = _.orderBy(chats, ['active'], ['asc']);
@@ -366,6 +368,7 @@ class Chat extends Component {
       }
     }
 
+    let newChat = chats;
     let tabs = [];
 
     _.forEach(chats, item => {
@@ -457,7 +460,10 @@ class Chat extends Component {
           moveTab={(hoverIndex, dragIndex) => {
             this.props.moveTab(hoverIndex, dragIndex, chats);
           }}
-          selectTab={this.props.selectTab}
+          selectTab={(selectedIndex, selectedID, chats) => {
+            console.log('Sele', selectedIndex, selectedID);
+            this.props.selectTab(selectedIndex, selectedID, newChat);
+          }}
           tabs={tabs}
         />
         <TabContent>

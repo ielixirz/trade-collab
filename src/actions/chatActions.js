@@ -252,19 +252,6 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
       };
     });
 
-    newTabs = _.orderBy(newTabs, ['active'], ['asc']);
-
-    _.forEach(newTabs, (item, x) => {
-      if (newTabs[x].ChatRoomKey === 'custom') {
-        newTabs.push(newTabs.splice(x, 1)[0]);
-      }
-    });
-    newTabs = _.map(newTabs, (item, index) => {
-      return {
-        ...item,
-        position: index
-      };
-    });
     const originalReducer = [];
     _.forEach(newTabs, (item, index) => {
       originalReducer[item.ChatRoomKey] = {
@@ -334,34 +321,23 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
     dispatch({ type: MOVE_TAB, payload: originalReducer });
   }
 };
-export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => {
-  const chats = getState().ChatReducer.chatrooms;
-  const tabs = [];
-  _.forEach(chats, item => {
-    tabs.push({
-      id: tabs.length + 1,
-      roomName: item.roomName,
-      active: item.active,
-      ChatRoomKey: item.ChatRoomKey,
-      ShipmentKey: item.ShipmentKey,
-      ChatRoomData: item.ChatRoomData,
-      position: _.get(chats, `${item.ChatRoomKey}.position`, _.size(chats)),
+export const selectTab = (selectedIndex, selectedID, tabs) => (dispatch, getState) => {
+  console.log('Tabs', tabs);
+  console.log('Select', selectedIndex, selectedID);
 
-      member: item.member
-    });
-  });
-  const newTabs = tabs.map(tab => {
-    if (tab.id === selectedID) {
+  const newTabs = _.map(tabs, (item, index) => {
+    if (index === selectedIndex) {
       dispatch({
         type: SELECT_ROOM,
-        payload: tab.ChatRoomKey
+        payload: item.ChatRoomKey
       });
     }
     return {
-      ...tab,
-      active: tab.id === selectedID
+      ...item,
+      active: index === selectedIndex
     };
   });
+  console.log('newTab', newTabs);
 
   const originalReducer = [];
   _.forEach(newTabs, (item, index) => {
@@ -371,64 +347,9 @@ export const selectTab = (selectedIndex, selectedID) => (dispatch, getState) => 
       roomName: item.roomName,
       active: item.active,
       ChatRoomData: item.ChatRoomData,
-      position: index,
+      position: item.position,
       member: item.member
     };
-    const { ChatRoomKey, ShipmentKey } = item;
-    const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.message`, false);
-    const members = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.members`, false);
-    if (room) {
-      room.unsubscribe();
-      if (members) {
-        members.unsubscribe();
-      }
-    }
-    _.set(
-      chatroom,
-      `${ShipmentKey}.${ChatRoomKey}.message`,
-      GetChatMessage(ShipmentKey, ChatRoomKey, 25).subscribe({
-        next: res => {
-          dispatch({
-            type: FETCH_CHAT,
-            id: ChatRoomKey,
-            payload: res
-          });
-          _.set(
-            chatroom,
-            `${ShipmentKey}.${ChatRoomKey}.member`,
-            GetChatRoomMemberList(ShipmentKey, ChatRoomKey).subscribe({
-              next: res => {
-                const members = _.map(res, item => {
-                  return {
-                    ChatRoomMemberKey: item.id,
-                    ...item.data()
-                  };
-                });
-                dispatch({
-                  type: TOGGLE_LOAD,
-                  payload: false
-                });
-                dispatch({
-                  type: FETCH_CHAT_MEMBER,
-                  id: ChatRoomKey,
-                  payload: members
-                });
-              }
-            })
-          );
-        },
-        error: err => {
-          console.log(err);
-          alert(err.message);
-        },
-        complete: () => {
-          dispatch({
-            type: TOGGLE_LOAD,
-            payload: false
-          });
-        }
-      })
-    );
   });
   dispatch({ type: MOVE_TAB, payload: originalReducer });
 };
@@ -627,9 +548,12 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
           chatrooms[index].active = false;
         }
       });
-      if (_.isEmpty(_.filter(chatrooms, item => item.active))) {
-        chatrooms[0].active = true;
+      if (_.size(chatrooms) > 0) {
+        if (_.isEmpty(_.filter(chatrooms, item => item.active))) {
+          chatrooms[0].active = true;
+        }
       }
+
       const newChatRoom = _.get(getState(), 'ChatReducer.lastCreatedChat', '');
       if (!_.isEmpty(newChatRoom)) {
         chatrooms = _.orderBy(chatrooms, ['active'], ['asc']);
