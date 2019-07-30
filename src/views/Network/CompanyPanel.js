@@ -420,7 +420,8 @@ const CompanyPanel = (props) => {
           console.log('TO DO LOG');
         },
       });
-    } catch {
+    } catch (e) {
+      console.error(e);
       setBlocking(false);
     }
   }, [acceptedRequest]);
