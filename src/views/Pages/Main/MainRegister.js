@@ -99,8 +99,33 @@ class MainRegister extends Component {
           },
         });
         break;
-      case 'SHIPMENT_CHAT_INVITE':
-        // TO-DO for fluke
+      case 'Chat':
+        RegisterUser(data).subscribe({
+          next: (result) => {
+            this.props.setDefault();
+            const checkingMembership = KeepIsCompanyMember(dataKey.companyKey, result).subscribe({
+              next: (isMember) => {
+                if (isMember) {
+                  checkingMembership.unsubscribe();
+                  this.props.login(
+                    { email: data.Email, password: data.Password },
+                    null,
+                    `#/selectprofile/?rs=${dataKey.shipmentKey}`,
+                  );
+                }
+              },
+              error: (err) => {
+                console.log('err', err);
+              },
+            });
+          },
+          complete: (result) => {
+            console.log(result);
+          },
+          error: (err) => {
+            console.log('err', err);
+          },
+        });
         break;
       default:
         // TO-DO return unhandled case.
