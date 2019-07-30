@@ -5,6 +5,7 @@ export const FILL_CREDENCIAL = 'FILL_CREDENCIAL';
 export const SAVE_CREDENCIAL = 'SAVE_CREDENCIAL';
 export const moveTab = 'moveTab';
 export const SELECT_ROOM = 'SELECT_ROOM';
+export const NEW_ROOM = 'NEW_ROOM';
 export const selectTab = 'selectTab';
 export const closedTab = 'closedTab';
 export const addTab = 'addTab';
