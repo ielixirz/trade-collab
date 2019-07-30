@@ -387,38 +387,42 @@ const CompanyPanel = (props) => {
   };
 
   useEffect(() => {
-    IsCompanyMember(props.match.params.key, props.auth.uid).subscribe((member) => {
-      setIsMember(member);
-      if (member) {
-        GetCompanyUserAccessibility(props.match.params.key)
-          .pipe(map(docs => docs.map(d => d.data())))
-          .subscribe((userMatrix) => {
-            const initRoles = [...roleList];
-            const roles = userMatrix.map(matrix => ({
-              value: {
-                role: matrix.CompanyUserAccessibilityRoleName,
-              },
-              label: matrix.CompanyUserAccessibilityRoleName,
-            }));
-            const companyRoles = initRoles.concat(roles);
-            setRoleList(companyRoles);
-            fetchIncomingRequest(props.match.params.key, roles);
-            fetchMember(props.match.params.key, roles);
-          });
-      }
-    });
-    GetCompanyDetail(props.match.params.key).subscribe({
-      next: (snapshot) => {
-        const data = snapshot.data();
-        setCompany(data);
-      },
-      error: (err) => {
-        console.log(err);
-      },
-      complete: () => {
-        console.log('TO DO LOG');
-      },
-    });
+    try {
+      IsCompanyMember(props.match.params.key, props.auth.uid).subscribe((member) => {
+        setIsMember(member);
+        if (member) {
+          GetCompanyUserAccessibility(props.match.params.key)
+            .pipe(map(docs => docs.map(d => d.data())))
+            .subscribe((userMatrix) => {
+              const initRoles = [...roleList];
+              const roles = userMatrix.map(matrix => ({
+                value: {
+                  role: matrix.CompanyUserAccessibilityRoleName,
+                },
+                label: matrix.CompanyUserAccessibilityRoleName,
+              }));
+              const companyRoles = initRoles.concat(roles);
+              setRoleList(companyRoles);
+              fetchIncomingRequest(props.match.params.key, roles);
+              fetchMember(props.match.params.key, roles);
+            });
+        }
+      });
+      GetCompanyDetail(props.match.params.key).subscribe({
+        next: (snapshot) => {
+          const data = snapshot.data();
+          setCompany(data);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+        complete: () => {
+          console.log('TO DO LOG');
+        },
+      });
+    } catch {
+      setBlocking(false);
+    }
   }, [acceptedRequest]);
 
   const toggleEdit = () => {
