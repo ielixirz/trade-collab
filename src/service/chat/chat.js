@@ -1,7 +1,9 @@
 /* eslint-disable max-len */
 import { collection, doc } from 'rxfire/firestore';
 import { from } from 'rxjs';
-import { map, retry, take } from 'rxjs/operators';
+import {
+  map, retry, take, filter,
+} from 'rxjs/operators';
 import { FirebaseApp } from '../firebase';
 
 const ShipmentRefPath = ShipmentKey => FirebaseApp.firestore()
@@ -146,3 +148,7 @@ export const LeaveChatRoomMember = (ShipmentKey, ChatRoomKey, ChatRoomMemberKey)
     .doc(ChatRoomMemberKey)
     .set({ ChatRoomMemberIsLeave: true }, { merge: true }),
 );
+
+export const isChatRoomMember = (ShipmentKey, ChatRoomKey, UserKey) => collection(
+  ChatRoomMemberRefPath(ShipmentKey, ChatRoomKey).where('ChatRoomMemberUserKey', '==', UserKey),
+).pipe(filter(data => data.length > 0));
