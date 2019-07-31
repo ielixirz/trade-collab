@@ -1,7 +1,7 @@
 import { collection, doc, collectionData } from 'rxfire/firestore';
 import { from, combineLatest, merge } from 'rxjs';
 import {
-  take, concatMap, map, tap, mergeMap, toArray, switchMap,
+  take, concatMap, map, tap, mergeMap, toArray, switchMap, filter,
 } from 'rxjs/operators';
 import _ from 'lodash';
 import { FirebaseApp } from '../firebase';
@@ -205,4 +205,6 @@ export const SearchShipment = (
 };
 
 // eslint-disable-next-line max-len
-export const TestCollectionGroup = ShipmentMemberUserKey => collection(ShipmentRefPath().where(`ShipmentMember.${ShipmentMemberUserKey}`, '>=', {}));
+export const isShipmentMember = (ShipmentKey, UserKey) => doc(ShipmentRefPath().doc(ShipmentKey)).pipe(
+  filter(DocData => !!DocData.data().ShipmentMemberList.find(Item => Item === UserKey)),
+);
