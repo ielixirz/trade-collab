@@ -176,18 +176,28 @@ class ChatWithHeader extends Component {
                 const data = result.path.split('/');
                 const chatkey = result.id;
                 const invite = CreateChatMultipleInvitation(
-                  inviteMember,
+                  _.filter(inviteMember, item => item.Email !== user.email),
                   ShipmentKey,
                   chatkey,
                   this.props.sender
                 ).subscribe({
                   next: res => {
-                    console.log('Invite Result', res);
-
-                    this.props.fetchMoreMessage(chatkey, ShipmentKey);
-                  },
-                  complete: result => {
+                    console.log('Invite Result');
                     invite.unsubscribe();
+                    this.props.fetchMoreMessage(chatkey, ShipmentKey);
+                  }
+                });
+                const ChatRoomMember = AddChatRoomMember(ShipmentKey, chatkey, {
+                  ChatRoomMemberUserKey: this.props.user.uid,
+                  ChatRoomMemberEmail: this.props.user.email,
+                  ChatRoomMemberImageUrl: '',
+                  ChatRoomMemberRole: inviteRole,
+                  ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+                }).subscribe({
+                  next: result => {},
+                  complete: () => {
+                    ChatRoomMember.unsubscribe();
                   }
                 });
               },
