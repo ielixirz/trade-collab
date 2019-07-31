@@ -156,15 +156,14 @@ class ChatWithHeader extends Component {
                   ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
                 }
               );
-
-              inviteMember.push({
-                Email: memberItem.UserMemberEmail,
-                Image: '',
-                Role: inviteRole,
-                ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
-              });
             }
+            inviteMember.push({
+              Email: memberItem.UserMemberEmail,
+              Image: '',
+              Role: inviteRole,
+              ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+              ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+            });
           });
           if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
             this.props.toggleCreateChat(true);
@@ -173,29 +172,23 @@ class ChatWithHeader extends Component {
               ChatRoomName: 'Internal'
             }).subscribe({
               next: result => {
+                console.log(inviteMember, 'inviteMember List');
                 const data = result.path.split('/');
                 const chatkey = result.id;
                 const invite = CreateChatMultipleInvitation(
-                  _.filter(inviteMember, item => item.Email !== user.email),
+                  inviteMember,
                   ShipmentKey,
                   chatkey,
                   this.props.sender
                 ).subscribe({
                   next: res => {
-                    console.log(res);
-                    invite.unsubscribe();
+                    console.log('Invite Result', res);
+
                     this.props.fetchMoreMessage(chatkey, ShipmentKey);
+                  },
+                  complete: result => {
+                    invite.unsubscribe();
                   }
-                });
-                const ChatRoomMember = AddChatRoomMember(ShipmentKey, chatkey, {
-                  ChatRoomMemberUserKey: this.props.user.uid,
-                  ChatRoomMemberEmail: this.props.user.email,
-                  ChatRoomMemberImageUrl: '',
-                  ChatRoomMemberRole: inviteRole,
-                  ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
-                }).subscribe({
-                  next: result => {}
                 });
               },
               complete: result => {
@@ -686,7 +679,7 @@ class ChatWithHeader extends Component {
                 <div className="msg_history-cover-bar" />
               </div>
               <div className="inputBox">
-                <div className="type_msg" contentEditable>
+                <div className="type_msg">
                   <UploadModal
                     chatFile={ChatRoomFileLink}
                     sendMessage={sendMessage}
