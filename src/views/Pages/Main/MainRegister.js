@@ -12,6 +12,7 @@ import SelectRole from '../SelectProfile/SelectRole';
 import Confirmation from '../SelectProfile/Confirmation';
 import { RegisterUser } from '../../../service/auth/register';
 import { KeepIsCompanyMember } from '../../../service/company/company';
+import { isChatRoomMember } from '../../../service/chat/chat';
 import { login, setDefault } from '../../../actions/loginActions';
 
 class MainRegister extends Component {
@@ -73,16 +74,16 @@ class MainRegister extends Component {
     switch (flow) {
       case 'Company':
         RegisterUser(data).subscribe({
-          next: (result) => {
+          next: (userKey) => {
             this.props.setDefault();
-            const checkingMembership = KeepIsCompanyMember(dataKey.companyKey, result).subscribe({
+            const checkingMembership = KeepIsCompanyMember(dataKey.companyKey, userKey).subscribe({
               next: (isMember) => {
                 if (isMember) {
                   checkingMembership.unsubscribe();
                   this.props.login(
                     { email: data.Email, password: data.Password },
                     null,
-                    `#/selectprofile/?rc=${dataKey.companyKey}`,
+                    `#/selectprofile/?l=${dataKey.companyKey}`,
                   );
                 }
               },
@@ -101,16 +102,16 @@ class MainRegister extends Component {
         break;
       case 'Chat':
         RegisterUser(data).subscribe({
-          next: (result) => {
+          next: (userKey) => {
             this.props.setDefault();
-            const checkingMembership = KeepIsCompanyMember(dataKey.companyKey, result).subscribe({
+            const checkingMembership = isChatRoomMember(dataKey.shipmentKey, dataKey.chatroomKey, userKey).subscribe({
               next: (isMember) => {
                 if (isMember) {
                   checkingMembership.unsubscribe();
                   this.props.login(
                     { email: data.Email, password: data.Password },
                     null,
-                    `#/selectprofile/?rs=${dataKey.shipmentKey}`,
+                    `#/selectprofile/?l=${dataKey.shipmentKey}`,
                   );
                 }
               },

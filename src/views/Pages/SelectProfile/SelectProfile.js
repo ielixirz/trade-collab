@@ -60,11 +60,25 @@ class SelectProfile extends Component {
     }, 2000);
   };
 
+  goToChat = (profile, chatroomKey) => {
+    const { user, history, fetchProfile } = this.props;
+    fetchProfile(user.uid, profile.id, history);
+    this.setState({
+      blocking: true,
+    });
+    // using timeout rightnow for workaround
+    setTimeout(() => {
+      history.push(`/chat/${chatroomKey}`);
+    }, 2000);
+  };
+
   getIn = (profile) => {
     const parsed = queryString.parse(this.props.location.search);
-    const { rc } = parsed;
-    if (rc !== undefined) {
-      this.goToCompany(profile, rc);
+    const { l } = parsed;
+    if (l !== undefined) {
+      this.goToCompany(profile, l);
+    } else if (l !== undefined) {
+      this.goToChat(profile, l);
     } else {
       this.goToShipment(profile);
     }
