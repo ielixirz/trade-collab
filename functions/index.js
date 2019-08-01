@@ -839,7 +839,7 @@ exports.SendEmailInviteIntoShipment = CloudFunctionsRegionsAsia.firestore
       border-radius:8px;
       padding:18px 0;
       background-color:rgba(255, 90 , 95, 1);
-      color:#ffffff;" class="redirectbutton" href='https://yterminal-b0906.firebaseapp.com/#/chat/${
+      color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/chat/${
         context.params.ShipmentKey
       }'>Join Now</a>`;
 
@@ -1121,7 +1121,7 @@ exports.NotiBellAndEmailInviteToJoinCompany = CloudFunctionsRegionsAsia.firestor
       border-radius:8px;
       padding:18px 0;
       background-color:rgba(255, 90 , 95, 1);
-      color:#ffffff;" class="redirectbutton" href='https://yterminal-b0906.firebaseapp.com/#/network/company/${
+      color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/network/company/${
         snapshot.data().CompanyInvitationCompanyKey
       }'>Join Now</a>`;
 
@@ -1550,7 +1550,7 @@ exports.SendUnreadMessage = CloudFunctionsRegionsAsia.https.onRequest(async (req
         border-radius:8px;
         padding:18px 0;
         background-color:rgba(255, 90 , 95, 1);
-        color:#ffffff;" class="redirectbutton" href='https://yterminal-b0906.firebaseapp.com/#/shipment'>View Messages</a>`;
+        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/shipment'>View Messages</a>`;
 
       const ProfileUnreadMergeText = MapTextWithProfileUnread.join();
       const ProfileUnreadMergeHtml = MapHtmlWithProfileUnread.join('');
