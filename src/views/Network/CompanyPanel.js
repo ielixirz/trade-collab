@@ -185,12 +185,6 @@ const CompanyPanel = (props) => {
     }
   };
 
-  const validateMembership = (companyKey, userKey) => {
-    IsCompanyMember(companyKey, userKey).subscribe((member) => {
-      setIsMember(member);
-    });
-  };
-
   const filterMemberRole = (role, member) => {
     let filterMembers = member;
     if (role !== 'ALL') {
@@ -209,17 +203,17 @@ const CompanyPanel = (props) => {
     combineLatest([
       GetCompanyInvitation(companyKey).pipe(
         map(docs => docs.map((d) => {
-          const data = d.data();
-          data.key = d.id;
-          return data;
-        })),
+            const data = d.data();
+            data.key = d.id;
+            return data;
+          })),
       ),
       GetCompanyMember(companyKey).pipe(
         map(docs => docs.map((d) => {
-          const data = d.data();
-          data.key = d.id;
-          return data;
-        })),
+            const data = d.data();
+            data.key = d.id;
+            return data;
+          })),
       ),
     ]).subscribe((data) => {
       const members = [];
@@ -236,13 +230,13 @@ const CompanyPanel = (props) => {
               data={{
                 onChangeFn: null,
                 onKeyPressFn: event => updateMember(
-                  companyKey,
-                  member.key,
-                  {
-                    UserMemberPosition: event.target.value,
-                  },
-                  member.UserMemberPosition,
-                ),
+                    companyKey,
+                    member.key,
+                    {
+                      UserMemberPosition: event.target.value,
+                    },
+                    member.UserMemberPosition,
+                  ),
               }}
             />
           ),
@@ -253,11 +247,11 @@ const CompanyPanel = (props) => {
               data={{
                 options: companyRoles,
                 onChangeFn: input => updateMember(
-                  companyKey,
-                  member.key,
-                  { UserMemberRoleName: input.value.role },
-                  member.UserMemberRoleName,
-                ),
+                    companyKey,
+                    member.key,
+                    { UserMemberRoleName: input.value.role },
+                    member.UserMemberRoleName,
+                  ),
               }}
             />
           ),
@@ -269,14 +263,14 @@ const CompanyPanel = (props) => {
                 {
                   text: 'Deactivate',
                   function: () => updateMember(companyKey, member.key, {
-                    UserMemberCompanyStandingStatus: 'Deactivated',
-                  }),
+                      UserMemberCompanyStandingStatus: 'Deactivated',
+                    }),
                 },
                 {
                   text: 'Activate',
                   function: () => updateMember(companyKey, member.key, {
-                    UserMemberCompanyStandingStatus: 'Active',
-                  }),
+                      UserMemberCompanyStandingStatus: 'Active',
+                    }),
                 },
               ]}
             />
@@ -306,7 +300,6 @@ const CompanyPanel = (props) => {
   };
 
   const responseToRequest = (keys, status) => {
-    setBlocking(true);
     if (status === 'Approve') {
       if (updateRole[keys.uKey] !== undefined) {
         UpdateCompanyRequestStatus(
@@ -394,34 +387,43 @@ const CompanyPanel = (props) => {
   };
 
   useEffect(() => {
-    validateMembership(props.match.params.key, props.auth.uid);
-    GetCompanyDetail(props.match.params.key).subscribe({
-      next: (snapshot) => {
-        const data = snapshot.data();
-        setCompany(data);
-      },
-      error: (err) => {
-        console.log(err);
-      },
-      complete: () => {
-        console.log('TO DO LOG');
-      },
-    });
-    GetCompanyUserAccessibility(props.match.params.key)
-      .pipe(map(docs => docs.map(d => d.data())))
-      .subscribe((userMatrix) => {
-        const initRoles = [...roleList];
-        const roles = userMatrix.map(matrix => ({
-          value: {
-            role: matrix.CompanyUserAccessibilityRoleName,
-          },
-          label: matrix.CompanyUserAccessibilityRoleName,
-        }));
-        const companyRoles = initRoles.concat(roles);
-        setRoleList(companyRoles);
-        fetchIncomingRequest(props.match.params.key, roles);
-        fetchMember(props.match.params.key, roles);
+    try {
+      IsCompanyMember(props.match.params.key, props.auth.uid).subscribe((member) => {
+        setIsMember(member);
+        if (member) {
+          GetCompanyUserAccessibility(props.match.params.key)
+            .pipe(map(docs => docs.map(d => d.data())))
+            .subscribe((userMatrix) => {
+              const initRoles = [...roleList];
+              const roles = userMatrix.map(matrix => ({
+                value: {
+                  role: matrix.CompanyUserAccessibilityRoleName,
+                },
+                label: matrix.CompanyUserAccessibilityRoleName,
+              }));
+              const companyRoles = initRoles.concat(roles);
+              setRoleList(companyRoles);
+              fetchIncomingRequest(props.match.params.key, roles);
+              fetchMember(props.match.params.key, roles);
+            });
+        }
       });
+      GetCompanyDetail(props.match.params.key).subscribe({
+        next: (snapshot) => {
+          const data = snapshot.data();
+          setCompany(data);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+        complete: () => {
+          console.log('TO DO LOG');
+        },
+      });
+    } catch (e) {
+      console.error(e);
+      setBlocking(false);
+    }
   }, [acceptedRequest]);
 
   const toggleEdit = () => {
