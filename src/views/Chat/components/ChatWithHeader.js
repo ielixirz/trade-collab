@@ -183,7 +183,6 @@ class ChatWithHeader extends Component {
                 ).subscribe({
                   next: res => {
                     console.log('Invite Result');
-                    invite.unsubscribe();
                     this.props.fetchMoreMessage(chatkey, ShipmentKey);
                   }
                 });
