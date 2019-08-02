@@ -12,8 +12,7 @@ import MemberInviteList from './MemberInviteList';
 class MemberInvite extends React.Component {
   onSelectRole = role => {
     const { existRoles } = this.props;
-    console.log('selected role ', role, 'existRoles', existRoles);
-    console.log('existRoles.includes(role)', existRoles.includes(role));
+
     let updated = null;
     if (existRoles.includes(role)) {
       updated = _.filter(existRoles, data => data !== role);
