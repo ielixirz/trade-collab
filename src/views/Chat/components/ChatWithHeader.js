@@ -497,22 +497,24 @@ class ChatWithHeader extends Component {
       onFileDrop,
       shipments
     } = this.props;
-    const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
+    const members = _.get(shipments, `${ShipmentKey}.ShipmentMember`, []);
+    console.log('Shipments member', members);
+    const isInvited = _.find(members, item => item.ShipmentMemberEmail === user.email);
     let ref = '';
-    const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
-    console.log(isInvited, 'member???');
+    const ship = _.get(shipments, `${ShipmentKey}`, {});
+    console.log(ship, 'ShipmentReferenceList???');
 
     if (!_.isEmpty(isInvited)) {
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
         ref = _.find(
           ship.ShipmentReferenceList,
-          item => item.ShipmentReferenceCompanyKey === isInvited.ChatRoomMemberCompanyKey
+          item => item.ShipmentReferenceCompanyKey === isInvited.ShipmentMemberCompanyKey
         );
       }
     } else {
       ref = 'loading';
     }
-
+    console.log('refs', ref);
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
         <Row
@@ -605,6 +607,7 @@ class ChatWithHeader extends Component {
                 className="msg_history"
                 onScroll={() => {
                   const div = document.getElementById('chathistory').scrollTop;
+                  console.log(div);
                   if (div === 0) {
                     fetchMoreMessage(ChatRoomKey, ShipmentKey);
                   }
@@ -617,7 +620,7 @@ class ChatWithHeader extends Component {
                   ? this.renderAssignCompany(this.props.ShipmentData.ShipmentCreatorType)
                   : isInvited
                   ? this.renderAssignCompany(
-                      isInvited.ChatRoomMemberRole[0],
+                      isInvited.ShipmentMemberRole[0],
                       _.get(isInvited, 'ChatRoomMemberCompanyKey', false)
                     )
                   : ''}
