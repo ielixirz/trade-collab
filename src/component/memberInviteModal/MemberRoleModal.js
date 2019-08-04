@@ -53,7 +53,7 @@ class MemberRoleModal extends React.Component {
     const { UserInfoAccountType } = user;
     console.log('usersRole', usersRole);
     let outputRole = [];
-    _.forEach(usersRole.ChatRoomMemberRole, item => {
+    _.forEach(usersRole.ShipmentMemberRole, item => {
       let role = _.get(AVAILABLE_ROLES, item, DEFAULT_ROLE);
       _.forEach(role, itemrole => {
         outputRole.push(itemrole);
