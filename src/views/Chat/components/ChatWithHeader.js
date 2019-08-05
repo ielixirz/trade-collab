@@ -291,11 +291,23 @@ class ChatWithHeader extends Component {
                 <p>Select a company, to inform your team about this shipment</p>
 
                 <Row>
-                  <Col xs={6}>
+                  <Col xs={4}>
                     <Select
                       onChange={e => {
                         this.setState({ company: e });
                       }}
+                      name="company"
+                      placeholder={'Select Company'}
+                      options={options}
+                      value={this.state.company}
+                    />
+                  </Col>
+                  <Col xs={3}>
+                    <Select
+                      onChange={e => {
+                        this.setState({ company: e });
+                      }}
+                      placeholder={'Select Role'}
                       name="company"
                       options={options}
                       value={this.state.company}
