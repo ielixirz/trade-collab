@@ -152,7 +152,7 @@ class ChatWithHeader extends Component {
           }));
           const inviteRole = userRole;
           const inviteMember = [];
-
+          const userMember = [];
           if (memberData) {
             const result = UpdateChatRoomMember(
               ShipmentKey,
@@ -198,16 +198,17 @@ class ChatWithHeader extends Component {
               ChatRoomName: 'Internal'
             }).subscribe({
               next: result => {
+                console.log(inviteMember, 'inviteMember List');
                 const data = result.path.split('/');
                 const chatkey = result.id;
                 const invite = CreateChatMultipleInvitation(
-                  inviteMember,
+                  _.filter(inviteMember, item => item.Email !== user.email),
                   ShipmentKey,
                   chatkey,
                   this.props.sender
                 ).subscribe({
                   next: res => {
-                    console.log(res);
+                    console.log('Invite Result');
                     invite.unsubscribe();
                     this.props.fetchMoreMessage(chatkey, ShipmentKey);
                   }
@@ -220,7 +221,10 @@ class ChatWithHeader extends Component {
                   ChatRoomMemberCompanyName: pickedCompany.CompanyName,
                   ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
                 }).subscribe({
-                  next: result => {}
+                  next: result => {},
+                  complete: () => {
+                    ChatRoomMember.unsubscribe();
+                  }
                 });
               },
               complete: result => {
@@ -899,7 +903,7 @@ class ChatWithHeader extends Component {
                 <div className="msg_history-cover-bar" />
               </div>
               <div className="inputBox">
-                <div className="type_msg" contentEditable>
+                <div className="type_msg">
                   <UploadModal
                     chatFile={ChatRoomFileLink}
                     sendMessage={sendMessage}

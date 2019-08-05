@@ -661,14 +661,9 @@ class Shipment extends Component {
     const result = _.filter(shipments, item => {
       let keyword = '';
       if (_.isEmpty(typeShipment)) {
-        return item.ShipmentStatus !== 'Cancelled';
+        return true;
       }
-      //
-      // Alert : All Status
-      // Plan : Planning, Order Confirmed
-      // Active : Order Confirmed, In Transit, Delayed
-      // Complete: Delivered, Completed
-      // Cancel: Cancelled
+
       switch (typeShipment) {
         case 'All':
           keyword = [
@@ -677,8 +672,7 @@ class Shipment extends Component {
             'In Transit',
             'Delayed',
             'Delivered',
-            'Completed',
-            'Cancelled'
+            'Completed'
           ];
           return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
         case 'Plan':
@@ -1019,7 +1013,7 @@ class Shipment extends Component {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: typeShipment === 'Plan' })}
+              className={classnames({ active: typeShipment === 'All' })}
               onClick={() => {
                 this.toggle('1');
                 this.props.setQuery('All');

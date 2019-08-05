@@ -23,7 +23,8 @@ import {
   toggleLoading,
   newChat,
   selectChatRoom,
-  toggleCreateChat
+  toggleCreateChat,
+  sortChat
 } from '../../actions/chatActions';
 
 import ChatWithHeader from './components/ChatWithHeader';
@@ -71,9 +72,6 @@ class Chat extends Component {
       this.nameInput.focus(true);
     }
     const hasNewChat = _.get(this.props, 'ChatReducer.selectedChat', '');
-    if (_.size(hasNewChat) > 2) {
-      this.props.selectChat(hasNewChat);
-    }
   }
 
   toggleBlocking = toggle => {
@@ -336,7 +334,9 @@ class Chat extends Component {
       }
       return item.ShipmentKey === params.shipmentkey;
     });
+
     const hasNewChat = _.get(this.props, 'ChatReducer.selectedChat', '');
+    const hasNewCreateChat = _.get(this.props, 'ChatReducer.lastCreatedChat', '');
     if (_.size(hasNewChat) > 2) {
       if (_.find(chats, item => item.ChatRoomKey === hasNewChat)) {
         chats = _.map(chats, (item, index) => {
@@ -355,6 +355,22 @@ class Chat extends Component {
       }
     }
 
+    if (hasNewCreateChat === hasNewChat) {
+      if (_.size(hasNewCreateChat) > 2) {
+        chats = _.orderBy(chats, ['active'], ['asc']);
+        _.forEach(chats, (item, x) => {
+          if (item.ChatRoomKey === 'custom') {
+            chats.push(chats.splice(x, 1)[0]);
+            chats = _.map(chats, (item, index) => ({
+              ...item,
+              position: index
+            }));
+          }
+        });
+      }
+    }
+
+    let newChat = chats;
     let tabs = [];
 
     _.forEach(chats, item => {
@@ -434,17 +450,7 @@ class Chat extends Component {
         member: item.member
       });
     });
-    tabs = _.sortBy(tabs, 'position');
-    let itemToReplace = {};
-    let createChatIndex = _.find(tabs, (item, index) => {
-      if (item.ShipmentKey === 'custom') {
-        itemToReplace = tabs.splice(index, 1);
-        return true;
-      }
-      return false;
-    });
-    tabs = tabs.concat(itemToReplace);
-    console.log('Tabs list is', tabs);
+    tabs = _.orderBy(tabs, ['position'], ['asc']);
     const activeTab = tabs.filter(tab => tab.active === true);
     const toggle = this.props.ChatReducer.toggle;
     const createChat = this.props.ChatReducer.createChat || false;
@@ -455,7 +461,9 @@ class Chat extends Component {
           moveTab={(hoverIndex, dragIndex) => {
             this.props.moveTab(hoverIndex, dragIndex, chats);
           }}
-          selectTab={this.props.selectTab}
+          selectTab={(selectedIndex, selectedID, chats) => {
+            this.props.selectTab(selectedIndex, selectedID, newChat);
+          }}
           tabs={tabs}
         />
         <TabContent>
@@ -504,6 +512,7 @@ export default connect(
     toggleLoading,
     toggleCreateChat,
     moveTab,
+    sortChat,
     editShipmentRef,
     updateShipmentRef,
     selectTab,
