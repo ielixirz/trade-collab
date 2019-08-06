@@ -239,3 +239,14 @@ export const GetShipmentRoleDetail = (ShipmentKey, Role) => docData(ShipmentRole
 
 // eslint-disable-next-line max-len
 export const isAvailableRole = (ShipmentKey, Role) => GetShipmentRoleDetail(ShipmentKey, Role).pipe(map(Doc => !!Doc));
+
+export const GetAvailableRole = ShipmentKey => GetAllShipmentRole(ShipmentKey).pipe(
+  map(ShipmentRoleList => ({
+    Exporter: !!ShipmentRoleList.Exporter,
+    Importer: !!ShipmentRoleList.Importer,
+    OutboundForwarder: !!ShipmentRoleList.OutboundForwarder,
+    InboundForwarder: !!ShipmentRoleList.InboundForwarder,
+    OutboundCustomBroker: !!ShipmentRoleList.OutboundCustomBroker,
+    InboundCustomBroker: !!ShipmentRoleList.InboundCustomBroker,
+  })),
+);
