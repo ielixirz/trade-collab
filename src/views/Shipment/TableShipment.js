@@ -29,7 +29,7 @@ import {
   PopoverBody,
   InputGroup,
   InputGroupAddon,
-  InputGroupText
+  InputGroupText, Alert
 } from 'reactstrap';
 import ShipmentInlineDate from './components/ShipmentInlineDate';
 import MainDataTable from '../../component/MainDataTable';
@@ -133,6 +133,7 @@ class TableShipment extends React.Component {
     this.state = {
       pinned: {},
       isEdit: false,
+      emptyRef:false,
       input: {
         refs: [],
         newRef: {
@@ -271,15 +272,19 @@ class TableShipment extends React.Component {
       <div>
         <p id={`popover${index}`} className="text-yterminal">
           {userrefs.length > 0 ? (
-            <Button>
+            <Button color={'ref'}>
               <b style={{ color: 'black' }}>{userrefs[0].ShipmentReferenceID}</b>
             </Button>
           ) : _.isEmpty(companies) ? (
             <TableLoading />
           ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (
+            <Button color={'ref'}>
             <b>Input your Ref#!</b>
+            </Button>
           ) : (
+            <Button color={'ref'}>
             <b>See Refs</b>
+            </Button>
           )}
         </p>
         <UncontrolledPopover
@@ -304,6 +309,10 @@ class TableShipment extends React.Component {
                   </Label>
                 </Col>
                 <Col xs={5}>
+                  {this.state.emptyRef ? ( <Alert color="danger">
+                    ref # cannot be empty
+                  </Alert>) : ''}
+
                   <Input
                     type="text"
                     name={`shipmentRefID${ref.length + 1}`}
@@ -330,40 +339,48 @@ class TableShipment extends React.Component {
                     }}
                     onKeyPress={_.debounce(
                       event => {
-                        if (event.key === 'Enter') {
-                          if (
-                            _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) === false
-                          ) {
-                            this.setState({
-                              submiting: {
-                                ...this.state.submiting,
-                                [shipmentKey]: {
-                                  isSubmit: true
+               console.log('key press',)
+                        if(_.size(this.state.input.newRef.ShipmentReferenceID)>0){
+                          this.setState({emptyRef:false})
+                          if (event.key === 'Enter') {
+                            if (
+                              _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) === false
+                            ) {
+                              this.setState({
+                                submiting: {
+                                  ...this.state.submiting,
+                                  [shipmentKey]: {
+                                    isSubmit: true
+                                  }
                                 }
-                              }
-                            });
-                            CreateShipmentReference(shipmentKey, this.state.input.newRef).subscribe(
-                              {
-                                next: res => {
-                                  this.setState({
-                                    submiting: {
-                                      ...this.state.submiting,
-                                      [shipmentKey]: {
-                                        refid: res.id,
-                                        isSubmit: true
+                              });
+                              CreateShipmentReference(shipmentKey, this.state.input.newRef).subscribe(
+                                {
+                                  next: res => {
+                                    this.setState({
+                                      submiting: {
+                                        ...this.state.submiting,
+                                        [shipmentKey]: {
+                                          refid: res.id,
+                                          isSubmit: true
+                                        }
                                       }
-                                    }
-                                  });
+                                    });
+                                  }
                                 }
-                              }
-                            );
-                          } else if (_.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0) {
-                            UpdateShipmentReference(
-                              shipmentKey,
-                              _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
-                              this.state.input.newRef
-                            );
+                              );
+                            } else if (_.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0) {
+                              UpdateShipmentReference(
+                                shipmentKey,
+                                _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
+                                this.state.input.newRef
+                              );
+                            }
                           }
+
+                        }else{
+
+                          this.setState({emptyRef:true})
                         }
                       },
                       2000,
