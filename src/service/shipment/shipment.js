@@ -232,3 +232,5 @@ export const DeleteShipmentRole = (ShipmentKey, Role) => from(
     .doc(Role)
     .delete(),
 );
+
+export const GetAllShipmentRole = ShipmentKey => collectionData(ShipmentRoleRefPath(ShipmentKey), 'ShipmentRole');
