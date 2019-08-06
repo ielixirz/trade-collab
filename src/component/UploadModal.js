@@ -2,7 +2,7 @@
 /* eslint-disable filenames/match-regex */
 /* as it is component */
 import React, {
-  useState, forwardRef, useRef, useImperativeHandle, useEffect,
+ useState, forwardRef, useRef, useImperativeHandle, useEffect,
 } from 'react';
 import {
   Input,
@@ -152,6 +152,7 @@ const UploadModal = forwardRef((props, ref) => {
   const confirmUpload = () => {
     setConfirming(true);
     setIsUploading(true);
+    const editedChatFile = props.chatFile === undefined ? [] : props.chatFile;
     _.forEach(uploadedFiles, (file) => {
       UpdateMetaData(file.refPath, {
         contentDisposition: `attachment; filename="${file.file.name}"`,
@@ -167,7 +168,6 @@ const UploadModal = forwardRef((props, ref) => {
           });
           GetURLFromStorageRefPath(metaData.ref).subscribe({
             next: (url) => {
-              const editedChatFile = props.chatFile === undefined ? [] : props.chatFile;
               editedChatFile.push({
                 FileName: file.fileName,
                 FileUrl: url,
@@ -279,7 +279,7 @@ Upload Files (
           color="primary"
           onClick={confirmUpload}
           style={{ backgroundColor: '#16a085', margin: 'auto', width: '300px' }}
-          disabled={isConfirming}
+          disabled={isConfirming || isUploading}
         >
           <b>Send</b>
         </Button>
