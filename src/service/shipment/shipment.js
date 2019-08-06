@@ -236,3 +236,6 @@ export const DeleteShipmentRole = (ShipmentKey, Role) => from(
 export const GetAllShipmentRole = ShipmentKey => collectionData(ShipmentRoleRefPath(ShipmentKey), 'ShipmentRole');
 
 export const GetShipmentRoleDetail = (ShipmentKey, Role) => docData(ShipmentRoleRefPath(ShipmentKey).doc(Role), 'ShipmentRole');
+
+// eslint-disable-next-line max-len
+export const isAvailableRole = (ShipmentKey, Role) => GetShipmentRoleDetail(ShipmentKey, Role).pipe(map(Doc => !!Doc));
