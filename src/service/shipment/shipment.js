@@ -226,3 +226,9 @@ export const AddShipmentRole = (ShipmentKey, Role, Data) => from(
     .doc(Role)
     .set(Data),
 );
+
+export const DeleteShipmentRole = (ShipmentKey, Role) => from(
+  ShipmentRoleRefPath(ShipmentKey)
+    .doc(Role)
+    .delete(),
+);
