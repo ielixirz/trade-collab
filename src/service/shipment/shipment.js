@@ -250,3 +250,8 @@ export const GetAvailableRole = ShipmentKey => GetAllShipmentRole(ShipmentKey).p
     InboundCustomBroker: !!ShipmentRoleList.InboundCustomBroker,
   })),
 );
+
+export const GetShipmentRoleByCompany = (ShipmentKey, CompanyKey) => collectionData(
+  ShipmentRoleRefPath(ShipmentKey).where('ShipmentRoleCompanyKey', '==', CompanyKey),
+  'ShipmentRole',
+).pipe(map(ShipmentRoleList => ShipmentRoleList[0]));
