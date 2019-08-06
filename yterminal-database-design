@@ -51,6 +51,26 @@
                 ConsigneeCompanyName (string)
                 ConsigneePier (string)
                 ConsigneeDate (timestamp)
+        +ShipmentRole
+            >Exporter
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >Importer
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >OutboundForwarder
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >InboundForwarder
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >OutboundCustomBroker
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >InboundCustomBroker
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >NoRole
         +ChatRoom
             >ChatRoomKey
                 ChatRoomName (string)
