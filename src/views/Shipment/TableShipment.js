@@ -271,7 +271,9 @@ class TableShipment extends React.Component {
       <div>
         <p id={`popover${index}`} className="text-yterminal">
           {userrefs.length > 0 ? (
-            <b style={{ color: 'black' }}>{userrefs[0].ShipmentReferenceID}</b>
+            <Button>
+              <b style={{ color: 'black' }}>{userrefs[0].ShipmentReferenceID}</b>
+            </Button>
           ) : _.isEmpty(companies) ? (
             <TableLoading />
           ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (
