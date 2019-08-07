@@ -36,6 +36,8 @@ import { GetShipmentDetail } from '../../service/shipment/shipment';
 import { GetShipmentNotificationCount } from '../../service/personalize/personalize';
 import { GetUserCompany } from '../../service/user/user';
 import { fetchCompany } from '../../actions/companyAction';
+import 'react-tagsinput/react-tagsinput.css';
+
 import './Chat.scss';
 
 class Chat extends Component {
