@@ -6,6 +6,7 @@
 /* eslint-disable filenames/match-regex */
 import _ from 'lodash';
 import React, { Component } from 'react';
+
 import { Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
@@ -48,7 +49,7 @@ class ChatWithHeader extends Component {
       email: '',
       companies: [],
       members: [],
-      toggleInvite:false,
+      toggleInvite: false,
       isAssign: false,
       sideCollpase: 'SHIPMENT'
     };
@@ -466,21 +467,22 @@ class ChatWithHeader extends Component {
       );
     }
   }
-renderInviteComponent(){
-    return <Row style={{ width: '100%', marginLeft: 20 }}>
-      <Col>
-
-      </Col>
-      <Col>
-        <Button onClick={()=>{
-          this.setState({toggleInvite:false});
-        }}>
-          Invite
-        </Button>
-      </Col>
-
-    </Row>
-}
+  renderInviteComponent() {
+    return (
+      <Row style={{ width: '100%', marginLeft: 20 }}>
+        <Col></Col>
+        <Col>
+          <Button
+            onClick={() => {
+              this.setState({ toggleInvite: false });
+            }}
+          >
+            Invite
+          </Button>
+        </Col>
+      </Row>
+    );
+  }
   render() {
     const {
       alert,
@@ -530,18 +532,20 @@ renderInviteComponent(){
 
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
-
-        <Row style={{backgroundColor: 'white', borderBottom: '1px solid #707070'}}>
+        <Row style={{ backgroundColor: 'white', borderBottom: '1px solid #707070' }}>
           <Breadcrumb className="chat-toolbar">
-            {this.state.toggleInvite ? (this.renderInviteComponent()):(                 <Row style={{ width: '100%', marginLeft: 20 }}>
+            {this.state.toggleInvite ? (
+              this.renderInviteComponent()
+            ) : (
+              <Row style={{ width: '100%', marginLeft: 20 }}>
                 <Col>
                   <Button className="btn-chat-label" style={{ fontSize: 'x-large' }}>
                     {ref === 'loading' ? (
                       <TextLoading />
                     ) : _.get(ref, 'ShipmentReferenceID', '') === '' ? (
                       <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>
-                      Ref is not defined
-                    </span>
+                        Ref is not defined
+                      </span>
                     ) : (
                       <b>{`${_.get(ref, 'ShipmentReferenceID', '')}`}</b>
                     )}
@@ -561,9 +565,11 @@ renderInviteComponent(){
                       list={member}
                       network={network}
                     />
-                    <Button onClick={()=>{
-                      this.setState({toggleInvite:true});
-                    }}>
+                    <Button
+                      onClick={() => {
+                        this.setState({ toggleInvite: true });
+                      }}
+                    >
                       Invite
                     </Button>
                     <MemberInviteModal
@@ -577,9 +583,7 @@ renderInviteComponent(){
                   </Row>
                 </Col>
               </Row>
-
             )}
-
           </Breadcrumb>
         </Row>
         <Row
