@@ -48,6 +48,7 @@ class ChatWithHeader extends Component {
       email: '',
       companies: [],
       members: [],
+      toggleInvite:false,
       isAssign: false,
       sideCollpase: 'SHIPMENT'
     };
@@ -465,7 +466,21 @@ class ChatWithHeader extends Component {
       );
     }
   }
+renderInviteComponent(){
+    return <Row style={{ width: '100%', marginLeft: 20 }}>
+      <Col>
 
+      </Col>
+      <Col>
+        <Button onClick={()=>{
+          this.setState({toggleInvite:false});
+        }}>
+          Invite
+        </Button>
+      </Col>
+
+    </Row>
+}
   render() {
     const {
       alert,
@@ -515,52 +530,56 @@ class ChatWithHeader extends Component {
 
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
-        <Row
-          style={{
-            backgroundColor: 'white',
-            borderBottom: '1px solid #707070'
-          }}
-        >
+
+        <Row style={{backgroundColor: 'white', borderBottom: '1px solid #707070'}}>
           <Breadcrumb className="chat-toolbar">
-            <Row style={{ width: '100%', marginLeft: 20 }}>
-              <Col>
-                <Button className="btn-chat-label" style={{ fontSize: 'x-large' }}>
-                  {ref === 'loading' ? (
-                    <TextLoading />
-                  ) : _.get(ref, 'ShipmentReferenceID', '') === '' ? (
-                    <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>
+            {this.state.toggleInvite ? (this.renderInviteComponent()):(                 <Row style={{ width: '100%', marginLeft: 20 }}>
+                <Col>
+                  <Button className="btn-chat-label" style={{ fontSize: 'x-large' }}>
+                    {ref === 'loading' ? (
+                      <TextLoading />
+                    ) : _.get(ref, 'ShipmentReferenceID', '') === '' ? (
+                      <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>
                       Ref is not defined
                     </span>
-                  ) : (
-                    <b>{`${_.get(ref, 'ShipmentReferenceID', '')}`}</b>
-                  )}
-                </Button>
-              </Col>
-              <Col>
-                <Row>
-                  <MemberModal
-                    {...this.props}
-                    count={
-                      _.filter(
-                        member,
-                        item => _.get(item, 'ChatRoomMemberIsLeave', false) === false
-                      ).length
-                    }
-                    toggleBlocking={toggleBlocking}
-                    list={member}
-                    network={network}
-                  />
-                  <MemberInviteModal
-                    {...this.props}
-                    ShipmentKey={ShipmentKey}
-                    ChatRoomKey={ChatRoomKey}
-                    member={member}
-                    usersRole={isInvited}
-                    sender={this.props.sender}
-                  />
-                </Row>
-              </Col>
-            </Row>
+                    ) : (
+                      <b>{`${_.get(ref, 'ShipmentReferenceID', '')}`}</b>
+                    )}
+                  </Button>
+                </Col>
+                <Col>
+                  <Row>
+                    <MemberModal
+                      {...this.props}
+                      count={
+                        _.filter(
+                          member,
+                          item => _.get(item, 'ChatRoomMemberIsLeave', false) === false
+                        ).length
+                      }
+                      toggleBlocking={toggleBlocking}
+                      list={member}
+                      network={network}
+                    />
+                    <Button onClick={()=>{
+                      this.setState({toggleInvite:true});
+                    }}>
+                      Invite
+                    </Button>
+                    <MemberInviteModal
+                      {...this.props}
+                      ShipmentKey={ShipmentKey}
+                      ChatRoomKey={ChatRoomKey}
+                      member={member}
+                      usersRole={isInvited}
+                      sender={this.props.sender}
+                    />
+                  </Row>
+                </Col>
+              </Row>
+
+            )}
+
           </Breadcrumb>
         </Row>
         <Row
