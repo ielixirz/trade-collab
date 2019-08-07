@@ -34,6 +34,9 @@ import { PutFile } from '../../../service/storage/managestorage';
 import { FETCH_CHAT_MEMBER, FETCH_COMPANY_USER } from '../../../constants/constants';
 import { GetUserCompany } from '../../../service/user/user';
 import { ClearUnReadChatMessage } from '../../../service/personalize/personalize';
+import TagsInput from 'react-tagsinput';
+
+import { isValidEmail } from '../../../utils/validation'; // If using WebPack and style-loader.
 
 const AVAILABLE_ROLES = {
   Importer: 'Exporter',
@@ -51,9 +54,10 @@ class ChatWithHeader extends Component {
       members: [],
       toggleInvite: false,
       isAssign: false,
-      sideCollpase: 'SHIPMENT'
+      sideCollpase: 'SHIPMENT',
+      tags: []
     };
-
+    this.handleChange = this.handleChange.bind(this);
     this.msgChatRef = React.createRef();
   }
 
@@ -467,10 +471,32 @@ class ChatWithHeader extends Component {
       );
     }
   }
+  handleChange(tags) {
+    console.log('Tags', tags);
+    this.setState({
+      tags: _.union(
+        _.filter(tags, item => {
+          if (isValidEmail(item)) {
+            return true;
+          }
+          return false;
+        })
+      )
+    });
+  }
   renderInviteComponent() {
     return (
       <Row style={{ width: '100%', marginLeft: 20 }}>
-        <Col></Col>
+        <Col>
+          <TagsInput
+            value={this.state.tags}
+            onChange={this.handleChange}
+            inputProps={{
+              className: 'react-tagsinput-input',
+              placeholder: 'To'
+            }}
+          />
+        </Col>
         <Col>
           <Button
             onClick={() => {
