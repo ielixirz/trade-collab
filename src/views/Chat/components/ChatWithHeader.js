@@ -598,14 +598,7 @@ class ChatWithHeader extends Component {
                     >
                       Invite
                     </Button>
-                    <MemberInviteModal
-                      {...this.props}
-                      ShipmentKey={ShipmentKey}
-                      ChatRoomKey={ChatRoomKey}
-                      member={member}
-                      usersRole={isInvited}
-                      sender={this.props.sender}
-                    />
+
                   </Row>
                 </Col>
               </Row>
