@@ -457,27 +457,36 @@ e-mail address only for this shipment
 
   renderInviteComponent() {
     return (
-      <Row style={{ width: '100%', marginLeft: 20 }}>
-        <Col>
+      <React.Fragment>
+        <Col xs={0.5} style={{ marginTop: 15 }}>
+          <span>To: </span>
+        </Col>
+        <Col xs={6} style={{ height: 50, marginTop: 5 }}>
           <TagsInput
             value={this.state.tags}
             onChange={this.handleChange}
             inputProps={{
               className: 'react-tagsinput-input',
-              placeholder: 'To',
+              placeholder: 'Input email address',
             }}
           />
         </Col>
-        <Col>
-          <Button
-            onClick={() => {
-              this.setState({ toggleInvite: false });
-            }}
-          >
-            Invite
-          </Button>
+        <Col xs={2}>
+          <Row>
+            <Button
+              style={{ marginLeft: 22, height: 38 }}
+              onClick={() => {
+                this.setState({ toggleInvite: false });
+              }}
+            >
+              Invite
+            </Button>
+          </Row>
         </Col>
-      </Row>
+        <Col xs={1} />
+        <Col xs={1} />
+        <Col xs={1} />
+      </React.Fragment>
     );
   }
 
@@ -528,48 +537,50 @@ e-mail address only for this shipment
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
         <Row style={{ backgroundColor: 'white', borderBottom: '1px solid #707070' }}>
           <Breadcrumb className="chat-toolbar">
-            {this.state.toggleInvite ? (
-              this.renderInviteComponent()
-            ) : (
-              <Row style={{ width: '100%', marginLeft: 20 }}>
-                <Col>
-                  <Button className="btn-chat-label" style={{ fontSize: 'x-large' }}>
-                    {ref === 'loading' ? (
-                      <TextLoading />
-                    ) : _.get(ref, 'ShipmentReferenceID', '') === '' ? (
-                      <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>
-                        Ref is not defined
-                      </span>
-                    ) : (
-                      <b>{`${_.get(ref, 'ShipmentReferenceID', '')}`}</b>
-                    )}
-                  </Button>
-                </Col>
-                <Col>
-                  <Row>
-                    <MemberModal
-                      {...this.props}
-                      count={
-                        _.filter(
-                          member,
-                          item => _.get(item, 'ChatRoomMemberIsLeave', false) === false,
-                        ).length
-                      }
-                      toggleBlocking={toggleBlocking}
-                      list={member}
-                      network={network}
-                    />
-                    <Button
-                      onClick={() => {
-                        this.setState({ toggleInvite: true });
-                      }}
-                    >
-                      Invite
+            <Row style={{ width: '100%', marginLeft: 20 }}>
+              {this.state.toggleInvite ? (
+                this.renderInviteComponent()
+              ) : (
+                <React.Fragment>
+                  <Col>
+                    <Button className="btn-chat-label" style={{ fontSize: 'x-large' }}>
+                      {ref === 'loading' ? (
+                        <TextLoading />
+                      ) : _.get(ref, 'ShipmentReferenceID', '') === '' ? (
+                        <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>
+                          Ref is not defined
+                        </span>
+                      ) : (
+                        <b>{`${_.get(ref, 'ShipmentReferenceID', '')}`}</b>
+                      )}
                     </Button>
-                  </Row>
-                </Col>
-              </Row>
-            )}
+                  </Col>
+                  <Col>
+                    <Row>
+                      <MemberModal
+                        {...this.props}
+                        count={
+                          _.filter(
+                            member,
+                            item => _.get(item, 'ChatRoomMemberIsLeave', false) === false,
+                          ).length
+                        }
+                        toggleBlocking={toggleBlocking}
+                        list={member}
+                        network={network}
+                      />
+                      <Button
+                        onClick={() => {
+                          this.setState({ toggleInvite: true });
+                        }}
+                      >
+                        Invite
+                      </Button>
+                    </Row>
+                  </Col>
+                </React.Fragment>
+              )}
+            </Row>
           </Breadcrumb>
         </Row>
         <Row
