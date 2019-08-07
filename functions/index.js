@@ -1786,3 +1786,53 @@ exports.CreateMemberFromNonSystemUser = CloudFunctionsRegionsAsia.firestore
       }
     }
   });
+
+exports.ManageShipmentRole = CloudFunctionsRegionsAsia.firestore
+  .document('Shipment/{ShipmentKey}/ShipmentRole/{ShipmentRoleKey}')
+  .onWrite(async (change, context) => {
+    const oldValue = change.before.data();
+    const newValue = change.after.data();
+
+    const ShipmentKey = context.params.ShipmentKey;
+    const Role = context.params.ShipmentRoleKey;
+
+    const CompanyKey = newValue.ShipmentRoleCompanyKey;
+
+    const GetShipmentData = await admin
+      .firestore()
+      .collection('Shipment')
+      .doc(ShipmentKey)
+      .get();
+
+    const ShipmentMember = GetShipmentData.data().ShipmentMember;
+
+    const CompanyMemberList = _.findKey(ShipmentMember, ['ShipmentMemberCompanyKey', CompanyKey]);
+
+    const UpdateCompanyMemberBatch = admin.firestore().batch();
+
+    if (newValue) {
+      CompanyMemberList.map(CompanyMemberKey => {
+        const ShipmentMemberRef = admin
+          .firestore()
+          .collection('Shipment')
+          .doc(ShipmentKey);
+        const MemberKey = `ShipmentMember.${CompanyMemberKey}.ShipmentMemberRole`;
+        UpdateCompanyMemberBatch.set(ShipmentMemberRef, { [MemberKey]: Role }, { merge: true });
+      });
+      return UpdateCompanyMemberBatch.commit();
+    } else if (!newValue && oldValue) {
+      CompanyMemberList.map(CompanyMemberKey => {
+        const ShipmentMemberRef = admin
+          .firestore()
+          .collection('Shipment')
+          .doc(ShipmentKey);
+        const MemberKey = `ShipmentMember.${CompanyMemberKey}.ShipmentMemberRole`;
+        UpdateCompanyMemberBatch.set(
+          ShipmentMemberRef,
+          { [MemberKey]: 'No Role' },
+          { merge: true }
+        );
+      });
+      return UpdateCompanyMemberBatch.commit();
+    }
+  });
