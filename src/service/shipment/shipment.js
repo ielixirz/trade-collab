@@ -255,3 +255,7 @@ export const GetShipmentRoleByCompany = (ShipmentKey, CompanyKey) => collectionD
   ShipmentRoleRefPath(ShipmentKey).where('ShipmentRoleCompanyKey', '==', CompanyKey),
   'ShipmentRole',
 ).pipe(map(ShipmentRoleList => ShipmentRoleList[0]));
+
+export const isAssignCompanyToShipment = (ShipmentKey, UserKey) => docData(ShipmentRefPath().doc(ShipmentKey), 'ShipmentKey').pipe(
+  map(ShipmentDoc => !!ShipmentDoc.data().ShipmentMember[UserKey].ShipmentMemberCompanyKey),
+);
