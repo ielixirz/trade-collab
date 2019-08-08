@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Row, Col, Button } from 'reactstrap';
 import TagsInput from 'react-tagsinput';
+import 'react-tagsinput/react-tagsinput.css';
 import _ from 'lodash';
 import { CreateChatMultipleInvitation } from '../../../service/join/invite';
 import { GetUserInfoFromEmail } from '../../../service/user/user';
