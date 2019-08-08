@@ -12,7 +12,6 @@ import {
 } from 'reactstrap';
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
-import TagsInput from 'react-tagsinput';
 import MemberModal from '../../../component/MemberModal';
 import UploadModal from '../../../component/UploadModal';
 import TextLoading from '../../../component/svg/TextLoading';
@@ -20,6 +19,7 @@ import FileSide from '../FileSide';
 import ShipmentSide from '../ShipmentSide';
 import ChatMessage from './ChatMessage';
 import PreMessage from './PreMessage';
+import ChatInviteBar from './ChatInviteBar';
 import {
   AddChatRoomMember,
   CreateChatRoom,
@@ -29,8 +29,6 @@ import {
 import { GetCompanyMember } from '../../../service/company/company';
 import { CreateChatMultipleInvitation } from '../../../service/join/invite';
 import { ClearUnReadChatMessage } from '../../../service/personalize/personalize';
-
-import { isValidEmail } from '../../../utils/validation'; // If using WebPack and style-loader.
 
 let lastkey = '';
 class ChatWithHeader extends Component {
@@ -45,9 +43,7 @@ class ChatWithHeader extends Component {
       toggleInvite: false,
       isAssign: false,
       sideCollpase: 'SHIPMENT',
-      tags: [],
     };
-    this.handleChange = this.handleChange.bind(this);
     this.msgChatRef = React.createRef();
   }
 
@@ -101,6 +97,12 @@ class ChatWithHeader extends Component {
       console.log('is custom tab or something went wrong', e.message);
     }
   };
+
+  toggleInviteComponent(toggle) {
+    this.setState({
+      toggleInvite: !toggle,
+    });
+  }
 
   UpdateReader(ShipmentKey, ChatRoomKey, sender, data) {
     const refresh = _.debounce(() => {
@@ -190,20 +192,6 @@ class ChatWithHeader extends Component {
         },
       });
     }
-  }
-
-  handleChange(tags) {
-    console.log('Tags', tags);
-    this.setState({
-      tags: _.union(
-        _.filter(tags, (item) => {
-          if (isValidEmail(item)) {
-            return true;
-          }
-          return false;
-        }),
-      ),
-    });
   }
 
   renderAssignCompany(ChatRoomType) {
@@ -457,36 +445,14 @@ e-mail address only for this shipment
 
   renderInviteComponent() {
     return (
-      <React.Fragment>
-        <Col xs={0.5} style={{ marginTop: 15 }}>
-          <span>To: </span>
-        </Col>
-        <Col xs={6} style={{ height: 50, marginTop: 5 }}>
-          <TagsInput
-            value={this.state.tags}
-            onChange={this.handleChange}
-            inputProps={{
-              className: 'react-tagsinput-input',
-              placeholder: 'Input email address',
-            }}
-          />
-        </Col>
-        <Col xs={2}>
-          <Row>
-            <Button
-              style={{ marginLeft: 22, height: 38 }}
-              onClick={() => {
-                this.setState({ toggleInvite: false });
-              }}
-            >
-              Invite
-            </Button>
-          </Row>
-        </Col>
-        <Col xs={1} />
-        <Col xs={1} />
-        <Col xs={1} />
-      </React.Fragment>
+      <ChatInviteBar
+        chatRoomKey={this.props.ChatRoomKey}
+        shipmentKey={this.props.shipmentKey}
+        sender={this.props.sender}
+        member={this.props.members}
+        shipmentData={this.props.ShipmentData}
+        toggleInvite={() => this.toggleInviteComponent(true)}
+      />
     );
   }
 
@@ -571,7 +537,7 @@ e-mail address only for this shipment
                       />
                       <Button
                         onClick={() => {
-                          this.setState({ toggleInvite: true });
+                          this.toggleInviteComponent(this.state.toggleInvite);
                         }}
                       >
                         Invite
