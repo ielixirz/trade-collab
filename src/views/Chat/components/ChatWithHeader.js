@@ -6,9 +6,19 @@
 /* eslint-disable filenames/match-regex */
 import _ from 'lodash';
 import React, { Component } from 'react';
-
 import {
- Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon,
+  Breadcrumb,
+  Row,
+  Col,
+  Button,
+  InputGroup,
+  InputGroupAddon,
+  Input,
+  UncontrolledPopover,
+  PopoverBody,
+  Label,
+  Form,
+  FormGroup,
 } from 'reactstrap';
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
@@ -29,6 +39,11 @@ import {
 import { GetCompanyMember } from '../../../service/company/company';
 import { CreateChatMultipleInvitation } from '../../../service/join/invite';
 import { ClearUnReadChatMessage } from '../../../service/personalize/personalize';
+import TableLoading from '../../../component/svg/TableLoading';
+import {
+  CreateShipmentReference,
+  UpdateShipmentReference,
+} from '../../../service/shipment/shipment';
 
 let lastkey = '';
 class ChatWithHeader extends Component {
@@ -42,8 +57,19 @@ class ChatWithHeader extends Component {
       members: [],
       toggleInvite: false,
       isAssign: false,
+      input: {
+        refs: [],
+        newRef: {
+          ShipmentReferenceID: '',
+          ShipmentReferenceCompanyName: '',
+          ShipmentReferenceCompanyKey: '',
+        },
+      },
+
+      submiting: {},
       sideCollpase: 'SHIPMENT',
     };
+
     this.msgChatRef = React.createRef();
   }
 
@@ -243,11 +269,23 @@ for
                 <p>Select a company, to inform your team about this shipment</p>
 
                 <Row>
-                  <Col xs={6}>
+                  <Col xs={4}>
                     <Select
                       onChange={(e) => {
                         this.setState({ company: e });
                       }}
+                      name="company"
+                      placeholder="Select Company"
+                      options={options}
+                      value={this.state.company}
+                    />
+                  </Col>
+                  <Col xs={3}>
+                    <Select
+                      onChange={(e) => {
+                        this.setState({ company: e });
+                      }}
+                      placeholder="Select Role"
                       name="company"
                       options={options}
                       value={this.state.company}
@@ -270,6 +308,19 @@ for
                     >
                       Confirm
                     </Button>
+                  </Col>
+                </Row>
+                <br />
+                <Row>
+                  <Col xs="auto">
+                    <Form inline>
+                      <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
+                        <Label for="exampleEmail" className="mr-sm-2">
+                          REF #
+                        </Label>
+                        <Input type="text" name="ref" id="ref" placeholder="Reference Number" />
+                      </FormGroup>
+                    </Form>
                   </Col>
                 </Row>
               </div>
@@ -456,6 +507,201 @@ e-mail address only for this shipment
     );
   }
 
+  renderRefComponent(index, ref, shipmentKey, ShipmentMember) {
+    const { user, companies } = this.props;
+    const userCompany = [];
+    let refs = [];
+    refs = _.map(ref, item => item);
+    const userrefs = _.filter(ref, refItem => _.some(companies, item => _.includes(refItem.ShipmentReferenceCompanyKey, item.CompanyKey)));
+    console.log('ShipmentMember', ShipmentMember);
+    const hasCompany = _.get(ShipmentMember, `${user.uid}`, {});
+
+    const alreadyHave = !_.isEmpty(userrefs);
+    return (
+      <div>
+        <Button id={`popover${index}`} className="text-yterminal">
+          {userrefs.length > 0 ? (
+            <b style={{ color: 'black' }}>{userrefs[0].ShipmentReferenceID}</b>
+          ) : _.isEmpty(companies) ? (
+            <TableLoading />
+          ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (
+            <b>Input your Ref#!</b>
+          ) : (
+            <b>See Refs</b>
+          )}
+        </Button>
+        <UncontrolledPopover
+          trigger="legacy"
+          placement="bottom"
+          className="yterminalRef"
+          target={`popover${index}`}
+        >
+          <PopoverBody>
+            {!alreadyHave ? (
+              <Row
+                style={{
+                  marginBottom: '5px',
+                }}
+              >
+                <Col xs={1} />
+                <Col xs={5} style={{ paddingTop: 5 }}>
+                  <Label check>
+                    {_.isEmpty(hasCompany.ShipmentMemberCompanyName)
+                      ? 'Please Assign Company'
+                      : hasCompany.ShipmentMemberCompanyName}
+                  </Label>
+                </Col>
+                <Col xs={5}>
+                  <Input
+                    type="text"
+                    name={`shipmentRefID${ref.length + 1}`}
+                    id={`shipmentRefID${ref.length + 1}`}
+                    disabled={_.isEmpty(hasCompany.ShipmentMemberCompanyName)}
+                    value={
+                      _.isEmpty(hasCompany.ShipmentMemberCompanyName)
+                        ? 'N/A'
+                        : this.state.input.newRef.ShipmentReferenceID
+                    }
+                    onChange={(e) => {
+                      const { value } = e.target;
+                      this.setState({
+                        input: {
+                          newRef: {
+                            ...this.state.input.newRef,
+                            ShipmentReferenceID: value,
+                            ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
+                            ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
+                            ShipmentKey: shipmentKey,
+                          },
+                        },
+                      });
+                    }}
+                    onKeyPress={_.debounce(
+                      (event) => {
+                        if (event.key === 'Enter') {
+                          if (
+                            _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) === false
+                          ) {
+                            this.setState({
+                              submiting: {
+                                ...this.state.submiting,
+                                [shipmentKey]: {
+                                  isSubmit: true,
+                                },
+                              },
+                            });
+                            CreateShipmentReference(shipmentKey, this.state.input.newRef).subscribe(
+                              {
+                                next: (res) => {
+                                  this.setState({
+                                    submiting: {
+                                      ...this.state.submiting,
+                                      [shipmentKey]: {
+                                        refid: res.id,
+                                        isSubmit: true,
+                                      },
+                                    },
+                                  });
+                                },
+                              },
+                            );
+                          } else if (_.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0) {
+                            UpdateShipmentReference(
+                              shipmentKey,
+                              _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
+                              this.state.input.newRef,
+                            );
+                          }
+                        }
+                      },
+                      2000,
+                      {
+                        leading: true,
+                        trailing: false,
+                      },
+                    )}
+                    maxLength={50}
+                    bsSize="sm"
+                  />
+                </Col>
+              </Row>
+            ) : (
+              ''
+            )}
+            {refs.map((refItem, refIndex) => (
+              <Row
+                key={refIndex}
+                style={{
+                  marginBottom: '5px',
+                }}
+              >
+                <Col xs={1} />
+                <Col xs={5} style={{ paddingTop: 5 }}>
+                  <Label check>
+(
+                    {refItem.ShipmentReferenceCompanyName}
+)
+                  </Label>
+                </Col>
+                <Col xs={5}>
+                  <Input
+                    type="text"
+                    name={`shipmentRefID${refIndex}`}
+                    id={`shipmentRefID${refIndex}`}
+                    value={refItem.ShipmentReferenceIDInput}
+                    onChange={(e) => {
+                      const { value } = e.target;
+                      // (ShipmentKey, refKey, Data)
+                      this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
+                        ...refItem,
+                        ShipmentReferenceIDInput: value,
+                        ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
+                        ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
+                        ShipmentKey: shipmentKey,
+                      });
+                    }}
+                    onKeyPress={(event) => {
+                      if (event.key === 'Enter') {
+                        const update = UpdateShipmentReference(
+                          shipmentKey,
+                          refItem.ShipmentReferenceKey,
+                          {
+                            ...refItem,
+                            ShipmentReferenceID: refItem.ShipmentReferenceIDInput,
+                          },
+                        ).subscribe({
+                          next: (res) => {
+                            console.log('Update Ref', res);
+                          },
+                          complete: (res) => {
+                            this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
+                              ...refItem,
+                              ShipmentReferenceID: refItem.ShipmentReferenceIDInput,
+                              ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
+                              ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
+                              ShipmentKey: shipmentKey,
+                            });
+                            update.unsubscribe();
+                          },
+                        });
+                      }
+                    }}
+                    maxLength={50}
+                    bsSize="sm"
+                    disabled={
+                      hasCompany.ShipmentMemberCompanyKey !== refItem.ShipmentReferenceCompanyKey
+                    }
+                  />
+                </Col>
+              </Row>
+            ))}
+          </PopoverBody>
+        </UncontrolledPopover>
+      </div>
+    );
+    return <span style={{ color: '#b5b2b2', fontStyle: 'italic' }}>Please Assign company</span>;
+  }
+
   render() {
     const {
       user,
@@ -486,7 +732,7 @@ e-mail address only for this shipment
     const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
     let ref = '';
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
-    console.log(isInvited, 'member???');
+    console.log(this.props, 'props');
 
     if (!_.isEmpty(isInvited)) {
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
@@ -501,7 +747,12 @@ e-mail address only for this shipment
 
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
-        <Row style={{ backgroundColor: 'white', borderBottom: '1px solid #707070' }}>
+        <Row
+          style={{
+            backgroundColor: 'white',
+            borderBottom: '1px solid #707070',
+          }}
+        >
           <Breadcrumb className="chat-toolbar">
             <Row style={{ width: '100%', marginLeft: 20 }}>
               {this.state.toggleInvite ? (
@@ -509,17 +760,12 @@ e-mail address only for this shipment
               ) : (
                 <React.Fragment>
                   <Col>
-                    <Button className="btn-chat-label" style={{ fontSize: 'x-large' }}>
-                      {ref === 'loading' ? (
-                        <TextLoading />
-                      ) : _.get(ref, 'ShipmentReferenceID', '') === '' ? (
-                        <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>
-                          Ref is not defined
-                        </span>
-                      ) : (
-                        <b>{`${_.get(ref, 'ShipmentReferenceID', '')}`}</b>
-                      )}
-                    </Button>
+                    {this.renderRefComponent(
+                      1,
+                      _.get(ship, 'ShipmentReferenceList', []),
+                      ShipmentKey,
+                      ship.ShipmentMember,
+                    )}
                   </Col>
                   <Col>
                     <Row>

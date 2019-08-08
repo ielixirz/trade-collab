@@ -36,9 +36,8 @@ import { GetShipmentDetail } from '../../service/shipment/shipment';
 import { GetShipmentNotificationCount } from '../../service/personalize/personalize';
 import { GetUserCompany } from '../../service/user/user';
 import { fetchCompany } from '../../actions/companyAction';
-import 'react-tagsinput/react-tagsinput.css';
-
 import './Chat.scss';
+import { editShipmentRef, updateShipmentRef } from '../../actions/shipmentActions';
 
 class Chat extends Component {
   constructor(props) {
@@ -156,6 +155,8 @@ class Chat extends Component {
         user={user}
         sender={sender}
         chatMsg={chatMsg}
+        editShipmentRef={this.props.editShipmentRef}
+        updateShipmentRef={this.props.updateShipmentRef}
         ChatRoomData={ChatRoomData}
         text={text}
         companies={companies}
@@ -512,6 +513,8 @@ export default connect(
     toggleCreateChat,
     moveTab,
     sortChat,
+    editShipmentRef,
+    updateShipmentRef,
     selectTab,
     selectChat: selectChatRoom,
     getChatRoomList,
