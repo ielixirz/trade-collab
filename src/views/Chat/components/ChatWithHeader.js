@@ -16,7 +16,9 @@ import {
   Input,
   UncontrolledPopover,
   PopoverBody,
-  Label
+  Label,
+  Form,
+  FormGroup
 } from 'reactstrap';
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
@@ -334,6 +336,19 @@ class ChatWithHeader extends Component {
                     >
                       Confirm
                     </Button>
+                  </Col>
+                </Row>
+                <br />
+                <Row>
+                  <Col xs={'auto'}>
+                    <Form inline>
+                      <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
+                        <Label for="exampleEmail" className="mr-sm-2">
+                          REF #
+                        </Label>
+                        <Input type="text" name="ref" id="ref" placeholder="Reference Number" />
+                      </FormGroup>
+                    </Form>
                   </Col>
                 </Row>
               </div>
