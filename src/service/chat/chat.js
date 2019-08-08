@@ -1,5 +1,7 @@
 /* eslint-disable max-len */
-import { collection, doc, docData } from 'rxfire/firestore';
+import {
+  collection, doc, docData, collectionData,
+} from 'rxfire/firestore';
 import { from } from 'rxjs';
 import {
   map, retry, take, filter,
@@ -157,4 +159,7 @@ export const isInternalChatRoom = (ShipmentKey, ChatRoomKey) => docData(ChatRoom
   map(ChatRoomDoc => ChatRoomDoc.data().ChatRoomIsInternal),
 );
 
-export const GetCompanyInternalChatRoom = (ShipmentKey, CompanyKey) => docData(ShipmentRefPath(ShipmentKey).where('ChatRoomCompanyKey', '==', CompanyKey));
+export const GetCompanyInternalChatRoom = (ShipmentKey, CompanyKey) => collectionData(
+  ShipmentRefPath(ShipmentKey).where('ChatRoomCompanyKey', '==', CompanyKey),
+  'ChatRoomKey',
+).pipe(map(ChatRoomList => ChatRoomList[0]));
