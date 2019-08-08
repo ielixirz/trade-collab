@@ -1,4 +1,6 @@
-import { collection, doc, collectionData } from 'rxfire/firestore';
+import {
+  collection, doc, collectionData, docData,
+} from 'rxfire/firestore';
 import { from, combineLatest, merge } from 'rxjs';
 import {
   take, concatMap, map, tap, mergeMap, toArray, switchMap, filter,
@@ -22,6 +24,11 @@ const ShipmentMasterDataRefPath = ShipmentKey => FirebaseApp.firestore()
   .collection('Shipment')
   .doc(ShipmentKey)
   .collection('ShipmentShareData');
+
+const ShipmentRoleRefPath = ShipmentKey => FirebaseApp.firestore()
+  .collection('Shipment')
+  .doc(ShipmentKey)
+  .collection('ShipmentRole');
 
 /* ex. CreateShipment
   {
@@ -207,4 +214,48 @@ export const SearchShipment = (
 // eslint-disable-next-line max-len
 export const isShipmentMember = (ShipmentKey, UserKey) => doc(ShipmentRefPath().doc(ShipmentKey)).pipe(
   filter(DocData => !!DocData.data().ShipmentMemberList.find(Item => Item === UserKey)),
+);
+
+/* ex AddShipmentRole
+  ShipmentRoleCompanyName (string)
+  ShipmentRoleCompanyKey (string)
+*/
+
+export const AddShipmentRole = (ShipmentKey, Role, Data) => from(
+  ShipmentRoleRefPath(ShipmentKey)
+    .doc(Role)
+    .set(Data),
+);
+
+export const DeleteShipmentRole = (ShipmentKey, Role) => from(
+  ShipmentRoleRefPath(ShipmentKey)
+    .doc(Role)
+    .delete(),
+);
+
+export const GetAllShipmentRole = ShipmentKey => collectionData(ShipmentRoleRefPath(ShipmentKey), 'ShipmentRole');
+
+export const GetShipmentRoleDetail = (ShipmentKey, Role) => docData(ShipmentRoleRefPath(ShipmentKey).doc(Role), 'ShipmentRole');
+
+// eslint-disable-next-line max-len
+export const isAvailableRole = (ShipmentKey, Role) => GetShipmentRoleDetail(ShipmentKey, Role).pipe(map(Doc => !!Doc));
+
+export const GetAvailableRole = ShipmentKey => GetAllShipmentRole(ShipmentKey).pipe(
+  map(ShipmentRoleList => ({
+    Exporter: !!ShipmentRoleList.Exporter,
+    Importer: !!ShipmentRoleList.Importer,
+    OutboundForwarder: !!ShipmentRoleList.OutboundForwarder,
+    InboundForwarder: !!ShipmentRoleList.InboundForwarder,
+    OutboundCustomBroker: !!ShipmentRoleList.OutboundCustomBroker,
+    InboundCustomBroker: !!ShipmentRoleList.InboundCustomBroker,
+  })),
+);
+
+export const GetShipmentRoleByCompany = (ShipmentKey, CompanyKey) => collectionData(
+  ShipmentRoleRefPath(ShipmentKey).where('ShipmentRoleCompanyKey', '==', CompanyKey),
+  'ShipmentRole',
+).pipe(map(ShipmentRoleList => ShipmentRoleList[0]));
+
+export const isAssignCompanyToShipment = (ShipmentKey, UserKey) => docData(ShipmentRefPath().doc(ShipmentKey), 'ShipmentKey').pipe(
+  map(ShipmentDoc => !!ShipmentDoc.data().ShipmentMember[UserKey].ShipmentMemberCompanyKey),
 );

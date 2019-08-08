@@ -51,10 +51,32 @@
                 ConsigneeCompanyName (string)
                 ConsigneePier (string)
                 ConsigneeDate (timestamp)
+        +ShipmentRole
+            >Exporter
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >Importer
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >OutboundForwarder
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >InboundForwarder
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >OutboundCustomBroker
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >InboundCustomBroker
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >NoRole
         +ChatRoom
             >ChatRoomKey
                 ChatRoomName (string)
                 ChatRoomType (string)
+                ChatRoomIsInternal (string)
+                ChatRoomCompanyKey (string)
                 ChatRoomMemberList (array<string>)
                 ChatRoomFileLink (Array<object>)
                     [ {FileName : "FileA.jpg" , FileUrl : "'https://firebasestorage.googleapis.com'" , FileCreateTimestamp : "123123124124124" , FilePath : "/Shipment/{ShipmentKey}/ShipmentFile/{FileKey}" }]
@@ -102,8 +124,6 @@
                         ChatRoomMessageReaderSurName (string)
                         ChatRoomMessageReaderProfileImageUrl (string)
                         ChatRoomMessageReaderLastestMessageKey (string)
-
-
         +ShipmentFile
             >FileKey
                 FileName (string)
