@@ -85,7 +85,7 @@ const ChatInviteBar = ({
     const result = CreateChatMultipleInvitation(inviteData, shipmentKey, chatRoomKey, sender);
     result.subscribe({
       next: (res) => {
-        console.log(res);
+        toggleInvite();
       },
     });
 

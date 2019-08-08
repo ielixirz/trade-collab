@@ -498,7 +498,7 @@ e-mail address only for this shipment
     return (
       <ChatInviteBar
         chatRoomKey={this.props.ChatRoomKey}
-        shipmentKey={this.props.shipmentKey}
+        shipmentKey={this.props.ShipmentKey}
         sender={this.props.sender}
         member={this.props.members}
         shipmentData={this.props.ShipmentData}
