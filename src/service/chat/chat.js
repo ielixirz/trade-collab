@@ -156,3 +156,5 @@ export const isChatRoomMember = (ShipmentKey, ChatRoomKey, UserKey) => collectio
 export const isInternalChatRoom = (ShipmentKey, ChatRoomKey) => docData(ChatRoomRefPath(ShipmentKey, ChatRoomKey), 'ChatRoomKey').pipe(
   map(ChatRoomDoc => ChatRoomDoc.data().ChatRoomIsInternal),
 );
+
+export const GetCompanyInternalChatRoom = (ShipmentKey, CompanyKey) => docData(ShipmentRefPath(ShipmentKey).where('ChatRoomCompanyKey', '==', CompanyKey));
