@@ -14,7 +14,7 @@ import {
   Col,
   InputGroup,
   InputGroupAddon,
-  Alert,
+  Alert
 } from 'reactstrap';
 import _ from 'lodash';
 
@@ -35,11 +35,11 @@ const RequestToJoinModal = forwardRef((props, ref) => {
     setModal(!modal);
   };
 
-  const handleInputNoteChange = (event) => {
+  const handleInputNoteChange = event => {
     setNote(event.target.value);
   };
 
-  const handleInputSearchTextChange = (event) => {
+  const handleInputSearchTextChange = event => {
     setSearchText(event.target.value);
   };
 
@@ -47,7 +47,7 @@ const RequestToJoinModal = forwardRef((props, ref) => {
     if (selectedIndex !== null) {
       const selectedCompany = foundCompany[selectedIndex];
       const userKey = props.userId;
-      IsCompanyMember(selectedCompany.id, userKey).subscribe((isMember) => {
+      IsCompanyMember(selectedCompany.id, userKey).subscribe(isMember => {
         if (isMember) {
           setIsAlreadyMember(true);
         } else {
@@ -56,9 +56,9 @@ const RequestToJoinModal = forwardRef((props, ref) => {
             CompanyRequestCompanyKey: selectedCompany.id,
             CompanyRequestCompanyName: selectedCompany.data.CompanyName,
             CompanyRequestNote: note,
-            CompanyRequestStatus: 'Pending',
+            CompanyRequestStatus: 'Pending'
           };
-          CreateUserRequest(userKey, usrReqData).subscribe((result) => {
+          CreateUserRequest(userKey, usrReqData).subscribe(result => {
             const usrReqKey = result.id;
             const comReqData = {
               UserRequestReference: usrReqKey,
@@ -70,7 +70,7 @@ const RequestToJoinModal = forwardRef((props, ref) => {
               UserRequestSurname: props.profile.ProfileSurname,
               UserRequestEmail: props.profile.ProfileEmail,
               UserRequestNote: note,
-              UserRequestStatus: 'Pending',
+              UserRequestStatus: 'Pending'
             };
             CreateCompanyRequest(selectedCompany.id, usrReqKey, comReqData);
           });
@@ -80,7 +80,7 @@ const RequestToJoinModal = forwardRef((props, ref) => {
     }
   };
 
-  const selectCompany = (index) => {
+  const selectCompany = index => {
     setSelectedIndex(index);
   };
 
@@ -88,15 +88,15 @@ const RequestToJoinModal = forwardRef((props, ref) => {
     setSelectedIndex(null);
     const foundCompanyArray = [];
     CheckAvaliableCompanyName(searchText).subscribe({
-      next: (snapshot) => {
-        snapshot.forEach((doc) => {
+      next: snapshot => {
+        snapshot.forEach(doc => {
           foundCompanyArray.push({
             data: doc.data(),
-            id: doc.id,
+            id: doc.id
           });
         });
       },
-      error: (err) => {
+      error: err => {
         console.log(err);
         alert(err.message);
       },
@@ -108,7 +108,7 @@ const RequestToJoinModal = forwardRef((props, ref) => {
         } else {
           setIsSearchFound(false);
         }
-      },
+      }
     });
   };
 
@@ -116,7 +116,7 @@ const RequestToJoinModal = forwardRef((props, ref) => {
     // eslint-disable-next-line no-shadow
     triggerRequestToJoin() {
       toggle();
-    },
+    }
   }));
 
   const validateRequest = () => {
@@ -144,8 +144,7 @@ const RequestToJoinModal = forwardRef((props, ref) => {
             placeholder="Search a company..."
             value={searchText}
             onChange={handleInputSearchTextChange}
-          />
-          {' '}
+          />{' '}
           <InputGroupAddon addonType="append">
             <Button
               type="button"
@@ -180,18 +179,12 @@ const RequestToJoinModal = forwardRef((props, ref) => {
               />
             </Col>
             <Col xs={5} style={{ margin: 'auto' }}>
-              <span style={{ fontSize: 'medium' }}>
-                {' '}
-                {company.data.CompanyName}
-                {' '}
-              </span>
-              {' '}
+              <span style={{ fontSize: 'medium' }}> {company.data.CompanyName} </span>{' '}
             </Col>
             <Col xs={3} style={{ margin: 'auto' }}>
               <span style={{ cursor: 'pointer' }}>
                 <b>See Profile</b>
-              </span>
-              {' '}
+              </span>{' '}
             </Col>
           </Row>
         ))}
@@ -230,8 +223,7 @@ const RequestToJoinModal = forwardRef((props, ref) => {
           disabled={!validateRequest()}
         >
           Send Request
-        </Button>
-        {' '}
+        </Button>{' '}
       </ModalFooter>
     </Modal>
   );

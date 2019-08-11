@@ -2,7 +2,7 @@
 /* eslint-disable filenames/match-regex */
 /* as it is component */
 import React, {
- useState, forwardRef, useRef, useImperativeHandle, useEffect,
+  useState, forwardRef, useRef, useImperativeHandle, useEffect,
 } from 'react';
 import {
   Input,
