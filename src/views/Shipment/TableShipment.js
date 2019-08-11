@@ -29,7 +29,8 @@ import {
   PopoverBody,
   InputGroup,
   InputGroupAddon,
-  InputGroupText, Alert
+  InputGroupText,
+  Alert
 } from 'reactstrap';
 import ShipmentInlineDate from './components/ShipmentInlineDate';
 import MainDataTable from '../../component/MainDataTable';
@@ -133,7 +134,7 @@ class TableShipment extends React.Component {
     this.state = {
       pinned: {},
       isEdit: false,
-      emptyRef:false,
+      emptyRef: false,
       input: {
         refs: [],
         newRef: {
@@ -279,11 +280,11 @@ class TableShipment extends React.Component {
             <TableLoading />
           ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (
             <Button color={'ref'}>
-            <b>Input your Ref#!</b>
+              <b>Input your Ref#!</b>
             </Button>
           ) : (
             <Button color={'ref'}>
-            <b>See Refs</b>
+              <b>See Refs</b>
             </Button>
           )}
         </p>
@@ -309,9 +310,7 @@ class TableShipment extends React.Component {
                   </Label>
                 </Col>
                 <Col xs={5}>
-                  {this.state.emptyRef ? ( <Alert color="danger">
-                    ref # cannot be empty
-                  </Alert>) : ''}
+                  {this.state.emptyRef ? <Alert color="danger">ref # cannot be empty</Alert> : ''}
 
                   <Input
                     type="text"
@@ -339,12 +338,13 @@ class TableShipment extends React.Component {
                     }}
                     onKeyPress={_.debounce(
                       event => {
-               console.log('key press',)
-                        if(_.size(this.state.input.newRef.ShipmentReferenceID)>0){
-                          this.setState({emptyRef:false})
+                        console.log('key press');
+                        if (_.size(this.state.input.newRef.ShipmentReferenceID) > 0) {
+                          this.setState({ emptyRef: false });
                           if (event.key === 'Enter') {
                             if (
-                              _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) === false
+                              _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) ===
+                              false
                             ) {
                               this.setState({
                                 submiting: {
@@ -354,22 +354,25 @@ class TableShipment extends React.Component {
                                   }
                                 }
                               });
-                              CreateShipmentReference(shipmentKey, this.state.input.newRef).subscribe(
-                                {
-                                  next: res => {
-                                    this.setState({
-                                      submiting: {
-                                        ...this.state.submiting,
-                                        [shipmentKey]: {
-                                          refid: res.id,
-                                          isSubmit: true
-                                        }
+                              CreateShipmentReference(
+                                shipmentKey,
+                                this.state.input.newRef
+                              ).subscribe({
+                                next: res => {
+                                  this.setState({
+                                    submiting: {
+                                      ...this.state.submiting,
+                                      [shipmentKey]: {
+                                        refid: res.id,
+                                        isSubmit: true
                                       }
-                                    });
-                                  }
+                                    }
+                                  });
                                 }
-                              );
-                            } else if (_.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0) {
+                              });
+                            } else if (
+                              _.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0
+                            ) {
                               UpdateShipmentReference(
                                 shipmentKey,
                                 _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
@@ -377,10 +380,8 @@ class TableShipment extends React.Component {
                               );
                             }
                           }
-
-                        }else{
-
-                          this.setState({emptyRef:true})
+                        } else {
+                          this.setState({ emptyRef: true });
                         }
                       },
                       2000,

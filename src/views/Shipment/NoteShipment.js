@@ -2,9 +2,7 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable filenames/match-regex */
 import React from 'react';
-import {
-  Popover, PopoverBody, Input, Tooltip,
-} from 'reactstrap';
+import { Popover, PopoverBody, Input, Tooltip } from 'reactstrap';
 import { EditShipment } from '../../service/shipment/shipment';
 import { UpdateMasterData } from '../../service/masterdata/masterdata';
 
@@ -17,26 +15,26 @@ class NoteShipment extends React.Component {
       popoverOpen: false,
       value: this.props.item.ShipmentDetailPriceDescriptionOfGoods,
       isInEditMode: false,
-      tooltipEditOpen: false,
+      tooltipEditOpen: false
     };
     this.tooltipEditToggle = this.tooltipEditToggle.bind(this);
   }
 
   changeEditMode = () => {
     this.setState({
-      isInEditMode: !this.state.isInEditMode,
+      isInEditMode: !this.state.isInEditMode
     });
   };
 
   edit = (shipmentKey, editValue) => {
     UpdateMasterData(shipmentKey, 'DefaultTemplate', {
-      ShipmentDetailPriceDescriptionOfGoods: editValue,
+      ShipmentDetailPriceDescriptionOfGoods: editValue
     }).subscribe(() => {});
   };
 
   toggle() {
     this.setState({
-      popoverOpen: !this.state.popoverOpen,
+      popoverOpen: !this.state.popoverOpen
     });
   }
 
@@ -47,18 +45,18 @@ class NoteShipment extends React.Component {
           type="textarea"
           style={{ width: '100%', height: 100 }}
           defaultValue={this.state.value}
-          onChange={(event) => {
+          onChange={event => {
             this.setState({
-              value: event.target.value,
+              value: event.target.value
             });
           }}
-          onKeyDown={(button) => {
+          onKeyDown={button => {
             if (button.key === 'Enter') {
               this.edit(this.props.item.uid, this.state.value);
               this.setState({ isInEditMode: false });
             }
           }}
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
           }}
         />
@@ -74,19 +72,20 @@ class NoteShipment extends React.Component {
     </React.Fragment>
   );
 
-  renderDefaultView = () => (this.state.value === '' || this.state.value === undefined ? (
-    <div style={{ cursor: 'pointer' }} onDoubleClick={this.changeEditMode}>
-      <i style={{ color: 'grey' }}>Double Click to edit the description...</i>
-    </div>
-  ) : (
-    <div style={{ cursor: 'pointer' }} onDoubleClick={this.changeEditMode}>
-      {this.state.value}
-    </div>
-  ));
+  renderDefaultView = () =>
+    this.state.value === '' || this.state.value === undefined ? (
+      <div style={{ cursor: 'pointer' }} onDoubleClick={this.changeEditMode}>
+        <i style={{ color: 'grey' }}>Double Click to edit the description...</i>
+      </div>
+    ) : (
+      <div style={{ cursor: 'pointer' }} onDoubleClick={this.changeEditMode}>
+        {this.state.value}
+      </div>
+    );
 
   tooltipEditToggle() {
     this.setState({
-      tooltipEditOpen: !this.state.tooltipEditOpen,
+      tooltipEditOpen: !this.state.tooltipEditOpen
     });
   }
 

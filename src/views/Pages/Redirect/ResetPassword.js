@@ -10,13 +10,13 @@ import ResetPasswordModal from '../../../component/ResetPasswordModal';
 import '../../../scss/ResetPassword.scss';
 import { VerifyPasswordResetCode } from '../../../service/auth/manageuser';
 
-const ResetPassword = (props) => {
+const ResetPassword = props => {
   const resetPasswordModalRef = useRef(null);
 
   useEffect(() => {
     const parsed = queryString.parse(props.location.search);
     VerifyPasswordResetCode(parsed.oobCode)
-      .then((email) => {
+      .then(email => {
         resetPasswordModalRef.current.triggerResetPassword(email, parsed.oobCode, false);
       })
       .catch(() => {
