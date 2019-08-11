@@ -1,7 +1,9 @@
 import {
   collection, doc, collectionData, docData,
 } from 'rxfire/firestore';
-import { from, combineLatest, merge } from 'rxjs';
+import {
+  from, combineLatest, merge, forkJoin,
+} from 'rxjs';
 import {
   take, concatMap, map, tap, mergeMap, toArray, switchMap, filter,
 } from 'rxjs/operators';
@@ -260,4 +262,14 @@ export const isAssignCompanyToShipment = (ShipmentKey, UserKey) => docData(Shipm
   map(ShipmentDoc => !!ShipmentDoc.data().ShipmentMember[UserKey].ShipmentMemberCompanyKey),
 );
 
-export const CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData = () => from();
+export const CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData = (
+  ShipmentData,
+  ShipmentReferenceData,
+  ShipmentMasterData,
+) => from(ShipmentRefPath().add(ShipmentData)).pipe(
+  map(ShipmentDocResult => ShipmentDocResult.id),
+  switchMap(ShipmentId => forkJoin(
+    CreateShipmentReference(ShipmentId, ShipmentReferenceData),
+    UpdateShipmetMasterDataDetail(ShipmentId, 'DefaultTemplate', ShipmentMasterData),
+  )),
+);
