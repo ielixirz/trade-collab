@@ -149,9 +149,7 @@ exports.ReaderLastestMessage = CloudFunctionsRegionsAsia.firestore
             const AddItem = admin
               .firestore()
               .doc(
-                `Shipment/${context.params.ShipmentKey}/ChatRoom/${
-                  context.params.ChatRoomKey
-                }/ChatRoomMessage/${ChatRoomMessageKeyItem}`
+                `Shipment/${context.params.ShipmentKey}/ChatRoom/${context.params.ChatRoomKey}/ChatRoomMessage/${ChatRoomMessageKeyItem}`
               )
               .set(
                 {
@@ -839,9 +837,7 @@ exports.SendEmailInviteIntoShipment = CloudFunctionsRegionsAsia.firestore
       border-radius:8px;
       padding:18px 0;
       background-color:rgba(255, 90 , 95, 1);
-      color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/chat/${
-        context.params.ShipmentKey
-      }'>Join Now</a>`;
+      color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/chat/${context.params.ShipmentKey}'>Join Now</a>`;
 
     if (RecruiterProfileFirstName && RecruiterProfileSurName) {
       const SendInviteIntoShipment = await SendEmail(
@@ -1528,16 +1524,12 @@ exports.SendUnreadMessage = CloudFunctionsRegionsAsia.https.onRequest(async (req
 
       const MapTextWithProfileUnread = element.map(
         Item =>
-          `${Item.ProfileFirstname} ${Item.ProfileSurname} has ${
-            Item.ShipmentChatCount
-          } unread messages`
+          `${Item.ProfileFirstname} ${Item.ProfileSurname} has ${Item.ShipmentChatCount} unread messages`
       );
 
       const MapHtmlWithProfileUnread = element.map(
         Item =>
-          `<p class="profile-unread"> <span class="highlighttext" style="color: rgba(22, 160, 133, 1);" >${
-            Item.ProfileFirstname
-          } ${Item.ProfileSurname}</span> has ${Item.ShipmentChatCount} Unread Message </p>`
+          `<p class="profile-unread"> <span class="highlighttext" style="color: rgba(22, 160, 133, 1);" >${Item.ProfileFirstname} ${Item.ProfileSurname}</span> has ${Item.ShipmentChatCount} Unread Message </p>`
       );
 
       const ButtonRedirect = `<a style="width: 400px;

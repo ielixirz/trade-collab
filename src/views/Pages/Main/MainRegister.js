@@ -24,15 +24,15 @@ class MainRegister extends Component {
       Email: '',
       Password: '',
       AccountType: '',
-      blocking: true,
+      blocking: true
     };
   }
 
-  nextStep = (r) => {
+  nextStep = r => {
     const { step } = this.state;
     const nextState = {
       step: step + 1,
-      AccountType: r,
+      AccountType: r
     };
     if (this.props.invite) {
       nextState.Email = this.props.inviteData.email;
@@ -40,28 +40,28 @@ class MainRegister extends Component {
     this.setState(nextState);
   };
 
-  handleChange = input => (event) => {
+  handleChange = input => event => {
     this.setState({ [input]: event.target.value });
   };
 
-  handleEmailChange = (email) => {
+  handleEmailChange = email => {
     this.setState({ Email: email });
   };
 
   handleRegister = () => {
     const { Email, Password } = this.state;
     RegisterUser(this.state).subscribe({
-      next: (result) => {
+      next: result => {
         this.props.setDefault();
         this.props.login({ email: Email, password: Password }, null, '#/selectprofile');
       },
-      complete: (result) => {
+      complete: result => {
         console.log(result);
       },
-      error: (err) => {
+      error: err => {
         console.log('err', err);
         window.location.replace('#/login');
-      },
+      }
     });
   };
 
@@ -73,30 +73,30 @@ class MainRegister extends Component {
     switch (flow) {
       case 'Company':
         RegisterUser(data).subscribe({
-          next: (result) => {
+          next: result => {
             this.props.setDefault();
             const checkingMembership = KeepIsCompanyMember(dataKey.companyKey, result).subscribe({
-              next: (isMember) => {
+              next: isMember => {
                 if (isMember) {
                   checkingMembership.unsubscribe();
                   this.props.login(
                     { email: data.Email, password: data.Password },
                     null,
-                    `#/selectprofile/?rc=${dataKey.companyKey}`,
+                    `#/selectprofile/?rc=${dataKey.companyKey}`
                   );
                 }
               },
-              error: (err) => {
+              error: err => {
                 console.log('err', err);
-              },
+              }
             });
           },
-          complete: (result) => {
+          complete: result => {
             console.log(result);
           },
-          error: (err) => {
+          error: err => {
             console.log('err', err);
-          },
+          }
         });
         break;
       case 'SHIPMENT_CHAT_INVITE':
@@ -110,15 +110,13 @@ class MainRegister extends Component {
 
   render() {
     const { step } = this.state;
-    const {
- Firstname, Surname, Email, Password, AccountType,
-} = this.state;
+    const { Firstname, Surname, Email, Password, AccountType } = this.state;
     const values = {
       Firstname,
       Surname,
       Email,
       Password,
-      AccountType,
+      AccountType
     };
     if (this.props.invite) {
       values.Email = this.props.inviteData.email;
@@ -156,14 +154,14 @@ class MainRegister extends Component {
     }
   }
 }
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   const { authReducer } = state;
   return {
-    ...authReducer,
+    ...authReducer
   };
 };
 
 export default connect(
   mapStateToProps,
-  { login, setDefault },
+  { login, setDefault }
 )(MainRegister);

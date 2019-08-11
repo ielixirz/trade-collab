@@ -31,7 +31,7 @@ import {
   ModalFooter,
   InputGroupAddon,
   InputGroupText,
-  InputGroup,
+  InputGroup
 } from 'reactstrap';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -45,7 +45,7 @@ import {
   CreateShipmentReference,
   EditShipment,
   SearchShipment,
-  UpdateShipmentReference,
+  UpdateShipmentReference
 } from '../../service/shipment/shipment';
 import { UpdateMasterData } from '../../service/masterdata/masterdata';
 import './Shipment.scss';
@@ -77,12 +77,12 @@ class Shipment extends Component {
         ref: '',
         bound: '',
         method: '',
-        type: '',
+        type: ''
       },
       companies: {},
       modal: false,
       dropdownOpen: false,
-      blocking: true,
+      blocking: true
     };
     this.fetchMoreShipment = this.fetchMoreShipment.bind(this);
     this.toggle = this.toggle.bind(this);
@@ -107,7 +107,7 @@ class Shipment extends Component {
 
   modal() {
     this.setState(prevState => ({
-      modal: !prevState.modal,
+      modal: !prevState.modal
     }));
   }
 
@@ -167,29 +167,29 @@ class Shipment extends Component {
 
     parameter.ShipmentCreateTimestamp = new Date().getTime();
     CreateShipment(parameter).subscribe({
-      next: (createdShipment) => {
+      next: createdShipment => {
         this.fetchShipmentReload();
         const shipmentKey = createdShipment.id;
         const inviteMember = [];
 
         UpdateMasterData(createdShipment.id, 'DefaultTemplate', {
-          ShipmentDetailProduct: parameter.ShipmentProductName,
+          ShipmentDetailProduct: parameter.ShipmentProductName
         }).subscribe(() => {
           this.props.history.push(`/chat/${shipmentKey}`);
         });
       },
-      error: () => {},
+      error: () => {}
     });
 
     this.setState(prevState => ({
       modal: !prevState.modal,
-      input: {},
+      input: {}
     }));
   }
 
   dropdown() {
     this.setState(prevState => ({
-      dropdownOpen: !prevState.dropdownOpen,
+      dropdownOpen: !prevState.dropdownOpen
     }));
   }
 
@@ -285,22 +285,22 @@ class Shipment extends Component {
           '',
           'asc',
           _.size(this.props.shipments) + 10,
-          this.props.user.uid,
+          this.props.user.uid
         ).subscribe({
-          next: (shipment) => {
+          next: shipment => {
             const { query: typeShipment } = this.props;
             const result = shipment;
             this.setState({ blocking: false });
 
             this.props.fetchShipments(result, notification);
           },
-          error: (err) => {
+          error: err => {
             console.log(err);
             this.setState({ blocking: false });
           },
           complete: () => {}
         });
-      },
+      }
     });
   }
 
@@ -389,7 +389,7 @@ class Shipment extends Component {
     GetUserCompany(this.props.user.uid).subscribe({
       next: res => {
         this.props.fetchCompany(res);
-      },
+      }
     });
   }
 
@@ -401,7 +401,7 @@ class Shipment extends Component {
   toggle(tab) {
     if (this.state.activeTab !== tab) {
       this.setState({
-        activeTab: tab,
+        activeTab: tab
       });
     }
   }
@@ -410,8 +410,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        role,
-      },
+        role
+      }
     });
   }
 
@@ -419,8 +419,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        bound,
-      },
+        bound
+      }
     });
   }
 
@@ -428,8 +428,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        method,
-      },
+        method
+      }
     });
   }
 
@@ -437,8 +437,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        type,
-      },
+        type
+      }
     });
   }
 
@@ -448,18 +448,18 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        [name]: value,
-      },
+        [name]: value
+      }
     });
   }
 
-  handleChange = (selectedOption) => {
+  handleChange = selectedOption => {
     console.log(selectedOption);
     this.setState({
       input: {
         ...this.state.input,
-        role: selectedOption.value,
-      },
+        role: selectedOption.value
+      }
     });
   };
 
@@ -540,13 +540,14 @@ class Shipment extends Component {
             next: res => {
               let shipment = _.map(res, item => ({
                 id: item.ShipmentID,
-                ...item,
+                ...item
               }));
               console.log('Search Result ', shipment);
               if (_.includes(this.state.filterKeyword, 'Date')) {
                 shipment = _.filter(
                   shipment,
-                  item => _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName') >= search,
+                  item =>
+                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName') >= search
                 );
               } else if (this.state.filterKeyword !== 'ShipmentReferenceList') {
                 shipment = _.filter(shipment, item =>
@@ -562,9 +563,9 @@ class Shipment extends Component {
               this.setState({ blocking: false });
 
               this.props.fetchShipments(result, notification);
-            },
+            }
           });
-        },
+        }
       });
     }
   }
@@ -580,7 +581,7 @@ class Shipment extends Component {
       { value: 'ShipmentBuyerCompanyName', label: 'Buyer' },
       { value: 'ShipmentSellerCompanyName', label: 'Seller' },
       // { value: 'ShipmentStatus', label: 'Status' },
-      { value: 'ShipmentReferenceList', label: 'Ref' },
+      { value: 'ShipmentReferenceList', label: 'Ref' }
     ];
 
     const SearchShipmentFilter = () => (
@@ -593,7 +594,7 @@ class Shipment extends Component {
         onChange={option => {
           this.setState({
             filterKeyword: option.value,
-            keyword: '',
+            keyword: ''
           });
           this.props.searching('');
         }}
@@ -904,33 +905,31 @@ class Shipment extends Component {
                         this.setMethod(1);
                       }}
                       style={{
-                        marginRight: '5px',
+                        marginRight: '5px'
                       }}
                       disabled={method === 1}
                     >
                       Ocean Freight
-                    </Button>
-                    {' '}
+                    </Button>{' '}
                     <Button
                       color="yterminal"
                       onClick={() => {
                         this.setMethod(2);
                       }}
                       style={{
-                        marginRight: '5px',
+                        marginRight: '5px'
                       }}
                       disabled={method === 2}
                     >
                       Show Both
-                    </Button>
-                    {' '}
+                    </Button>{' '}
                     <Button
                       color="yterminal"
                       onClick={() => {
                         this.setMethod(3);
                       }}
                       style={{
-                        marginRight: '5px',
+                        marginRight: '5px'
                       }}
                       disabled={method === 3}
                     >
@@ -942,7 +941,7 @@ class Shipment extends Component {
                         this.setMethod(4);
                       }}
                       style={{
-                        marginRight: '5px',
+                        marginRight: '5px'
                       }}
                       disabled={method === 4}
                     >
@@ -1006,9 +1005,7 @@ class Shipment extends Component {
                 this.props.setQuery('');
               }}
             >
-              <span style={styles.title}>Alert</span>
-              {' '}
-              <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Alert</span> <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -1031,9 +1028,7 @@ class Shipment extends Component {
                 this.props.setQuery('Cancel');
               }}
             >
-              <i className="icon-close" />
-              {' '}
-              <span style={styles.title}>Cancel</span>
+              <i className="icon-close" /> <span style={styles.title}>Cancel</span>
             </NavLink>
           </NavItem>
           <Col>
@@ -1078,13 +1073,13 @@ const styles = {
   title: {
     fontSize: 16,
     color: '#707070',
-    cursor: 'pointer',
+    cursor: 'pointer'
   },
   lineTab: {
     color: '#EAEAEA',
     opacity: 0.8,
-    marginLeft: 20,
-  },
+    marginLeft: 20
+  }
 };
 
 const mapStateToProps = state => {
@@ -1092,7 +1087,7 @@ const mapStateToProps = state => {
   const { query = '', search = '' } = shipmentReducer;
   const sender = _.find(
     profileReducer.ProfileList,
-    item => item.id === profileReducer.ProfileDetail.id,
+    item => item.id === profileReducer.ProfileDetail.id
   );
 
   return {
