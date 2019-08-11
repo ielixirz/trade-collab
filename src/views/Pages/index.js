@@ -5,6 +5,4 @@ import Register from './Register';
 import ForgotPass from './ForgotPass/ForgotPass';
 import ResetPassword from './Redirect/ResetPassword';
 
-export {
-  Login, Page404, Page500, Register, ForgotPass, ResetPassword,
-};
+export { Login, Page404, Page500, Register, ForgotPass, ResetPassword };

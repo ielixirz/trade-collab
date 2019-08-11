@@ -1,7 +1,5 @@
 import { collection, doc } from 'rxfire/firestore';
-import {
- from, combineLatest, forkJoin, of, concat, merge,
-} from 'rxjs';
+import { from, combineLatest, forkJoin, of, concat, merge } from 'rxjs';
 import {
   take,
   switchMap,
@@ -11,7 +9,7 @@ import {
   toArray,
   concatAll,
   combineAll,
-  filter,
+  filter
 } from 'rxjs/operators';
 import _ from 'lodash';
 
@@ -22,12 +20,14 @@ import { GetProlfileList } from '../user/profile';
 import { GetCompanyDetail } from '../company/company';
 import { AddChatRoomMember } from '../chat/chat';
 
-const CompanyInvitationRefPath = CompanyKey => FirebaseApp.firestore()
+const CompanyInvitationRefPath = CompanyKey =>
+  FirebaseApp.firestore()
     .collection('Company')
     .doc(CompanyKey)
     .collection('CompanyInvitation');
 
-const UserInvitationRefPath = UserKey => FirebaseApp.firestore()
+const UserInvitationRefPath = UserKey =>
+  FirebaseApp.firestore()
     .collection('UserInfo')
     .doc(UserKey)
     .collection('UserInvitation');
@@ -48,7 +48,8 @@ const UserInvitationRefPath = UserKey => FirebaseApp.firestore()
 */
 
 // eslint-disable-next-line max-len
-export const CreateCompanyInvitation = (CompanyKey, Data) => from(CompanyInvitationRefPath(CompanyKey).add(Data));
+export const CreateCompanyInvitation = (CompanyKey, Data) =>
+  from(CompanyInvitationRefPath(CompanyKey).add(Data));
 
 /*  CreateUserInvitation
   {
@@ -63,49 +64,54 @@ export const CreateCompanyInvitation = (CompanyKey, Data) => from(CompanyInvitat
   }
 */
 
-export const CreateUserInvitation = (UserKey, InvitationKey, Data) => from(
+export const CreateUserInvitation = (UserKey, InvitationKey, Data) =>
+  from(
     UserInvitationRefPath(UserKey)
       .doc(InvitationKey)
-      .set(Data),
+      .set(Data)
   );
 
-export const UpdateCompanyInvitationStatus = (CompanyKey, InvitationKey, Status) => from(
+export const UpdateCompanyInvitationStatus = (CompanyKey, InvitationKey, Status) =>
+  from(
     collection(
       CompanyInvitationRefPath(CompanyKey)
         .doc(InvitationKey)
-        .update({ UserInvitationStatus: Status }),
-    ),
+        .update({ UserInvitationStatus: Status })
+    )
   );
 
-export const UpdateUserInvitationStatus = (UserKey, InvitationKey, Status) => from(
+export const UpdateUserInvitationStatus = (UserKey, InvitationKey, Status) =>
+  from(
     collection(
       UserInvitationRefPath(UserKey)
         .doc(InvitationKey)
-        .update({ CompanyInvitationStatus: Status }),
-    ),
+        .update({ CompanyInvitationStatus: Status })
+    )
   );
 
-export const DeleteCompanyInvitation = (CompanyKey, InvitationKey) => from(
+export const DeleteCompanyInvitation = (CompanyKey, InvitationKey) =>
+  from(
     collection(
       CompanyInvitationRefPath(CompanyKey)
         .doc(InvitationKey)
-        .delete(),
-    ),
+        .delete()
+    )
   );
 
-export const DeleteUserInvitation = (UserKey, InvitationKey) => from(
+export const DeleteUserInvitation = (UserKey, InvitationKey) =>
+  from(
     collection(
       CompanyInvitationRefPath(UserKey)
         .doc(InvitationKey)
-        .delete(),
-    ),
+        .delete()
+    )
   );
 
 export const CreateCompanyMultipleInvitation = (
   ColleaguesDataList,
   CompanyKey,
   CompanyName,
-  RecruiterData,
+  RecruiterData
 ) => {
   const EmailList = ColleaguesDataList.map(ColleaguesItem => ColleaguesItem.Email);
 
@@ -132,13 +138,14 @@ export const CreateCompanyMultipleInvitation = (
       UserInvitationPosition: ColleaguesDataList[index].Position,
       UserInvitationRole: ColleaguesDataList[index].Role,
       UserInvitationTimestamp: new Date(),
-      UserInvitationStatus: 'Pending',
-    })),
+      UserInvitationStatus: 'Pending'
+    }))
   );
 
-  const CompanySource = Email => GetCompanyDetail(CompanyKey).pipe(
+  const CompanySource = Email =>
+    GetCompanyDetail(CompanyKey).pipe(
       map(CompanyDoc => CompanyDoc.data()),
-      map((CompanyDocData) => {
+      map(CompanyDocData => {
         const PreloadData = _.find(ColleaguesDataList, { Email });
         const payload = {
           CompanyInvitationReference: '',
@@ -156,24 +163,24 @@ export const CreateCompanyMultipleInvitation = (
           CompanyInvitationRecruiterProfileFirstName:
             RecruiterData.CompanyInvitationRecruiterProfileFirstName,
           CompanyInvitationRecruiterProfileSurName:
-            RecruiterData.CompanyInvitationRecruiterProfileSurName,
+            RecruiterData.CompanyInvitationRecruiterProfileSurName
         };
 
         return payload;
       }),
-      take(1),
+      take(1)
     );
 
   return EmailListSource.pipe(
-    concatMap((UserInvitationPayload) => {
+    concatMap(UserInvitationPayload => {
       console.log(UserInvitationPayload);
       return combineLatest(
         CreateCompanyInvitation(CompanyKey, UserInvitationPayload),
         CompanySource(UserInvitationPayload.UserInvitationEmail),
-        of(UserInvitationPayload.UserInvitationUserKey),
+        of(UserInvitationPayload.UserInvitationUserKey)
       );
     }),
-    concatMap(res => CreateUserInvitation(res[2], res[0].id, res[1])),
+    concatMap(res => CreateUserInvitation(res[2], res[0].id, res[1]))
   );
 };
 
@@ -195,7 +202,7 @@ export const CreateChatMultipleInvitation = (
   ChatInviteDataList,
   ShipmentKey,
   ChatRoomKey,
-  sender,
+  sender
 ) => {
   console.log('Sender Data', sender);
   const EmailList = ChatInviteDataList.map(ChatInviteItem => ChatInviteItem.Email);
@@ -203,7 +210,7 @@ export const CreateChatMultipleInvitation = (
   const EmailListSource = from(EmailList).pipe(
     tap(a => console.log(a)),
     concatMap(Email => GetUserInfoFromEmail(Email).pipe(take(1))),
-    map((UserInfoList) => {
+    map(UserInfoList => {
       const Data = UserInfoList[0].data();
       const ID = UserInfoList[0].id;
       const Doc = { ...Data, id: ID };
@@ -221,11 +228,11 @@ export const CreateChatMultipleInvitation = (
         ChatRoomMemberRecruiterUserKey: sender.uid,
         ChatRoomMemberRecruiterProfileKey: sender.id,
         ChatRoomMemberRecruiterProfileFirstName: sender.ProfileFirstname,
-        ChatRoomMemberRecruiterProfileSurName: sender.ProfileSurname,
+        ChatRoomMemberRecruiterProfileSurName: sender.ProfileSurname
       };
       return PayloadData;
     }),
-    concatMap(PayloadData => AddChatRoomMember(ShipmentKey, ChatRoomKey, PayloadData)),
+    concatMap(PayloadData => AddChatRoomMember(ShipmentKey, ChatRoomKey, PayloadData))
   );
 
   return EmailListSource;
@@ -235,10 +242,10 @@ export const IsExistInvitation = (UserKey, CompanyKey) => {
   const CompanyInvitationStatusPendingSource = collection(
     UserInvitationRefPath(UserKey)
       .where('CompanyInvitationCompanyKey', '==', CompanyKey)
-      .where('CompanyInvitationStatus', '==', 'Pending'),
+      .where('CompanyInvitationStatus', '==', 'Pending')
   ).pipe(take(1));
 
   return combineLatest(CompanyInvitationStatusPendingSource).pipe(
-    map(Result => Result[0].length > 0),
+    map(Result => Result[0].length > 0)
   );
 };

@@ -17,7 +17,7 @@ import {
   Input,
   Label,
   Row,
-  Alert,
+  Alert
 } from 'reactstrap';
 import './login.css';
 import { connect } from 'react-redux';
@@ -29,7 +29,7 @@ import {
   INVALID_PASSWORD,
   INVALID_EMAIL_CODE,
   ACCOUNT_NOT_FOUND_CODE,
-  INVALID_PASSWORD_CODE,
+  INVALID_PASSWORD_CODE
 } from '../../../constants/auth';
 
 class Login extends Component {
@@ -37,11 +37,11 @@ class Login extends Component {
     super(props);
     this.state = {
       isError: false,
-      errorMsg: '',
+      errorMsg: ''
     };
   }
 
-  displayError = (error) => {
+  displayError = error => {
     let errorMessage = 'Unknown Error Occur.';
     switch (error.code) {
       case INVALID_EMAIL_CODE:
@@ -58,7 +58,7 @@ class Login extends Component {
     }
     this.setState({
       isError: true,
-      errorMsg: errorMessage,
+      errorMsg: errorMessage
     });
   };
 
@@ -80,9 +80,7 @@ class Login extends Component {
                       {this.state.isError ? (
                         <Row style={{ margin: 'auto', marginBottom: '15px' }}>
                           <Alert style={{ margin: 'auto' }} color="danger">
-                            {this.state.errorMsg}
-                            {' '}
-!
+                            {this.state.errorMsg} !
                           </Alert>
                         </Row>
                       ) : (
@@ -134,7 +132,7 @@ class Login extends Component {
                           display: 'flex',
                           flexDirection: 'row',
                           justifyContent: 'center',
-                          marginTop: '20px',
+                          marginTop: '20px'
                         }}
                       >
                         <p>
@@ -159,13 +157,13 @@ class Login extends Component {
                             fontWeight: 'bold',
                             marginLeft: 20,
                             marginRight: 20,
-                            width: '300px',
+                            width: '300px'
                           }}
                           onClick={() => {
                             this.props.login(
                               this.props.loginForm,
                               this.displayError,
-                              '#/selectprofile',
+                              '#/selectprofile'
                             );
                           }}
                           className="px-4"
@@ -185,14 +183,14 @@ class Login extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   const { authReducer } = state;
   return {
-    ...authReducer,
+    ...authReducer
   };
 };
 
 export default connect(
   mapStateToProps,
-  { typinglogin, login },
+  { typinglogin, login }
 )(Login);

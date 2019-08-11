@@ -17,38 +17,38 @@ export const { store, persistor } = configureStore();
 // Containers
 const DefaultLayout = Loadable({
   loader: () => import('./containers/DefaultLayout'),
-  loading,
+  loading
 });
 
 // Pages
 const Login = Loadable({
   loader: () => import('./views/Pages/Login'),
-  loading,
+  loading
 });
 
 const Register = Loadable({
   loader: () => import('./views/Pages/Main/MainRegister'),
-  loading,
+  loading
 });
 
 const Page404 = Loadable({
   loader: () => import('./views/Pages/Page404'),
-  loading,
+  loading
 });
 
 const Page500 = Loadable({
   loader: () => import('./views/Pages/Page500'),
-  loading,
+  loading
 });
 
 const ResetPassword = Loadable({
   loader: () => import('./views/Pages/Redirect/ResetPassword'),
-  loading,
+  loading
 });
 
 const NewUser = Loadable({
   loader: () => import('./views/Pages/Redirect/NewUser'),
-  loading,
+  loading
 });
 
 class App extends Component {

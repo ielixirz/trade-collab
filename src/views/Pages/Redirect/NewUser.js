@@ -10,16 +10,16 @@ import { isDateBefore } from '../../../utils/date';
 
 import MainRegister from '../Main/MainRegister';
 
-const NewUser = (props) => {
+const NewUser = props => {
   const [inviteData, setInviteData] = useState({});
   const [expired, setExpired] = useState(undefined);
 
-  const verifyExpiration = (seconds) => {
+  const verifyExpiration = seconds => {
     const isExpired = isDateBefore(new Date(+seconds * 1000), new Date());
     return isExpired;
   };
 
-  const verifyUsed = (usage) => {
+  const verifyUsed = usage => {
     if (usage === 'Y') {
       return false;
     }
@@ -28,9 +28,7 @@ const NewUser = (props) => {
 
   useEffect(() => {
     const parsed = queryString.parse(props.location.search);
-    const {
- dke, ed, e, f, ck, u,
-} = parsed;
+    const { dke, ed, e, f, ck, u } = parsed;
     // ---- TO-DO secret key need to be stored securely
     const bytesUsed = CryptoJS.AES.decrypt(u, 'redroylkeew');
     const decryptedUsed = bytesUsed.toString(CryptoJS.enc.Utf8);
@@ -65,7 +63,7 @@ const NewUser = (props) => {
           email: decryptedEmail,
           flow: decryptedFlow,
           docKey: decryptedDKE,
-          dataKey,
+          dataKey
         });
       } else {
         setExpired(true);
