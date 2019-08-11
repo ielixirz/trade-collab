@@ -1,8 +1,12 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
 /* as it is component */
-import React, { useState, forwardRef, useImperativeHandle, useCallback } from 'react';
-import { Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import React, {
+  useState, forwardRef, useImperativeHandle, useCallback,
+} from 'react';
+import {
+  Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader,
+} from 'reactstrap';
 import Select from 'react-select';
 import { useMappedState } from 'redux-react-hook';
 import _ from 'lodash';
@@ -19,16 +23,16 @@ const CopyModal = forwardRef((props, ref) => {
     setModal(!modal);
   };
 
-  const handleChatroomSelectChange = value => {
+  const handleChatroomSelectChange = (value) => {
     setCopyChatroom(value);
   };
 
-  const preventParentCollapse = e => {
+  const preventParentCollapse = (e) => {
     e.stopPropagation();
   };
 
   const copy = () => {
-    _.each(copyChatroom, room => {
+    _.each(copyChatroom, (room) => {
       const copiedChatRoomFileLink = room.value.file === undefined ? [] : room.value.file;
       copiedChatRoomFileLink.push(file);
       EditChatRoomFileLink(room.value.shipmentKey, room.value.chatroomKey, copiedChatRoomFileLink);
@@ -38,27 +42,27 @@ const CopyModal = forwardRef((props, ref) => {
           {
             filename: file.FileName,
             type: 'pdf',
-            link: file.FileUrl
-          }
-        ]
+            link: file.FileUrl,
+          },
+        ],
       });
       props.sendMessage(room.value.chatroomKey, room.value.shipmentKey, msg, true);
     });
     toggle();
   };
 
-  const mapChatroom = chatrooms => {
+  const mapChatroom = (chatrooms) => {
     const tempChatroomOption = [];
-    Object.keys(chatrooms).forEach(key => {
+    Object.keys(chatrooms).forEach((key) => {
       if (key !== 'custom') {
         const room = chatrooms[key];
         tempChatroomOption.push({
           value: {
             shipmentKey: room.ShipmentKey,
             chatroomKey: room.ChatRoomKey,
-            file: room.ChatRoomData.ChatRoomFileLink
+            file: room.ChatRoomData.ChatRoomFileLink,
           },
-          label: room.roomName
+          label: room.roomName,
         });
       }
     });
@@ -67,9 +71,9 @@ const CopyModal = forwardRef((props, ref) => {
 
   const mapState = useCallback(
     state => ({
-      chatrooms: state.ChatReducer.chatrooms
+      chatrooms: state.ChatReducer.chatrooms,
     }),
-    []
+    [],
   );
 
   const chatrooms = useMappedState(mapState);
@@ -82,7 +86,7 @@ const CopyModal = forwardRef((props, ref) => {
       }
       mapChatroom(chatrooms.chatrooms);
       toggle();
-    }
+    },
   }));
 
   return (
@@ -123,7 +127,8 @@ const CopyModal = forwardRef((props, ref) => {
       <ModalFooter>
         <Button color="primary" onClick={copy}>
           Copy
-        </Button>{' '}
+        </Button>
+        {' '}
       </ModalFooter>
     </Modal>
   );

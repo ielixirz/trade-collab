@@ -4,13 +4,13 @@ import { Container } from 'reactstrap';
 import { RegisterUser } from '../../../service/auth/register';
 
 class Confirmation extends Component {
-  saveAndContinue = r => {
+  saveAndContinue = (r) => {
     this.props.nextStep(r);
   };
 
   render() {
     const {
-      values: { AccountType }
+      values: { AccountType },
     } = this.props;
 
     return (

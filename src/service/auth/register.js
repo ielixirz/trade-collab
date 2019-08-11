@@ -20,36 +20,29 @@ RegisterWithEmail('holy-wisdom@hotmail.com','123456').subscribe({
 
 */
 
-export const RegisterWithEmail = (Email, Password) =>
-  from(FirebaseApp.auth().createUserWithEmailAndPassword(Email, Password));
+export const RegisterWithEmail = (Email, Password) => from(FirebaseApp.auth().createUserWithEmailAndPassword(Email, Password));
 
-export const RegisterUser = Data => {
-  const { Email, Password, Firstname, Surname, AccountType, NonUserDocumentKey } = Data;
+export const RegisterUser = (Data) => {
+  const {
+    Email, Password, Firstname, Surname, AccountType,
+  } = Data;
 
-  const UserInfoData =
-    NonUserDocumentKey === undefined
-      ? {
-          UserInfoEmail: Email,
-          UserInfoAccountType: AccountType
-        }
-      : {
-          UserInfoEmail: Email,
-          UserInfoAccountType: AccountType,
-          UserInfoIsInviteFromEmail: true,
-          UserInfoInviteDocumentKey: NonUserDocumentKey
-        };
+  const UserInfoData = {
+    UserInfoEmail: Email,
+    UserInfoAccountType: AccountType,
+  };
 
   const ProfileData = {
     ProfileFirstname: Firstname,
     ProfileSurname: Surname,
-    ProfileEmail: Email
+    ProfileEmail: Email,
   };
 
   return RegisterWithEmail(Email, Password).pipe(
     map(RegisterSnapshot => RegisterSnapshot.user.uid),
-    tap(uid => {
+    tap((uid) => {
       UpdateUserInfo(uid, UserInfoData);
       CreateProfile(uid, ProfileData);
-    })
+    }),
   );
 };

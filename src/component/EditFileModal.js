@@ -2,7 +2,9 @@
 /* eslint-disable filenames/match-regex */
 /* as it is component */
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
-import { Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import {
+  Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader,
+} from 'reactstrap';
 import { EditChatRoomFileLink } from '../service/chat/chat';
 
 const EditFileModal = forwardRef((props, ref) => {
@@ -16,7 +18,7 @@ const EditFileModal = forwardRef((props, ref) => {
     setModal(!modal);
   };
 
-  const handleInputFileNameChange = event => {
+  const handleInputFileNameChange = (event) => {
     setEditedFileName(event.target.value);
   };
 
@@ -34,7 +36,7 @@ const EditFileModal = forwardRef((props, ref) => {
       setEditIndex(editIndex);
       setChatFile(chatFile);
       toggle();
-    }
+    },
   }));
 
   return (
@@ -61,7 +63,8 @@ const EditFileModal = forwardRef((props, ref) => {
       <ModalFooter>
         <Button color="primary" onClick={edit}>
           Edit
-        </Button>{' '}
+        </Button>
+        {' '}
       </ModalFooter>
     </Modal>
   );

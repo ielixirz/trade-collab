@@ -2,7 +2,9 @@
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable filenames/match-regex */
 import React, { Component } from 'react';
-import { Card, CardBody, Col, Container, Row, CardTitle, CardSubtitle } from 'reactstrap';
+import {
+  Card, CardBody, Col, Container, Row, CardTitle, CardSubtitle,
+} from 'reactstrap';
 import './register.css';
 import './checkbox.scss';
 import { RegisterUser } from '../../../service/auth/register';
@@ -15,18 +17,18 @@ const styles = {
     marginTop: 30,
     marginBottom: 30,
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   agreeTerm: {
     fontWeight: 'bold',
-    marginLeft: 10
+    marginLeft: 10,
   },
   termCon: {
     fontWeight: 'bold',
     marginBottom: 5,
     color: '#16a085',
-    marginLeft: 10
-  }
+    marginLeft: 10,
+  },
 };
 
 class RegisterMail extends Component {

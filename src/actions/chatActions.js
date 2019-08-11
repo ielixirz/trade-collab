@@ -195,7 +195,7 @@ export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
       ChatRoomKey: item.ChatRoomKey,
       ShipmentKey: item.ShipmentKey,
       ChatRoomData: item.ChatRoomData,
-      position: _.get(chats, `${item.ChatRoomKey}.position`, _.size(chats)),
+      position: item.position,
       member: item.member
     });
   });

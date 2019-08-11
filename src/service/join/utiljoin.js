@@ -5,7 +5,6 @@ import { map } from 'rxjs/operators';
 import { IsExistInvitation } from './invite';
 import { IsExistRequest } from './request';
 
-export const CombineIsExistInvitationRequest = (UserKey, CompanyKey) =>
-  combineLatest(IsExistInvitation(UserKey, CompanyKey), IsExistRequest(UserKey, CompanyKey)).pipe(
-    map(Res => Res[0] || Res[1])
-  );
+export const CombineIsExistInvitationRequest = (UserKey, CompanyKey) => combineLatest(IsExistInvitation(UserKey, CompanyKey), IsExistRequest(UserKey, CompanyKey)).pipe(
+  map(Res => Res[0] || Res[1]),
+);

@@ -12,13 +12,13 @@ import {
   SearchShipment,
   CombineShipmentAndShipmentReference,
   TestCollectionGroup,
-  CreateShipmentMember
+  CreateShipmentMember,
 } from '../../service/shipment/shipment';
 import { GetMasterDataChatRoom, GetDefaultTemplate } from '../../service/masterdata/masterdata';
 import {
   CreateCompanyMultipleInvitation,
   CreateChatMultipleInvitation,
-  IsExistInvitation
+  IsExistInvitation,
 } from '../../service/join/invite';
 import { GetProfileListFromEmail } from '../../service/user/profile';
 
@@ -29,7 +29,7 @@ import {
   CreateCompanyUserAccessibility,
   GetCompanyUserAccessibility,
   UpdataCompanyUserAccessibility,
-  DeleteCompanyUserAccessibility
+  DeleteCompanyUserAccessibility,
 } from '../../service/company/company';
 
 import { GetUserRequest } from '../../service/join/request';
@@ -37,7 +37,7 @@ import { GetUserRequest } from '../../service/join/request';
 import {
   AddShipmentPin,
   DeleteShipmentPin,
-  GetShipmentPin
+  GetShipmentPin,
 } from '../../service/personalize/personalize';
 
 const TestService = () => {
@@ -55,7 +55,7 @@ const TestService = () => {
     ChatRoomMessageSender: ProfileKey,
     ChatRoomMessageContext: 'น่าร๊ากกกก',
     ChatRoomMessageType: 'Text',
-    ChatRoomMessageTimestamp: new Date()
+    ChatRoomMessageTimestamp: new Date(),
   };
 
   useEffect(() => {

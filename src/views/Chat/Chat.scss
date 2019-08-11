@@ -472,32 +472,6 @@ h2.time-background:before {
   z-index: -1;
 }
 
-.react-tagsinput-input {
-  width: 200px;
-}
-.react-tagsinput {
-  border: 0px;
-  border-bottom: 1px solid hsl(0, 0%, 90%);
-  height: 50px;
-  overflow: scroll;
-}
-.react-tagsinput-tag {
-  background-color: hsl(0, 0%, 90%) !important;
-  border: 0px;
-  color: black;
-
-  &.chat-invite {
-    &.exist {
-      color: black;
-      font-weight: bold;
-    }
-    &.notExist {
-      color: grey;
-      font-style: italic;
-    }
-  }
-}
-
 .uploading-file-row {
   margin-bottom: 2px;
   margin-left: 5px;
@@ -572,9 +546,4 @@ h2.time-background:before {
   &:focus {
     box-shadow: none !important;
   }
-}
-
-i.cancel-invite {
-  margin: 8px 0px 0px 10px !important;
-  cursor: pointer;
 }
