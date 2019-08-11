@@ -1,6 +1,9 @@
 img {
   max-width: 100%;
 }
+.selectfilter{
+  width:100px
+}
 
 .text-yterminal {
   color: #16a085;
@@ -10,6 +13,16 @@ img {
   float: right;
 }
 
+.btn-ref{
+  color: #23282c;
+  background-color: transparent;
+  width: 100%;
+
+}
+.btn-ref:hover{
+
+  border-color: #c8ced3;
+}
 .left {
   float: left;
 }

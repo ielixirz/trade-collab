@@ -28,7 +28,7 @@ export const setDefault = () => dispatch => {
     payload: {}
   });
 };
-export const login = (data, callback) => dispatch => {
+export const login = (data, callback, redirectUrl) => dispatch => {
   const { email, password } = data;
   dispatch({
     type: FETCH_COMPANY_USER,
@@ -74,7 +74,7 @@ export const login = (data, callback) => dispatch => {
         complete: () => {}
       });
 
-      window.location.replace('#/selectprofile');
+      window.location.replace(redirectUrl);
     },
     error: err => {
       console.log(err);

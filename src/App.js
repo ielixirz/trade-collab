@@ -17,33 +17,38 @@ export const { store, persistor } = configureStore();
 // Containers
 const DefaultLayout = Loadable({
   loader: () => import('./containers/DefaultLayout'),
-  loading,
+  loading
 });
 
 // Pages
 const Login = Loadable({
   loader: () => import('./views/Pages/Login'),
-  loading,
+  loading
 });
 
 const Register = Loadable({
   loader: () => import('./views/Pages/Main/MainRegister'),
-  loading,
+  loading
 });
 
 const Page404 = Loadable({
   loader: () => import('./views/Pages/Page404'),
-  loading,
+  loading
 });
 
 const Page500 = Loadable({
   loader: () => import('./views/Pages/Page500'),
-  loading,
+  loading
 });
 
 const ResetPassword = Loadable({
-  loader: () => import('./views/Pages/Email/ResetPassword'),
-  loading,
+  loader: () => import('./views/Pages/Redirect/ResetPassword'),
+  loading
+});
+
+const NewUser = Loadable({
+  loader: () => import('./views/Pages/Redirect/NewUser'),
+  loading
 });
 
 class App extends Component {
@@ -57,6 +62,7 @@ class App extends Component {
                 <Route exact path="/login" name="Login Page" component={Login} />
                 <Route exact path="/register" name="Register Page" component={Register} />
                 <Route path="/rp" name="Reset Password" component={ResetPassword} />
+                <Route path="/nu" name="New User" component={NewUser} />
                 <Route exact path="/404" name="Page 404" component={Page404} />
                 <Route exact path="/500" name="Page 500" component={Page500} />
                 <Route path="/" name="Home" component={DefaultLayout} />

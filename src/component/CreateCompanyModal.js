@@ -1,12 +1,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
 /* as it is component */
-import React, {
-  useState, forwardRef, useImperativeHandle, useEffect,
-} from 'react';
-import {
-  Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader,
-} from 'reactstrap';
+import React, { useState, forwardRef, useImperativeHandle, useEffect } from 'react';
+import { Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { CombineCreateCompanyWithCreateCompanyMember } from '../service/company/company';
 
 const CreateCompanyModal = forwardRef((props, ref) => {
@@ -24,7 +20,7 @@ const CreateCompanyModal = forwardRef((props, ref) => {
     setExtend(!isExtend);
   };
 
-  const handleCompanyInputChange = (event) => {
+  const handleCompanyInputChange = event => {
     const createCompany = { ...company };
     const inputValue = event.target.value;
     const inputName = event.target.id;
@@ -53,7 +49,7 @@ const CreateCompanyModal = forwardRef((props, ref) => {
       UserMemberRoleName: 'Owner',
       CompanyUserAccessibilityRolePermissionCode: '11111111111111',
       UserMemberCompanyStandingStatus: 'Active',
-      UserMemberJoinedTimestamp: new Date(),
+      UserMemberJoinedTimestamp: new Date()
     };
     CombineCreateCompanyWithCreateCompanyMember(company, props.userKey, userData).subscribe(() => {
       props.updateCompany(company);
@@ -65,7 +61,7 @@ const CreateCompanyModal = forwardRef((props, ref) => {
     triggerCreateCompany() {
       setExtend(false);
       toggle();
-    },
+    }
   }));
 
   const validate = () => {
@@ -146,8 +142,7 @@ const CreateCompanyModal = forwardRef((props, ref) => {
           disabled={!validate()}
         >
           Create Company
-        </Button>
-        {' '}
+        </Button>{' '}
       </ModalFooter>
     </Modal>
   );

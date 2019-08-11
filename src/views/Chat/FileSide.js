@@ -3,9 +3,7 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable filenames/match-regex */
 import React, { useEffect, useState, useRef } from 'react';
-import {
-  Collapse, CardBody, Card, Row, Col,
-} from 'reactstrap';
+import { Collapse, CardBody, Card, Row, Col } from 'reactstrap';
 import _ from 'lodash';
 import FileList from '../../component/FileList';
 import { EditChatRoomFileLink } from '../../service/chat/chat';
@@ -17,23 +15,23 @@ const styles = {
     fontSize: '1.2em',
     fontWeight: 'bold',
     color: '#707070',
-    marginLeft: 15,
+    marginLeft: 15
   },
   arrow: {
     fontSize: '1.2em',
     marginLeft: 5,
-    color: '#707070',
+    color: '#707070'
   },
   status: {
-    color: '#58CADB',
+    color: '#58CADB'
   },
   card: {
     marginBottom: '0.2rem',
-    marginRight: '0.2rem',
-  },
+    marginRight: '0.2rem'
+  }
 };
 
-const FileSide = (props) => {
+const FileSide = props => {
   const [selectedFile, setSelectedFile] = useState([]);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const fileListRef = useRef(null);
@@ -46,11 +44,11 @@ const FileSide = (props) => {
     props.collapseTrigger('FILE');
   };
 
-  const deleteSelectedFile = (e) => {
+  const deleteSelectedFile = e => {
     e.stopPropagation();
     if (selectedFile.length > 0) {
       const updatingFile = [...props.chatFile];
-      _.forEach(selectedFile, (f) => {
+      _.forEach(selectedFile, f => {
         updatingFile[f.originalindex].FileIsDelete = true;
       });
       setSelectedFile([]);
@@ -130,16 +128,14 @@ const FileSide = (props) => {
                 </svg>
               </span>
               <span style={styles.title}>
-                {!isDeleteMode ? 'Shared Files' : 'Deleted Files'}
-                {' '}
-(
+                {!isDeleteMode ? 'Shared Files' : 'Deleted Files'} (
                 {props.chatFile === undefined
                   ? '0'
                   : isDeleteMode
-                    ? _.filter(props.chatFile, file => file.FileIsDelete === true).length
-                    : _.filter(
+                  ? _.filter(props.chatFile, file => file.FileIsDelete === true).length
+                  : _.filter(
                       props.chatFile,
-                      file => file.FileIsDelete === undefined || file.FileIsDelete === false,
+                      file => file.FileIsDelete === undefined || file.FileIsDelete === false
                     ).length}
                 )
               </span>
@@ -156,7 +152,7 @@ const FileSide = (props) => {
                   fontSize: 'medium',
                   padding: '0',
                   paddingLeft: '20px',
-                  cursor: 'pointer',
+                  cursor: 'pointer'
                 }}
                 onKeyDown={null}
                 tabIndex="-1"
