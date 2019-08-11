@@ -4,9 +4,7 @@
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable filenames/match-regex */
 import React, { useState } from 'react';
-import {
-  Form, Col, Container, Row, Input,
-} from 'reactstrap';
+import { Form, Col, Container, Row, Input } from 'reactstrap';
 import './register.css';
 import './checkbox.scss';
 import { RegisterUser } from '../../../service/auth/register';
@@ -14,19 +12,19 @@ import { GetUserInfoFromEmail } from '../../../service/user/user';
 import { isValidEmail, isValidName, isValidPassword } from '../../../utils/validation';
 
 const styles = {
-  marginInput: { marginLeft: 5, marginRight: 5 },
+  marginInput: { marginLeft: 5, marginRight: 5 }
 };
 
-const Register = (props) => {
+const Register = props => {
   const [invalid, setInvalid] = useState({
     Firstname: { isInvalid: undefined, msg: '' },
     Surname: { isInvalid: undefined, msg: '' },
     Email: { isInvalid: undefined, msg: '' },
-    Password: { isInvalid: undefined, msg: '' },
+    Password: { isInvalid: undefined, msg: '' }
   });
   const [isDuplicate, setIsDuplicate] = useState(false);
 
-  const validateFields = (values) => {
+  const validateFields = values => {
     let valid = true;
     const i = { ...invalid };
     if (values.Firstname !== '') {
@@ -89,8 +87,8 @@ const Register = (props) => {
     return valid;
   };
 
-  const handleEmailChange = (email) => {
-    GetUserInfoFromEmail(email).subscribe((data) => {
+  const handleEmailChange = email => {
+    GetUserInfoFromEmail(email).subscribe(data => {
       if (data.length === 0) {
         setIsDuplicate(false);
       } else setIsDuplicate(true);
@@ -98,7 +96,7 @@ const Register = (props) => {
     props.handleEmailChange(email);
   };
 
-  const saveAndContinue = (e) => {
+  const saveAndContinue = e => {
     e.preventDefault();
     if (validateFields(props.values) && !isDuplicate) {
       props.nextStep('');
@@ -116,7 +114,7 @@ const Register = (props) => {
                   paddingLeft: 20,
                   paddingRight: 20,
                   paddingTop: 40,
-                  paddingBottom: 40,
+                  paddingBottom: 40
                 }}
               >
                 <h2 style={{ marginLeft: 0 }}>Create new account for free!</h2>
@@ -202,7 +200,7 @@ const Register = (props) => {
                       name="email"
                       style={{ marginTop: 0 }}
                       placeholder="you@example.com"
-                      onChange={(e) => {
+                      onChange={e => {
                         handleEmailChange(e.target.value);
                       }}
                       defaultValue={props.values.Email}

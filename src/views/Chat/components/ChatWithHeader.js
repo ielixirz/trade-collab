@@ -6,33 +6,44 @@
 /* eslint-disable filenames/match-regex */
 import _ from 'lodash';
 import React, { Component } from 'react';
-import { Breadcrumb, Row, Col, Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
+import {
+  Breadcrumb,
+  Row,
+  Col,
+  Button,
+  InputGroup,
+  InputGroupAddon,
+  Input,
+  UncontrolledPopover,
+  PopoverBody,
+  Label,
+  Form,
+  FormGroup
+} from 'reactstrap';
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
-import CKEditor from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import MemberModal from '../../../component/MemberModal';
-import MemberInviteModal from '../../../component/MemberInviteModal';
 import UploadModal from '../../../component/UploadModal';
 import TextLoading from '../../../component/svg/TextLoading';
 import FileSide from '../FileSide';
 import ShipmentSide from '../ShipmentSide';
 import ChatMessage from './ChatMessage';
 import PreMessage from './PreMessage';
+import ChatInviteBar from './ChatInviteBar';
 import {
   AddChatRoomMember,
   CreateChatRoom,
-  GetChatRoomMemberList,
   UpdateChatRoomMember,
   UpdateChatRoomMessageReader
 } from '../../../service/chat/chat';
 import { GetCompanyMember } from '../../../service/company/company';
 import { CreateChatMultipleInvitation } from '../../../service/join/invite';
-import { moveTab } from '../../../actions/chatActions';
-import { PutFile } from '../../../service/storage/managestorage';
-import { FETCH_CHAT_MEMBER, FETCH_COMPANY_USER } from '../../../constants/constants';
-import { GetUserCompany } from '../../../service/user/user';
 import { ClearUnReadChatMessage } from '../../../service/personalize/personalize';
+import TableLoading from '../../../component/svg/TableLoading';
+import {
+  CreateShipmentReference,
+  UpdateShipmentReference
+} from '../../../service/shipment/shipment';
 
 const AVAILABLE_ROLES = {
   Importer: 'Exporter',
@@ -48,7 +59,18 @@ class ChatWithHeader extends Component {
       email: '',
       companies: [],
       members: [],
+      toggleInvite: false,
       isAssign: false,
+      input: {
+        refs: [],
+        newRef: {
+          ShipmentReferenceID: '',
+          ShipmentReferenceCompanyName: '',
+          ShipmentReferenceCompanyKey: ''
+        }
+      },
+
+      submiting: {},
       sideCollpase: 'SHIPMENT'
     };
 
@@ -56,12 +78,12 @@ class ChatWithHeader extends Component {
   }
 
   componentDidMount() {
-    const { ShipmentKey, ChatRoomKey, sender, chatMsg } = this.props;
+    const { ShipmentKey, ChatRoomKey, sender } = this.props;
     if (this.multilineTextarea) {
       this.multilineTextarea.style.height = '50px ';
     }
     ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
-      next: res => {}
+      next: () => {}
     });
   }
 
@@ -83,7 +105,7 @@ class ChatWithHeader extends Component {
           ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
         });
         ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
-          next: res => {}
+          next: () => {}
         });
       }
       lastkey = chatMsg[chatMsg.length - 1].id;
@@ -104,6 +126,12 @@ class ChatWithHeader extends Component {
     }
   };
 
+  toggleInviteComponent(toggle) {
+    this.setState({
+      toggleInvite: !toggle
+    });
+  }
+
   UpdateReader(ShipmentKey, ChatRoomKey, sender, data) {
     const refresh = _.debounce(() => {
       UpdateChatRoomMessageReader(ShipmentKey, ChatRoomKey, sender, data);
@@ -111,7 +139,7 @@ class ChatWithHeader extends Component {
     refresh();
   }
 
-  handleAssignCompany(e, role, userRole) {
+  handleAssignCompany(e, userRole) {
     const { ShipmentKey, ChatRoomKey, members, user } = this.props;
     const { companies } = this.props;
 
@@ -126,7 +154,6 @@ class ChatWithHeader extends Component {
           }));
           const inviteRole = userRole;
           const inviteMember = [];
-          const userMember = [];
           if (memberData) {
             const result = UpdateChatRoomMember(
               ShipmentKey,
@@ -183,7 +210,6 @@ class ChatWithHeader extends Component {
                 ).subscribe({
                   next: res => {
                     console.log('Invite Result');
-                    invite.unsubscribe();
                     this.props.fetchMoreMessage(chatkey, ShipmentKey);
                   }
                 });
@@ -214,22 +240,14 @@ class ChatWithHeader extends Component {
     }
   }
 
-  renderAssignCompany(ChatRoomType, hasInvite = false) {
-    const {
-      ChatRoomData,
-      user,
-      ShipmentData,
-      ShipmentKey,
-      ChatRoomKey,
-      members: member
-    } = this.props;
+  renderAssignCompany(ChatRoomType) {
+    const { user, ShipmentData, ShipmentKey, ChatRoomKey, members: member } = this.props;
 
     const members = ShipmentData.ShipmentMember;
     const memberData = _.find(members, (item, index) => index === user.uid);
     console.log('Member Data', memberData);
-    const isHaveRole = _.find(member, item => item.ChatRoomMemberUserKey === user.uid);
     // const isHaveRole = _.get(ShipmentData, `ShipmentMember.${user.uid}`, {});
-    const companies = this.props.companies;
+    const { companies } = this.props;
 
     let options = [];
     options = _.map(companies, item => ({
@@ -265,11 +283,23 @@ class ChatWithHeader extends Component {
                 <p>Select a company, to inform your team about this shipment</p>
 
                 <Row>
-                  <Col xs={6}>
+                  <Col xs={4}>
                     <Select
                       onChange={e => {
                         this.setState({ company: e });
                       }}
+                      name="company"
+                      placeholder="Select Company"
+                      options={options}
+                      value={this.state.company}
+                    />
+                  </Col>
+                  <Col xs={3}>
+                    <Select
+                      onChange={e => {
+                        this.setState({ company: e });
+                      }}
+                      placeholder="Select Role"
                       name="company"
                       options={options}
                       value={this.state.company}
@@ -287,15 +317,24 @@ class ChatWithHeader extends Component {
                       disabled={this.state.isAssign}
                       onClick={() => {
                         this.setState({ isAssign: true });
-                        this.handleAssignCompany(
-                          this.state.company,
-                          ChatRoomType,
-                          memberData.ShipmentMemberRole
-                        );
+                        this.handleAssignCompany(this.state.company, memberData.ShipmentMemberRole);
                       }}
                     >
                       Confirm
                     </Button>
+                  </Col>
+                </Row>
+                <br />
+                <Row>
+                  <Col xs="auto">
+                    <Form inline>
+                      <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
+                        <Label for="exampleEmail" className="mr-sm-2">
+                          REF #
+                        </Label>
+                        <Input type="text" name="ref" id="ref" placeholder="Reference Number" />
+                      </FormGroup>
+                    </Form>
                   </Col>
                 </Row>
               </div>
@@ -344,11 +383,7 @@ class ChatWithHeader extends Component {
                       backgroundColor: '#16A085'
                     }}
                     onClick={() => {
-                      this.handleAssignCompany(
-                        this.state.company,
-                        ChatRoomType,
-                        memberData.ShipmentMemberRole
-                      );
+                      this.handleAssignCompany(this.state.company, memberData.ShipmentMemberRole);
                     }}
                   >
                     Confirm
@@ -466,9 +501,214 @@ class ChatWithHeader extends Component {
     }
   }
 
+  renderInviteComponent() {
+    return (
+      <ChatInviteBar
+        chatRoomKey={this.props.ChatRoomKey}
+        shipmentKey={this.props.ShipmentKey}
+        sender={this.props.sender}
+        member={this.props.members}
+        shipmentData={this.props.ShipmentData}
+        toggleInvite={() => this.toggleInviteComponent(true)}
+      />
+    );
+  }
+
+  renderRefComponent(index, ref, shipmentKey, ShipmentMember) {
+    const { user, companies } = this.props;
+    const userCompany = [];
+    let refs = [];
+    refs = _.map(ref, item => item);
+    const userrefs = _.filter(ref, refItem =>
+      _.some(companies, item => _.includes(refItem.ShipmentReferenceCompanyKey, item.CompanyKey))
+    );
+    console.log('ShipmentMember', ShipmentMember);
+    const hasCompany = _.get(ShipmentMember, `${user.uid}`, {});
+
+    const alreadyHave = !_.isEmpty(userrefs);
+    return (
+      <div>
+        <Button id={`popover${index}`} className="text-yterminal">
+          {userrefs.length > 0 ? (
+            <b style={{ color: 'black' }}>{userrefs[0].ShipmentReferenceID}</b>
+          ) : _.isEmpty(companies) ? (
+            <TableLoading />
+          ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (
+            <b>Input your Ref#!</b>
+          ) : (
+            <b>See Refs</b>
+          )}
+        </Button>
+        <UncontrolledPopover
+          trigger="legacy"
+          placement="bottom"
+          className="yterminalRef"
+          target={`popover${index}`}
+        >
+          <PopoverBody>
+            {!alreadyHave ? (
+              <Row
+                style={{
+                  marginBottom: '5px'
+                }}
+              >
+                <Col xs={1} />
+                <Col xs={5} style={{ paddingTop: 5 }}>
+                  <Label check>
+                    {_.isEmpty(hasCompany.ShipmentMemberCompanyName)
+                      ? 'Please Assign Company'
+                      : hasCompany.ShipmentMemberCompanyName}
+                  </Label>
+                </Col>
+                <Col xs={5}>
+                  <Input
+                    type="text"
+                    name={`shipmentRefID${ref.length + 1}`}
+                    id={`shipmentRefID${ref.length + 1}`}
+                    disabled={_.isEmpty(hasCompany.ShipmentMemberCompanyName)}
+                    value={
+                      _.isEmpty(hasCompany.ShipmentMemberCompanyName)
+                        ? 'N/A'
+                        : this.state.input.newRef.ShipmentReferenceID
+                    }
+                    onChange={e => {
+                      const { value } = e.target;
+                      this.setState({
+                        input: {
+                          newRef: {
+                            ...this.state.input.newRef,
+                            ShipmentReferenceID: value,
+                            ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
+                            ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
+                            ShipmentKey: shipmentKey
+                          }
+                        }
+                      });
+                    }}
+                    onKeyPress={_.debounce(
+                      event => {
+                        if (event.key === 'Enter') {
+                          if (
+                            _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) === false
+                          ) {
+                            this.setState({
+                              submiting: {
+                                ...this.state.submiting,
+                                [shipmentKey]: {
+                                  isSubmit: true
+                                }
+                              }
+                            });
+                            CreateShipmentReference(shipmentKey, this.state.input.newRef).subscribe(
+                              {
+                                next: res => {
+                                  this.setState({
+                                    submiting: {
+                                      ...this.state.submiting,
+                                      [shipmentKey]: {
+                                        refid: res.id,
+                                        isSubmit: true
+                                      }
+                                    }
+                                  });
+                                }
+                              }
+                            );
+                          } else if (_.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0) {
+                            UpdateShipmentReference(
+                              shipmentKey,
+                              _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
+                              this.state.input.newRef
+                            );
+                          }
+                        }
+                      },
+                      2000,
+                      {
+                        leading: true,
+                        trailing: false
+                      }
+                    )}
+                    maxLength={50}
+                    bsSize="sm"
+                  />
+                </Col>
+              </Row>
+            ) : (
+              ''
+            )}
+            {refs.map((refItem, refIndex) => (
+              <Row
+                key={refIndex}
+                style={{
+                  marginBottom: '5px'
+                }}
+              >
+                <Col xs={1} />
+                <Col xs={5} style={{ paddingTop: 5 }}>
+                  <Label check>({refItem.ShipmentReferenceCompanyName})</Label>
+                </Col>
+                <Col xs={5}>
+                  <Input
+                    type="text"
+                    name={`shipmentRefID${refIndex}`}
+                    id={`shipmentRefID${refIndex}`}
+                    value={refItem.ShipmentReferenceIDInput}
+                    onChange={e => {
+                      const { value } = e.target;
+                      // (ShipmentKey, refKey, Data)
+                      this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
+                        ...refItem,
+                        ShipmentReferenceIDInput: value,
+                        ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
+                        ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
+                        ShipmentKey: shipmentKey
+                      });
+                    }}
+                    onKeyPress={event => {
+                      if (event.key === 'Enter') {
+                        const update = UpdateShipmentReference(
+                          shipmentKey,
+                          refItem.ShipmentReferenceKey,
+                          {
+                            ...refItem,
+                            ShipmentReferenceID: refItem.ShipmentReferenceIDInput
+                          }
+                        ).subscribe({
+                          next: res => {
+                            console.log('Update Ref', res);
+                          },
+                          complete: res => {
+                            this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
+                              ...refItem,
+                              ShipmentReferenceID: refItem.ShipmentReferenceIDInput,
+                              ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
+                              ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
+                              ShipmentKey: shipmentKey
+                            });
+                            update.unsubscribe();
+                          }
+                        });
+                      }
+                    }}
+                    maxLength={50}
+                    bsSize="sm"
+                    disabled={
+                      hasCompany.ShipmentMemberCompanyKey !== refItem.ShipmentReferenceCompanyKey
+                    }
+                  />
+                </Col>
+              </Row>
+            ))}
+          </PopoverBody>
+        </UncontrolledPopover>
+      </div>
+    );
+    return <span style={{ color: '#b5b2b2', fontStyle: 'italic' }}>Please Assign company</span>;
+  }
+
   render() {
     const {
-      alert,
       user,
       network,
       msg: sending,
@@ -480,12 +720,9 @@ class ChatWithHeader extends Component {
       toggleBlocking,
       sender,
       ShipmentKey,
-      ShipmentData = {},
       members: member,
       ChatRoomKey,
       ChatRoomFileLink,
-      ChatRoomMember,
-      ChatRoomData: { ChatRoomType },
       // Action
       sendMessage,
       fetchMoreMessage,
@@ -500,7 +737,7 @@ class ChatWithHeader extends Component {
     const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
     let ref = '';
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
-    console.log(isInvited, 'member???');
+    console.log(this.props, 'props');
 
     if (!_.isEmpty(isInvited)) {
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
@@ -523,43 +760,43 @@ class ChatWithHeader extends Component {
         >
           <Breadcrumb className="chat-toolbar">
             <Row style={{ width: '100%', marginLeft: 20 }}>
-              <Col>
-                <Button className="btn-chat-label" style={{ fontSize: 'x-large' }}>
-                  {ref === 'loading' ? (
-                    <TextLoading />
-                  ) : _.get(ref, 'ShipmentReferenceID', '') === '' ? (
-                    <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>
-                      Ref is not defined
-                    </span>
-                  ) : (
-                    <b>{`${_.get(ref, 'ShipmentReferenceID', '')}`}</b>
-                  )}
-                </Button>
-              </Col>
-              <Col>
-                <Row>
-                  <MemberModal
-                    {...this.props}
-                    count={
-                      _.filter(
-                        member,
-                        item => _.get(item, 'ChatRoomMemberIsLeave', false) === false
-                      ).length
-                    }
-                    toggleBlocking={toggleBlocking}
-                    list={member}
-                    network={network}
-                  />
-                  <MemberInviteModal
-                    {...this.props}
-                    ShipmentKey={ShipmentKey}
-                    ChatRoomKey={ChatRoomKey}
-                    member={member}
-                    usersRole={isInvited}
-                    sender={this.props.sender}
-                  />
-                </Row>
-              </Col>
+              {this.state.toggleInvite ? (
+                this.renderInviteComponent()
+              ) : (
+                <React.Fragment>
+                  <Col>
+                    {this.renderRefComponent(
+                      1,
+                      _.get(ship, 'ShipmentReferenceList', []),
+                      ShipmentKey,
+                      ship.ShipmentMember
+                    )}
+                  </Col>
+                  <Col>
+                    <Row>
+                      <MemberModal
+                        {...this.props}
+                        count={
+                          _.filter(
+                            member,
+                            item => _.get(item, 'ChatRoomMemberIsLeave', false) === false
+                          ).length
+                        }
+                        toggleBlocking={toggleBlocking}
+                        list={member}
+                        network={network}
+                      />
+                      <Button
+                        onClick={() => {
+                          this.toggleInviteComponent(this.state.toggleInvite);
+                        }}
+                      >
+                        Invite
+                      </Button>
+                    </Row>
+                  </Col>
+                </React.Fragment>
+              )}
             </Row>
           </Breadcrumb>
         </Row>
@@ -616,10 +853,7 @@ class ChatWithHeader extends Component {
                 {_.get(this.props.ShipmentData, 'ShipmentCreatorUserKey', false) === user.uid
                   ? this.renderAssignCompany(this.props.ShipmentData.ShipmentCreatorType)
                   : isInvited
-                  ? this.renderAssignCompany(
-                      isInvited.ChatRoomMemberRole[0],
-                      _.get(isInvited, 'ChatRoomMemberCompanyKey', false)
-                    )
+                  ? this.renderAssignCompany(isInvited.ChatRoomMemberRole[0])
                   : ''}
                 {chatMsg.map((msg, i) => {
                   const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);

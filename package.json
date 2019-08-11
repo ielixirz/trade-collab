@@ -59,6 +59,8 @@
     "react-router-config": "^5.0.1",
     "react-router-dom": "^5.0.1",
     "react-select": "^2.4.2",
+    "react-tag-input": "^6.4.0",
+    "react-tagsinput": "^3.19.0",
     "react-test-renderer": "^16.8.4",
     "reactstrap": "^7.1.0",
     "redux": "^4.0.1",

@@ -104,7 +104,11 @@ class MainRegister extends Component {
         RegisterUser(data).subscribe({
           next: (userKey) => {
             this.props.setDefault();
-            const checkingMembership = isChatRoomMember(dataKey.shipmentKey, dataKey.chatroomKey, userKey).subscribe({
+            const checkingMembership = isChatRoomMember(
+              dataKey.shipmentKey,
+              dataKey.chatroomKey,
+              userKey,
+            ).subscribe({
               next: (isMember) => {
                 if (isMember) {
                   checkingMembership.unsubscribe();

@@ -1,8 +1,6 @@
 import { collection, doc } from 'rxfire/firestore';
 import { from, combineLatest } from 'rxjs';
-import {
- take, map, switchMap, tap, concatMap,
-} from 'rxjs/operators';
+import { take, map, switchMap, tap, concatMap } from 'rxjs/operators';
 
 import { FirebaseApp } from '../firebase';
 
@@ -10,12 +8,14 @@ import { CreateUserCompany } from '../user/user';
 
 const CompanyRefPath = () => FirebaseApp.firestore().collection('Company');
 
-const CompanyMemberRefPath = CompanyKey => FirebaseApp.firestore()
+const CompanyMemberRefPath = CompanyKey =>
+  FirebaseApp.firestore()
     .collection('Company')
     .doc(CompanyKey)
     .collection('CompanyMember');
 
-const CompanyUserAccessibilityRefPath = CompanyKey => FirebaseApp.firestore()
+const CompanyUserAccessibilityRefPath = CompanyKey =>
+  FirebaseApp.firestore()
     .collection('Company')
     .doc(CompanyKey)
     .collection('CompanyUserAccessibility');
@@ -35,66 +35,77 @@ const CompanyUserAccessibilityRefPath = CompanyKey => FirebaseApp.firestore()
 
 export const CreateCompany = Data => from(CompanyRefPath().add(Data));
 
-export const UpdateCompany = (CompanyKey, Data) => from(
+export const UpdateCompany = (CompanyKey, Data) =>
+  from(
     CompanyRefPath()
       .doc(CompanyKey)
-      .set(Data, { merge: true }),
+      .set(Data, { merge: true })
   );
 
 export const GetCompanyDetail = CompanyKey => doc(CompanyRefPath().doc(CompanyKey));
 
-export const CheckAvaliableCompanyName = CompanyName => collection(CompanyRefPath().where('CompanyName', '==', CompanyName)).pipe(take(1));
+export const CheckAvaliableCompanyName = CompanyName =>
+  collection(CompanyRefPath().where('CompanyName', '==', CompanyName)).pipe(take(1));
 
-export const SetCompanyID = (CompanyKey, CompanyID) => from(
+export const SetCompanyID = (CompanyKey, CompanyID) =>
+  from(
     CompanyRefPath()
       .doc(CompanyKey)
-      .set({ CompanyID }, { merge: true }),
+      .set({ CompanyID }, { merge: true })
   );
 
-export const SetCompanyImageLink = (CompanyKey, CompanyImageLink) => from(
+export const SetCompanyImageLink = (CompanyKey, CompanyImageLink) =>
+  from(
     CompanyRefPath()
       .doc(CompanyKey)
-      .set({ CompanyImageLink }, { merge: true }),
+      .set({ CompanyImageLink }, { merge: true })
   );
 
 // eslint-disable-next-line max-len
-export const IsCompanyMember = (CompanyKey, UserKey) => doc(CompanyMemberRefPath(CompanyKey).doc(UserKey)).pipe(
+export const IsCompanyMember = (CompanyKey, UserKey) =>
+  doc(CompanyMemberRefPath(CompanyKey).doc(UserKey)).pipe(
     take(1),
-    map(Result => !!Result.data()),
+    map(Result => !!Result.data())
   );
 
 // eslint-disable-next-line max-len
-export const KeepIsCompanyMember = (CompanyKey, UserKey) => doc(CompanyMemberRefPath(CompanyKey).doc(UserKey)).pipe(map(Result => !!Result.data()));
+export const KeepIsCompanyMember = (CompanyKey, UserKey) =>
+  doc(CompanyMemberRefPath(CompanyKey).doc(UserKey)).pipe(map(Result => !!Result.data()));
 
 export const GetCompanyMember = CompanyKey => collection(CompanyMemberRefPath(CompanyKey));
 
-export const UpdateCompanyMember = (CompanyKey, UserInfoKey, Data) => from(
+export const UpdateCompanyMember = (CompanyKey, UserInfoKey, Data) =>
+  from(
     CompanyMemberRefPath(CompanyKey)
       .doc(UserInfoKey)
-      .update(Data),
+      .update(Data)
   );
 
-export const CreateCompanyMember = (CompanyKey, UserInfoKey, CompanyMemberData) => from(
+export const CreateCompanyMember = (CompanyKey, UserInfoKey, CompanyMemberData) =>
+  from(
     CompanyMemberRefPath(CompanyKey)
       .doc(UserInfoKey)
-      .set(CompanyMemberData),
+      .set(CompanyMemberData)
   );
 
 export const CombineCreateCompanyWithCreateCompanyMember = (
   CompanyData,
   UserInfoKey,
-  CompanyMemberData,
-) => CreateCompany(CompanyData).pipe(
+  CompanyMemberData
+) =>
+  CreateCompany(CompanyData).pipe(
     map(CompanyDocData => CompanyDocData.id),
-    concatMap(CompanyID => combineLatest(
+    concatMap(CompanyID =>
+      combineLatest(
         CreateCompanyMember(CompanyID, UserInfoKey, CompanyMemberData),
         CreateUserCompany(UserInfoKey, {
           UserCompanyReference: FirebaseApp.firestore()
             .collection('Company')
             .doc(CompanyID),
-          UserCompanyTimestamp: new Date(),
-        }),
-      )),
+          UserCompanyTimestamp: new Date()
+        })
+      )
+    )
   );
 
 /* ex. CreateCompanyUserAccessibility
@@ -105,45 +116,52 @@ export const CombineCreateCompanyWithCreateCompanyMember = (
 */
 
 // eslint-disable-next-line max-len
-export const CreateCompanyUserAccessibility = (CompanyKey, Data) => from(CompanyUserAccessibilityRefPath(CompanyKey).add(Data));
+export const CreateCompanyUserAccessibility = (CompanyKey, Data) =>
+  from(CompanyUserAccessibilityRefPath(CompanyKey).add(Data));
 
 // eslint-disable-next-line max-len
-export const GetCompanyUserAccessibility = CompanyKey => collection(
-    CompanyUserAccessibilityRefPath(CompanyKey).orderBy('CompanyUserAccessibilityIndex', 'asc'),
+export const GetCompanyUserAccessibility = CompanyKey =>
+  collection(
+    CompanyUserAccessibilityRefPath(CompanyKey).orderBy('CompanyUserAccessibilityIndex', 'asc')
   );
 
 // eslint-disable-next-line max-len
-export const UpdateCompanyUserAccessibility = (CompanyKey, CompanyUserAccessibilityKey, Data) => from(
+export const UpdateCompanyUserAccessibility = (CompanyKey, CompanyUserAccessibilityKey, Data) =>
+  from(
     CompanyUserAccessibilityRefPath(CompanyKey)
       .doc(CompanyUserAccessibilityKey)
-      .set(Data, { merge: true }),
+      .set(Data, { merge: true })
   );
 
-export const DeleteCompanyUserAccessibility = (CompanyKey, CompanyUserAccessibilityKey) => from(
+export const DeleteCompanyUserAccessibility = (CompanyKey, CompanyUserAccessibilityKey) =>
+  from(
     CompanyUserAccessibilityRefPath(CompanyKey)
       .doc(CompanyUserAccessibilityKey)
-      .delete(),
+      .delete()
   );
 
-export const RemoveFromCompany = (CompanyKey, UserKey) => CompanyMemberRefPath(CompanyKey)
+export const RemoveFromCompany = (CompanyKey, UserKey) =>
+  CompanyMemberRefPath(CompanyKey)
     .doc(UserKey)
     .delete();
 
 export const CompanyUserAccessibilityIsTargetRole = (
   CompanyKey,
-  CompanyUserAccessibilityRoleName,
-) => collection(
+  CompanyUserAccessibilityRoleName
+) =>
+  collection(
     CompanyMemberRefPath(CompanyKey).where(
       'UserMemberRoleName',
       '==',
-      CompanyUserAccessibilityRoleName,
-    ),
+      CompanyUserAccessibilityRoleName
+    )
   ).pipe(
     take(1),
-    map(CompanyUserAccessibilityDoc => CompanyUserAccessibilityDoc.length > 0),
+    map(CompanyUserAccessibilityDoc => CompanyUserAccessibilityDoc.length > 0)
   );
 
-export const CompanyUserAccessibilityIsOnlyOneOwner = CompanyKey => collection(CompanyMemberRefPath(CompanyKey).where('UserMemberRoleName', '==', 'Owner')).pipe(
+export const CompanyUserAccessibilityIsOnlyOneOwner = CompanyKey =>
+  collection(CompanyMemberRefPath(CompanyKey).where('UserMemberRoleName', '==', 'Owner')).pipe(
     take(1),
-    map(CompanyUserAccessibilityDoc => CompanyUserAccessibilityDoc.length === 1),
+    map(CompanyUserAccessibilityDoc => CompanyUserAccessibilityDoc.length === 1)
   );

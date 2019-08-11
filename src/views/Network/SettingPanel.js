@@ -13,7 +13,7 @@ import {
   Button,
   Input,
   DropdownMenu,
-  DropdownItem,
+  DropdownItem
 } from 'reactstrap';
 import ErrorPopup from '../../component/commonPopup/ErrorPopup';
 
@@ -24,7 +24,7 @@ import {
   UpdateCompanyUserAccessibility,
   CreateCompanyUserAccessibility,
   DeleteCompanyUserAccessibility,
-  CompanyUserAccessibilityIsTargetRole,
+  CompanyUserAccessibilityIsTargetRole
 } from '../../service/company/company';
 
 const RoleButton = ({ roleName, deleteHandler, editHandler }) => {
@@ -40,7 +40,7 @@ const RoleButton = ({ roleName, deleteHandler, editHandler }) => {
     setIsEditing(true);
   };
 
-  const handleInputChange = (event) => {
+  const handleInputChange = event => {
     setEditingRole(event.target.value);
   };
 
@@ -64,7 +64,7 @@ const RoleButton = ({ roleName, deleteHandler, editHandler }) => {
       id={`role-${roleName}`}
       onChange={handleInputChange}
       value={editingRole}
-      onKeyPress={(event) => {
+      onKeyPress={event => {
         if (event.key === 'Enter') {
           editHandler(editingRole);
         }
@@ -73,49 +73,50 @@ const RoleButton = ({ roleName, deleteHandler, editHandler }) => {
   );
 };
 
-const PermissionButton = ({ binary, updatePermission, disabled }) => (binary === '1' ? (
-  <i
-    className="cui-check icons font-2xl d-block matrix-check"
-    role="button"
-    style={{
-      margin: 'auto',
-      fontSize: 'medium',
-      cursor: 'pointer',
-    }}
+const PermissionButton = ({ binary, updatePermission, disabled }) =>
+  binary === '1' ? (
+    <i
+      className="cui-check icons font-2xl d-block matrix-check"
+      role="button"
+      style={{
+        margin: 'auto',
+        fontSize: 'medium',
+        cursor: 'pointer'
+      }}
       // eslint-disable-next-line max-len
-    onClick={disabled === true ? null : updatePermission}
-    onKeyDown={null}
-    tabIndex="-1"
-  />
-) : (
-  <div
-    style={{ width: '100%', height: '24px' }}
-    role="button"
-    onKeyDown={null}
-    tabIndex="-1"
-    onClick={disabled === true ? null : updatePermission}
-  />
-));
+      onClick={disabled === true ? null : updatePermission}
+      onKeyDown={null}
+      tabIndex="-1"
+    />
+  ) : (
+    <div
+      style={{ width: '100%', height: '24px' }}
+      role="button"
+      onKeyDown={null}
+      tabIndex="-1"
+      onClick={disabled === true ? null : updatePermission}
+    />
+  );
 
-const SettingPanel = (props) => {
+const SettingPanel = props => {
   const [roles, setRoles] = useState([]);
   const [roleColumn, setRoleColumn] = useState([
     {
       dataField: 'permission',
       text: '',
       style: {
-        width: '700px',
+        width: '700px'
       },
       headerStyle: {
-        width: '700px',
-      },
-    },
+        width: '700px'
+      }
+    }
   ]);
   const [lastUpdate, setLastUpdate] = useState({});
   const [blocking, setBlocking] = useState(true);
   const errorPopupRef = useRef(null);
 
-  const toggleBlocking = (block) => {
+  const toggleBlocking = block => {
     setBlocking(block);
   };
 
@@ -123,18 +124,18 @@ const SettingPanel = (props) => {
     CreateCompanyUserAccessibility(props.match.params.key, {
       CompanyUserAccessibilityIndex: lastIndex + 1,
       CompanyUserAccessibilityRoleName: roleName,
-      CompanyUserAccessibilityRolePermissionCode: '00000000000000',
+      CompanyUserAccessibilityRolePermissionCode: '00000000000000'
     });
   };
 
   const deleteRole = (key, roleName) => {
-    CompanyUserAccessibilityIsTargetRole(props.match.params.key, roleName).subscribe((inUsed) => {
+    CompanyUserAccessibilityIsTargetRole(props.match.params.key, roleName).subscribe(inUsed => {
       if (!inUsed) {
         DeleteCompanyUserAccessibility(props.match.params.key, key);
       } else {
         errorPopupRef.current.triggerError(
           "Can't remove role, someone still using this role.",
-          'WARN',
+          'WARN'
         );
       }
     });
@@ -142,7 +143,7 @@ const SettingPanel = (props) => {
 
   const updateRole = (editedRoleName, key) => {
     UpdateCompanyUserAccessibility(props.match.params.key, key, {
-      CompanyUserAccessibilityRoleName: editedRoleName,
+      CompanyUserAccessibilityRoleName: editedRoleName
     });
   };
 
@@ -154,16 +155,16 @@ const SettingPanel = (props) => {
     UpdateCompanyUserAccessibility(props.match.params.key, key, {
       CompanyUserAccessibilityIndex: index,
       CompanyUserAccessibilityRoleName: roleName,
-      CompanyUserAccessibilityRolePermissionCode: matrix,
+      CompanyUserAccessibilityRolePermissionCode: matrix
     }).subscribe(() => {
       setLastUpdate({
         user: props.auth.uid,
-        timestamp: new Date(),
+        timestamp: new Date()
       });
     });
   };
 
-  const populateRoleToTable = (fetchResult) => {
+  const populateRoleToTable = fetchResult => {
     const initialRow = [...PERMISSION_LIST];
     const initialCol = [];
 
@@ -171,14 +172,14 @@ const SettingPanel = (props) => {
       dataField: 'permission',
       text: '',
       style: {
-        width: '500px',
+        width: '500px'
       },
       headerStyle: {
-        width: '500px',
-      },
+        width: '500px'
+      }
     });
 
-    _.forEach(fetchResult, (result) => {
+    _.forEach(fetchResult, result => {
       initialCol.push({
         dataField: result.CompanyUserAccessibilityRoleName,
         text: (
@@ -189,13 +190,13 @@ const SettingPanel = (props) => {
           />
         ),
         style: {
-          width: '100px',
+          width: '100px'
         },
         headerStyle: {
-          width: '100px',
+          width: '100px'
         },
         align: 'center',
-        headerAlign: 'center',
+        headerAlign: 'center'
       });
       let increment = 0;
       const matrixArray = result.CompanyUserAccessibilityRolePermissionCode.split('');
@@ -209,16 +210,17 @@ const SettingPanel = (props) => {
             <PermissionButton
               disabled={result.CompanyUserAccessibilityRoleName === 'Owner'}
               binary={binary}
-              updatePermission={() => updatePermission(
-                result.CompanyUserAccessibilityRoleName,
-                matrixArray,
-                index,
-                result.CompanyUserAccessibilityIndex,
-                result.id,
-              )
+              updatePermission={() =>
+                updatePermission(
+                  result.CompanyUserAccessibilityRoleName,
+                  matrixArray,
+                  index,
+                  result.CompanyUserAccessibilityIndex,
+                  result.id
+                )
               }
             />
-          ),
+          )
         };
       });
     });
@@ -237,11 +239,11 @@ const SettingPanel = (props) => {
         </Button>
       ),
       style: {
-        width: '40px',
+        width: '40px'
       },
       headerStyle: {
-        width: '40px',
-      },
+        width: '40px'
+      }
     });
 
     toggleBlocking(false);
@@ -249,16 +251,18 @@ const SettingPanel = (props) => {
     setRoles(initialRow);
   };
 
-  const fetchRole = (key) => {
+  const fetchRole = key => {
     GetCompanyUserAccessibility(key)
       .pipe(
-        map(docs => docs.map((d) => {
-          const data = d.data();
-          data.id = d.id;
-          return data;
-        })),
+        map(docs =>
+          docs.map(d => {
+            const data = d.data();
+            data.id = d.id;
+            return data;
+          })
+        )
       )
-      .subscribe((result) => {
+      .subscribe(result => {
         populateRoleToTable(result);
       });
   };
@@ -299,12 +303,12 @@ const SettingPanel = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   const { authReducer, userReducer, profileReducer } = state;
   return {
     auth: authReducer.user,
     user: userReducer.UserInfo,
-    currentProfile: profileReducer.ProfileList[0],
+    currentProfile: profileReducer.ProfileList[0]
   };
 };
 
