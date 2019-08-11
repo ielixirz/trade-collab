@@ -1,141 +1,150 @@
-import React, { useState, useEffect } from 'react';
-import {  CreateShipment, CreateChatRoom, CreateUserInfo, CreateCompany, CreateProfile, CreateMasterData, CreateShipmentShareList,
-  CreateShipmentShareData, CreateShipmentFile, CreateChatRoomPrivateShareData, CreateChatRoomMessage,
-  CreateUserInvitation, CreateUserRequest, CreateUserShipment, CreateUserChatRoom, CreateCompanyMember,
-  CreateCompanyInvitation, CreateCompanyRequest, CreateCompanyUserMatrix, CreateUserPersonalizeShipmentOrdering, CreateUserPersonalizeShipmentPin,
-  CreateUserPersonalizeShipmentReferenceDisplay
-} from '../../service/mockdata';
+// import React, { useState, useEffect } from 'react';
+// import {  CreateShipment, CreateChatRoom, CreateUserInfo, CreateCompany, CreateProfile, CreateMasterData, CreateShipmentShareList,
+//   CreateShipmentShareData, CreateShipmentFile, CreateChatRoomPrivateShareData, CreateChatRoomMessage,
+//   CreateUserInvitation, CreateUserRequest, CreateUserShipment, CreateUserChatRoom, CreateCompanyMember,
+//   CreateCompanyInvitation, CreateCompanyRequest, CreateCompanyUserMatrix, CreateUserPersonalizeShipmentOrdering, CreateUserPersonalizeShipmentPin,
+//   CreateUserPersonalizeShipmentReferenceDisplay
+// } from '../../service/mockdata';
 
-const mockdata = () => {
-  const [count, setCount] = useState(0);
+// const mockdata = () => {
+//   const [count, setCount] = useState(0);
 
-  const ShipmentKey = 'HDTPONlnceJeG5yAA1Zy';
-  const ChatRoomKey = 'lvCb608c7PusGqptBsq0';
+//   const ShipmentKey = 'HDTPONlnceJeG5yAA1Zy';
+//   const ChatRoomKey = 'lvCb608c7PusGqptBsq0';
 
-  const UserInfoKey = 'aE5lNgaD1bcf3OHeQR3P';
-  const ProfileKey = '3Ntt1SClkYCwOZXnLkKl';
+//   const UserInfoKey = 'aE5lNgaD1bcf3OHeQR3P';
+//   const ProfileKey = '3Ntt1SClkYCwOZXnLkKl';
 
-  const CompanyKey = 'LuX49vebvTP7U3tSAq0d';
+//   const CompanyKey = 'LuX49vebvTP7U3tSAq0d';
 
+//   useEffect(() => {
+//     // CreateShipment
 
-  useEffect(() => {
-    // CreateShipment
+//   useEffect(() => {
+//     // CreateShipment
 
-    // CreateShipment().then((res) => {
-    //   console.log(res.id);
-    // });
+//     // CreateShipment().then((res) => {
+//     //   console.log(res.id);
+//     // });
 
-    // CreateChatRoom
+//     // CreateChatRoom
 
-    // CreateChatRoom(ShipmentKey).then( res => {
-    //     console.log(res.id)
-    // })
+//     // CreateChatRoom(ShipmentKey).then( res => {
+//     //     console.log(res.id)
+//     // })
 
-    // CreateUserInfo
+//     // CreateUserInfo
 
-    // CreateUserInfo().then( res => {
-    //     console.log(res.id)
-    // })
+//     // CreateUserInfo().then( res => {
+//     //     console.log(res.id)
+//     // })
 
-    // CreateCompany
+//     // CreateCompany
 
-    // CreateCompany().then( res => {
-    //     console.log(res.id)
-    // })
+//     // CreateCompany().then( res => {
+//     //     console.log(res.id)
+//     // })
 
-    // CreateProfile
+//     // CreateProfile
 
-    // CreateProfile(UserInfoKey).then(res => {
-    //   console.log(res.id)
-    // })
+//     // CreateProfile(UserInfoKey).then(res => {
+//     //   console.log(res.id)
+//     // })
 
-    // CreateMasterData
+//     // CreateMasterData
 
-    // CreateMasterData('Shipper')
-    // CreateMasterData('ShipmentDetail')
-    // CreateMasterData('Consignee')
+//     // CreateMasterData('Shipper')
+//     // CreateMasterData('ShipmentDetail')
+//     // CreateMasterData('Consignee')
 
-    // CreateShipmentShareList
+//     // CreateShipmentShareList
 
-    // CreateShipmentShareList(ShipmentKey)
+//     // CreateShipmentShareList(ShipmentKey)
 
-    // CreateShipmentShareData
+//     // CreateShipmentShareData
 
-    // CreateShipmentShareData(ShipmentKey,'Shipper')
-    // CreateShipmentShareData(ShipmentKey,'ShipmentDetail')
-    // CreateShipmentShareData(ShipmentKey,'Consignee')
+//     // CreateShipmentShareData(ShipmentKey,'Shipper')
+//     // CreateShipmentShareData(ShipmentKey,'ShipmentDetail')
+//     // CreateShipmentShareData(ShipmentKey,'Consignee')
 
-    // CreateShipmentFile
+//     // CreateShipmentFile
 
-    // CreateShipmentFile(ShipmentKey).then(res => {
-    //     console.log(res.id)
-    // })
+//     // CreateShipmentFile(ShipmentKey).then(res => {
+//     //     console.log(res.id)
+//     // })
 
-    // CreateChatRoomPrivateShareData
+//     // CreateChatRoomPrivateShareData
 
-    // CreateChatRoomPrivateShareData(ShipmentKey,ChatRoomKey,'Trucking')
+//     // CreateChatRoomPrivateShareData(ShipmentKey,ChatRoomKey,'Trucking')
 
-    // CreateChatRoomMessage
+//     // CreateChatRoomMessage
 
-    // CreateChatRoomMessage(ShipmentKey,ChatRoomKey,ProfileKey)
+//     // CreateChatRoomMessage(ShipmentKey,ChatRoomKey,ProfileKey)
 
-    // CreateUserInvitation
+//     // CreateUserInvitation
 
-    // CreateUserInvitation(UserInfoKey)
+//     // CreateUserInvitation(UserInfoKey)
 
-    // CreateUserRequest
+//     // CreateUserRequest
 
-    // CreateUserRequest(UserInfoKey)
+//     // CreateUserRequest(UserInfoKey)
 
-    // CreateUserShipment
+//     // CreateUserShipment
 
-    // CreateUserShipment(UserInfoKey,ShipmentKey)
+//     // CreateUserShipment(UserInfoKey,ShipmentKey)
 
-    // CreateUserChatRoom
+//     // CreateUserChatRoom
 
-    // CreateUserChatRoom(UserInfoKey,ShipmentKey,ChatRoomKey)
+//     // CreateUserChatRoom(UserInfoKey,ShipmentKey,ChatRoomKey)
 
-    // CreateCompanyMember
+//     // CreateCompanyMember
 
-    // CreateCompanyMember(CompanyKey)
+//     // CreateCompanyMember(CompanyKey)
 
-    // CreateCompanyInvitation
+//     // CreateCompanyInvitation
 
-    // CreateCompanyInvitation(CompanyKey,UserInfoKey)
+//     // CreateCompanyInvitation(CompanyKey,UserInfoKey)
 
-    // CreateCompanyRequest
+//     // CreateCompanyRequest
 
-    // CreateCompanyRequest(CompanyKey,UserInfoKey)
+//     // CreateCompanyRequest(CompanyKey,UserInfoKey)
 
-    // CreateCompanyUserMatrix
+//     // CreateCompanyUserMatrix
 
-    // CreateCompanyUserMatrix(CompanyKey)
+//     // CreateCompanyUserMatrix(CompanyKey)
 
-    // CreateUserPersonalizeShipmentOrdering
+//     // CreateUserPersonalizeShipmentOrdering
 
-    // CreateUserPersonalizeShipmentOrdering(ProfileKey,ShipmentKey)
+//     // CreateUserPersonalizeShipmentOrdering(ProfileKey,ShipmentKey)
 
-    // CreateUserPersonalizeShipmentPin
+//     // CreateUserPersonalizeShipmentPin
 
-    // CreateUserPersonalizeShipmentPin(ProfileKey,ShipmentKey)
+//     // CreateUserPersonalizeShipmentPin(ProfileKey,ShipmentKey)
 
-    // CreateUserPersonalizeShipmentReferenceDisplay
+//     // CreateUserPersonalizeShipmentReferenceDisplay
 
-    // CreateUserPersonalizeShipmentReferenceDisplay(ProfileKey,ShipmentKey)
+//     // CreateUserPersonalizeShipmentReferenceDisplay(ProfileKey,ShipmentKey)
 
+//   return (
+//     <div>
+//       {/* <p>You clicked {count} times</p>
+//       <button onClick={() => setCount(count + 1)}>
+//         Click me
+//       </button> */}
+//       <h1>Mock Data Component</h1>
 
-  }, []);
+//   }, []);
 
-  return (
-    <div>
-      {/* <p>You clicked {count} times</p>
-      <button onClick={() => setCount(count + 1)}>
-        Click me
-      </button> */}
-      <h1>Mock Data Component</h1>
+//   return (
+//     <div>
+//       {/* <p>You clicked {count} times</p>
+//       <button onClick={() => setCount(count + 1)}>
+//         Click me
+//       </button> */}
+//       <h1>Mock Data Component</h1>
 
-    </div>
-  );
-};
+//     </div>
+//   );
+// };
 
-export default mockdata;
+// export default mockdata;

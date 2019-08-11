@@ -1,3 +1,5 @@
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable import/no-extraneous-dependencies */
@@ -6,6 +8,8 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import queryString from 'query-string';
+
 import { Col, Container, Row } from 'reactstrap';
 import './card.css';
 import BlockUi from 'react-block-ui';
@@ -21,22 +25,22 @@ class SelectProfile extends Component {
     user: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
     profiles: PropTypes.array.isRequired,
-    fetchProfile: PropTypes.isRequired,
+    fetchProfile: PropTypes.isRequired
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      blocking: false,
+      blocking: false
     };
     this.errorPopupRef = React.createRef();
   }
 
-  goToShipment = (profile) => {
+  goToShipment = profile => {
     const { user, history, fetchProfile } = this.props;
     fetchProfile(user.uid, profile.id, history);
     this.setState({
-      blocking: true,
+      blocking: true
     });
     // using timeout rightnow for workaround
     setTimeout(() => {
@@ -44,10 +48,32 @@ class SelectProfile extends Component {
     }, 2000);
   };
 
+  goToCompany = (profile, companyKey) => {
+    const { user, history, fetchProfile } = this.props;
+    fetchProfile(user.uid, profile.id, history);
+    this.setState({
+      blocking: true
+    });
+    // using timeout rightnow for workaround
+    setTimeout(() => {
+      history.push(`/network/company/${companyKey}`);
+    }, 2000);
+  };
+
+  getIn = profile => {
+    const parsed = queryString.parse(this.props.location.search);
+    const { rc } = parsed;
+    if (rc !== undefined) {
+      this.goToCompany(profile, rc);
+    } else {
+      this.goToShipment(profile);
+    }
+  };
+
   renderProfile = profile => (
     <div
       className="cardSelect"
-      onClick={() => this.goToShipment(profile)}
+      onClick={() => this.getIn(profile)}
       role="button"
       tabIndex={0}
       key={profile.id}
@@ -57,7 +83,7 @@ class SelectProfile extends Component {
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          flex: 1,
+          flex: 1
         }}
       >
         <img
@@ -73,7 +99,7 @@ class SelectProfile extends Component {
             height: 50,
             borderRadius: 50 / 2,
             marginLeft: 10,
-            flex: 0.2,
+            flex: 0.2
           }}
         />
         <h4
@@ -81,7 +107,7 @@ class SelectProfile extends Component {
             display: 'flex',
             marginLeft: 20,
             textAlign: 'center',
-            flex: 0.8,
+            flex: 0.8
           }}
         >
           {profile.ProfileFirstname}
@@ -133,7 +159,7 @@ class SelectProfile extends Component {
 export default connect(
   state => ({
     user: state.authReducer.user,
-    profiles: state.profileReducer.ProfileList,
+    profiles: state.profileReducer.ProfileList
   }),
-  { fetchProfile: getProfileDetail },
+  { fetchProfile: getProfileDetail }
 )(SelectProfile);

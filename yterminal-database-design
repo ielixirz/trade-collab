@@ -17,7 +17,8 @@
         ShipmentMemberList (array <string>)
         ShipmentPartnerEmail (string)
         ShipmentCreatorProfileFirstName (string)
-        ShipmentCreatorProfileSurName (string) 
+        ShipmentCreatorProfileSurName (string)
+        ShipmentCreatorProfileKey (string)
         ShipmentMember (object<object>)
             {
                 ShipmentMemberUserKey : 
@@ -50,10 +51,32 @@
                 ConsigneeCompanyName (string)
                 ConsigneePier (string)
                 ConsigneeDate (timestamp)
+        +ShipmentRole
+            >Exporter
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >Importer
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >OutboundForwarder
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >InboundForwarder
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >OutboundCustomBroker
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >InboundCustomBroker
+                ShipmentRoleCompanyName (string)
+                ShipmentRoleCompanyKey (string)
+            >NoRole
         +ChatRoom
             >ChatRoomKey
                 ChatRoomName (string)
                 ChatRoomType (string)
+                ChatRoomIsInternal (string)
+                ChatRoomCompanyKey (string)
                 ChatRoomMemberList (array<string>)
                 ChatRoomFileLink (Array<object>)
                     [ {FileName : "FileA.jpg" , FileUrl : "'https://firebasestorage.googleapis.com'" , FileCreateTimestamp : "123123124124124" , FilePath : "/Shipment/{ShipmentKey}/ShipmentFile/{FileKey}" }]
@@ -101,8 +124,6 @@
                         ChatRoomMessageReaderSurName (string)
                         ChatRoomMessageReaderProfileImageUrl (string)
                         ChatRoomMessageReaderLastestMessageKey (string)
-
-
         +ShipmentFile
             >FileKey
                 FileName (string)
@@ -123,6 +144,8 @@
         UserInfoCompanyRelate (string)
         UserInfoNotificationToken (Array<string>)
         UserInfoIsMultipleProfile (bool)
+        UserInfoIsInviteFromEmail (bool)
+        UserInfoInviteDocumentKey (string)
         +Profile
             >ProfileKey
                 ProfileFirstname (string)
@@ -177,7 +200,7 @@
                 UserNotificationCompanyKey (string)
                 UserNotificationRedirectPage (string)
                 UserNotificationShipmentKey (string)
-                UserNotificationChatroonKey (string)
+                UserNotificationChatRoomKey (string)
 
 +UserPersonalize
     >ProfileKey
@@ -219,7 +242,7 @@
             >UserKey
                 UserMemberEmail (string)
                 UserMemberPosition (string)
-                CompanyUserAccessibilityRoleName (string) 
+                UserMemberRoleName (string) 
                 CompanyUserAccessibilityRolePermissionCode (string) (Binary number)
                 UserMemberCompanyStandingStatus (string)
                 UserMemberJoinedTimestamp (timestamp)
@@ -293,38 +316,22 @@
         ConsigneeETAWarehouseDate (timestamp)
         ConsigneeCountry (string)
 
-
-__________________________________________________________________________________
-
-User 
-    A
-        A1 
-        A2
-        A3
-    B
-        B1
-        B2
-
-Ogan
-    A
-        A1 : Owner
-        A2 : Editor
-        A3 : Editor
-        A4 : Observe
-        A5 : Creator
-    B
-        B1 : Owner
-        B2 : Editor
-        B3 : Observe
-
-
-Shipment1
-
-    Owner   Member
-    A       A , B
-
-    Editable 
-
-
-Note - One Chatroom can have many Organ ?
-     - Organ C can invate ? 
++NonUserInvite
+    >NonUserInviteKey
+        ShipmentKey (string)
+        ShipmentProductName (string)
+        ShipmentReferenceID (string)
+        ChatRoomKey (string)
+        CompanyKey (string)
+        CompanyMemberRoleName (string)
+        CompanyMemberPosition (string)
+        CompanyUserAccessibilityRolePermissionCode (string)
+        NonUserInviteType (string)
+        NonUserInviteEmail (string)
+        NonUserInviteRecruiterUserKey (string)
+        NonUserInviteRecruiterProfileKey (string)
+        NonUserInviteRecruiterProfileFirstName (string)
+        NonUserInviteRecruiterProfileSurName (string)
+        NonUserInviteRecruiterCompanyName (string)
+        NonUserInviteRecruiterCompanyKey (string)
+        NonUserInviteExpiryDate (timestamp)

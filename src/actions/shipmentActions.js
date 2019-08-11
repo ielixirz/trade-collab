@@ -5,6 +5,7 @@ import {
   FETCH_SHIPMENT_LIST_DATA,
   FETCH_SHIPMENT_REF_LIST,
   NOTIFICATIONS,
+  SEARCH_KEYWORD,
   UPDATE_SHIPMENT_REF
 } from '../constants/constants';
 import {
@@ -60,7 +61,12 @@ export const fetchShipments = (ShipmentData, notification) => (dispatch, getStat
     payload: shipments
   });
 };
-
+export const searching = text => dispatch => {
+  dispatch({
+    type: SEARCH_KEYWORD,
+    payload: text
+  });
+};
 export const editShipmentRef = (ShipmentKey, refKey, Data) => dispatch => {
   dispatch({
     type: EDIT_SHIPMENT_REF,

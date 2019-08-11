@@ -7,6 +7,8 @@ const admin = require('firebase-admin');
 
 const sgMail = require('@sendgrid/mail');
 
+const AES = require('crypto-js/aes');
+
 var serviceAccount = require('./weeklyorder0-firebase-adminsdk-aruhg-0fd4837a53.json');
 
 admin.initializeApp({
@@ -147,9 +149,7 @@ exports.ReaderLastestMessage = CloudFunctionsRegionsAsia.firestore
             const AddItem = admin
               .firestore()
               .doc(
-                `Shipment/${context.params.ShipmentKey}/ChatRoom/${
-                  context.params.ChatRoomKey
-                }/ChatRoomMessage/${ChatRoomMessageKeyItem}`
+                `Shipment/${context.params.ShipmentKey}/ChatRoom/${context.params.ChatRoomKey}/ChatRoomMessage/${ChatRoomMessageKeyItem}`
               )
               .set(
                 {
@@ -377,6 +377,9 @@ exports.OnCreateShipment = CloudFunctionsRegionsAsia.firestore
         });
 
       const ShipmentPartnerEmail = snapshot.data().ShipmentPartnerEmail;
+      const ShipmentCreatorProfileFirstName = snapshot.data().ShipmentCreatorProfileFirstName;
+      const ShipmentCreatorProfileSurName = snapshot.data().ShipmentCreatorProfileSurName;
+      const ShipmentCreatorProfileKey = snapshot.data().ShipmentCreatorProfileKey;
 
       const FindPartnerUserKey = await admin
         .firestore()
@@ -416,10 +419,13 @@ exports.OnCreateShipment = CloudFunctionsRegionsAsia.firestore
           .add({
             ChatRoomMemberUserKey: PartnerUID,
             ChatRoomMemberEmail: ShipmentPartnerEmail,
-            ChatRoomMemberRole: [ShipmetPartnerRole]
+            ChatRoomMemberRole: [ShipmetPartnerRole],
+            ChatRoomMemberRecruiterProfileFirstName: ShipmentCreatorProfileFirstName,
+            ChatRoomMemberRecruiterProfileSurName: ShipmentCreatorProfileSurName,
+            ChatRoomMemberRecruiterProfileKey: ShipmentCreatorProfileKey,
+            ChatRoomMemberRecruiterUserKey: ShipmentMemberUserKey
           });
       }
-
       return Promise.all([
         CreateShipmentShareData,
         AddShipmentShareList,
@@ -831,9 +837,7 @@ exports.SendEmailInviteIntoShipment = CloudFunctionsRegionsAsia.firestore
       border-radius:8px;
       padding:18px 0;
       background-color:rgba(255, 90 , 95, 1);
-      color:#ffffff;" class="redirectbutton" href='https://yterminal-b0906.firebaseapp.com/#/chat/${
-        context.params.ShipmentKey
-      }'>Join Now</a>`;
+      color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/chat/${context.params.ShipmentKey}'>Join Now</a>`;
 
     if (RecruiterProfileFirstName && RecruiterProfileSurName) {
       const SendInviteIntoShipment = await SendEmail(
@@ -1113,7 +1117,7 @@ exports.NotiBellAndEmailInviteToJoinCompany = CloudFunctionsRegionsAsia.firestor
       border-radius:8px;
       padding:18px 0;
       background-color:rgba(255, 90 , 95, 1);
-      color:#ffffff;" class="redirectbutton" href='https://yterminal-b0906.firebaseapp.com/#/network/company/${
+      color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/network/company/${
         snapshot.data().CompanyInvitationCompanyKey
       }'>Join Now</a>`;
 
@@ -1520,16 +1524,12 @@ exports.SendUnreadMessage = CloudFunctionsRegionsAsia.https.onRequest(async (req
 
       const MapTextWithProfileUnread = element.map(
         Item =>
-          `${Item.ProfileFirstname} ${Item.ProfileSurname} has ${
-            Item.ShipmentChatCount
-          } unread messages`
+          `${Item.ProfileFirstname} ${Item.ProfileSurname} has ${Item.ShipmentChatCount} unread messages`
       );
 
       const MapHtmlWithProfileUnread = element.map(
         Item =>
-          `<p class="profile-unread"> <span class="highlighttext" style="color: rgba(22, 160, 133, 1);" >${
-            Item.ProfileFirstname
-          } ${Item.ProfileSurname}</span> has ${Item.ShipmentChatCount} Unread Message </p>`
+          `<p class="profile-unread"> <span class="highlighttext" style="color: rgba(22, 160, 133, 1);" >${Item.ProfileFirstname} ${Item.ProfileSurname}</span> has ${Item.ShipmentChatCount} Unread Message </p>`
       );
 
       const ButtonRedirect = `<a style="width: 400px;
@@ -1542,7 +1542,7 @@ exports.SendUnreadMessage = CloudFunctionsRegionsAsia.https.onRequest(async (req
         border-radius:8px;
         padding:18px 0;
         background-color:rgba(255, 90 , 95, 1);
-        color:#ffffff;" class="redirectbutton" href='https://yterminal-b0906.firebaseapp.com/#/shipment'>View Messages</a>`;
+        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/shipment'>View Messages</a>`;
 
       const ProfileUnreadMergeText = MapTextWithProfileUnread.join();
       const ProfileUnreadMergeHtml = MapHtmlWithProfileUnread.join('');
@@ -1585,5 +1585,246 @@ exports.CheckMultipleProfile = CloudFunctionsRegionsAsia.firestore
         .collection('UserInfo')
         .doc(context.params.UserKey)
         .set({ UserInfoIsMultipleProfile: true }, { merge: true });
+    }
+  });
+
+exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
+  .document('NonUserInvite/{NonUserInviteKey}')
+  .onCreate(async (snapshot, context) => {
+    const NonUserInviteEmail = snapshot.data().NonUserInviteEmail;
+    const NonUserInviteRecruiterProfileFirstName = snapshot.data()
+      .NonUserInviteRecruiterProfileFirstName;
+    const NonUserInviteRecruiterProfileSurName = snapshot.data()
+      .NonUserInviteRecruiterProfileSurName;
+    const NonUserInviteRecruiterCompanyName = snapshot.data().NonUserInviteRecruiterCompanyName;
+    const ShipmentProductName = snapshot.data().ShipmentProductName;
+    const ShipmentReferenceID = snapshot.data().ShipmentReferenceID;
+    const NonUserInviteType = snapshot.data().NonUserInviteType;
+    const NonUserInviteExpiryDate = snapshot.data().NonUserInviteExpiryDate;
+    const NonUserInviteRecruiterCompanyKey = snapshot.data().NonUserInviteRecruiterCompanyKey;
+    const ShipmentKey = snapshot.data().ShipmentKey;
+    const ChatRoomKey = snapshot.data().ChatRoomKey;
+
+    const isUsed = snapshot.data().isUsed ? snapshot.data().isUsed : 'N';
+
+    const Encoder = stringtext =>
+      encodeURIComponent(AES.encrypt(stringtext, 'redroylkeew').toString());
+
+    const DocumentKeyEncoder = Encoder(context.params.NonUserInviteKey);
+    const ExpiryDateEncoder = Encoder(String(NonUserInviteExpiryDate.seconds));
+    const EmailEncoder = Encoder(NonUserInviteEmail);
+    const InviteTypeEncoder = Encoder(NonUserInviteType);
+    const InviteRecruiterCompanyKeyEncoder = Encoder(NonUserInviteRecruiterCompanyKey);
+    const ShipmentKeyEncoder = Encoder(ShipmentKey);
+    const ChatRoomKeyEncoder = Encoder(ChatRoomKey);
+    const isUsedEncoder = Encoder(isUsed);
+
+    if (NonUserInviteType === 'Shipment') {
+      const HeaderText = `Join ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} on a shipment`;
+      const HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName}</span> on a shipment</h2>`;
+
+      let Content;
+
+      if (NonUserInviteRecruiterCompanyName && ShipmentReferenceID && ShipmentProductName) {
+        Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} </span> from <span style="color: rgba(234, 70, 70, 1);"> ${NonUserInviteRecruiterCompanyName} </span> has invited you to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReferenceID} ${ShipmentProductName} </span> </p>`;
+      } else if (ShipmentReferenceID && ShipmentProductName) {
+        Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} </span> has invited you to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReferenceID} ${ShipmentProductName} </span> </p>`;
+      } else if (NonUserInviteRecruiterCompanyName && ShipmentReferenceID) {
+        Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${NonUserInviteRecruiterCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReferenceID} </span> </p>`;
+      } else {
+        Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> a shipment </span> </p>`;
+      }
+
+      const ContentDescription = `<br><p> In weeklyorders you get a live snapshot of all your shipments. Shipments in planning, confirmed or completed. You can easily inform your company or your external supply chain <span style="color: rgba(234, 70, 70, 1);">(Exporter, Importer, Forwarder Custom Broker)</span> about the shipment. So everyone is on the same page. Here all your files, communications are organized by shipment. <a><u>Learn more...</u></a> </p>`;
+
+      Content = Content + ContentDescription;
+
+      const ButtonRedirect = `<a style="width: 400px;
+        font-size:14px;
+        font-weight:500;
+        letter-spacing:0.25px;
+        text-decoration:none;
+        text-transform:none;
+        display:inline-block;
+        border-radius:8px;
+        padding:18px 0;
+        background-color:rgba(255, 90 , 95, 1);
+        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&sk=${ShipmentKeyEncoder}&crk=${ChatRoomKeyEncoder}&u=${isUsedEncoder}'>Join Now - Free</a>`;
+
+      const SendInviteIntoShipment = await SendEmail(
+        InviteIntoShipmentTemplate(
+          NonUserInviteEmail,
+          HeaderText,
+          HeaderHtml,
+          Content,
+          ButtonRedirect
+        )
+      );
+
+      return SendInviteIntoShipment;
+    } else if (NonUserInviteType === 'Company') {
+      const HeaderText = `Invited to join ${NonUserInviteRecruiterCompanyName}`;
+      const HeaderHtml = `<h2>Invited to join ${NonUserInviteRecruiterCompanyName}</h2>`;
+
+      let Content = `<p> ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} has invited you to join ${NonUserInviteRecruiterCompanyName} </p>`;
+
+      const ContentDescription = `<br><p> In weeklyorders you get a live snapshot of all your shipments. Shipments in planning, confirmed or completed. You can easily inform your company or your external supply chain <span style="color: rgba(234, 70, 70, 1);">(Exporter, Importer, Forwarder Custom Broker)</span> about the shipment. So everyone is on the same page. Here all your files, communications are organized by shipment. <a><u>Learn more...</u></a> </p>`;
+
+      Content = Content + ContentDescription;
+
+      const ButtonRedirect = `<a style="width: 400px;
+        font-size:14px;
+        font-weight:500;
+        letter-spacing:0.25px;
+        text-decoration:none;
+        text-transform:none;
+        display:inline-block;
+        border-radius:8px;
+        padding:18px 0;
+        background-color:rgba(255, 90 , 95, 1);
+        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&ck=${InviteRecruiterCompanyKeyEncoder}&u=${isUsedEncoder}'>Join Now - Free</a>`;
+
+      const SendInviteIntoCompany = await SendEmail(
+        InviteToJoinCompanyTemplate(
+          NonUserInviteEmail,
+          HeaderText,
+          HeaderHtml,
+          Content,
+          ButtonRedirect
+        )
+      );
+
+      return SendInviteIntoCompany;
+    }
+  });
+
+exports.CreateMemberFromNonSystemUser = CloudFunctionsRegionsAsia.firestore
+  .document('UserInfo/{UserInfoKey}')
+  .onCreate(async (snapshot, context) => {
+    const UserKey = context.params.UserInfoKey;
+    const UserInfoIsInviteFromEmail = snapshot.data().UserInfoIsInviteFromEmail;
+    const UserInfoInviteDocumentKey = snapshot.data().UserInfoInviteDocumentKey;
+
+    const SetUsedUrlLink = await admin
+      .firestore()
+      .collection('NonUserInvite')
+      .doc(UserInfoInviteDocumentKey)
+      .set({ isUsed: 'Y' }, { merge: true });
+
+    if (UserInfoIsInviteFromEmail && UserInfoInviteDocumentKey) {
+      const GetNonUserInvite = await admin
+        .firestore()
+        .collection('NonUserInvite')
+        .doc(UserInfoInviteDocumentKey)
+        .get();
+      const NonUserInviteData = GetNonUserInvite.data();
+
+      if (NonUserInviteData.NonUserInviteType === 'Shipment') {
+        const ShipmentKey = NonUserInviteData.ShipmentKey;
+        const ChatRoomKey = NonUserInviteData.ChatRoomKey;
+
+        ChatRoomMemberPayloadObject = {
+          ChatRoomMemberUserKey: UserKey,
+          ChatRoomMemberEmail: NonUserInviteData.NonUserInviteEmail
+        };
+
+        await admin
+          .firestore()
+          .collection('Shipment')
+          .doc(ShipmentKey)
+          .collection('ChatRoom')
+          .doc(ChatRoomKey)
+          .collection('ChatRoomMember')
+          .add(ChatRoomMemberPayloadObject);
+
+        return SetUsedUrlLink;
+      }
+
+      if (NonUserInviteData.NonUserInviteType === 'Company') {
+        const CompanyKey = NonUserInviteData.CompanyKey;
+
+        CompanyMemberPayloadObject = {
+          UserMemberEmail: NonUserInviteData.NonUserInviteEmail,
+          UserMemberPosition: NonUserInviteData.CompanyMemberPosition,
+          UserMemberRoleName: NonUserInviteData.CompanyMemberRoleName,
+          CompanyUserAccessibilityRolePermissionCode:
+            NonUserInviteData.CompanyUserAccessibilityRolePermissionCode,
+          UserMemberCompanyStandingStatus: 'Active',
+          UserMemberJoinedTimestamp: admin.firestore.FieldValue.serverTimestamp()
+        };
+
+        await admin
+          .firestore()
+          .collection('Company')
+          .doc(CompanyKey)
+          .collection('CompanyMember')
+          .doc(UserKey)
+          .set(CompanyMemberPayloadObject);
+
+        await admin
+          .firestore()
+          .collection('UserInfo')
+          .doc(UserKey)
+          .collection('UserCompany')
+          .add({
+            UserCompanyReference: admin
+              .firestore()
+              .collection('Company')
+              .doc(CompanyKey),
+            UserCompanyTimestamp: admin.firestore.FieldValue.serverTimestamp()
+          });
+
+        return SetUsedUrlLink;
+      }
+    }
+  });
+
+exports.ManageShipmentRole = CloudFunctionsRegionsAsia.firestore
+  .document('Shipment/{ShipmentKey}/ShipmentRole/{ShipmentRoleKey}')
+  .onWrite(async (change, context) => {
+    const oldValue = change.before.data();
+    const newValue = change.after.data();
+
+    const ShipmentKey = context.params.ShipmentKey;
+    const Role = context.params.ShipmentRoleKey;
+
+    const CompanyKey = newValue.ShipmentRoleCompanyKey;
+
+    const GetShipmentData = await admin
+      .firestore()
+      .collection('Shipment')
+      .doc(ShipmentKey)
+      .get();
+
+    const ShipmentMember = GetShipmentData.data().ShipmentMember;
+
+    const CompanyMemberList = _.findKey(ShipmentMember, ['ShipmentMemberCompanyKey', CompanyKey]);
+
+    const UpdateCompanyMemberBatch = admin.firestore().batch();
+
+    if (newValue) {
+      CompanyMemberList.map(CompanyMemberKey => {
+        const ShipmentMemberRef = admin
+          .firestore()
+          .collection('Shipment')
+          .doc(ShipmentKey);
+        const MemberKey = `ShipmentMember.${CompanyMemberKey}.ShipmentMemberRole`;
+        UpdateCompanyMemberBatch.set(ShipmentMemberRef, { [MemberKey]: Role }, { merge: true });
+      });
+      return UpdateCompanyMemberBatch.commit();
+    } else if (!newValue && oldValue) {
+      CompanyMemberList.map(CompanyMemberKey => {
+        const ShipmentMemberRef = admin
+          .firestore()
+          .collection('Shipment')
+          .doc(ShipmentKey);
+        const MemberKey = `ShipmentMember.${CompanyMemberKey}.ShipmentMemberRole`;
+        UpdateCompanyMemberBatch.set(
+          ShipmentMemberRef,
+          { [MemberKey]: 'No Role' },
+          { merge: true }
+        );
+      });
+      return UpdateCompanyMemberBatch.commit();
     }
   });

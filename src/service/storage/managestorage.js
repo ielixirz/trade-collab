@@ -1,5 +1,5 @@
 import {
-  fromTask, put, percentage, getDownloadURL, getMetadata,
+ fromTask, put, percentage, getDownloadURL, getMetadata,
 } from 'rxfire/storage';
 import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -50,4 +50,9 @@ export const DeleteFileFromURL = (Url) => {
   const StorageRefPath = storage.refFromURL(Url);
 
   return from(StorageRefPath.delete());
+};
+
+export const UpdateMetaData = (StorageRefPath, MetaData) => {
+  const RefPath = storage.ref(StorageRefPath);
+  return RefPath.updateMetadata(MetaData);
 };
