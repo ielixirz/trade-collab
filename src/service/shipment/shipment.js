@@ -139,7 +139,7 @@ export const UpdateShipmentReference = (ShipmentKey, ShipmentReferenceKey, Data)
 // eslint-disable-next-line max-len
 export const GetShipmentMasterDataDetail = (ShipmentKey, GroupType) => doc(ShipmentMasterDataRefPath(ShipmentKey).doc(GroupType)).pipe(take(1));
 
-export const UpdateShipmetMasterDataDetail = (ShipmentKey, GroupType, Data) => from(
+export const UpdateShipmentMasterDataDetail = (ShipmentKey, GroupType, Data) => from(
   ShipmentMasterDataRefPath(ShipmentKey)
     .doc(GroupType)
     .update(Data),
@@ -270,6 +270,6 @@ export const CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMaster
   map(ShipmentDocResult => ShipmentDocResult.id),
   switchMap(ShipmentId => forkJoin(
     CreateShipmentReference(ShipmentId, ShipmentReferenceData),
-    UpdateShipmetMasterDataDetail(ShipmentId, 'DefaultTemplate', ShipmentMasterData),
+    UpdateShipmentMasterDataDetail(ShipmentId, 'DefaultTemplate', ShipmentMasterData),
   )),
 );
