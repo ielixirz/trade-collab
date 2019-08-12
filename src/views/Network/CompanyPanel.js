@@ -19,7 +19,7 @@ import {
   Label,
   Input,
   ButtonGroup,
-  Badge
+  Badge,
 } from 'reactstrap';
 
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
@@ -40,14 +40,14 @@ import {
   IsCompanyMember,
   UpdateCompanyMember,
   GetCompanyUserAccessibility,
-  CompanyUserAccessibilityIsOnlyOneOwner
+  CompanyUserAccessibilityIsOnlyOneOwner,
 } from '../../service/company/company';
 import { GetProlfileList } from '../../service/user/profile';
 
 import {
   GetCompanyRequest,
   UpdateUserRequestStatus,
-  UpdateCompanyRequestStatus
+  UpdateCompanyRequestStatus,
 } from '../../service/join/request';
 
 import { GetCompanyInvitation } from '../../service/join/invite';
@@ -56,7 +56,7 @@ import { isValidProfileImg } from '../../utils/validation';
 import {
   PutFile,
   GetMetaDataFromStorageRefPath,
-  GetURLFromStorageRefPath
+  GetURLFromStorageRefPath,
 } from '../../service/storage/managestorage';
 
 const mockCompany = {
@@ -64,21 +64,21 @@ const mockCompany = {
   id: 123456,
   tel: '080-000-0000',
   desc: '123 ABC Rd., Bangkok 10000 Thailand',
-  website: 'www.website.com'
+  website: 'www.website.com',
 };
 
 const initRoleList = [
   {
     value: {
-      role: 'ALL'
+      role: 'ALL',
     },
-    label: 'ALL'
-  }
+    label: 'ALL',
+  },
 ];
 
 const { SearchBar } = Search;
 
-const renderMemberStatus = status => {
+const renderMemberStatus = (status) => {
   if (status === 'Deactivated') {
     return (
       <span style={{ color: '#AFAFAF' }}>
@@ -128,7 +128,7 @@ const renderRequestStatus = (status, keys, listener) => {
   }
   return '';
 };
-const CompanyPanel = props => {
+const CompanyPanel = (props) => {
   const [company, setCompany] = useState(mockCompany);
   const [invitedEmails, setinvitedEmails] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -164,13 +164,14 @@ const CompanyPanel = props => {
     if (Object.prototype.hasOwnProperty.call(data, 'UserMemberRoleName')) {
       if (oldData === 'Owner') {
         const isOnlyOwner = CompanyUserAccessibilityIsOnlyOneOwner(props.match.params.key);
-        isOnlyOwner.subscribe(onlyOwner => {
+        isOnlyOwner.subscribe((onlyOwner) => {
           if (onlyOwner) {
             errorPopupRef.current.triggerError(
               <span>
-                <b>Can't change role</b>, You must have atleast 1 Owner left in the company.
+                <b>Can't change role</b>
+, You must have atleast 1 Owner left in the company.
               </span>,
-              'WARN'
+              'WARN',
             );
           } else {
             UpdateCompanyMember(companyKey, userKey, data);
@@ -187,7 +188,7 @@ const CompanyPanel = props => {
   const filterMemberRole = (role, member) => {
     let filterMembers = member;
     if (role !== 'ALL') {
-      filterMembers = member.filter(m => {
+      filterMembers = member.filter((m) => {
         if (m.role.props === undefined) {
           return m.role === role;
         }
@@ -201,28 +202,24 @@ const CompanyPanel = props => {
     setBlocking(true);
     combineLatest([
       GetCompanyInvitation(companyKey).pipe(
-        map(docs =>
-          docs.map(d => {
-            const data = d.data();
-            data.key = d.id;
-            return data;
-          })
-        )
+        map(docs => docs.map((d) => {
+          const data = d.data();
+          data.key = d.id;
+          return data;
+        })),
       ),
       GetCompanyMember(companyKey).pipe(
-        map(docs =>
-          docs.map(d => {
-            const data = d.data();
-            data.key = d.id;
-            return data;
-          })
-        )
-      )
-    ]).subscribe(data => {
+        map(docs => docs.map((d) => {
+          const data = d.data();
+          data.key = d.id;
+          return data;
+        })),
+      ),
+    ]).subscribe((data) => {
       const members = [];
       const invited = [];
       const profileObs = [];
-      _.forEach(data[1], member => {
+      _.forEach(data[1], (member) => {
         members.push({
           name: '-',
           email: member.UserMemberEmail,
@@ -232,15 +229,14 @@ const CompanyPanel = props => {
               turnType="input"
               data={{
                 onChangeFn: null,
-                onKeyPressFn: event =>
-                  updateMember(
-                    companyKey,
-                    member.key,
-                    {
-                      UserMemberPosition: event.target.value
-                    },
-                    member.UserMemberPosition
-                  )
+                onKeyPressFn: event => updateMember(
+                  companyKey,
+                  member.key,
+                  {
+                    UserMemberPosition: event.target.value,
+                  },
+                  member.UserMemberPosition,
+                ),
               }}
             />
           ),
@@ -250,13 +246,12 @@ const CompanyPanel = props => {
               turnType="dropdown"
               data={{
                 options: companyRoles,
-                onChangeFn: input =>
-                  updateMember(
-                    companyKey,
-                    member.key,
-                    { UserMemberRoleName: input.value.role },
-                    member.UserMemberRoleName
-                  )
+                onChangeFn: input => updateMember(
+                  companyKey,
+                  member.key,
+                  { UserMemberRoleName: input.value.role },
+                  member.UserMemberRoleName,
+                ),
               }}
             />
           ),
@@ -267,36 +262,34 @@ const CompanyPanel = props => {
               options={[
                 {
                   text: 'Deactivate',
-                  function: () =>
-                    updateMember(companyKey, member.key, {
-                      UserMemberCompanyStandingStatus: 'Deactivated'
-                    })
+                  function: () => updateMember(companyKey, member.key, {
+                    UserMemberCompanyStandingStatus: 'Deactivated',
+                  }),
                 },
                 {
                   text: 'Activate',
-                  function: () =>
-                    updateMember(companyKey, member.key, {
-                      UserMemberCompanyStandingStatus: 'Active'
-                    })
-                }
+                  function: () => updateMember(companyKey, member.key, {
+                    UserMemberCompanyStandingStatus: 'Active',
+                  }),
+                },
               ]}
             />
-          )
+          ),
         });
         profileObs.push(GetProlfileList(member.key).pipe(map(docs2 => docs2.map(d2 => d2.data()))));
       });
-      _.forEach(data[0], invite => {
+      _.forEach(data[0], (invite) => {
         if (invite.UserInvitationStatus === 'Pending') {
           invited.push({
             name: `${invite.UserInvitationFirstname} ${invite.UserInvitationSurname}`,
             email: invite.UserInvitationEmail,
             position: invite.UserInvitationPosition,
             role: invite.UserInvitationRole,
-            status: renderMemberStatus('Pending')
+            status: renderMemberStatus('Pending'),
           });
         }
       });
-      combineLatest(profileObs).subscribe(users => {
+      combineLatest(profileObs).subscribe((users) => {
         _.forEach(users, (profile, index) => {
           members[index].name = `${profile[0].ProfileFirstname} ${profile[0].ProfileSurname}`;
         });
@@ -315,17 +308,17 @@ const CompanyPanel = props => {
           status,
           updateRole[keys.uKey],
           'rolePermissionCode',
-          updatePosition[keys.uKey] === undefined ? '-' : updatePosition[keys.uKey]
+          updatePosition[keys.uKey] === undefined ? '-' : updatePosition[keys.uKey],
         );
         UpdateUserRequestStatus(keys.uKey, keys.rKey, status);
         setAcceptedRequest({
           updateKey: keys,
-          status
+          status,
         });
       } else {
         errorPopupRef.current.triggerError(
           <span>Please select role to approve the request.</span>,
-          'WARN'
+          'WARN',
         );
       }
     } else {
@@ -335,12 +328,12 @@ const CompanyPanel = props => {
         status,
         '-',
         'rolePermissionCode',
-        updatePosition[keys.uKey] === undefined ? '-' : updatePosition[keys.uKey]
+        updatePosition[keys.uKey] === undefined ? '-' : updatePosition[keys.uKey],
       );
       UpdateUserRequestStatus(keys.uKey, keys.rKey, status);
       setAcceptedRequest({
         updateKey: keys,
-        status
+        status,
       });
     }
   };
@@ -348,9 +341,9 @@ const CompanyPanel = props => {
   const fetchIncomingRequest = (companyKey, companyRoles) => {
     GetCompanyRequest(companyKey)
       .pipe(map(docs => docs.map(d => d.data())))
-      .subscribe(results => {
+      .subscribe((results) => {
         const entries = [];
-        _.forEach(results, item => {
+        _.forEach(results, (item) => {
           const entry = {
             name: `${item.UserRequestFristname} ${item.UserRequestSurname}`,
             email: item.UserRequestEmail,
@@ -382,10 +375,10 @@ const CompanyPanel = props => {
               {
                 uKey: item.UserRequestUserKey,
                 cKey: item.UserRequestCompanyKey,
-                rKey: item.UserRequestKey
+                rKey: item.UserRequestKey,
               },
-              responseToRequest
-            )
+              responseToRequest,
+            ),
           };
           entries.push(entry);
         });
@@ -395,18 +388,18 @@ const CompanyPanel = props => {
 
   useEffect(() => {
     try {
-      IsCompanyMember(props.match.params.key, props.auth.uid).subscribe(member => {
+      IsCompanyMember(props.match.params.key, props.auth.uid).subscribe((member) => {
         setIsMember(member);
         if (member) {
           GetCompanyUserAccessibility(props.match.params.key)
             .pipe(map(docs => docs.map(d => d.data())))
-            .subscribe(userMatrix => {
+            .subscribe((userMatrix) => {
               const initRoles = [...roleList];
               const roles = userMatrix.map(matrix => ({
                 value: {
-                  role: matrix.CompanyUserAccessibilityRoleName
+                  role: matrix.CompanyUserAccessibilityRoleName,
                 },
-                label: matrix.CompanyUserAccessibilityRoleName
+                label: matrix.CompanyUserAccessibilityRoleName,
               }));
               const companyRoles = initRoles.concat(roles);
               setRoleList(companyRoles);
@@ -416,16 +409,16 @@ const CompanyPanel = props => {
         }
       });
       GetCompanyDetail(props.match.params.key).subscribe({
-        next: snapshot => {
+        next: (snapshot) => {
           const data = snapshot.data();
           setCompany(data);
         },
-        error: err => {
+        error: (err) => {
           console.log(err);
         },
         complete: () => {
           console.log('TO DO LOG');
-        }
+        },
       });
     } catch (e) {
       console.error(e);
@@ -440,11 +433,11 @@ const CompanyPanel = props => {
     setIsEdit(!isEdit);
   };
 
-  const handleInviteInputChange = emails => {
+  const handleInviteInputChange = (emails) => {
     setinvitedEmails(emails);
   };
 
-  const handleCompanyInputChange = event => {
+  const handleCompanyInputChange = (event) => {
     const editedCompany = { ...company };
     const inputName = event.target.id;
     const inputValue = event.target.value;
@@ -467,7 +460,7 @@ const CompanyPanel = props => {
     }
   };
 
-  const changeCompanyPic = file => {
+  const changeCompanyPic = (file) => {
     if (isValidProfileImg(file)) {
       setBlocking(true);
       const companyKey = props.match.params.key;
@@ -477,32 +470,33 @@ const CompanyPanel = props => {
         next: () => {
           console.log('TODO: UPLOAD PROGRESS');
         },
-        error: err => {
+        error: (err) => {
           console.log(err);
           alert(err.message);
         },
         complete: () => {
           GetMetaDataFromStorageRefPath(storageRefPath).subscribe({
-            next: metaData => {
+            next: (metaData) => {
               GetURLFromStorageRefPath(metaData.ref).subscribe({
-                next: url => {
+                next: (url) => {
                   editedCompany.CompanyImageLink = url;
                   UpdateCompany(companyKey, editedCompany).subscribe(() => {
                     setBlocking(false);
                   });
                 },
-                complete: () => {}
+                complete: () => {},
               });
-            }
+            },
           });
-        }
+        },
       });
     } else {
       errorPopupRef.current.triggerError(
         <span>
-          <b>Profile image is not valid</b>, Please upload only .jpg and .png files.
+          <b>Profile image is not valid</b>
+, Please upload only .jpg and .png files.
         </span>,
-        'WARN'
+        'WARN',
       );
     }
   };
@@ -670,7 +664,7 @@ const CompanyPanel = props => {
                     className="company-invitation-select"
                     ref={inviteInput}
                     handleDuplication
-                    duplicationCallback={isDub => {
+                    duplicationCallback={(isDub) => {
                       setIsEmailDuplicate(isDub);
                     }}
                   />
@@ -686,7 +680,7 @@ const CompanyPanel = props => {
                       if (invites.length > 0) {
                         inviteToCompanyModalRef.current.triggerInviteToCompany(invites, {
                           companyName: company.CompanyName,
-                          key: props.match.params.key
+                          key: props.match.params.key,
                         });
                       }
                     }}
@@ -704,7 +698,11 @@ const CompanyPanel = props => {
           <div className="incoming-request-container">
             <div className="company-table-label">
               <Row>
-                <h4>Incoming Request ({incomingRequest.length})</h4>
+                <h4>
+Incoming Request (
+                  {incomingRequest.length}
+)
+                </h4>
               </Row>
             </div>
             <MainDataTable
@@ -725,7 +723,11 @@ const CompanyPanel = props => {
                 <div className="company-table-label">
                   <Row>
                     <Col xs={7} style={{ paddingLeft: 0 }}>
-                      <h4>Members ({memberList.length})</h4>
+                      <h4>
+Members (
+                        {memberList.length}
+)
+                      </h4>
                     </Col>
                     <Col xs={3} style={{ paddingRight: 0 }}>
                       <SearchBar
@@ -771,16 +773,16 @@ const CompanyPanel = props => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { authReducer, userReducer, profileReducer } = state;
   const profile = _.find(
     profileReducer.ProfileList,
-    item => item.id === profileReducer.ProfileDetail.id
+    item => item.id === profileReducer.ProfileDetail.id,
   );
   return {
     auth: authReducer.user,
     user: userReducer.UserInfo,
-    currentProfile: profile
+    currentProfile: profile,
   };
 };
 
