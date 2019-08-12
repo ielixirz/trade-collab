@@ -117,7 +117,7 @@ export const GetChatRoomDetail = (ShipmentKey, ChatRoomKey) =>
 export const GetChatRoomPrivateMasterDataDetail = (ShipmentKey, ChatRoomKey, GroupType) =>
   doc(ChatRoomPrivateShareDataRefPath(ShipmentKey, ChatRoomKey).doc(GroupType)).pipe(take(1));
 
-export const UpdateShipmetMasterDataDetail = (ShipmentKey, ChatRoomKey, GroupType, Data) =>
+export const UpdateShipmentMasterDataDetail = (ShipmentKey, ChatRoomKey, GroupType, Data) =>
   from(
     ChatRoomPrivateShareDataRefPath(ShipmentKey, ChatRoomKey)
       .doc(GroupType)

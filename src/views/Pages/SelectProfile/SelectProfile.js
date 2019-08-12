@@ -25,22 +25,22 @@ class SelectProfile extends Component {
     user: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
     profiles: PropTypes.array.isRequired,
-    fetchProfile: PropTypes.isRequired
+    fetchProfile: PropTypes.isRequired,
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      blocking: false
+      blocking: false,
     };
     this.errorPopupRef = React.createRef();
   }
 
-  goToShipment = profile => {
+  goToShipment = (profile) => {
     const { user, history, fetchProfile } = this.props;
     fetchProfile(user.uid, profile.id, history);
     this.setState({
-      blocking: true
+      blocking: true,
     });
     // using timeout rightnow for workaround
     setTimeout(() => {
@@ -52,7 +52,7 @@ class SelectProfile extends Component {
     const { user, history, fetchProfile } = this.props;
     fetchProfile(user.uid, profile.id, history);
     this.setState({
-      blocking: true
+      blocking: true,
     });
     // using timeout rightnow for workaround
     setTimeout(() => {
@@ -60,11 +60,25 @@ class SelectProfile extends Component {
     }, 2000);
   };
 
-  getIn = profile => {
+  goToChat = (profile, chatroomKey) => {
+    const { user, history, fetchProfile } = this.props;
+    fetchProfile(user.uid, profile.id, history);
+    this.setState({
+      blocking: true,
+    });
+    // using timeout rightnow for workaround
+    setTimeout(() => {
+      history.push(`/chat/${chatroomKey}`);
+    }, 2000);
+  };
+
+  getIn = (profile) => {
     const parsed = queryString.parse(this.props.location.search);
-    const { rc } = parsed;
-    if (rc !== undefined) {
-      this.goToCompany(profile, rc);
+    const { c, s } = parsed;
+    if (c !== undefined) {
+      this.goToCompany(profile, c);
+    } else if (s !== undefined) {
+      this.goToChat(profile, s);
     } else {
       this.goToShipment(profile);
     }
@@ -83,7 +97,7 @@ class SelectProfile extends Component {
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          flex: 1
+          flex: 1,
         }}
       >
         <img
@@ -99,7 +113,7 @@ class SelectProfile extends Component {
             height: 50,
             borderRadius: 50 / 2,
             marginLeft: 10,
-            flex: 0.2
+            flex: 0.2,
           }}
         />
         <h4
@@ -107,7 +121,7 @@ class SelectProfile extends Component {
             display: 'flex',
             marginLeft: 20,
             textAlign: 'center',
-            flex: 0.8
+            flex: 0.8,
           }}
         >
           {profile.ProfileFirstname}
@@ -159,7 +173,7 @@ class SelectProfile extends Component {
 export default connect(
   state => ({
     user: state.authReducer.user,
-    profiles: state.profileReducer.ProfileList
+    profiles: state.profileReducer.ProfileList,
   }),
-  { fetchProfile: getProfileDetail }
+  { fetchProfile: getProfileDetail },
 )(SelectProfile);

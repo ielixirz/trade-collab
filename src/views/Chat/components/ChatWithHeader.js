@@ -41,7 +41,10 @@ import { CreateChatMultipleInvitation } from '../../../service/join/invite';
 import { ClearUnReadChatMessage } from '../../../service/personalize/personalize';
 import TableLoading from '../../../component/svg/TableLoading';
 import {
+  AddShipmentRole,
   CreateShipmentReference,
+  GetAvailableRole,
+  GetShipmentReferenceList,
   UpdateShipmentReference
 } from '../../../service/shipment/shipment';
 
@@ -57,9 +60,13 @@ class ChatWithHeader extends Component {
     this.state = {
       company: '',
       email: '',
+      refs: [],
       companies: [],
+      role: [],
+      refID: '',
       members: [],
       toggleInvite: false,
+      availableRole: {},
       isAssign: false,
       input: {
         refs: [],
@@ -84,6 +91,26 @@ class ChatWithHeader extends Component {
     }
     ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
       next: () => {}
+    });
+    GetShipmentReferenceList(ShipmentKey).subscribe({
+      next: res => {
+        this.setState({ refs: res });
+        console.log('getAll Ref');
+        _.forEach(res, ref => {
+          console.log(ref);
+          this.props.editShipmentRef(ShipmentKey, ref.ShipmentReferenceKey, {
+            ...ref
+          });
+        });
+      }
+    });
+    GetAvailableRole(ShipmentKey, ChatRoomKey).subscribe({
+      next: res => {
+        this.setState({
+          availableRole: res
+        });
+        console.log({ GetAvailableRole: res });
+      }
     });
   }
 
@@ -139,20 +166,27 @@ class ChatWithHeader extends Component {
     refresh();
   }
 
-  handleAssignCompany(e, userRole) {
+  handleAssignCompany(e, role, ref) {
     const { ShipmentKey, ChatRoomKey, members, user } = this.props;
     const { companies } = this.props;
 
     const memberData = _.find(members, (item, index) => index === user.uid);
     const pickedCompany = _.find(companies, item => item.CompanyKey === e.value);
+    console.log({ input: e, role, ref, pickedCompany: pickedCompany });
 
+    AddShipmentRole(ShipmentKey, role.value, {
+      ShipmentRoleCompanyName: pickedCompany.CompanyName,
+      ShipmentRoleCompanyKey: pickedCompany.CompanyKey
+    });
+    let userRole;
     if (pickedCompany) {
       const getCompany = GetCompanyMember(e.value).subscribe({
         next: res => {
           const CompanyMember = _.map(res, item => ({
             ...item.data()
           }));
-          const inviteRole = userRole;
+          const inviteRole = [];
+          inviteRole.push(role.value);
           const inviteMember = [];
           if (memberData) {
             const result = UpdateChatRoomMember(
@@ -223,6 +257,12 @@ class ChatWithHeader extends Component {
                 }).subscribe({
                   next: result => {},
                   complete: () => {
+                    CreateShipmentReference(ShipmentKey, {
+                      ShipmentReferenceID: ref,
+                      ShipmentReferenceCompanyKey: pickedCompany.CompanyKey,
+                      ShipmentReferenceCompanyName: pickedCompany.CompanyName,
+                      ShipmentKey: ShipmentKey
+                    }).subscribe({});
                     ChatRoomMember.unsubscribe();
                   }
                 });
@@ -241,10 +281,11 @@ class ChatWithHeader extends Component {
   }
 
   renderAssignCompany(ChatRoomType) {
-    const { user, ShipmentData, ShipmentKey, ChatRoomKey, members: member } = this.props;
-
-    const members = ShipmentData.ShipmentMember;
-    const memberData = _.find(members, (item, index) => index === user.uid);
+    const { user, ShipmentData, ShipmentKey, ChatRoomKey, members: member, shipments } = this.props;
+    const members = _.get(shipments, `${ShipmentKey}.ShipmentMember`, []);
+    console.log('Shipments member', members);
+    console.log('renderAssignCompany members', members);
+    const memberData = _.find(members, (item, index) => item.ShipmentMemberEmail === user.email);
     console.log('Member Data', memberData);
     // const isHaveRole = _.get(ShipmentData, `ShipmentMember.${user.uid}`, {});
     const { companies } = this.props;
@@ -254,147 +295,115 @@ class ChatWithHeader extends Component {
       value: item.CompanyKey,
       label: item.CompanyName
     }));
+
+    let roleOption = [];
+    _.forEach(this.state.availableRole, (role, index) => {
+      console.log('ROLE', role, index);
+      if (!role) {
+        roleOption.push({
+          value: index,
+          label: index
+        });
+      }
+    });
+    console.log('memberData', memberData);
     let output = '';
 
-    if (memberData) {
-      if (_.size(memberData.ShipmentMemberRole) > 0) {
-        if (_.isEmpty(memberData.ShipmentMemberCompanyName)) {
-          console.log('no Company');
-          if (ShipmentData.ShipmentCreatorUserKey === user.uid) {
-            output = (
-              <div
+    if (roleOption.length == 0) {
+      return '';
+    }
+    if (memberData.ShipmentMemberCompanyKey === '') {
+      output = (
+        <div
+          style={{
+            backgroundColor: 'rgba(242, 175, 41, 0.3)',
+            height: 'auto',
+            padding: '10px',
+            borderRadius: '5px',
+            zIndex: '100'
+          }}
+        >
+          <p
+            style={{
+              fontWeight: 700,
+              color: '#000000'
+            }}
+          >
+            You have been invite to this shipment
+          </p>
+          <p>Select a Company and Role, to inform your team about this shipment</p>
+
+          <Row>
+            <Col xs={4}>
+              <Select
+                onChange={e => {
+                  this.setState({ company: e });
+                }}
+                name="company"
+                placeholder="Select Company"
+                options={options}
+                value={this.state.company}
+              />
+            </Col>
+            <Col xs={3}>
+              <Select
+                onChange={e => {
+                  this.setState({ role: e });
+                }}
+                placeholder="Select Role"
+                name="company"
+                options={roleOption}
+                value={this.state.role}
+              />
+            </Col>
+            <Col xs={2}>
+              <Button
+                className="invite-btn"
                 style={{
-                  backgroundColor: 'rgba(242, 175, 41, 0.3)',
-                  height: 'auto',
-                  padding: '10px',
-                  borderRadius: '5px',
-                  zIndex: '100'
+                  marginLeft: '2rem',
+                  marginRight: '1rem',
+                  color: 'white',
+                  backgroundColor: '#16A085'
+                }}
+                disabled={
+                  _.isEmpty(this.state.company) ||
+                  _.isEmpty(this.state.role) ||
+                  _.isEmpty(this.state.refID)
+                }
+                onClick={() => {
+                  this.setState({ isAssign: true });
+                  this.handleAssignCompany(this.state.company, this.state.role, this.state.refID);
                 }}
               >
-                <p
-                  style={{
-                    fontWeight: 700,
-                    color: '#000000'
-                  }}
-                >
-                  You have assigned your self as an {_.join(memberData.ShipmentMemberRole, ',')} for
-                  this shipment
-                </p>
-                <p>Select a company, to inform your team about this shipment</p>
-
-                <Row>
-                  <Col xs={4}>
-                    <Select
-                      onChange={e => {
-                        this.setState({ company: e });
-                      }}
-                      name="company"
-                      placeholder="Select Company"
-                      options={options}
-                      value={this.state.company}
-                    />
-                  </Col>
-                  <Col xs={3}>
-                    <Select
-                      onChange={e => {
-                        this.setState({ company: e });
-                      }}
-                      placeholder="Select Role"
-                      name="company"
-                      options={options}
-                      value={this.state.company}
-                    />
-                  </Col>
-                  <Col xs={2}>
-                    <Button
-                      className="invite-btn"
-                      style={{
-                        marginLeft: '2rem',
-                        marginRight: '1rem',
-                        color: 'white',
-                        backgroundColor: '#16A085'
-                      }}
-                      disabled={this.state.isAssign}
-                      onClick={() => {
-                        this.setState({ isAssign: true });
-                        this.handleAssignCompany(this.state.company, memberData.ShipmentMemberRole);
-                      }}
-                    >
-                      Confirm
-                    </Button>
-                  </Col>
-                </Row>
-                <br />
-                <Row>
-                  <Col xs="auto">
-                    <Form inline>
-                      <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                        <Label for="exampleEmail" className="mr-sm-2">
-                          REF #
-                        </Label>
-                        <Input type="text" name="ref" id="ref" placeholder="Reference Number" />
-                      </FormGroup>
-                    </Form>
-                  </Col>
-                </Row>
-              </div>
-            );
-            return output;
-          }
-          output = (
-            <div
-              style={{
-                backgroundColor: 'rgba(242, 175, 41, 0.3)',
-                height: 'auto',
-                padding: '10px',
-                borderRadius: '5px',
-                zIndex: '100'
-              }}
-            >
-              <p
-                style={{
-                  fontWeight: 700,
-                  color: '#000000'
-                }}
-              >
-                {user.email} has been invited as
-                {_.join(memberData.ShipmentMemberRole, ',')} for this shipment
-              </p>
-              <p>Select a company, to inform your team about this shipment</p>
-
-              <Row>
-                <Col xs={6}>
-                  <Select
+                Confirm
+              </Button>
+            </Col>
+          </Row>
+          <br />
+          <Row>
+            <Col xs="auto">
+              <Form inline>
+                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
+                  <Label for="exampleEmail" className="mr-sm-2">
+                    REF #
+                  </Label>
+                  <Input
+                    type="text"
                     onChange={e => {
-                      this.setState({ company: e });
+                      this.setState({ refID: e.target.value });
                     }}
-                    name="company"
-                    options={options}
-                    value={this.state.company}
+                    name="ref"
+                    id="ref"
+                    value={this.state.refID}
+                    placeholder="Reference Number"
                   />
-                </Col>
-                <Col xs={2}>
-                  <Button
-                    className="invite-btn"
-                    style={{
-                      marginLeft: '2rem',
-                      marginRight: '1rem',
-                      color: 'white',
-                      backgroundColor: '#16A085'
-                    }}
-                    onClick={() => {
-                      this.handleAssignCompany(this.state.company, memberData.ShipmentMemberRole);
-                    }}
-                  >
-                    Confirm
-                  </Button>
-                </Col>
-              </Row>
-            </div>
-          );
-          return output;
-        }
-      }
+                </FormGroup>
+              </Form>
+            </Col>
+          </Row>
+        </div>
+      );
+      return output;
     }
     const suggestion = _.map(this.props.network, item => ({
       id: item.UserMemberEmail,
@@ -720,6 +729,7 @@ class ChatWithHeader extends Component {
       toggleBlocking,
       sender,
       ShipmentKey,
+      ChatRoomMember,
       members: member,
       ChatRoomKey,
       ChatRoomFileLink,
@@ -734,7 +744,11 @@ class ChatWithHeader extends Component {
       onFileDrop,
       shipments
     } = this.props;
-    const isInvited = _.find(member, item => item.ChatRoomMemberEmail === user.email);
+    const members = _.get(shipments, `${ShipmentKey}.ShipmentMember`, []);
+    console.log('Shipments member', members);
+    const isInvited = _.find(members, item => item.ShipmentMemberEmail === user.email);
+    const ChatRoomMemberData = _.find(member, item => item.ChatRoomMemberEmail === user.email);
+    console.log('ChatRoomMemberData', ChatRoomMemberData);
     let ref = '';
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
     console.log(this.props, 'props');
@@ -743,13 +757,13 @@ class ChatWithHeader extends Component {
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
         ref = _.find(
           ship.ShipmentReferenceList,
-          item => item.ShipmentReferenceCompanyKey === isInvited.ChatRoomMemberCompanyKey
+          item => item.ShipmentReferenceCompanyKey === isInvited.ShipmentMemberCompanyKey
         );
       }
     } else {
       ref = 'loading';
     }
-
+    console.log('refs', ref);
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
         <Row
@@ -842,6 +856,7 @@ class ChatWithHeader extends Component {
                 className="msg_history"
                 onScroll={() => {
                   const div = document.getElementById('chathistory').scrollTop;
+                  console.log(div);
                   if (div === 0) {
                     fetchMoreMessage(ChatRoomKey, ShipmentKey);
                   }
@@ -853,7 +868,7 @@ class ChatWithHeader extends Component {
                 {_.get(this.props.ShipmentData, 'ShipmentCreatorUserKey', false) === user.uid
                   ? this.renderAssignCompany(this.props.ShipmentData.ShipmentCreatorType)
                   : isInvited
-                  ? this.renderAssignCompany(isInvited.ChatRoomMemberRole[0])
+                  ? this.renderAssignCompany(isInvited.ShipmentMemberRole[0])
                   : ''}
                 {chatMsg.map((msg, i) => {
                   const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
@@ -934,7 +949,7 @@ class ChatWithHeader extends Component {
                       <Button
                         color="default"
                         onClick={() => {
-                          if (_.get(isInvited, 'ChatRoomMemberIsLeave', false) === false) {
+                          if (_.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false) === false) {
                             browseFile(ShipmentKey);
                           } else {
                             window.alert('You has been remove from the chat');
@@ -963,14 +978,14 @@ class ChatWithHeader extends Component {
                     <textarea
                       className="chat-message-input"
                       placeholder={
-                        _.get(isInvited, 'ChatRoomMemberIsLeave', false)
+                        _.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false)
                           ? 'You has been remove from the chat'
                           : 'type...'
                       }
                       ref={ref => (this.multilineTextarea = ref)}
                       type="textarea"
                       value={text}
-                      disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}
+                      disabled={_.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false)}
                       onMouseEnter={() => {
                         ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
                           next: res => {}
@@ -1025,7 +1040,7 @@ class ChatWithHeader extends Component {
                           event.preventDefault(); // Stops enter from creating a new line
                           if (
                             !_.isEmpty(_.trim(text)) &&
-                            _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
+                            _.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false) === false
                           ) {
                             sendMessage(
                               ChatRoomKey,
@@ -1052,7 +1067,7 @@ class ChatWithHeader extends Component {
 
                           if (
                             !_.isEmpty(_.trim(text)) &&
-                            _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
+                            _.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false) === false
                           ) {
                             sendMessage(
                               ChatRoomKey,

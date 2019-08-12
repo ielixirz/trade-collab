@@ -7,11 +7,15 @@ import { connect } from 'react-redux';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 
+import { combineLatest } from 'rxjs';
+import { takeWhile } from 'rxjs/operators';
 import Register from '../Register/Register';
 import SelectRole from '../SelectProfile/SelectRole';
 import Confirmation from '../SelectProfile/Confirmation';
 import { RegisterUser } from '../../../service/auth/register';
 import { KeepIsCompanyMember } from '../../../service/company/company';
+import { isShipmentMember } from '../../../service/shipment/shipment';
+import { isChatRoomMember } from '../../../service/chat/chat';
 import { login, setDefault } from '../../../actions/loginActions';
 
 class MainRegister extends Component {
@@ -24,15 +28,15 @@ class MainRegister extends Component {
       Email: '',
       Password: '',
       AccountType: '',
-      blocking: true
+      blocking: true,
     };
   }
 
-  nextStep = r => {
+  nextStep = (r) => {
     const { step } = this.state;
     const nextState = {
       step: step + 1,
-      AccountType: r
+      AccountType: r,
     };
     if (this.props.invite) {
       nextState.Email = this.props.inviteData.email;
@@ -40,28 +44,28 @@ class MainRegister extends Component {
     this.setState(nextState);
   };
 
-  handleChange = input => event => {
+  handleChange = input => (event) => {
     this.setState({ [input]: event.target.value });
   };
 
-  handleEmailChange = email => {
+  handleEmailChange = (email) => {
     this.setState({ Email: email });
   };
 
   handleRegister = () => {
     const { Email, Password } = this.state;
     RegisterUser(this.state).subscribe({
-      next: result => {
+      next: (result) => {
         this.props.setDefault();
         this.props.login({ email: Email, password: Password }, null, '#/selectprofile');
       },
-      complete: result => {
+      complete: (result) => {
         console.log(result);
       },
-      error: err => {
+      error: (err) => {
         console.log('err', err);
         window.location.replace('#/login');
-      }
+      },
     });
   };
 
@@ -73,36 +77,73 @@ class MainRegister extends Component {
     switch (flow) {
       case 'Company':
         RegisterUser(data).subscribe({
-          next: result => {
+          next: (userKey) => {
             this.props.setDefault();
-            const checkingMembership = KeepIsCompanyMember(dataKey.companyKey, result).subscribe({
-              next: isMember => {
+            const checkingMembership = KeepIsCompanyMember(dataKey.companyKey, userKey).subscribe({
+              next: (isMember) => {
                 if (isMember) {
                   checkingMembership.unsubscribe();
                   this.props.login(
                     { email: data.Email, password: data.Password },
                     null,
-                    `#/selectprofile/?rc=${dataKey.companyKey}`
+                    `#/selectprofile/?c=${dataKey.companyKey}`,
                   );
                 }
               },
-              error: err => {
+              error: (err) => {
                 console.log('err', err);
-              }
+              },
             });
           },
-          complete: result => {
+          complete: (result) => {
             console.log(result);
           },
-          error: err => {
+          error: (err) => {
             console.log('err', err);
-          }
+          },
         });
         break;
-      case 'SHIPMENT_CHAT_INVITE':
-        // TO-DO for fluke
+      case 'Shipment':
+        RegisterUser(data).subscribe({
+          next: (userKey) => {
+            this.props.setDefault();
+            const checkingChatMembership = isChatRoomMember(
+              dataKey.shipmentKey,
+              dataKey.chatroomKey,
+              userKey,
+            );
+            const checkingShipmentMembership = isShipmentMember(dataKey.shipmentKey, userKey);
+
+            const combineChecking = combineLatest([
+              checkingChatMembership,
+              checkingShipmentMembership,
+            ]).pipe(takeWhile(results => results[0] && results[1]));
+
+            combineChecking.subscribe({
+              next: (results) => {
+                if (results[0] && results[1]) {
+                  this.props.login(
+                    { email: data.Email, password: data.Password },
+                    null,
+                    `#/selectprofile/?s=${dataKey.shipmentKey}`,
+                  );
+                }
+              },
+              error: (err) => {
+                console.log('err', err);
+              },
+            });
+          },
+          complete: (result) => {
+            console.log(result);
+          },
+          error: (err) => {
+            console.log('err', err);
+          },
+        });
         break;
       default:
+        console.log('default');
         // TO-DO return unhandled case.
         break;
     }
@@ -110,13 +151,15 @@ class MainRegister extends Component {
 
   render() {
     const { step } = this.state;
-    const { Firstname, Surname, Email, Password, AccountType } = this.state;
+    const {
+      Firstname, Surname, Email, Password, AccountType,
+    } = this.state;
     const values = {
       Firstname,
       Surname,
       Email,
       Password,
-      AccountType
+      AccountType,
     };
     if (this.props.invite) {
       values.Email = this.props.inviteData.email;
@@ -154,14 +197,14 @@ class MainRegister extends Component {
     }
   }
 }
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { authReducer } = state;
   return {
-    ...authReducer
+    ...authReducer,
   };
 };
 
 export default connect(
   mapStateToProps,
-  { login, setDefault }
+  { login, setDefault },
 )(MainRegister);
