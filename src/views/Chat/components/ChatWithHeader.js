@@ -236,7 +236,7 @@ class ChatWithHeader extends Component {
                 console.log(inviteMember, 'inviteMember List');
                 const data = result.path.split('/');
                 const chatkey = result.id;
-                const invite = CreateChatMultipl  eInvitation(
+                const invite = CreateChatMultipleInvitation(
                   _.filter(inviteMember, item => item.Email !== user.email),
                   ShipmentKey,
                   chatkey,
