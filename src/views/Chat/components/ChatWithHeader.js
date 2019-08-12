@@ -41,7 +41,11 @@ import { CreateChatMultipleInvitation } from '../../../service/join/invite';
 import { ClearUnReadChatMessage } from '../../../service/personalize/personalize';
 import TableLoading from '../../../component/svg/TableLoading';
 import {
+  AddShipmentRole,
   CreateShipmentReference,
+  GetAvailableRole,
+  GetShipmentDetail,
+  GetShipmentReferenceList,
   UpdateShipmentReference
 } from '../../../service/shipment/shipment';
 
@@ -57,9 +61,14 @@ class ChatWithHeader extends Component {
     this.state = {
       company: '',
       email: '',
+      refs: [],
       companies: [],
+      role: [],
+      refID: '',
       members: [],
+      shipment: {},
       toggleInvite: false,
+      availableRole: {},
       isAssign: false,
       input: {
         refs: [],
@@ -77,6 +86,33 @@ class ChatWithHeader extends Component {
     this.msgChatRef = React.createRef();
   }
 
+  componentWillMount() {
+    const { ShipmentKey } = this.props;
+    GetShipmentDetail(ShipmentKey).subscribe({
+      next: res => {
+        let result = [];
+        const shipments = res.data();
+        console.log('ShipmentData', shipments);
+
+        GetShipmentReferenceList(ShipmentKey).subscribe({
+          next: refres => {
+            this.setState({ refs: refres });
+            console.log('getAll Ref');
+            result[0] = {
+              ...shipments,
+              ShipmentID: ShipmentKey,
+              ShipmentReferenceList: refres
+            };
+            this.props.fetchShipments(result, {});
+          }
+        });
+        this.setState({
+          shipment: res.data()
+        });
+      }
+    });
+  }
+
   componentDidMount() {
     const { ShipmentKey, ChatRoomKey, sender } = this.props;
     if (this.multilineTextarea) {
@@ -84,6 +120,15 @@ class ChatWithHeader extends Component {
     }
     ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
       next: () => {}
+    });
+
+    GetAvailableRole(ShipmentKey, ChatRoomKey).subscribe({
+      next: res => {
+        this.setState({
+          availableRole: res
+        });
+        console.log({ GetAvailableRole: res });
+      }
     });
   }
 
@@ -139,20 +184,27 @@ class ChatWithHeader extends Component {
     refresh();
   }
 
-  handleAssignCompany(e, userRole) {
+  handleAssignCompany(e, role, ref) {
     const { ShipmentKey, ChatRoomKey, members, user } = this.props;
     const { companies } = this.props;
 
     const memberData = _.find(members, (item, index) => index === user.uid);
     const pickedCompany = _.find(companies, item => item.CompanyKey === e.value);
+    console.log({ input: e, role, ref, pickedCompany: pickedCompany });
 
+    AddShipmentRole(ShipmentKey, role.value, {
+      ShipmentRoleCompanyName: pickedCompany.CompanyName,
+      ShipmentRoleCompanyKey: pickedCompany.CompanyKey
+    });
+    let userRole;
     if (pickedCompany) {
       const getCompany = GetCompanyMember(e.value).subscribe({
         next: res => {
           const CompanyMember = _.map(res, item => ({
             ...item.data()
           }));
-          const inviteRole = userRole;
+          const inviteRole = [];
+          inviteRole.push(role.value);
           const inviteMember = [];
           if (memberData) {
             const result = UpdateChatRoomMember(
@@ -223,6 +275,12 @@ class ChatWithHeader extends Component {
                 }).subscribe({
                   next: result => {},
                   complete: () => {
+                    CreateShipmentReference(ShipmentKey, {
+                      ShipmentReferenceID: ref,
+                      ShipmentReferenceCompanyKey: pickedCompany.CompanyKey,
+                      ShipmentReferenceCompanyName: pickedCompany.CompanyName,
+                      ShipmentKey: ShipmentKey
+                    }).subscribe({});
                     ChatRoomMember.unsubscribe();
                   }
                 });
@@ -240,11 +298,12 @@ class ChatWithHeader extends Component {
     }
   }
 
-  renderAssignCompany(ChatRoomType) {
-    const { user, ShipmentData, ShipmentKey, ChatRoomKey, members: member } = this.props;
-
-    const members = ShipmentData.ShipmentMember;
-    const memberData = _.find(members, (item, index) => index === user.uid);
+  renderAssignCompany() {
+    const { user, ShipmentData, ShipmentKey, ChatRoomKey, members: member, shipments } = this.props;
+    const members = _.get(shipments, `${ShipmentKey}.ShipmentMember`, []);
+    console.log('Shipments member', members);
+    console.log('renderAssignCompany members', members);
+    const memberData = _.find(members, (item, index) => item.ShipmentMemberEmail === user.email);
     console.log('Member Data', memberData);
     // const isHaveRole = _.get(ShipmentData, `ShipmentMember.${user.uid}`, {});
     const { companies } = this.props;
@@ -254,157 +313,28 @@ class ChatWithHeader extends Component {
       value: item.CompanyKey,
       label: item.CompanyName
     }));
+
+    let roleOption = [];
+    _.forEach(this.state.availableRole, (role, index) => {
+      console.log('ROLE', role, index);
+      if (!role) {
+        roleOption.push({
+          value: index,
+          label: index
+        });
+      }
+    });
+    console.log('memberData', memberData);
     let output = '';
 
-    if (memberData) {
-      if (_.size(memberData.ShipmentMemberRole) > 0) {
-        if (_.isEmpty(memberData.ShipmentMemberCompanyName)) {
-          console.log('no Company');
-          if (ShipmentData.ShipmentCreatorUserKey === user.uid) {
-            output = (
-              <div
-                style={{
-                  backgroundColor: 'rgba(242, 175, 41, 0.3)',
-                  height: 'auto',
-                  padding: '10px',
-                  borderRadius: '5px',
-                  zIndex: '100'
-                }}
-              >
-                <p
-                  style={{
-                    fontWeight: 700,
-                    color: '#000000'
-                  }}
-                >
-                  You have assigned your self as an {_.join(memberData.ShipmentMemberRole, ',')} for
-                  this shipment
-                </p>
-                <p>Select a company, to inform your team about this shipment</p>
-
-                <Row>
-                  <Col xs={4}>
-                    <Select
-                      onChange={e => {
-                        this.setState({ company: e });
-                      }}
-                      name="company"
-                      placeholder="Select Company"
-                      options={options}
-                      value={this.state.company}
-                    />
-                  </Col>
-                  <Col xs={3}>
-                    <Select
-                      onChange={e => {
-                        this.setState({ company: e });
-                      }}
-                      placeholder="Select Role"
-                      name="company"
-                      options={options}
-                      value={this.state.company}
-                    />
-                  </Col>
-                  <Col xs={2}>
-                    <Button
-                      className="invite-btn"
-                      style={{
-                        marginLeft: '2rem',
-                        marginRight: '1rem',
-                        color: 'white',
-                        backgroundColor: '#16A085'
-                      }}
-                      disabled={this.state.isAssign}
-                      onClick={() => {
-                        this.setState({ isAssign: true });
-                        this.handleAssignCompany(this.state.company, memberData.ShipmentMemberRole);
-                      }}
-                    >
-                      Confirm
-                    </Button>
-                  </Col>
-                </Row>
-                <br />
-                <Row>
-                  <Col xs="auto">
-                    <Form inline>
-                      <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                        <Label for="exampleEmail" className="mr-sm-2">
-                          REF #
-                        </Label>
-                        <Input type="text" name="ref" id="ref" placeholder="Reference Number" />
-                      </FormGroup>
-                    </Form>
-                  </Col>
-                </Row>
-              </div>
-            );
-            return output;
-          }
-          output = (
-            <div
-              style={{
-                backgroundColor: 'rgba(242, 175, 41, 0.3)',
-                height: 'auto',
-                padding: '10px',
-                borderRadius: '5px',
-                zIndex: '100'
-              }}
-            >
-              <p
-                style={{
-                  fontWeight: 700,
-                  color: '#000000'
-                }}
-              >
-                {user.email} has been invited as
-                {_.join(memberData.ShipmentMemberRole, ',')} for this shipment
-              </p>
-              <p>Select a company, to inform your team about this shipment</p>
-
-              <Row>
-                <Col xs={6}>
-                  <Select
-                    onChange={e => {
-                      this.setState({ company: e });
-                    }}
-                    name="company"
-                    options={options}
-                    value={this.state.company}
-                  />
-                </Col>
-                <Col xs={2}>
-                  <Button
-                    className="invite-btn"
-                    style={{
-                      marginLeft: '2rem',
-                      marginRight: '1rem',
-                      color: 'white',
-                      backgroundColor: '#16A085'
-                    }}
-                    onClick={() => {
-                      this.handleAssignCompany(this.state.company, memberData.ShipmentMemberRole);
-                    }}
-                  >
-                    Confirm
-                  </Button>
-                </Col>
-              </Row>
-            </div>
-          );
-          return output;
-        }
-      }
+    if (roleOption.length == 0) {
+      return '';
     }
-    const suggestion = _.map(this.props.network, item => ({
-      id: item.UserMemberEmail,
-      label: item.UserMemberEmail
-    }));
-    if (_.size(member) < 2) {
-      return (
+    if (_.get(memberData, 'ShipmentMemberCompanyKey', '') === '') {
+      output = (
         <div
           style={{
-            backgroundColor: 'rgba(88, 202, 219, 0.3)',
+            backgroundColor: 'rgba(242, 175, 41, 0.3)',
             height: 'auto',
             padding: '10px',
             borderRadius: '5px',
@@ -417,40 +347,31 @@ class ChatWithHeader extends Component {
               color: '#000000'
             }}
           >
-            Input your {this.props.ChatRoomData.ChatRoomType} e-mail address only for this shipment
+            You have been invite to this shipment
           </p>
+          <p>Select a Company and Role, to inform your team about this shipment</p>
 
           <Row>
-            <Col xs={6}>
-              <Autocomplete
-                renderInput={props => (
-                  <input
-                    {...props}
-                    style={{
-                      width: '100%'
-                    }}
-                  />
-                )}
-                wrapperStyle={{
-                  width: '100%'
+            <Col xs={4}>
+              <Select
+                onChange={e => {
+                  this.setState({ company: e });
                 }}
-                items={suggestion}
-                shouldItemRender={(item, value) =>
-                  item.label.toLowerCase().indexOf(value.toLowerCase()) > -1
-                }
-                getItemValue={item => item.label}
-                renderItem={(item, highlighted) => (
-                  <div
-                    key={item.id}
-                    style={{ backgroundColor: highlighted ? '#eee' : 'transparent' }}
-                  >
-                    {item.label}
-                  </div>
-                )}
-                value={this.state.email}
-                placeholder="...input email address"
-                onChange={e => this.setState({ email: e.target.value })}
-                onSelect={value => this.setState({ email: value })}
+                name="company"
+                placeholder="Select Company"
+                options={options}
+                value={this.state.company}
+              />
+            </Col>
+            <Col xs={3}>
+              <Select
+                onChange={e => {
+                  this.setState({ role: e });
+                }}
+                placeholder="Select Role"
+                name="company"
+                options={roleOption}
+                value={this.state.role}
               />
             </Col>
             <Col xs={2}>
@@ -462,42 +383,45 @@ class ChatWithHeader extends Component {
                   color: 'white',
                   backgroundColor: '#16A085'
                 }}
+                disabled={
+                  _.isEmpty(this.state.company) ||
+                  _.isEmpty(this.state.role) ||
+                  _.isEmpty(this.state.refID)
+                }
                 onClick={() => {
-                  const inviteMember = [];
-                  const role = [];
-                  role.push(this.props.ChatRoomData.ChatRoomType);
-                  inviteMember.push({
-                    Email: this.state.email,
-                    Image: '',
-                    Role: role,
-                    ChatRoomMemberCompanyName: '',
-                    ChatRoomMemberCompanyKey: ''
-                  });
-                  console.log(inviteMember);
-                  if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
-                    const invite = CreateChatMultipleInvitation(
-                      inviteMember,
-                      ShipmentKey,
-                      ChatRoomKey,
-                      this.props.sender
-                    ).subscribe({
-                      next: res => {
-                        console.log(res);
-                        invite.unsubscribe();
-                      }
-                    });
-                  } else {
-                    window.alert('You has been remove from the chat');
-                  }
+                  this.setState({ isAssign: true });
+                  this.handleAssignCompany(this.state.company, this.state.role, this.state.refID);
                 }}
               >
-                <i style={{ marginRight: '0.5rem' }} className="fa  fa-user-plus fa-lg" />
-                Invite
+                Confirm
               </Button>
+            </Col>
+          </Row>
+          <br />
+          <Row>
+            <Col xs="auto">
+              <Form inline>
+                <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
+                  <Label for="exampleEmail" className="mr-sm-2">
+                    REF #
+                  </Label>
+                  <Input
+                    type="text"
+                    onChange={e => {
+                      this.setState({ refID: e.target.value });
+                    }}
+                    name="ref"
+                    id="ref"
+                    value={this.state.refID}
+                    placeholder="Reference Number"
+                  />
+                </FormGroup>
+              </Form>
             </Col>
           </Row>
         </div>
       );
+      return output;
     }
   }
 
@@ -522,6 +446,7 @@ class ChatWithHeader extends Component {
     const userrefs = _.filter(ref, refItem =>
       _.some(companies, item => _.includes(refItem.ShipmentReferenceCompanyKey, item.CompanyKey))
     );
+    console.log('companies', companies);
     console.log('ShipmentMember', ShipmentMember);
     const hasCompany = _.get(ShipmentMember, `${user.uid}`, {});
 
@@ -532,7 +457,7 @@ class ChatWithHeader extends Component {
           {userrefs.length > 0 ? (
             <b style={{ color: 'black' }}>{userrefs[0].ShipmentReferenceID}</b>
           ) : _.isEmpty(companies) ? (
-            <TableLoading />
+            <b>See Refs</b>
           ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (
             <b>Input your Ref#!</b>
           ) : (
@@ -720,6 +645,7 @@ class ChatWithHeader extends Component {
       toggleBlocking,
       sender,
       ShipmentKey,
+      ChatRoomMember,
       members: member,
       ChatRoomKey,
       ChatRoomFileLink,
@@ -734,19 +660,24 @@ class ChatWithHeader extends Component {
       onFileDrop,
       shipments
     } = this.props;
+    const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
+    console.log('Shipment data', ship);
     const members = _.get(shipments, `${ShipmentKey}.ShipmentMember`, []);
+
     console.log('Shipments member', members);
     const isInvited = _.find(members, item => item.ShipmentMemberEmail === user.email);
+    const ChatRoomMemberData = _.find(member, item => item.ChatRoomMemberEmail === user.email);
+    console.log('isInvited', isInvited);
     let ref = '';
-    const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
     console.log(this.props, 'props');
 
     if (!_.isEmpty(isInvited)) {
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
-        ref = _.find(
-          ship.ShipmentReferenceList,
-          item => item.ShipmentReferenceCompanyKey === isInvited.ShipmentMemberCompanyKey
-        );
+        ref =
+          _.find(
+            _.get(ship, 'ShipmentReferenceList', []),
+            item => item.ShipmentReferenceCompanyKey === isInvited.ShipmentMemberCompanyKey
+          ) || 'loading';
       }
     } else {
       ref = 'loading';
@@ -771,7 +702,7 @@ class ChatWithHeader extends Component {
                       1,
                       _.get(ship, 'ShipmentReferenceList', []),
                       ShipmentKey,
-                      ship.ShipmentMember
+                      _.get(ship, 'ShipmentMember', [])
                     )}
                   </Col>
                   <Col>
@@ -854,9 +785,9 @@ class ChatWithHeader extends Component {
                 }}
               >
                 {_.get(this.props.ShipmentData, 'ShipmentCreatorUserKey', false) === user.uid
-                  ? this.renderAssignCompany(this.props.ShipmentData.ShipmentCreatorType)
+                  ? this.renderAssignCompany()
                   : isInvited
-                  ? this.renderAssignCompany(isInvited.ShipmentMemberRole[0])
+                  ? this.renderAssignCompany()
                   : ''}
                 {chatMsg.map((msg, i) => {
                   const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
@@ -937,7 +868,7 @@ class ChatWithHeader extends Component {
                       <Button
                         color="default"
                         onClick={() => {
-                          if (_.get(isInvited, 'ChatRoomMemberIsLeave', false) === false) {
+                          if (_.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false) === false) {
                             browseFile(ShipmentKey);
                           } else {
                             window.alert('You has been remove from the chat');
@@ -966,14 +897,14 @@ class ChatWithHeader extends Component {
                     <textarea
                       className="chat-message-input"
                       placeholder={
-                        _.get(isInvited, 'ChatRoomMemberIsLeave', false)
+                        _.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false)
                           ? 'You has been remove from the chat'
                           : 'type...'
                       }
                       ref={ref => (this.multilineTextarea = ref)}
                       type="textarea"
                       value={text}
-                      disabled={_.get(isInvited, 'ChatRoomMemberIsLeave', false)}
+                      disabled={_.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false)}
                       onMouseEnter={() => {
                         ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
                           next: res => {}
@@ -1028,7 +959,7 @@ class ChatWithHeader extends Component {
                           event.preventDefault(); // Stops enter from creating a new line
                           if (
                             !_.isEmpty(_.trim(text)) &&
-                            _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
+                            _.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false) === false
                           ) {
                             sendMessage(
                               ChatRoomKey,
@@ -1055,7 +986,7 @@ class ChatWithHeader extends Component {
 
                           if (
                             !_.isEmpty(_.trim(text)) &&
-                            _.get(isInvited, 'ChatRoomMemberIsLeave', false) === false
+                            _.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false) === false
                           ) {
                             sendMessage(
                               ChatRoomKey,

@@ -2,7 +2,9 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable filenames/match-regex */
 /* as it is component */
-import React, { useState, forwardRef, useImperativeHandle, useEffect, useRef } from 'react';
+import React, {
+  useState, forwardRef, useImperativeHandle, useEffect, useRef,
+} from 'react';
 import {
   Label,
   Button,
@@ -11,7 +13,7 @@ import {
   ModalFooter,
   ModalHeader,
   Input,
-  Alert
+  Alert,
 } from 'reactstrap';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -76,74 +78,72 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
     const temp = updateRole;
     temp[email] = {
       role: input.value.role,
-      code: input.value.code
+      code: input.value.code,
     };
     setUpdateRole(temp);
   };
 
-  const handleCompanyInputChange = input => {
+  const handleCompanyInputChange = (input) => {
     setCompany(input.value);
   };
 
-  const handleInviteInputChange = emails => {
+  const handleInviteInputChange = (emails) => {
     setinvitedEmails(emails);
   };
 
   const fetchInvitedUserDetail = (emails, companyKey) => {
     setBlocking(true);
     const userObs = [];
-    emails.forEach(email => {
+    emails.forEach((email) => {
       userObs.push(
         GetUserInfoFromEmail(email.value).pipe(
-          map(docs => {
+          map((docs) => {
             if (docs.length === 0) {
               return {
                 isFound: false,
-                email: email.value
+                email: email.value,
               };
             }
             return {
               isFound: true,
-              docs
+              docs,
             };
-          })
-        )
+          }),
+        ),
       );
     });
 
     GetCompanyUserAccessibility(companyKey)
       .pipe(map(docs => docs.map(d => d.data())))
-      .subscribe(userMatrix => {
+      .subscribe((userMatrix) => {
         const roles = userMatrix.map(matrix => ({
           value: {
             role: matrix.CompanyUserAccessibilityRoleName,
-            code: matrix.CompanyUserAccessibilityRolePermissionCode
+            code: matrix.CompanyUserAccessibilityRolePermissionCode,
           },
-          label: matrix.CompanyUserAccessibilityRoleName
+          label: matrix.CompanyUserAccessibilityRoleName,
         }));
 
-        combineLatest(userObs).subscribe(results1 => {
+        combineLatest(userObs).subscribe((results1) => {
           const profileObs = [];
           const inviteAlreadyPendingEntities = [];
           const inviteAlreadyMemberEntities = [];
           const inviteNotExistEntities = [];
           const inviteExistEntities = [];
           let n = 0;
-          results1.forEach(result => {
+          results1.forEach((result) => {
             if (result.isFound) {
               const data = result.docs[0].data();
               const userKey = result.docs[0].id;
               profileObs.push(
                 GetProlfileList(userKey).pipe(
-                  map(docs =>
-                    docs.map(d => {
-                      const profile = d.data();
-                      profile.email = data.UserInfoEmail;
-                      profile.key = userKey;
-                      return profile;
-                    })
-                  )
-                )
+                  map(docs => docs.map((d) => {
+                    const profile = d.data();
+                    profile.email = data.UserInfoEmail;
+                    profile.key = userKey;
+                    return profile;
+                  })),
+                ),
               );
             } else {
               const index = n;
@@ -169,7 +169,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
                     classNamePrefix="select"
                     placeholder="Choose Role"
                   />
-                )
+                ),
               };
               inviteNotExistEntities.push(inviteEntity);
               n += 1;
@@ -177,19 +177,19 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
           });
           setNonExistingInvited(inviteNotExistEntities);
           setBlocking(false);
-          combineLatest(profileObs).subscribe(results2 => {
+          combineLatest(profileObs).subscribe((results2) => {
             setBlocking(true);
             const loopOne = DeepCopyArray(results2);
             const loopTwo = DeepCopyArray(results2);
             const memberCheckObs = [];
             const pendingCheckObs = [];
             // First loop to check isMember
-            loopOne.forEach(result => {
+            loopOne.forEach((result) => {
               const firstProfile = result.pop();
               memberCheckObs.push(IsCompanyMember(companyKey, firstProfile.key));
               pendingCheckObs.push(CombineIsExistInvitationRequest(firstProfile.key, companyKey));
             });
-            combineLatest(memberCheckObs.concat(pendingCheckObs)).subscribe(isInvitable => {
+            combineLatest(memberCheckObs.concat(pendingCheckObs)).subscribe((isInvitable) => {
               const isInvitableChunk = _.chunk(isInvitable, isInvitable.length / 2);
               const isMemberList = isInvitableChunk[0];
               const isPendingList = isInvitableChunk[1];
@@ -202,7 +202,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
                     name: <i style={{ color: 'grey' }}>Already a Member</i>,
                     email: firstProfile.email,
                     position: '-',
-                    role: '-'
+                    role: '-',
                   };
                   inviteAlreadyMemberEntities.push(inviteEntity);
                 } else if (isPendingList[index]) {
@@ -211,7 +211,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
                     name: <i style={{ color: 'grey' }}>Invite/Request Already Sent</i>,
                     email: firstProfile.email,
                     position: '-',
-                    role: '-'
+                    role: '-',
                   };
                   inviteAlreadyPendingEntities.push(inviteEntity);
                 } else {
@@ -238,7 +238,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
                         classNamePrefix="select"
                         placeholder="Choose Role"
                       />
-                    )
+                    ),
                   };
                   inviteExistEntities.push(inviteEntity);
                 }
@@ -257,7 +257,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
     setModal(!modal);
   };
 
-  const validateInvite = emails => {
+  const validateInvite = (emails) => {
     if (company === '' || emails.length === 0) {
       setIsValidInvite1(false);
       return false;
@@ -287,24 +287,24 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
     }
   };
 
-  const mapCompanyForDropdown = companyData => {
+  const mapCompanyForDropdown = (companyData) => {
     const availableCompanies = companyData[0];
     const companyList = [];
-    availableCompanies.forEach(item => {
+    availableCompanies.forEach((item) => {
       companyList.push({
         value: {
           companyName: item.company,
-          key: item.key
+          key: item.key,
         },
-        label: item.company
+        label: item.company,
       });
     });
     return companyList;
   };
 
-  const validateRoleSelection = inviteData => {
+  const validateRoleSelection = (inviteData) => {
     let isValid = true;
-    inviteData.forEach(item => {
+    inviteData.forEach((item) => {
       // eslint-disable-next-line prefer-destructuring
       if (item.Role === undefined) {
         isValid = false;
@@ -322,29 +322,29 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
       CompanyInvitationRecruiterUserKey: props.recruiter.uid,
       CompanyInvitationRecruiterProfileKey: props.recruiter.profile.id,
       CompanyInvitationRecruiterProfileFirstName: props.recruiter.profile.ProfileFirstname,
-      CompanyInvitationRecruiterProfileSurName: props.recruiter.profile.ProfileSurname
+      CompanyInvitationRecruiterProfileSurName: props.recruiter.profile.ProfileSurname,
     };
     const role = updateRole;
     const position = updatePosition;
-    existingInvited.forEach(item => {
+    existingInvited.forEach((item) => {
       // eslint-disable-next-line prefer-destructuring
       const email = item.email;
       const inviteData = {
         Email: email,
         Role: role[email].role,
         RoleCode: role[email].code,
-        Position: position[email] === undefined ? '' : position[email]
+        Position: position[email] === undefined ? '' : position[email],
       };
       inviteDataList.push(inviteData);
     });
-    nonExistingInvited.forEach(item => {
+    nonExistingInvited.forEach((item) => {
       // eslint-disable-next-line prefer-destructuring
       const email = item.email;
       const inviteData = {
         Email: email,
         Role: role[email].role,
         RoleCode: role[email].code,
-        Position: position[email] === undefined ? '' : position[email]
+        Position: position[email] === undefined ? '' : position[email],
       };
       nonUserInviteDataList.push(inviteData);
     });
@@ -353,9 +353,9 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
         inviteDataList,
         company.key,
         company.companyName,
-        recruiter
+        recruiter,
       ).subscribe(() => {});
-      nonUserInviteDataList.forEach(i => {
+      nonUserInviteDataList.forEach((i) => {
         CreateNonUserInvite({
           CompanyKey: company.key,
           CompanyMemberRoleName: i.Role,
@@ -370,7 +370,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
           NonUserInviteRecruiterProfileSurName: recruiter.CompanyInvitationRecruiterProfileSurName,
           NonUserInviteRecruiterCompanyName: company.companyName,
           NonUserInviteRecruiterCompanyKey: company.key,
-          NonUserInviteExpiryDate: AddDay(new Date(), 28).toDate()
+          NonUserInviteExpiryDate: AddDay(new Date(), 28).toDate(),
         });
       });
       setBlocking(false);
@@ -397,7 +397,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
         setCurrentStep(2);
       }
       toggle();
-    }
+    },
   }));
 
   const renderStepOneBody = () => (
@@ -429,7 +429,7 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
         placeholder="Write email address.."
         ref={inviteInput}
         handleDuplication
-        duplicationCallback={isDub => {
+        duplicationCallback={(isDub) => {
           setIsEmailDuplicate(isDub);
         }}
       />
@@ -462,7 +462,14 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
           {currentStep === 1 ? renderStepOneBody() : renderStepTwoBody()}
           {currentStep === 1 && isValidInvite1 === false ? (
             <Alert color="warning" style={{ marginTop: 10, marginBottom: 0 }}>
-              Please select your <b>company</b> and enter your invitee <b>email</b>.
+              Please select your
+              {' '}
+              <b>company</b>
+              {' '}
+and enter your invitee
+              {' '}
+              <b>email</b>
+.
             </Alert>
           ) : (
             ''
@@ -494,9 +501,12 @@ const InviteToCompanyModal = forwardRef((props, ref) => {
             onClick={invite}
             disabled={existingInvited.concat(nonExistingInvited).length === 0}
           >
-            Send Invitation ({existingInvited.concat(nonExistingInvited).length})
+            Send Invitation (
+            {existingInvited.concat(nonExistingInvited).length}
+)
           </Button>
-        )}{' '}
+        )}
+        {' '}
       </ModalFooter>
     </Modal>
   );

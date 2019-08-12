@@ -10,16 +10,16 @@ import { isDateBefore } from '../../../utils/date';
 
 import MainRegister from '../Main/MainRegister';
 
-const NewUser = props => {
+const NewUser = (props) => {
   const [inviteData, setInviteData] = useState({});
   const [expired, setExpired] = useState(undefined);
 
-  const verifyExpiration = seconds => {
+  const verifyExpiration = (seconds) => {
     const isExpired = isDateBefore(new Date(+seconds * 1000), new Date());
     return isExpired;
   };
 
-  const verifyUsed = usage => {
+  const verifyUsed = (usage) => {
     if (usage === 'Y') {
       return false;
     }
@@ -28,7 +28,10 @@ const NewUser = props => {
 
   useEffect(() => {
     const parsed = queryString.parse(props.location.search);
-    const { dke, ed, e, f, ck, u } = parsed;
+    const {
+      dke, ed, e, f, ck, u, crk, sk,
+    } = parsed;
+
     // ---- TO-DO secret key need to be stored securely
     const bytesUsed = CryptoJS.AES.decrypt(u, 'redroylkeew');
     const decryptedUsed = bytesUsed.toString(CryptoJS.enc.Utf8);
@@ -48,13 +51,20 @@ const NewUser = props => {
 
       const dataKey = {};
       let decryptedCompanyKey;
-      // let decrypted???Key ---> for invite to shipment/chat case
+      let decryptedChatroomKey;
+      let decryptedShipmentKey;
       if (decryptedFlow === 'Company') {
         const bytesCompany = CryptoJS.AES.decrypt(ck, 'redroylkeew');
         decryptedCompanyKey = bytesCompany.toString(CryptoJS.enc.Utf8);
         dataKey.companyKey = decryptedCompanyKey;
-      } else {
-        // data.chatKey???? = decrypted???Key;
+      } else if (decryptedFlow === 'Shipment') {
+        const bytesChatroom = CryptoJS.AES.decrypt(crk, 'redroylkeew');
+        decryptedChatroomKey = bytesChatroom.toString(CryptoJS.enc.Utf8);
+        dataKey.chatroomKey = decryptedChatroomKey;
+
+        const bytesShipment = CryptoJS.AES.decrypt(sk, 'redroylkeew');
+        decryptedShipmentKey = bytesShipment.toString(CryptoJS.enc.Utf8);
+        dataKey.shipmentKey = decryptedShipmentKey;
       }
 
       if (!verifyExpiration(decryptedED)) {
@@ -63,7 +73,7 @@ const NewUser = props => {
           email: decryptedEmail,
           flow: decryptedFlow,
           docKey: decryptedDKE,
-          dataKey
+          dataKey,
         });
       } else {
         setExpired(true);
