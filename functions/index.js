@@ -149,7 +149,9 @@ exports.ReaderLastestMessage = CloudFunctionsRegionsAsia.firestore
             const AddItem = admin
               .firestore()
               .doc(
-                `Shipment/${context.params.ShipmentKey}/ChatRoom/${context.params.ChatRoomKey}/ChatRoomMessage/${ChatRoomMessageKeyItem}`
+                `Shipment/${context.params.ShipmentKey}/ChatRoom/${
+                  context.params.ChatRoomKey
+                }/ChatRoomMessage/${ChatRoomMessageKeyItem}`
               )
               .set(
                 {
@@ -837,7 +839,9 @@ exports.SendEmailInviteIntoShipment = CloudFunctionsRegionsAsia.firestore
       border-radius:8px;
       padding:18px 0;
       background-color:rgba(255, 90 , 95, 1);
-      color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/chat/${context.params.ShipmentKey}'>Join Now</a>`;
+      color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/chat/${
+        context.params.ShipmentKey
+      }'>Join Now</a>`;
 
     if (RecruiterProfileFirstName && RecruiterProfileSurName) {
       const SendInviteIntoShipment = await SendEmail(
@@ -1524,12 +1528,16 @@ exports.SendUnreadMessage = CloudFunctionsRegionsAsia.https.onRequest(async (req
 
       const MapTextWithProfileUnread = element.map(
         Item =>
-          `${Item.ProfileFirstname} ${Item.ProfileSurname} has ${Item.ShipmentChatCount} unread messages`
+          `${Item.ProfileFirstname} ${Item.ProfileSurname} has ${
+            Item.ShipmentChatCount
+          } unread messages`
       );
 
       const MapHtmlWithProfileUnread = element.map(
         Item =>
-          `<p class="profile-unread"> <span class="highlighttext" style="color: rgba(22, 160, 133, 1);" >${Item.ProfileFirstname} ${Item.ProfileSurname}</span> has ${Item.ShipmentChatCount} Unread Message </p>`
+          `<p class="profile-unread"> <span class="highlighttext" style="color: rgba(22, 160, 133, 1);" >${
+            Item.ProfileFirstname
+          } ${Item.ProfileSurname}</span> has ${Item.ShipmentChatCount} Unread Message </p>`
       );
 
       const ButtonRedirect = `<a style="width: 400px;
@@ -1632,7 +1640,7 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
       } else if (NonUserInviteRecruiterCompanyName && ShipmentReferenceID) {
         Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${NonUserInviteRecruiterCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReferenceID} </span> </p>`;
       } else {
-        Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> a shipment </span> </p>`;
+        Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> a shipment </span> </p>`;
       }
 
       const ContentDescription = `<br><p> In weeklyorders you get a live snapshot of all your shipments. Shipments in planning, confirmed or completed. You can easily inform your company or your external supply chain <span style="color: rgba(234, 70, 70, 1);">(Exporter, Importer, Forwarder Custom Broker)</span> about the shipment. So everyone is on the same page. Here all your files, communications are organized by shipment. <a><u>Learn more...</u></a> </p>`;
