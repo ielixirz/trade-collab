@@ -675,7 +675,7 @@ class ChatWithHeader extends Component {
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
         ref =
           _.find(
-            ship.ShipmentReferenceList,
+            _.get(ship, 'ShipmentReferenceList', []),
             item => item.ShipmentReferenceCompanyKey === isInvited.ShipmentMemberCompanyKey
           ) || 'loading';
       }
@@ -702,7 +702,7 @@ class ChatWithHeader extends Component {
                       1,
                       _.get(ship, 'ShipmentReferenceList', []),
                       ShipmentKey,
-                      ship.ShipmentMember
+                      _.get(ship, 'ShipmentMember', [])
                     )}
                   </Col>
                   <Col>
