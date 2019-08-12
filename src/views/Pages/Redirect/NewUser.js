@@ -29,8 +29,8 @@ const NewUser = (props) => {
   useEffect(() => {
     const parsed = queryString.parse(props.location.search);
     const {
- dke, ed, e, f, ck, u, cr, s,
-} = parsed;
+      dke, ed, e, f, ck, u, cr, s,
+    } = parsed;
     // ---- TO-DO secret key need to be stored securely
     const bytesUsed = CryptoJS.AES.decrypt(u, 'redroylkeew');
     const decryptedUsed = bytesUsed.toString(CryptoJS.enc.Utf8);

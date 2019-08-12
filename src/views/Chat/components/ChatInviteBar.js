@@ -17,14 +17,14 @@ const ChatInviteBar = ({
   shipmentKey,
   sender,
   member,
-  shipmentData
+  shipmentData,
 }) => {
   const [displayEmail, setDisplayEmail] = useState([]);
   const [emails, setEmails] = useState([]);
   const [notExistEmails, setNotExistEmails] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const isExistingMember = invited => {
+  const isExistingMember = (invited) => {
     const found = _.find(member, m => invited === m.ChatRoomMemberEmail);
     if (found) {
       return true;
@@ -32,14 +32,14 @@ const ChatInviteBar = ({
     return false;
   };
 
-  const processInvitedEmail = email => {
-    GetUserInfoFromEmail(email).subscribe(data => {
+  const processInvitedEmail = (email) => {
+    GetUserInfoFromEmail(email).subscribe((data) => {
       if (data.length > 0) {
         if (!isExistingMember(email)) {
           setEmails([...emails, { Email: email, isExist: true, isMarkRemove: false }]);
           setDisplayEmail([
             ...displayEmail,
-            { Email: email, isExist: true, dataIndex: emails.length }
+            { Email: email, isExist: true, dataIndex: emails.length },
           ]);
         } else {
           // TO-DO alert warning for existing member
@@ -47,17 +47,17 @@ const ChatInviteBar = ({
       } else {
         setNotExistEmails([
           ...notExistEmails,
-          { Email: email, isExist: false, isMarkRemove: false }
+          { Email: email, isExist: false, isMarkRemove: false },
         ]);
         setDisplayEmail([
           ...displayEmail,
-          { Email: email, isExist: false, dataIndex: emails.length }
+          { Email: email, isExist: false, dataIndex: emails.length },
         ]);
       }
     });
   };
 
-  const handleEmailInputChange = tags => {
+  const handleEmailInputChange = (tags) => {
     const inputTag = tags[tags.length - 1];
     if (isValidEmail(inputTag)) {
       processInvitedEmail(inputTag);
@@ -84,9 +84,9 @@ const ChatInviteBar = ({
     const inviteData = _.filter(emails, e => e.isMarkRemove === false);
     const result = CreateChatMultipleInvitation(inviteData, shipmentKey, chatRoomKey, sender);
     result.subscribe({
-      next: res => {
+      next: (res) => {
         toggleInvite();
-      }
+      },
     });
 
     // Send Not-Existing User Invites
@@ -102,13 +102,17 @@ const ChatInviteBar = ({
       CompanyInvitationRecruiterCompanyKey:
         shipmentData.ShipmentMember[sender.uid].ShipmentMemberCompanyKey === undefined
           ? ''
-          : shipmentData.ShipmentMember[sender.uid].ShipmentMemberCompanyKey
+          : shipmentData.ShipmentMember[sender.uid].ShipmentMemberCompanyKey,
     };
-    _.forEach(notExistEmails, email => {
+    _.forEach(notExistEmails, (email) => {
       if (!email.isMarkRemove) {
         CreateNonUserInvite({
+          ShipmentKey: shipmentKey,
+          ShipmentProductName: '',
+          ShipmentReferenceID: '',
+          ChatRoomKey: chatRoomKey,
           NonUserInviteType: 'Shipment',
-          NonUserInviteEmail: email,
+          NonUserInviteEmail: email.Email,
           NonUserInviteRecruiterUserKey: recruiter.CompanyInvitationRecruiterUserKey,
           NonUserInviteRecruiterProfileKey: recruiter.CompanyInvitationRecruiterProfileKey,
           NonUserInviteRecruiterProfileFirstName:
@@ -116,13 +120,16 @@ const ChatInviteBar = ({
           NonUserInviteRecruiterProfileSurName: recruiter.CompanyInvitationRecruiterProfileSurName,
           NonUserInviteRecruiterCompanyName: recruiter.CompanyInvitationRecruiterCompanyName,
           NonUserInviteRecruiterCompanyKey: recruiter.CompanyInvitationRecruiterCompanyKey,
-          NonUserInviteExpiryDate: AddDay(new Date(), 28).toDate()
+          NonUserInviteExpiryDate: AddDay(new Date(), 28).toDate(),
         });
       }
     });
+    if (inviteData.length === 0) {
+      toggleInvite();
+    }
   };
 
-  const tagRenderer = props => {
+  const tagRenderer = (props) => {
     const {
       tag,
       key,
@@ -165,7 +172,7 @@ const ChatInviteBar = ({
           onChange={handleEmailInputChange}
           inputProps={{
             className: 'react-tagsinput-input',
-            placeholder: 'Input email address'
+            placeholder: 'Input email address',
           }}
           renderTag={tagRenderer}
         />
