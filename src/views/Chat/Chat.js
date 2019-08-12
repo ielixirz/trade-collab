@@ -37,7 +37,7 @@ import { GetShipmentNotificationCount } from '../../service/personalize/personal
 import { GetUserCompany } from '../../service/user/user';
 import { fetchCompany } from '../../actions/companyAction';
 import './Chat.scss';
-import { editShipmentRef, updateShipmentRef } from '../../actions/shipmentActions';
+import { editShipmentRef, fetchShipments, updateShipmentRef } from '../../actions/shipmentActions';
 
 class Chat extends Component {
   constructor(props) {
@@ -175,6 +175,7 @@ class Chat extends Component {
         // Action
         sendMessage={onSendMessage}
         fetchMoreMessage={onFetchMoreMessage}
+        fetchShipments={this.props.fetchShipments}
         browseFile={this.browseFile}
         //   Event
         onDropChatStyle={this.state.onDropChatStyle}
@@ -518,6 +519,7 @@ export default connect(
     selectTab,
     selectChat: selectChatRoom,
     getChatRoomList,
-    fetchCompany
+    fetchCompany,
+    fetchShipments
   }
 )(Chat);
