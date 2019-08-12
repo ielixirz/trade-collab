@@ -269,7 +269,7 @@ export const CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMaster
 ) => from(ShipmentRefPath().add(ShipmentData)).pipe(
   map(ShipmentDocResult => ShipmentDocResult.id),
   switchMap(ShipmentId => forkJoin(
-    CreateShipmentReference(ShipmentId, ShipmentReferenceData),
-    UpdateShipmentMasterDataDetail(ShipmentId, 'DefaultTemplate', ShipmentMasterData),
+    CreateShipmentReference(ShipmentId, ShipmentReferenceData).pipe(take(1)),
+    UpdateShipmentMasterDataDetail(ShipmentId, 'DefaultTemplate', ShipmentMasterData).pipe(take(1)),
   )),
 );
