@@ -277,7 +277,7 @@ class TableShipment extends React.Component {
               <b style={{ color: 'black' }}>{userrefs[0].ShipmentReferenceID}</b>
             </Button>
           ) : _.isEmpty(companies) ? (
-            <TableLoading />
+            <b>See Refs</b>
           ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (
             <Button color={'ref'}>
               <b>Input your Ref#!</b>
