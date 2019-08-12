@@ -7,11 +7,14 @@ import { connect } from 'react-redux';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 
+import { combineLatest } from 'rxjs';
+import { takeWhile } from 'rxjs/operators';
 import Register from '../Register/Register';
 import SelectRole from '../SelectProfile/SelectRole';
 import Confirmation from '../SelectProfile/Confirmation';
 import { RegisterUser } from '../../../service/auth/register';
 import { KeepIsCompanyMember } from '../../../service/company/company';
+import { isShipmentMember } from '../../../service/shipment/shipment';
 import { isChatRoomMember } from '../../../service/chat/chat';
 import { login, setDefault } from '../../../actions/loginActions';
 
@@ -83,7 +86,7 @@ class MainRegister extends Component {
                   this.props.login(
                     { email: data.Email, password: data.Password },
                     null,
-                    `#/selectprofile/?l=${dataKey.companyKey}`,
+                    `#/selectprofile/?c=${dataKey.companyKey}`,
                   );
                 }
               },
@@ -100,22 +103,29 @@ class MainRegister extends Component {
           },
         });
         break;
-      case 'Chat':
+      case 'Shipment':
         RegisterUser(data).subscribe({
           next: (userKey) => {
             this.props.setDefault();
-            const checkingMembership = isChatRoomMember(
+            const checkingChatMembership = isChatRoomMember(
               dataKey.shipmentKey,
               dataKey.chatroomKey,
               userKey,
-            ).subscribe({
-              next: (isMember) => {
-                if (isMember) {
-                  checkingMembership.unsubscribe();
+            );
+            const checkingShipmentMembership = isShipmentMember(dataKey.shipmentKey, userKey);
+
+            const combineChecking = combineLatest([
+              checkingChatMembership,
+              checkingShipmentMembership,
+            ]).pipe(takeWhile(results => results[0] && results[1]));
+
+            combineChecking.subscribe({
+              next: (results) => {
+                if (results[0] && results[1]) {
                   this.props.login(
                     { email: data.Email, password: data.Password },
                     null,
-                    `#/selectprofile/?l=${dataKey.shipmentKey}`,
+                    `#/selectprofile/?s=${dataKey.shipmentKey}`,
                   );
                 }
               },
@@ -133,6 +143,7 @@ class MainRegister extends Component {
         });
         break;
       default:
+        console.log('default');
         // TO-DO return unhandled case.
         break;
     }
@@ -141,8 +152,8 @@ class MainRegister extends Component {
   render() {
     const { step } = this.state;
     const {
- Firstname, Surname, Email, Password, AccountType,
-} = this.state;
+      Firstname, Surname, Email, Password, AccountType,
+    } = this.state;
     const values = {
       Firstname,
       Surname,

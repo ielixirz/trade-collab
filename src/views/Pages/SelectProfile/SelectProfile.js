@@ -74,11 +74,11 @@ class SelectProfile extends Component {
 
   getIn = (profile) => {
     const parsed = queryString.parse(this.props.location.search);
-    const { l } = parsed;
-    if (l !== undefined) {
-      this.goToCompany(profile, l);
-    } else if (l !== undefined) {
-      this.goToChat(profile, l);
+    const { c, s } = parsed;
+    if (c !== undefined) {
+      this.goToCompany(profile, c);
+    } else if (s !== undefined) {
+      this.goToChat(profile, s);
     } else {
       this.goToShipment(profile);
     }
