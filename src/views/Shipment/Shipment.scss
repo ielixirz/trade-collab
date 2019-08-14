@@ -336,3 +336,35 @@ tbody > tr:hover {
     width: 150px;
   }
 }
+
+
+.company-shipment{
+  margin: 4px;
+  border-radius: 3px;
+  background-color: #d6d6d6;
+  width: -webkit-fill-available;
+}
+
+
+.company-shipment-button{
+  margin: 4px;
+  border-radius: 3px;
+}
+
+.shipment-header {
+  font-size: 12px;
+  color: #9b9b9b;
+}
+
+.shipment-item-box{
+  border: 0px;
+}
+
+.shipment-item-box-gray-background{
+  margin: 4px;
+  border: 0px;
+  opacity: 0.44;
+  border-radius: 3px;
+  background-color: #d6d6d6;
+  width: -webkit-fill-available;
+}

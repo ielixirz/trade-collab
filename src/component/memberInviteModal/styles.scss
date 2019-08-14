@@ -76,3 +76,41 @@
     }
   }
 }
+
+.member-invite_background {
+  padding: 16px;
+  background-color: #f4f4f4;
+}
+
+.edit-modal-invite {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1;
+  letter-spacing: 0.21px;
+  text-align: end;
+  color: #4a4a4a;
+  margin-right: 16px;
+}
+
+.invite-name {
+  font-size: 12px;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 0.92;
+  letter-spacing: 0.18px;
+  color: #4a4a4a;
+}
+
+.invite-email {
+  opacity: 0.5;
+  font-size: 10px;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.1;
+  letter-spacing: 0.15px;
+  color: #6a6a6a;
+}
