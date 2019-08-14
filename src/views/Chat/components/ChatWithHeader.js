@@ -388,7 +388,8 @@ class ChatWithHeader extends Component {
                 disabled={
                   _.isEmpty(this.state.company) ||
                   _.isEmpty(this.state.role) ||
-                  _.isEmpty(this.state.refID)
+                  _.isEmpty(this.state.refID) ||
+                  this.state.isAssign
                 }
                 onClick={() => {
                   this.setState({ isAssign: true });
