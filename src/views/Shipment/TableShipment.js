@@ -765,7 +765,7 @@ class TableShipment extends React.Component {
         ...item,
       };
     });
-    collection = _.orderBy(collection, ['PIN', 'notifications'], ['desc', 'desc']);
+    collection = _.orderBy(collection, ['notifications','PIN'], ['desc', 'desc']);
 
     input = _.map(collection, (item, index) => {
       const etd = _.get(item, 'ShipperETDDate', 0);
