@@ -429,6 +429,7 @@ class Chat extends Component {
                 });
               }}
               onBlur={e => {
+                console.log('Un Focus');
                 EditChatRoom(item.ShipmentKey, item.ChatRoomKey, {
                   ChatRoomName: this.state.roomeditor.roomName
                 });

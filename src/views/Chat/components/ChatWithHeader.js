@@ -33,6 +33,7 @@ import ChatInviteBar from './ChatInviteBar';
 import {
   AddChatRoomMember,
   CreateChatRoom,
+  EditChatRoom,
   UpdateChatRoomMember,
   UpdateChatRoomMessageReader
 } from '../../../service/chat/chat';
@@ -509,6 +510,38 @@ class ChatWithHeader extends Component {
                           }
                         }
                       });
+                    }}
+                    onBlur={e => {
+                      console.log('Un Focus ref trigger');
+                      if (_.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) === false) {
+                        this.setState({
+                          submiting: {
+                            ...this.state.submiting,
+                            [shipmentKey]: {
+                              isSubmit: true
+                            }
+                          }
+                        });
+                        CreateShipmentReference(shipmentKey, this.state.input.newRef).subscribe({
+                          next: res => {
+                            this.setState({
+                              submiting: {
+                                ...this.state.submiting,
+                                [shipmentKey]: {
+                                  refid: res.id,
+                                  isSubmit: true
+                                }
+                              }
+                            });
+                          }
+                        });
+                      } else if (_.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0) {
+                        UpdateShipmentReference(
+                          shipmentKey,
+                          _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
+                          this.state.input.newRef
+                        );
+                      }
                     }}
                     onKeyPress={_.debounce(
                       event => {
