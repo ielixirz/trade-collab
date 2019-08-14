@@ -83,6 +83,11 @@ class Chat extends Component {
   };
 
   createChatRoom(fetchChatMessage, param, room, user) {
+    const { shipments } = this.state;
+    const members = shipments.ShipmentMember;
+    const memberData = _.find(members, (item, index) => index === user.uid);
+    console.log('memberData', memberData);
+
     const shipmentkey = _.get(param, 'shipmentkey', 'HDTPONlnceJeG5yAA1Zy');
     CreateChatRoom(shipmentkey, {
       ChatRoomType: room,
@@ -98,9 +103,9 @@ class Chat extends Component {
           ChatRoomMemberUserKey: user.uid,
           ChatRoomMemberEmail: user.email,
           ChatRoomMemberImageUrl: '',
-          ChatRoomMemberRole: [room],
-          ChatRoomMemberCompanyName: '',
-          ChatRoomMemberCompanyKey: ''
+          ChatRoomMemberRole: memberData.ShipmentMemberRole,
+          ChatRoomMemberCompanyName: memberData.ShipmentMemberCompanyName || '',
+          ChatRoomMemberCompanyKey: memberData.ShipmentMemberCompanyKey || ''
         }).subscribe({
           next: res => {
             fetchChatMessage(data[data.length - 1], shipmentkey, chatkey);
@@ -424,6 +429,7 @@ class Chat extends Component {
                 });
               }}
               onBlur={e => {
+                console.log('Un Focus');
                 EditChatRoom(item.ShipmentKey, item.ChatRoomKey, {
                   ChatRoomName: this.state.roomeditor.roomName
                 });

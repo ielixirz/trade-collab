@@ -745,6 +745,14 @@
     "@babel/helper-regex" "^7.4.4"
     regexpu-core "^4.5.4"
 
+"@babel/polyfill@^7.4.4":
+  version "7.4.4"
+  resolved "https://registry.yarnpkg.com/@babel/polyfill/-/polyfill-7.4.4.tgz#78801cf3dbe657844eeabf31c1cae3828051e893"
+  integrity sha512-WlthFLfhQQhh+A2Gn5NSFl0Huxz36x86Jn+E9OW7ibK8edKPq+KLy4apM1yDpQ8kJOVi1OVjpP4vSDLdrI04dg==
+  dependencies:
+    core-js "^2.6.5"
+    regenerator-runtime "^0.13.2"
+
 "@babel/preset-env@7.3.1":
   version "7.3.1"
   resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.3.1.tgz#389e8ca6b17ae67aaf9a2111665030be923515db"
@@ -7432,6 +7440,11 @@ lodash.clone@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.clone/-/lodash.clone-4.5.0.tgz#195870450f5a13192478df4bc3d23d2dea1907b6"
   integrity sha1-GVhwRQ9aExkkeN9Lw9I9LeoZB7Y=
 
+lodash.defaults@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/lodash.defaults/-/lodash.defaults-4.2.0.tgz#d09178716ffea4dde9e5fb7b37f6f0802274580c"
+  integrity sha1-0JF4cW/+pN3p5ft7N/bwgCJ0WAw=
+
 lodash.escape@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/lodash.escape/-/lodash.escape-4.0.1.tgz#c9044690c21e04294beaa517712fded1fa88de98"
@@ -10325,6 +10338,14 @@ react@^16.1.1, react@^16.8.4:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
     scheduler "^0.13.6"
+
+reactstrap-confirm@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/reactstrap-confirm/-/reactstrap-confirm-1.1.0.tgz#7d0202501c5feabb622fa96064557459a49ccda7"
+  integrity sha512-3Y78oRfT5WGtqg7ylza69ApznhOrNRFGMaIHBepS6WE+J4zDH5PhDDBD5INAbR+a0enhz3ihX+mOs26qyPDfQw==
+  dependencies:
+    "@babel/polyfill" "^7.4.4"
+    lodash.defaults "^4.2.0"
 
 reactstrap@^7.1.0:
   version "7.1.0"

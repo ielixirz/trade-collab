@@ -20,6 +20,7 @@ import {
   Form,
   FormGroup
 } from 'reactstrap';
+import confirm from 'reactstrap-confirm';
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
 import MemberModal from '../../../component/MemberModal';
@@ -33,6 +34,7 @@ import ChatInviteBar from './ChatInviteBar';
 import {
   AddChatRoomMember,
   CreateChatRoom,
+  EditChatRoom,
   UpdateChatRoomMember,
   UpdateChatRoomMessageReader
 } from '../../../service/chat/chat';
@@ -386,7 +388,8 @@ class ChatWithHeader extends Component {
                 disabled={
                   _.isEmpty(this.state.company) ||
                   _.isEmpty(this.state.role) ||
-                  _.isEmpty(this.state.refID)
+                  _.isEmpty(this.state.refID) ||
+                  this.state.isAssign
                 }
                 onClick={() => {
                   this.setState({ isAssign: true });
@@ -510,22 +513,66 @@ class ChatWithHeader extends Component {
                         }
                       });
                     }}
-                    onKeyPress={_.debounce(
-                      event => {
-                        if (event.key === 'Enter') {
-                          if (
-                            _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) === false
-                          ) {
+                    onBlur={e => {
+                      console.log('Un Focus ref trigger');
+                      if (_.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) === false) {
+                        this.setState({
+                          submiting: {
+                            ...this.state.submiting,
+                            [shipmentKey]: {
+                              isSubmit: true
+                            }
+                          }
+                        });
+                        CreateShipmentReference(shipmentKey, this.state.input.newRef).subscribe({
+                          next: res => {
                             this.setState({
                               submiting: {
                                 ...this.state.submiting,
                                 [shipmentKey]: {
+                                  refid: res.id,
                                   isSubmit: true
                                 }
                               }
                             });
-                            CreateShipmentReference(shipmentKey, this.state.input.newRef).subscribe(
-                              {
+                          }
+                        });
+                      } else if (_.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0) {
+                        UpdateShipmentReference(
+                          shipmentKey,
+                          _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
+                          this.state.input.newRef
+                        );
+                      }
+                    }}
+                    onKeyPress={_.debounce(
+                      async event => {
+                        if (event.key === 'Enter') {
+                          // const confirmation = await confirm({
+                          //   message: 'Confirm edit shipment reference',
+                          //   confirmText: 'OK',
+                          //   title: 'Confirm',
+                          //   confirmColor: 'primary'
+                          // });
+                          const confirmation = true;
+                          console.log('Enter', confirmation);
+                          if (confirmation === true) {
+                            if (
+                              _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) ===
+                              false
+                            ) {
+                              this.setState({
+                                submiting: {
+                                  ...this.state.submiting,
+                                  [shipmentKey]: {
+                                    isSubmit: true
+                                  }
+                                }
+                              });
+                              CreateShipmentReference(
+                                shipmentKey,
+                                this.state.input.newRef
+                              ).subscribe({
                                 next: res => {
                                   this.setState({
                                     submiting: {
@@ -537,14 +584,16 @@ class ChatWithHeader extends Component {
                                     }
                                   });
                                 }
-                              }
-                            );
-                          } else if (_.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0) {
-                            UpdateShipmentReference(
-                              shipmentKey,
-                              _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
-                              this.state.input.newRef
-                            );
+                              });
+                            } else if (
+                              _.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0
+                            ) {
+                              UpdateShipmentReference(
+                                shipmentKey,
+                                _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
+                                this.state.input.newRef
+                              );
+                            }
                           }
                         }
                       },
@@ -578,6 +627,30 @@ class ChatWithHeader extends Component {
                     type="text"
                     name={`shipmentRefID${refIndex}`}
                     id={`shipmentRefID${refIndex}`}
+                    onBlur={e => {
+                      const update = UpdateShipmentReference(
+                        shipmentKey,
+                        refItem.ShipmentReferenceKey,
+                        {
+                          ...refItem,
+                          ShipmentReferenceID: refItem.ShipmentReferenceIDInput
+                        }
+                      ).subscribe({
+                        next: res => {
+                          console.log('Update Ref', res);
+                        },
+                        complete: res => {
+                          this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
+                            ...refItem,
+                            ShipmentReferenceID: refItem.ShipmentReferenceIDInput,
+                            ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
+                            ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
+                            ShipmentKey: shipmentKey
+                          });
+                          update.unsubscribe();
+                        }
+                      });
+                    }}
                     value={refItem.ShipmentReferenceIDInput}
                     onChange={e => {
                       const { value } = e.target;
@@ -590,30 +663,44 @@ class ChatWithHeader extends Component {
                         ShipmentKey: shipmentKey
                       });
                     }}
-                    onKeyPress={event => {
+                    onKeyPress={async event => {
                       if (event.key === 'Enter') {
-                        const update = UpdateShipmentReference(
-                          shipmentKey,
-                          refItem.ShipmentReferenceKey,
-                          {
-                            ...refItem,
-                            ShipmentReferenceID: refItem.ShipmentReferenceIDInput
-                          }
-                        ).subscribe({
-                          next: res => {
-                            console.log('Update Ref', res);
-                          },
-                          complete: res => {
-                            this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
+                        // const confirmation = await confirm({
+                        //   message: 'Confirm edit shipment reference',
+                        //   confirmText: 'OK',
+                        //   title: 'Confirm',
+                        //   confirmColor: 'primary'
+                        // });
+                        const confirmation = true;
+                        if (confirmation) {
+                          const update = UpdateShipmentReference(
+                            shipmentKey,
+                            refItem.ShipmentReferenceKey,
+                            {
                               ...refItem,
-                              ShipmentReferenceID: refItem.ShipmentReferenceIDInput,
-                              ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
-                              ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
-                              ShipmentKey: shipmentKey
-                            });
-                            update.unsubscribe();
-                          }
-                        });
+                              ShipmentReferenceID: refItem.ShipmentReferenceIDInput
+                            }
+                          ).subscribe({
+                            next: res => {
+                              console.log('Update Ref', res);
+                            },
+                            complete: res => {
+                              this.props.editShipmentRef(
+                                shipmentKey,
+                                refItem.ShipmentReferenceKey,
+                                {
+                                  ...refItem,
+                                  ShipmentReferenceID: refItem.ShipmentReferenceIDInput,
+                                  ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
+                                  ShipmentReferenceCompanyName:
+                                    hasCompany.ShipmentMemberCompanyName,
+                                  ShipmentKey: shipmentKey
+                                }
+                              );
+                              update.unsubscribe();
+                            }
+                          });
+                        }
                       }
                     }}
                     maxLength={50}
