@@ -1,7 +1,6 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable filenames/match-regex */
 import React from 'react';
 import {
   Button,
@@ -25,7 +24,9 @@ class MemberModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      modal: false
+      modal: false,
+      isEdit: false,
+      state: 1
     };
   }
 
@@ -41,6 +42,10 @@ class MemberModal extends React.Component {
       &times;
     </button>
   );
+
+  toggleEdit = () => {
+    this.setState(state => ({ isEdit: !state.isEdit }));
+  }
 
   render() {
     let {
@@ -101,14 +106,46 @@ class MemberModal extends React.Component {
 
           {count === 0 ? <TextLoading /> : count}
         </Button>
-        <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
+        <Modal size="lg"
+        style={{ height: '80%'}}
+        isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>          
           <ModalHeader toggle={this.toggle} close={this.renderCloseButton()}>
+          <div>Members in this chat room</div>
+          </ModalHeader>
+          <ModalBody style={{
+              height: '400px',
+              overflowY: 'auto'            
+          }}>
+          <div className="member-invite_background">
+                 Invite by E-mail
             <InputGroup>
-              <InputGroupAddon addonType="prepend">
+            <Col sm={10}>
+              <Autocomplete
+                  className="member-search-container"
+                  items={suggestion}
+                  shouldItemRender={(item, value) =>
+                    item.label.toLowerCase().indexOf(value.toLowerCase()) > -1
+                  }
+                  getItemValue={item => item.label}
+                  renderItem={(item, highlighted) => (
+                    <div
+                      key={item.id}
+                      style={{ backgroundColor: highlighted ? '#eee' : 'transparent' }} >
+                      {item.label}
+                    </div>
+                  )}
+                  value={this.state.value}
+                  placeholder="...input email address"
+                  onChange={e => this.setState({ value: e.target.value })}
+                  onSelect={value => this.setState({ value })}
+                />
+                </Col>
+            
                 <Button
                   className="invite-btn"
                   style={{
                     color: 'white',
+                    borderRadius: '3px',
                     backgroundColor: '#16A085'
                   }}
                   onClick={() => {
@@ -149,58 +186,23 @@ class MemberModal extends React.Component {
                     }
                   }}
                 >
-                  <span style={{ color: '#fff', fontWeight: 'bold' }}>Invite new member:</span>
+                  <span style={{ color: '#fff', fontWeight: 'bold' }}>Send Invite</span>
                 </Button>
-              </InputGroupAddon>
-              <Autocomplete
-                items={suggestion}
-                shouldItemRender={(item, value) =>
-                  item.label.toLowerCase().indexOf(value.toLowerCase()) > -1
-                }
-                getItemValue={item => item.label}
-                renderItem={(item, highlighted) => (
-                  <div
-                    key={item.id}
-                    style={{ backgroundColor: highlighted ? '#eee' : 'transparent' }}
-                  >
-                    {item.label}
-                  </div>
-                )}
-                value={this.state.value}
-                placeholder="...input email address"
-                onChange={e => this.setState({ value: e.target.value })}
-                onSelect={value => this.setState({ value })}
-              />
             </InputGroup>
-            <br />
-          </ModalHeader>
-          <ModalBody>
-            <Row>
-              <Col xs="6" sm="6">
-                <span
-                  style={{ color: '#3B3B3B', fontSize: 22, fontWeight: 'bold' }}
-                  className="float-left"
-                >
-                  Members In this chat
-                </span>
-              </Col>
-              <Col xs="6" sm="3">
-                <span style={{ color: '#707070' }} className="float-right">
-                  Role in shipment:
-                </span>
-              </Col>
-              <Col xs="6" sm="3">
-                <span style={{ color: '#16A085', textAlign: 'right' }} className="float-right">
-                  <div style={{ marginBottom: -10 }}>(what is this?)</div>
-                </span>
-              </Col>
-            </Row>
-            <hr />
-            {Object.keys(shipmentMember).map((key, index) => (
+            </div>
+            <br/>
+            <div>              
+              <span style={{textDecoration:'underline' , textAlign : 'end' ,fontWeight:'bold'}} onClick={() => {
+                this.toggleEdit();
+              }}>Edit</span>
+            </div>
+
+             {Object.keys(shipmentMember).map((key, index) => (
               <MemberInChat
                 toggleBlocking={toggleBlocking}
                 title={key}
                 member={shipmentMember[key]}
+                isEdit={this.state.isEdit}
                 {...props}
               />
             ))}

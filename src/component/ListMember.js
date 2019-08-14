@@ -1,12 +1,24 @@
 import React from 'react';
-import { ListGroup, ListGroupItem, Row, Col } from 'reactstrap';
+import { Button ,ListGroup, ListGroupItem, Row, Col } from 'reactstrap';
 import RoleBadges from './RoleBadges.js';
 import _ from 'lodash';
 import { LeaveChatRoomMember } from '../service/chat/chat';
+import UserCircle from '../component/svg/User';
+import Trash from '../component/svg/Trash';
 
 export default class ListMember extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = { deleteStateEnable: false };
+  }
+
+  toggleDeleteState = () => {
+    this.setState(state => ({ deleteStateEnable: !state.deleteStateEnable }));
+  }
+
   render() {
-    const { item: member, toggleBlocking } = this.props;
+    const { item: member, toggleBlocking , isEdit} = this.props;
 
     let email = _.get(member, 'ChatRoomMemberEmail', '');
     let role = _.map(member.ChatRoomMemberRole, item => {
@@ -22,23 +34,17 @@ export default class ListMember extends React.Component {
             <Row>
               <Col xs="6" sm="7" className="text-left">
                 <span>
-                  <img
-                    style={{ borderRadius: 15 }}
-                    src="https://image.flaticon.com/icons/svg/21/21104.svg"
-                    alt="image"
-                    width="30"
-                    height="30"
-                  />
+                  <UserCircle/>
                 </span>
                 <span style={{ marginLeft: 10 }}>
-                  {member.ChatRoomMemberFirstnameFirstProfile}{' '}
-                  {member.ChatRoomMemberSurnameFirstProfile}
+                  <span className="invite-name">{member.ChatRoomMemberFirstnameFirstProfile}{' '}
+                  {member.ChatRoomMemberSurnameFirstProfile}</span>
                 </span>
                 <br />
-                <span style={{ marginLeft: 40, fontSize: 12 }}>{email}</span>
+                <span className="invite-email" style={{ marginLeft: 40, fontSize: 12 }}>{email}</span>
               </Col>
-              <Col xs="6" sm="3">
-                {role.map(item => {
+              <Col xs="6" sm="2">
+                {/* {role.map(item => {
                   return (
                     <span
                       className="badge-role"
@@ -53,15 +59,31 @@ export default class ListMember extends React.Component {
                       {item}
                     </span>
                   );
-                })}
+                })} */}
               </Col>
               <Col
                 style={{
                   'z-index': 10
-                }}
-              >
-                <a
-                  href="#"
+                }}>
+
+                { isEdit === true ? 
+                 <span                 
+                   onClick={e => {
+                   e.preventDefault()
+                   this.toggleDeleteState()
+                 }}>
+              {this.state.deleteStateEnable ? 
+              <Row>
+                  <Button 
+                    className="company-shipment-button"
+                    style={{borderRadius : "5px" , border : "solid 1px #070707"}}
+                    color="white" onClick={this.toggleCompanyState}>
+                    Cancel
+                  </Button>
+                  <Button 
+                  className="company-shipment-button"
+                  style={{marginLeft : '8px'}}
+                  color="danger"
                   onClick={e => {
                     e.preventDefault();
                     toggleBlocking(true);
@@ -77,15 +99,22 @@ export default class ListMember extends React.Component {
                       },
                       complete: res => {}
                     });
-                  }}
-                >
-                  <i className="fa fa-trash-o" style={{ opacity: 0.7, marginLeft: 60 }} />
-                </a>
+                  }}>
+                    Remove
+                  </Button>
+                </Row>: 
+                <span style={{}}>         
+                  <Trash/>
+                </span>
+                }                 
+               </span>
+                  :
+                  null}
+              
               </Col>
             </Row>
           </ListGroupItem>
         </ListGroup>
-        <hr className="listHr" />
       </div>
     );
   }

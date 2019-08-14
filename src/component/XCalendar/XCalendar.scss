@@ -1,0 +1,153 @@
+//
+// Colors
+//
+
+$blue-color: #3399ff;
+$light-blue-color: #99ccff;
+$red-color: #ff3333;
+$light-red-color: #ffcccc;
+$white-color: #ffffff;
+
+$today-color: $red-color;
+$today-bg-color: $light-red-color;
+
+$disabled-color: $white-color;
+$disabled-bg-color: $light-red-color;
+
+$selected-color: $white-color;
+$selected-bg-color: $light-blue-color;
+
+$start-bg-color: $blue-color;
+$end-bg-color: $blue-color;
+
+
+//
+// Styles
+//
+
+.XCalendar {
+    width: 100%;
+
+    .DayPicker {
+        &-Day {
+            border-radius: 0%;
+
+            &--today {
+                position: relative;
+                color: $today-color !important;
+                background-color: $today-bg-color;
+
+                &::before {
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    border: 2px solid $today-color;
+                    z-index: 1;
+                }
+            }
+
+            &--disabled {
+                background-color: $disabled-bg-color;
+                color: inherit;
+                opacity: 0.65;
+            }
+
+            &--selected {
+
+                &:not(.DayPicker-Day--start),
+                &:not(.DayPicker-Day--end),
+                &:not(.DayPicker-Day--outside) {
+                    background-color: $selected-bg-color;
+                    color: $white-color;
+                }
+            }
+
+
+            // Range Modifiers
+
+            &--start {
+                background-color: $start-bg-color !important;
+                z-index: 1;
+            }
+
+            &--end {
+                background-color: $end-bg-color !important;
+            }
+        }
+    }
+
+    .DayPickerInput {
+        width: 100%;
+
+        &-Overlay {
+            width: 594px;
+        }
+    }
+
+
+    //
+    // Range Inputs
+
+    &-Input {
+        position: relative;
+        flex-grow: 1;
+    }
+
+    &-To {
+        .DayPickerInput-Overlay {
+            margin: {
+                left: -297px;
+            }
+        }
+    }
+
+    &-TBA {
+        text-decoration: none;
+        color: $blue-color;
+        opacity: 0.75;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+
+    //
+    // Bootstrap Inputs
+
+    .input-group-text {
+        font-weight: 500;
+        background-color: inherit;
+
+        padding: {
+            right: 0;
+        }
+
+        &::after {
+            display: block;
+
+            padding: {
+                left: 0.25rem;
+                right: 0.25rem;
+            }
+
+            content: ' : ';
+            font-weight: inherit;
+        }
+    }
+
+    .form-control {
+        border-left-style: none !important;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+
+        &:focus {
+            border: 1px solid #ced4da;
+            box-shadow: none;
+        }
+    }
+}
