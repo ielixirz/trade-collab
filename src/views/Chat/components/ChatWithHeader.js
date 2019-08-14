@@ -20,7 +20,6 @@ import {
   Form,
   FormGroup
 } from 'reactstrap';
-import confirm from 'reactstrap-confirm';
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
 import MemberModal from '../../../component/MemberModal';
@@ -548,12 +547,7 @@ class ChatWithHeader extends Component {
                     onKeyPress={_.debounce(
                       async event => {
                         if (event.key === 'Enter') {
-                          // const confirmation = await confirm({
-                          //   message: 'Confirm edit shipment reference',
-                          //   confirmText: 'OK',
-                          //   title: 'Confirm',
-                          //   confirmColor: 'primary'
-                          // });
+
                           const confirmation = true;
                           console.log('Enter', confirmation);
                           if (confirmation === true) {
@@ -665,12 +659,7 @@ class ChatWithHeader extends Component {
                     }}
                     onKeyPress={async event => {
                       if (event.key === 'Enter') {
-                        // const confirmation = await confirm({
-                        //   message: 'Confirm edit shipment reference',
-                        //   confirmText: 'OK',
-                        //   title: 'Confirm',
-                        //   confirmColor: 'primary'
-                        // });
+
                         const confirmation = true;
                         if (confirmation) {
                           const update = UpdateShipmentReference(
