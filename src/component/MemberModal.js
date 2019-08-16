@@ -19,6 +19,7 @@ import * as _ from 'lodash';
 import TextLoading from './svg/TextLoading';
 import MemberInChat from './MemberInChat';
 import { CreateChatMultipleInvitation } from '../service/join/invite';
+import XSuggest from '../component/XSuggest';
 
 class MemberModal extends React.Component {
   constructor(props) {
@@ -26,7 +27,8 @@ class MemberModal extends React.Component {
     this.state = {
       modal: false,
       isEdit: false,
-      state: 1
+      state: 1,
+      inviteEmailList: [],
     };
   }
 
@@ -116,11 +118,14 @@ class MemberModal extends React.Component {
               height: '400px',
               overflowY: 'auto'            
           }}>
-          <div className="member-invite_background">
+          <div style={{backgroundColor: '#f4f4f4' , borderRadius: '3px', 
+          paddingTop: '16px' , paddingLeft: '8px' , paddingRight: '8px', paddingBottom : '16px'}}>
+            <div style={{marginLeft: '16px' , textDecorationLine: 'underline'}}>
                  Invite by E-mail
-            <InputGroup>
+            </div>
+            <InputGroup style={{marginTop: '4px'}}>
             <Col sm={10}>
-              <Autocomplete
+              {/* <Autocomplete
                   className="member-search-container"
                   items={suggestion}
                   shouldItemRender={(item, value) =>
@@ -138,7 +143,19 @@ class MemberModal extends React.Component {
                   placeholder="...input email address"
                   onChange={e => this.setState({ value: e.target.value })}
                   onSelect={value => this.setState({ value })}
-                />
+                /> */}
+
+                <XSuggest
+                    placeholder="Input your Importers E-mail address"
+                    datasets={suggestion}
+                    idName={'id'}
+                    labelName={'label'}
+                    avatarName={'avatar'}
+                    onAdd={item => this.state.inviteEmailList.push(item)}
+                    onRemove={item => this.state.inviteEmailList.pop(item)}
+                    onChange={(selects, adds, removes) => console.log(selects, adds, removes)}
+                  />
+
                 </Col>
             
                 <Button
@@ -152,37 +169,43 @@ class MemberModal extends React.Component {
                     const inviteMember = [];
                     const role = [];
                     role.push(this.props.ChatRoomData.ChatRoomType);
-                    inviteMember.push({
-                      Email: this.state.value,
-                      Image: '',
-                      Role: role,
-                      ChatRoomMemberCompanyName: '',
-                      ChatRoomMemberCompanyKey: ''
-                    });
-
-                    const hasMember = _.find(
-                      member,
-                      (item, index) => item.ChatRoomMemberEmail === this.state.value
-                    );
-
-                    if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
+                    _.forEach(this.state.inviteEmailList , (invite) =>{
+                      const hasMember = _.find(
+                        member,
+                        (item, index) => item.ChatRoomMemberEmail === invite.id
+                      );
+ 
                       if (_.isEmpty(hasMember)) {
-                        const invite = CreateChatMultipleInvitation(
-                          inviteMember,
-                          ShipmentKey,
-                          ChatRoomKey,
-                          this.props.sender
-                        ).subscribe({
-                          next: res => {
-                            console.log(res);
-                            invite.unsubscribe();
-                          }
+                        inviteMember.push({
+                          Email: invite.id,
+                          Image: '',
+                          Role: role,
+                          ChatRoomMemberCompanyName: '',
+                          ChatRoomMemberCompanyKey: ''
                         });
-                      } else {
-                        window.alert('already in chatroom');
                       }
-                    } else {
-                      window.alert('You has been remove from the chat');
+                    })
+
+                    if (inviteMember.length > 0){
+                      if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
+                          const invite = CreateChatMultipleInvitation(
+                            inviteMember,
+                            ShipmentKey,
+                            ChatRoomKey,
+                            this.props.sender
+                          ).subscribe({
+                            next: res => {
+                              this.setState({
+                                inviteEmailList : []
+                              });
+                              invite.unsubscribe();
+                            }
+                          });
+                      } else {
+                        window.alert('You has been remove from the chat');
+                      }
+                    }else{
+                      window.alert('already in chatroom');
                     }
                   }}
                 >
@@ -191,8 +214,8 @@ class MemberModal extends React.Component {
             </InputGroup>
             </div>
             <br/>
-            <div>              
-              <span style={{textDecoration:'underline' , textAlign : 'end' ,fontWeight:'bold'}} onClick={() => {
+            <div style={{textAlign : 'end', marginRight : '60px'}}>              
+              <span style={{textDecoration:'underline' ,fontWeight:'bold'}} onClick={() => {
                 this.toggleEdit();
               }}>Edit</span>
             </div>

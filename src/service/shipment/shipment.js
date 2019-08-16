@@ -93,6 +93,14 @@ export const GetShipmentList = (
 
 export const GetShipmentDetail = ShipmentKey => doc(ShipmentRefPath().doc(ShipmentKey));
 
+export const GetLastestShipment = (ShipmentMemberUserKey) => {
+  const DefaultQuery = ShipmentRefPath()
+  .where('ShipmentMemberList', 'array-contains', ShipmentMemberUserKey)
+  .orderBy('ShipmentCreateTimestamp', 'desc');
+
+  return collectionData(DefaultQuery.limit(1) , 'ShipmentID')
+}
+
 /* Example data CreateShipmentFile
   {
     FileName (string)

@@ -172,7 +172,13 @@ export default class XCalendar extends React.Component {
                                     inputProps={{
                                         className: 'form-control XCalendar-Input--input',
                                         onClick: () => this.handleFocusIn('from'),
-                                        onBlur: () => this.handleFocusOut('from')
+                                        onBlur: () => this.handleFocusOut('from'),
+                                        onKeyPress: e => {
+                                            // eslint-disable-next-line no-useless-escape
+                                            if (/[^0-9\/]/.test(String.fromCharCode(e.which || e.keyCode))) {
+                                                e.preventDefault()
+                                            }
+                                        }
                                     }}
                                     dayPickerProps={{
                                         modifiers,
@@ -209,7 +215,13 @@ export default class XCalendar extends React.Component {
                                     inputProps={{
                                         className: 'form-control XCalendar-Input--input',
                                         onClick: () => this.handleFocusIn('to'),
-                                        onBlur: () => this.handleFocusOut('to')
+                                        onBlur: () => this.handleFocusOut('to'),
+                                        onKeyPress: e => {
+                                            // eslint-disable-next-line no-useless-escape
+                                            if (/[^0-9\/]/.test(String.fromCharCode(e.which || e.keyCode))) {
+                                                e.preventDefault()
+                                            }
+                                        }
                                     }}
                                     dayPickerProps={{
                                         modifiers,

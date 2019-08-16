@@ -202,7 +202,8 @@ export const CreateChatMultipleInvitation = (
 
   const EmailListSource = from(EmailList).pipe(
     tap(a => console.log(a)),
-    concatMap(Email => GetUserInfoFromEmail(Email).pipe(take(1))),
+    concatMap(Email => 
+      GetUserInfoFromEmail(Email).pipe(take(1))),
     map((UserInfoList) => {
       const Data = UserInfoList[0].data();
       const ID = UserInfoList[0].id;

@@ -103,7 +103,7 @@ export default class ListMember extends React.Component {
                     Remove
                   </Button>
                 </Row>: 
-                <span style={{}}>         
+                <span className="float-right" style={{marginRight : '60px'}}>         
                   <Trash/>
                 </span>
                 }                 
