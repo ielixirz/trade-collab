@@ -204,32 +204,32 @@ class Shipment extends Component {
     parameter.ShipmentCreatorProfileKey = this.props.sender.id;
     parameter.ShipmentDetailProduct = this.state.input.details;
     parameter.ShipmentCreateTimestamp = new Date().getTime();
-
-    
+    parameter.ShipmentETD = this.state.input.eta;
+    parameter.ShipmentETAPort = this.state.input.etd;
 
     // if (isValidEmail(input.to) && this.props.user.email !== input.to) {
       // parameter.ShipmentPartnerEmail = input.to;
     // }
 
-    _.forEach(this.state.input.to , (emailTo, index) => {
-      parameter.ShipmentPartnerEmail = emailTo;
-      CreateShipment(parameter).subscribe({
-        next: (createdShipment) => {
-          if (index === this.state.input.to.length){
-            this.fetchShipmentReload();
-            const shipmentKey = createdShipment.id;
-            const inviteMember = [];
+    // _.forEach(this.state.input.to , (emailTo, index) => {
+    //   parameter.ShipmentPartnerEmail = emailTo;
+    //   CreateShipment(parameter).subscribe({
+    //     next: (createdShipment) => {
+    //       if (index === this.state.input.to.length){
+    //         this.fetchShipmentReload();
+    //         const shipmentKey = createdShipment.id;
+    //         const inviteMember = [];
     
-            UpdateMasterData(createdShipment.id, 'DefaultTemplate', {
-              ShipmentDetailProduct: parameter.ShipmentProductName,
-            }).subscribe(() => {
-              this.props.history.push(`/chat/${shipmentKey}`);
-            });
-          }
-        },
-        error: () => {},
-      });
-    })
+    //         UpdateMasterData(createdShipment.id, 'DefaultTemplate', {
+    //           ShipmentDetailProduct: parameter.ShipmentProductName,
+    //         }).subscribe(() => {
+    //           this.props.history.push(`/chat/${shipmentKey}`);
+    //         });
+    //       }
+    //     },
+    //     error: () => {},
+    //   });
+    // })
 
     CreateShipment(parameter).subscribe({
       next: (createdShipment) => {
