@@ -41,11 +41,16 @@ import { fetchShipments, fetchMoreShipments, searching } from '../../actions/shi
 import {
   CombineShipmentAndShipmentReference,
   CreateShipment,
+  GetLastestShipment,
   CreateShipmentReference,
   EditShipment,
   SearchShipment,
   UpdateShipmentReference
 } from '../../service/shipment/shipment';
+import {
+  CombineCreateCompanyWithCreateCompanyMember,
+} from '../../service/company/company';
+
 import { UpdateMasterData } from '../../service/masterdata/masterdata';
 import './Shipment.scss';
 import { GetUserCompany } from '../../service/user/user';
@@ -62,9 +67,7 @@ import Airplane from '../../component/svg/Airplane';
 import Boat from '../../component/svg/Boat';
 import Truck from '../../component/svg/Truck';
 import XCalendar from '../../component/XCalendar';
-import XSugguest from '../../component/XSuggest';
-
-import avatar from '../../assets/img/user.png'
+import XSuggest from '../../component/XSuggest';
 
 const WAIT_INTERVAL = 1000;
 const ENTER_KEY = 13;
@@ -79,7 +82,7 @@ class Shipment extends Component {
       input: {
         role: 1,
         from: '',
-        to: '',
+        to: [],
         product: '',
         ref: '',
         bound: '',
@@ -87,7 +90,10 @@ class Shipment extends Component {
         type: 1,
         details: '',
         etd: 1565446633,
-        eta: 1565446633
+        eta: 1565446633,
+        newCompanyName: '',
+        importer: '',
+        exporter: '',
       },
       companies: {},
       modal: false,
@@ -126,6 +132,17 @@ class Shipment extends Component {
     this.setState(prevState => ({
       modal: !prevState.modal
     }));
+  }
+
+  getLastestShipment = () => {
+    GetLastestShipment(this.props.user.uid).subscribe({
+      next: (data) => {
+        console.log("complete" + data);
+      },
+      error: (error) => {
+        console.log("error" + error);
+      },
+    });
   }
 
   createShipment() {
@@ -181,17 +198,39 @@ class Shipment extends Component {
     //     parameter.ShipmentCreatorType = `Outbound ${parameter.ShipmentCreatorType}`;
     //   }
     // }
-    if (isValidEmail(input.to) && this.props.user.email !== input.to) {
-      parameter.ShipmentPartnerEmail = input.to;
-    }
+    parameter.ShipmentSellerCompanyName = this.state.companySelectName;
     parameter.ShipmentCreatorProfileFirstName = this.props.sender.ProfileFirstname;
     parameter.ShipmentCreatorProfileSurName = this.props.sender.ProfileSurname;
     parameter.ShipmentCreatorProfileKey = this.props.sender.id;
-
-    // parameter.ShipmentBuyerCompanyName = this.
     parameter.ShipmentDetailProduct = this.state.input.details;
-
     parameter.ShipmentCreateTimestamp = new Date().getTime();
+
+    
+
+    // if (isValidEmail(input.to) && this.props.user.email !== input.to) {
+      // parameter.ShipmentPartnerEmail = input.to;
+    // }
+
+    _.forEach(this.state.input.to , (emailTo, index) => {
+      parameter.ShipmentPartnerEmail = emailTo;
+      CreateShipment(parameter).subscribe({
+        next: (createdShipment) => {
+          if (index === this.state.input.to.length){
+            this.fetchShipmentReload();
+            const shipmentKey = createdShipment.id;
+            const inviteMember = [];
+    
+            UpdateMasterData(createdShipment.id, 'DefaultTemplate', {
+              ShipmentDetailProduct: parameter.ShipmentProductName,
+            }).subscribe(() => {
+              this.props.history.push(`/chat/${shipmentKey}`);
+            });
+          }
+        },
+        error: () => {},
+      });
+    })
+
     CreateShipment(parameter).subscribe({
       next: createdShipment => {
         this.fetchShipmentReload();
@@ -337,6 +376,8 @@ class Shipment extends Component {
   componentDidMount() {
     const { search } = this.props;
 
+    this.getLastestShipment()
+
     if (!_.isEmpty(this.fetchShipment)) {
       this.fetchShipment.unsubscribe();
       if (!_.isEmpty(this.combineShipment)) {
@@ -427,8 +468,30 @@ class Shipment extends Component {
   }
 
   createCompany = () => {
-    //TODO
-  }
+    const userData = {
+      UserMemberEmail: this.props.user.email,
+      UserMemberPosition: '-',
+      UserMemberRoleName: 'Owner',
+      CompanyUserAccessibilityRolePermissionCode: '11111111111111',
+      UserMemberCompanyStandingStatus: 'Active',
+      UserMemberJoinedTimestamp: new Date(),
+    };
+
+    const companyData = {
+      CompanyName: this.state.input.newCompanyName,
+      CompanyID: this.state.input.newCompanyName
+    }
+
+    CombineCreateCompanyWithCreateCompanyMember(companyData, this.props.user.uid, userData).subscribe(() => {
+      this.props.companies.push(companyData)
+      this.setState({
+        input: {
+          ...this.state.input,
+          newCompanyName : '',
+        },
+      });
+    });
+  };
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.activeTab !== this.state.activeTab) {
@@ -585,7 +648,7 @@ class Shipment extends Component {
       case 1:
         return 'Sea Ocean Freight';
       case 3:
-        return 'Air Frieght';
+        return 'Air Freight';
       case 4:
         return 'Truck';  
     }
@@ -754,7 +817,17 @@ class Shipment extends Component {
 
   render() {
     const { role, bound, method, type } = this.state.input;
-    const { query: typeShipment, shipments } = this.props;
+    const { query: typeShipment, network ,shipments} = this.props;
+
+    console.log('Shipment props', this.props);
+
+    let suggestion = _.map(network, item => {
+      return {
+        id: item.UserMemberEmail,
+        label: item.UserMemberEmail
+      };
+    });
+
     console.log('shipments', shipments);
     const result = _.filter(shipments, item => {
       let keyword = '';
@@ -818,8 +891,11 @@ class Shipment extends Component {
                        <Input
                           style={{marginLeft:'8px' , marginRight:'8px', width: '90%'}}
                           type="text"
-                          id="input-company"
+                          name="newCompanyName"
+                          id="newCompanyName"
                           placeholder="Input New Company Name"
+                          onChange={this.writeText}
+                          value={this.state.input.newCompanyName}  
                        />                      
                       <Row>
                         <Col xs="4" />
@@ -947,21 +1023,17 @@ class Shipment extends Component {
                         {this.getShippingMessage(this.state.input.method)}
                   </DropdownToggle>
                   
-                    <DropdownMenu>
+                    <DropdownMenu style={{width: '200%'}}>
                       <DropdownItem disabled className="shipment-header">Freight Method</DropdownItem>
                         <DropdownItem
                           onClick={() => {
                             this.setMethod(1);
                           }}
                           className="shipment-item-box-gray-background">
-                          <Row>
-                            <Col sm={3}>
-                              Sea Ocean Freight
-                            </Col>
-                            <Col sm={6}>
-                              <Boat/>
-                          </Col>
-                          </Row>
+                          Sea Ocean Freight
+                          <span className="float-right">
+                            <Boat />
+                          </span>
                         </DropdownItem>
 
                       {/* <DropdownItem
@@ -972,22 +1044,28 @@ class Shipment extends Component {
                         Show Both
                       </DropdownItem> */}
 
-                      <DropdownItem
+                      <DropdownItem                      
                         onClick={() => {
                           this.setMethod(3);
                         }}
-                        className="shipment-item-box-gray-background">
+                        className="shipment-item-box-gray-background"
+                        disabled>
                         Air Freight
-                        <Airplane/>
+                        <span className="float-right">
+                          <Airplane/>
+                        </span>
                       </DropdownItem>
 
                       <DropdownItem
                         onClick={() => {
                           this.setMethod(4);
                         }}
-                        className="shipment-item-box-gray-background">
+                        className="shipment-item-box-gray-background"
+                        disabled>
                         Truck
-                        <Truck/>
+                        <span className="float-right">
+                          <Truck />
+                        </span>
                       </DropdownItem>
                     </DropdownMenu>
                 </UncontrolledDropdown>
@@ -1011,7 +1089,8 @@ class Shipment extends Component {
                         onClick={() => {
                           this.setType(1);
                         }}
-                        className="shipment-item-box-gray-background">
+                        className="shipment-item-box-gray-background"
+                        disabled>
                         LCL : Less Than Container Load
                       </DropdownItem>
                     </DropdownMenu>
@@ -1073,21 +1152,14 @@ class Shipment extends Component {
                     onChange={this.writeText}
                     value={this.state.input.to}
                   /> */}
-                  <XSugguest
+                  <XSuggest
                     placeholder="Input your Importers E-mail address"
-                    datasets={[
-                      { id: 0, label: 'KAK Beer' },
-                      { id: 1, label: 'banana', avatar: 'https://www.w3schools.com/howto/img_avatar2.png' },
-                      { id: 2, label: 'pear0', avatar: avatar },
-                      { id: 3, label: 'pear1', avatar: avatar },
-                      { id: 4, label: 'pear2', avatar: avatar },
-                      { id: 5, label: 'pear3', avatar: avatar }
-                    ]}
+                    datasets={suggestion}
                     idName={'id'}
                     labelName={'label'}
                     avatarName={'avatar'}
-                    onAdd={item => console.log(item)}
-                    onRemove={item => console.log(item)}
+                    onAdd={item => this.state.input.to.push(item)}
+                    onRemove={item => this.state.input.to.pop(item)}
                     onChange={(selects, adds, removes) => console.log(selects, adds, removes)}
                   />
                 </Col>
@@ -1098,10 +1170,10 @@ class Shipment extends Component {
                 </Label>
                 <Col sm={10}>
                   <Input
-
                     type="text"
                     name="ref"
                     id="ref"
+                    placeholder="PO, Invoice No. Shipment Name etc. "
                     onChange={this.writeText}
                     value={this.state.input.ref}
                   />
@@ -1149,12 +1221,12 @@ class Shipment extends Component {
                 </Label>
                 <Col sm={10}>
                   <Input
-
                     type="text"
                     name="exporter"
                     id="exporter"
+                    placeholder="Input Exporter Company Name"
                     onChange={this.writeText}
-                    value={this.state.input.product}
+                    value={this.state.input.exporter}
                   />
                 </Col>
               </FormGroup>
@@ -1167,12 +1239,12 @@ class Shipment extends Component {
                 </Label>
                 <Col sm={10}>
                   <Input
-
                     type="text"
                     name="importer"
                     id="importer"
+                    placeholder="Input Importer Company Name"
                     onChange={this.writeText}
-                    value={this.state.input.product}
+                    value={this.state.input.importer}
                   />
                 </Col>
               </FormGroup>
@@ -1187,6 +1259,7 @@ class Shipment extends Component {
                     name="details"
                     id="details"
                     rows="4"
+                    placeholder="Description of order, quantity, price of goods etc."
                     onChange={this.writeText}
                     value={this.state.input.details}
                   />
@@ -1307,7 +1380,8 @@ const mapStateToProps = state => {
     sender,
     companies: companyReducer.UserCompany,
     query,
-    search
+    search,
+    network: companyReducer.NetworkEmail
   };
 };
 

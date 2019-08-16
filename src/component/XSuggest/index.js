@@ -1,3 +1,3 @@
-import XSugguest from './XSugguest'
+import XSuggest from './XSuggest'
 
-export default XSugguest;
+export default XSuggest

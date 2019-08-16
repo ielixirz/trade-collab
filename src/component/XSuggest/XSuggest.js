@@ -2,9 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Autocomplete from 'react-autocomplete'
 
-import './XSugguest.scss'
+import './XSuggest.scss'
 
-export default class XSugguest extends React.Component {
+export default class XSuggest extends React.Component {
     constructor(props) {
         super(props)
 
@@ -75,11 +75,11 @@ export default class XSugguest extends React.Component {
         const { items, selects, keyword } = this.state
 
         return (
-            <div className="form-control XSugguest">
-                <div className="XSugguest-List">
+            <div className="form-control XSuggest">
+                <div className="XSuggest-List">
                     {selects.map((item, index) => {
                         return (
-                            <div key={`xsugguest-selected-${index}`} className="chip">
+                            <div key={`xsuggest-selected-${index}`} className="chip">
                                 {
                                     item[avatarName]
                                         ? <img src={item[avatarName]} alt={item[labelName]} className="chip-avatar chip-avatar-img" />
@@ -97,17 +97,21 @@ export default class XSugguest extends React.Component {
                 </div>
 
                 <Autocomplete
-                    autocomplete="off" 
                     value={keyword}
                     items={items}
                     autoHighlight={false}
-                    wrapperProps={{ className: 'XSugguest-Input' }}
+                    wrapperProps={{ className: 'XSuggest-Input' }}
                     inputProps={{ placeholder: placeholder }}
-                    renderInput={props => <input {...props} type="text" autoComplete="none" onKeyDown={e => this.handleKeyDown(e.which, e.target.selectionStart)} />}
+                    renderInput={props => <input
+                        {...props}
+                        type="text"
+                        autoComplete="none"
+                        onKeyDown={e => this.handleKeyDown(e.which, e.target.selectionStart)}
+                    />}
                     renderMenu={items => <div className="list-unstyled" children={items} />}
                     renderItem={item => {
                         return (
-                            <div key={`xsugguest-id-${item[idName]}`} className="media">
+                            <div key={`xsuggest-id-${item[idName]}`} className="media">
                                 {
                                     item[avatarName]
                                         ? <img src={item[avatarName]} alt={item[labelName]} className="media-avatar media-avatar-img" />
@@ -130,7 +134,7 @@ export default class XSugguest extends React.Component {
     }
 }
 
-XSugguest.propTypes = {
+XSuggest.propTypes = {
     placeholder: PropTypes.string,
 
     datasets: PropTypes.array,
@@ -144,7 +148,7 @@ XSugguest.propTypes = {
     onChange: PropTypes.func
 }
 
-XSugguest.defaultProps = {
+XSuggest.defaultProps = {
     placeholder: 'Enter keyword here ...',
 
     datasets: [],
