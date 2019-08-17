@@ -448,7 +448,8 @@ class ChatWithHeader extends Component {
           ) : _.isEmpty(companies) ? (
             <b style={{ color: 'red' }}>New Shipment!</b>
           ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (
-            <b>Input your Ref#!</b>
+            <b style={{color:'red'}}>Input Ref!</b>
+
           ) : (
             <b style={{ color: 'red' }}>New Shipment!</b>
           )}
