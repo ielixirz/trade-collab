@@ -935,7 +935,7 @@ class ChatWithHeader extends Component {
                         }}
                       >
                         {' '}
-                        <i className="fa fa-plus" />
+                        <i className="fa fa-paperclip" />
                       </Button>
                       <input
                         type="file"
@@ -1033,11 +1033,11 @@ class ChatWithHeader extends Component {
                       }}
                     />
                     <InputGroupAddon addonType="append">
-                      <Button color="default1"> @</Button>
-                      <Button color="default1">
-                        {' '}
-                        <i className="fa fa-smile-o fa-lg" />
-                      </Button>
+                      {/*<Button color="default1"> @</Button>*/}
+                      {/*<Button color="default1">*/}
+                      {/*  {' '}*/}
+                      {/*  <i className="fa fa-smile-o fa-lg" />*/}
+                      {/*</Button>*/}
                       <Button
                         color="default1"
                         onClick={() => {
