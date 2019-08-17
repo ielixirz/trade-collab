@@ -225,7 +225,7 @@ class TableShipment extends React.Component {
     }
   }
 
-  renderRefComponent(index, ref, shipmentKey, ShipmentMember) {
+  renderRefComponent(index, ref, shipmentKey, ShipmentMember, status) {
     const { user, companies } = this.props;
     const userCompany = [];
     let refs = [];
@@ -238,6 +238,9 @@ class TableShipment extends React.Component {
     return (
       <div>
         <p id={`popover${index}`} className="text-yterminal">
+          <div
+            className={`shipment-table-ref-status-line ${status.toLowerCase().replace(' ', '')}`}
+          />
           {userrefs.length > 0 ? (
             <Button color="ref-shipment">
               <b style={{ color: 'black' }}>{userrefs[0].ShipmentReferenceID}</b>
@@ -246,11 +249,11 @@ class TableShipment extends React.Component {
             <TableLoading />
           ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (
             <Button color="ref-shipment">
-              <b style={{color:'red'}}>Input Ref!</b>
+              <b style={{ color: 'red' }}>Input Ref!</b>
             </Button>
           ) : (
             <Button color="ref-shipment">
-              <b style={{color:'red'}}>New Shipment!</b>
+              <b style={{ color: 'red' }}>New Shipment!</b>
             </Button>
           )}
         </p>
@@ -491,9 +494,7 @@ class TableShipment extends React.Component {
       <React.Fragment>
         <Row style={{ margin: 'auto' }}>
           {company === undefined || company === '' ? (
-            <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>
-              Company Unassigned
-            </span>
+            <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>Unassigned</span>
           ) : (
             company
           )}
@@ -729,6 +730,7 @@ class TableShipment extends React.Component {
             item.ShipmentReferenceList,
             item.ShipmentID,
             item.ShipmentMember,
+            item.ShipmentStatus,
           ),
           '': this.renderDescription(index, item),
           Seller: this.renderCompanyAndPort(
@@ -778,6 +780,7 @@ class TableShipment extends React.Component {
           item.ShipmentReferenceList,
           item.ShipmentID,
           item.ShipmentMember,
+          item.ShipmentStatus,
         ),
         '': this.renderDescription(index, item),
         Seller: this.renderCompanyAndPort(

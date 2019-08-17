@@ -20,11 +20,12 @@ img {
   width: 100%;
 }
 .btn-ref-shipment {
-  margin-left: -0.75rem;
   color: #23282c;
+  margin-top: 5px;
   background-color: transparent;
   width: 100%;
   text-align: left;
+  padding: 0;
 }
 .btn-ref-shipment:hover {
   background-color: #c8ced3;
@@ -344,5 +345,32 @@ tbody > tr:hover {
     min-height: 40px;
     border-color: hsl(0, 0%, 80%);
     width: 150px;
+  }
+}
+
+.price-desc-popover:hover {
+  background-color: #c8ced3;
+  border-color: #c8ced3;
+  padding: 0.5px;
+}
+
+.shipment-table-ref-status-line {
+  width: 50px;
+  height: 5px;
+  border-radius: 5px;
+  &.planning {
+    background-color: #367fee;
+  }
+  &.cancelled {
+    background-color: #9b9b9b;
+  }
+  &.delivered {
+    background-color: #37324d;
+  }
+  &.intransit {
+    background-color: #f2af29;
+  }
+  &.orderconfirmed {
+    background-color: #66d1bc;
   }
 }

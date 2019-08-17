@@ -7,6 +7,7 @@ import {
 } from 'reactstrap';
 import { EditShipment } from '../../service/shipment/shipment';
 import { UpdateMasterData } from '../../service/masterdata/masterdata';
+import PriceAndDesc from '../../component/svg/PriceAndDesc';
 
 class NoteShipment extends React.Component {
   constructor(props) {
@@ -93,12 +94,8 @@ class NoteShipment extends React.Component {
   render() {
     return (
       <div>
-        <span id={`Popover-${this.props.id}`}>
-          {this.props.item.seen ? (
-            <i className="fa fa-tag fa-lg" />
-          ) : (
-            <i className="fa fa-tag fa-lg" style={{ opacity: 0.5 }} />
-          )}
+        <span className="price-desc-popover" id={`Popover-${this.props.id}`}>
+          {this.props.item.seen ? <PriceAndDesc /> : <PriceAndDesc />}
         </span>
         <Popover
           placement="bottom"
