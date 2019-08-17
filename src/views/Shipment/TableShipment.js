@@ -562,6 +562,7 @@ class TableShipment extends React.Component {
     let data = [];
     let columns = [];
     let input = [];
+    //for gennerate empty table if data is return empty array
     if (_.size(this.props.input) === 0) {
       columns = [
         {
@@ -767,12 +768,11 @@ class TableShipment extends React.Component {
     input = _.map(collection, (item, index) => {
       const etd = _.get(item, 'ShipperETDDate', 0);
       const eta = _.get(item, 'ConsigneeETAPortDate', 0);
-
+      // for edit mode table
       if (this.state.isEdit) {
         return {
           id: index,
           alert: this.renderAlertComponent(index, item, item.ShipmentID),
-
           Ref: this.renderRefComponent(
             index,
             item.ShipmentReferenceList,
@@ -814,6 +814,7 @@ class TableShipment extends React.Component {
           uid: item.ShipmentID
         };
       }
+      //column order
       return {
         id: index,
         alert: this.renderAlertComponent(index, item, item.ShipmentID),
