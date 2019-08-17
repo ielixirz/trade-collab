@@ -93,12 +93,10 @@ class ChatWithHeader extends Component {
       next: res => {
         let result = [];
         const shipments = res.data();
-        console.log('ShipmentData', shipments);
 
         GetShipmentReferenceList(ShipmentKey).subscribe({
           next: refres => {
             this.setState({ refs: refres });
-            console.log('getAll Ref');
             result[0] = {
               ...shipments,
               ShipmentID: ShipmentKey,
@@ -128,7 +126,6 @@ class ChatWithHeader extends Component {
         this.setState({
           availableRole: res
         });
-        console.log({ GetAvailableRole: res });
       }
     });
   }
@@ -191,7 +188,6 @@ class ChatWithHeader extends Component {
 
     const memberData = _.find(members, (item, index) => index === user.uid);
     const pickedCompany = _.find(companies, item => item.CompanyKey === e.value);
-    console.log({ input: e, role, ref, pickedCompany: pickedCompany });
 
     AddShipmentRole(ShipmentKey, role.value, {
       ShipmentRoleCompanyName: pickedCompany.CompanyName,
@@ -252,7 +248,6 @@ class ChatWithHeader extends Component {
               ChatRoomName: 'Internal'
             }).subscribe({
               next: result => {
-                console.log(inviteMember, 'inviteMember List');
                 const data = result.path.split('/');
                 const chatkey = result.id;
                 const invite = CreateChatMultipleInvitation(
@@ -262,7 +257,6 @@ class ChatWithHeader extends Component {
                   this.props.sender
                 ).subscribe({
                   next: res => {
-                    console.log('Invite Result');
                     this.props.fetchMoreMessage(chatkey, ShipmentKey);
                   }
                 });
@@ -302,10 +296,7 @@ class ChatWithHeader extends Component {
   renderAssignCompany() {
     const { user, ShipmentData, ShipmentKey, ChatRoomKey, members: member, shipments } = this.props;
     const members = _.get(shipments, `${ShipmentKey}.ShipmentMember`, []);
-    console.log('Shipments member', members);
-    console.log('renderAssignCompany members', members);
     const memberData = _.find(members, (item, index) => item.ShipmentMemberEmail === user.email);
-    console.log('Member Data', memberData);
     // const isHaveRole = _.get(ShipmentData, `ShipmentMember.${user.uid}`, {});
     const { companies } = this.props;
 
@@ -317,7 +308,6 @@ class ChatWithHeader extends Component {
 
     let roleOption = [];
     _.forEach(this.state.availableRole, (role, index) => {
-      console.log('ROLE', role, index);
       if (!role) {
         roleOption.push({
           value: index,
@@ -325,7 +315,6 @@ class ChatWithHeader extends Component {
         });
       }
     });
-    console.log('memberData', memberData);
     let output = '';
 
     if (roleOption.length == 0) {
@@ -448,8 +437,6 @@ class ChatWithHeader extends Component {
     const userrefs = _.filter(ref, refItem =>
       _.some(companies, item => _.includes(refItem.ShipmentReferenceCompanyKey, item.CompanyKey))
     );
-    console.log('companies', companies);
-    console.log('ShipmentMember', ShipmentMember);
     const hasCompany = _.get(ShipmentMember, `${user.uid}`, {});
 
     const alreadyHave = !_.isEmpty(userrefs);
@@ -513,7 +500,6 @@ class ChatWithHeader extends Component {
                       });
                     }}
                     onBlur={e => {
-                      console.log('Un Focus ref trigger');
                       if (_.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) === false) {
                         this.setState({
                           submiting: {
@@ -548,7 +534,6 @@ class ChatWithHeader extends Component {
                       async event => {
                         if (event.key === 'Enter') {
                           const confirmation = true;
-                          console.log('Enter', confirmation);
                           if (confirmation === true) {
                             if (
                               _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) ===
@@ -735,15 +720,11 @@ class ChatWithHeader extends Component {
       shipments
     } = this.props;
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
-    console.log('Shipment data', ship);
     const members = _.get(shipments, `${ShipmentKey}.ShipmentMember`, []);
 
-    console.log('Shipments member', members);
     const isInvited = _.find(members, item => item.ShipmentMemberEmail === user.email);
     const ChatRoomMemberData = _.find(member, item => item.ChatRoomMemberEmail === user.email);
-    console.log('isInvited', isInvited);
     let ref = '';
-    console.log(this.props, 'props');
 
     if (!_.isEmpty(isInvited)) {
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
@@ -756,7 +737,6 @@ class ChatWithHeader extends Component {
     } else {
       ref = 'loading';
     }
-    console.log('refs', ref);
     return (
       <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
         <Row
@@ -856,7 +836,6 @@ class ChatWithHeader extends Component {
                 className="msg_history"
                 onScroll={() => {
                   const div = document.getElementById('chathistory').scrollTop;
-                  console.log(div);
                   if (div === 0) {
                     fetchMoreMessage(ChatRoomKey, ShipmentKey);
                   }
@@ -1058,8 +1037,6 @@ class ChatWithHeader extends Component {
                       <Button
                         color="default1"
                         onClick={() => {
-                          console.log('Input text is size', _.size(text));
-
                           if (
                             !_.isEmpty(_.trim(text)) &&
                             _.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false) === false
