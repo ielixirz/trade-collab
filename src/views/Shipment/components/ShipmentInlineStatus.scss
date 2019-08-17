@@ -1,0 +1,26 @@
+.select-shipment-status__indicators {
+  display: none !important;
+}
+
+.select-shipment-status__single-value {
+  font-size: 14px !important;
+  color: white !important;
+  font-weight: bold;
+}
+
+.select-shipment-status__input {
+  color: white !important;
+}
+
+.select-shipment-status__control {
+  width: 90% !important;
+  max-height: 30px !important;
+  min-height: 30px !important;
+  border: none !important;
+  border-radius: 15px !important;
+}
+
+.select-shipment-status__value-container {
+  max-height: 30px !important;
+  min-height: 30px !important;
+}

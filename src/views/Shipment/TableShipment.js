@@ -33,6 +33,7 @@ import {
   Alert,
 } from 'reactstrap';
 import ShipmentInlineDate from './components/ShipmentInlineDate';
+import ShipmentInlineStatus from './components/ShipmentInlineStatus';
 import MainDataTable from '../../component/MainDataTable';
 import TableLoading from '../../component/svg/TableLoading';
 
@@ -54,39 +55,6 @@ import { connect } from 'react-redux';
 import { SAVE_CREDENCIAL } from '../../constants/constants';
 import { GetUserCompany } from '../../service/user/user';
 import BlockUi from 'react-block-ui';
-
-const SHIPMENT_STATUS_UPDATE_OPTIONS = [
-  {
-    value: {
-      status: 'Planning',
-    },
-    label: 'Planning',
-  },
-  {
-    value: {
-      status: 'Order Confirmed',
-    },
-    label: 'Confirmed',
-  },
-  {
-    value: {
-      status: 'In Transit',
-    },
-    label: 'In Transit',
-  },
-  {
-    value: {
-      status: 'Delivered',
-    },
-    label: 'Delivered',
-  },
-  {
-    value: {
-      status: 'Cancelled',
-    },
-    label: 'Cancelled',
-  },
-];
 
 const SHIPMENT_STATUS_OPTIONS = [
   {
@@ -461,27 +429,7 @@ class TableShipment extends React.Component {
   }
 
   renderStatusComponent(item) {
-    return (
-      <div>
-        <Select
-          value={_.find(
-            SHIPMENT_STATUS_UPDATE_OPTIONS,
-            option => option.value.status === item.ShipmentStatus,
-          )}
-          name="colors"
-          id="shipment-status-select"
-          className="basic-multi-select"
-          classNamePrefix="select"
-          styles={{ control: styles => ({ ...styles, fontSize: '0.8vw' }) }}
-          options={SHIPMENT_STATUS_UPDATE_OPTIONS}
-          onChange={(option) => {
-            EditShipment(item.ShipmentID, {
-              ShipmentStatus: option.value.status,
-            });
-          }}
-        />
-      </div>
-    );
+    return <ShipmentInlineStatus shipment={item} editShipmentHandler={EditShipment} />;
   }
 
   renderDescription(index, item) {
@@ -564,7 +512,7 @@ class TableShipment extends React.Component {
     let data = [];
     let columns = [];
     let input = [];
-    //for gennerate empty table if data is return empty array
+    // for gennerate empty table if data is return empty array
     if (_.size(this.props.input) === 0) {
       columns = [
         {
@@ -817,7 +765,7 @@ class TableShipment extends React.Component {
           uid: item.ShipmentID,
         };
       }
-      //column order
+      // column order
       return {
         id: index,
         alert: this.renderAlertComponent(index, item, item.ShipmentID),
