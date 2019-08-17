@@ -1,26 +1,37 @@
 img {
   max-width: 100%;
 }
-.selectfilter{
-  width:100px
+.selectfilter {
+  width: 100px;
 }
 
 .text-yterminal {
   color: #16a085;
+  text-align: left;
 }
 
 .right {
   float: right;
 }
 
-.btn-ref{
+.btn-ref {
   color: #23282c;
   background-color: transparent;
   width: 100%;
-
 }
-.btn-ref:hover{
-
+.btn-ref-shipment {
+  color: #23282c;
+  margin-top: 5px;
+  background-color: transparent;
+  width: 100%;
+  text-align: left;
+  padding: 0;
+}
+.btn-ref-shipment:hover {
+  background-color: #c8ced3;
+  border-color: #c8ced3;
+}
+.btn-ref:hover {
   border-color: #c8ced3;
 }
 .left {
@@ -46,7 +57,7 @@ img {
 }
 
 .shipment-table-main-container {
-  font-size: 0.8vw;
+  font-size: 14px;
 }
 
 .create-shipment > .modal-content {
@@ -313,7 +324,7 @@ tbody > tr:hover {
 
 .search-filter-select-input {
   border: 0;
-  font-size: 0.8vw;
+  font-size: 14px;
 }
 
 .search-filter-select-container {
@@ -334,5 +345,32 @@ tbody > tr:hover {
     min-height: 40px;
     border-color: hsl(0, 0%, 80%);
     width: 150px;
+  }
+}
+
+.price-desc-popover:hover {
+  background-color: #c8ced3;
+  border-color: #c8ced3;
+  padding: 0.5px;
+}
+
+.shipment-table-ref-status-line {
+  width: 50px;
+  height: 5px;
+  border-radius: 5px;
+  &.planning {
+    background-color: #367fee;
+  }
+  &.cancelled {
+    background-color: #9b9b9b;
+  }
+  &.delivered {
+    background-color: #37324d;
+  }
+  &.intransit {
+    background-color: #f2af29;
+  }
+  &.orderconfirmed {
+    background-color: #66d1bc;
   }
 }

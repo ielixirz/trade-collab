@@ -33,6 +33,7 @@ import {
   Alert,
 } from 'reactstrap';
 import ShipmentInlineDate from './components/ShipmentInlineDate';
+import ShipmentInlineStatus from './components/ShipmentInlineStatus';
 import MainDataTable from '../../component/MainDataTable';
 import TableLoading from '../../component/svg/TableLoading';
 
@@ -54,39 +55,6 @@ import { connect } from 'react-redux';
 import { SAVE_CREDENCIAL } from '../../constants/constants';
 import { GetUserCompany } from '../../service/user/user';
 import BlockUi from 'react-block-ui';
-
-const SHIPMENT_STATUS_UPDATE_OPTIONS = [
-  {
-    value: {
-      status: 'Planning',
-    },
-    label: 'Planning',
-  },
-  {
-    value: {
-      status: 'Order Confirmed',
-    },
-    label: 'Confirmed',
-  },
-  {
-    value: {
-      status: 'In Transit',
-    },
-    label: 'In Transit',
-  },
-  {
-    value: {
-      status: 'Delivered',
-    },
-    label: 'Delivered',
-  },
-  {
-    value: {
-      status: 'Cancelled',
-    },
-    label: 'Cancelled',
-  },
-];
 
 const SHIPMENT_STATUS_OPTIONS = [
   {
@@ -257,7 +225,7 @@ class TableShipment extends React.Component {
     }
   }
 
-  renderRefComponent(index, ref, shipmentKey, ShipmentMember) {
+  renderRefComponent(index, ref, shipmentKey, ShipmentMember, status) {
     const { user, companies } = this.props;
     const userCompany = [];
     let refs = [];
@@ -270,19 +238,22 @@ class TableShipment extends React.Component {
     return (
       <div>
         <p id={`popover${index}`} className="text-yterminal">
+          <div
+            className={`shipment-table-ref-status-line ${status.toLowerCase().replace(' ', '')}`}
+          />
           {userrefs.length > 0 ? (
-            <Button color="ref">
+            <Button color="ref-shipment">
               <b style={{ color: 'black' }}>{userrefs[0].ShipmentReferenceID}</b>
             </Button>
           ) : _.isEmpty(companies) ? (
-            <b>See Refs</b>
+            <TableLoading />
           ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (
-            <Button color="ref">
-              <b>Input your Ref#!</b>
+            <Button color="ref-shipment">
+              <b style={{ color: 'red' }}>Input Ref!</b>
             </Button>
           ) : (
-            <Button color="ref">
-              <b>See Refs</b>
+            <Button color="ref-shipment">
+              <b style={{ color: 'red' }}>New Shipment!</b>
             </Button>
           )}
         </p>
@@ -461,27 +432,7 @@ class TableShipment extends React.Component {
   }
 
   renderStatusComponent(item) {
-    return (
-      <div>
-        <Select
-          value={_.find(
-            SHIPMENT_STATUS_UPDATE_OPTIONS,
-            option => option.value.status === item.ShipmentStatus,
-          )}
-          name="colors"
-          id="shipment-status-select"
-          className="basic-multi-select"
-          classNamePrefix="select"
-          styles={{ control: styles => ({ ...styles, fontSize: '0.8vw' }) }}
-          options={SHIPMENT_STATUS_UPDATE_OPTIONS}
-          onChange={(option) => {
-            EditShipment(item.ShipmentID, {
-              ShipmentStatus: option.value.status,
-            });
-          }}
-        />
-      </div>
-    );
+    return <ShipmentInlineStatus shipment={item} editShipmentHandler={EditShipment} />;
   }
 
   renderDescription(index, item) {
@@ -543,15 +494,13 @@ class TableShipment extends React.Component {
       <React.Fragment>
         <Row style={{ margin: 'auto' }}>
           {company === undefined || company === '' ? (
-            <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>
-              Company Unassigned
-            </span>
+            <span style={{ color: 'rgb(181, 178, 178)', fontStyle: 'italic' }}>Unassigned</span>
           ) : (
             company
           )}
         </Row>
         <Row style={{ margin: 'auto', fontSize: '0.8em' }}>
-          {port === undefined || port === '' ? '' : <b>{port}</b>}
+          {port === undefined || port === '' ? '' : port}
         </Row>
       </React.Fragment>
     );
@@ -564,6 +513,7 @@ class TableShipment extends React.Component {
     let data = [];
     let columns = [];
     let input = [];
+    // for gennerate empty table if data is return empty array
     if (_.size(this.props.input) === 0) {
       columns = [
         {
@@ -765,25 +715,24 @@ class TableShipment extends React.Component {
         ...item,
       };
     });
-    collection = _.orderBy(collection, ['notifications','PIN'], ['desc', 'desc']);
+    collection = _.orderBy(collection, ['PIN', 'notifications'], ['desc', 'desc']);
 
     input = _.map(collection, (item, index) => {
       const etd = _.get(item, 'ShipperETDDate', 0);
       const eta = _.get(item, 'ConsigneeETAPortDate', 0);
-
+      // for edit mode table
       if (this.state.isEdit) {
         return {
           id: index,
           alert: this.renderAlertComponent(index, item, item.ShipmentID),
-
           Ref: this.renderRefComponent(
             index,
             item.ShipmentReferenceList,
             item.ShipmentID,
             item.ShipmentMember,
+            item.ShipmentStatus,
           ),
-          // Seller: _.get(item, 'ShipmentSellerCompanyName', ''),
-          // Buyer: _.get(item, 'ShipmentBuyerCompanyName', ''),
+          '': this.renderDescription(index, item),
           Seller: this.renderCompanyAndPort(
             _.get(item, 'ShipmentSellerCompanyName', undefined),
             _.get(item, 'ShipperPort', undefined),
@@ -792,7 +741,9 @@ class TableShipment extends React.Component {
             _.get(item, 'ShipmentBuyerCompanyName', undefined),
             _.get(item, 'ConsigneePort', undefined),
           ),
+          Seperator1: 'x',
           Product: _.get(item, 'ShipmentProductName', ''),
+          Seperator2: 'x',
           ETD: (
             <ShipmentInlineDate
               initialValue={etd === null || etd === '' ? null : new Date(etd.seconds * 1000)}
@@ -811,12 +762,12 @@ class TableShipment extends React.Component {
               updateHandle={this.handleCalendarUpdate}
             />
           ),
-          '': this.renderDescription(index, item),
           Status: this.renderStatusComponent(item),
           ShipmentStatus: item.ShipmentStatus,
           uid: item.ShipmentID,
         };
       }
+      // column order
       return {
         id: index,
         alert: this.renderAlertComponent(index, item, item.ShipmentID),
@@ -829,7 +780,9 @@ class TableShipment extends React.Component {
           item.ShipmentReferenceList,
           item.ShipmentID,
           item.ShipmentMember,
+          item.ShipmentStatus,
         ),
+        '': this.renderDescription(index, item),
         Seller: this.renderCompanyAndPort(
           _.get(item, 'ShipmentSellerCompanyName', undefined),
           _.get(item, 'ShipperPort', undefined),
@@ -838,7 +791,9 @@ class TableShipment extends React.Component {
           _.get(item, 'ShipmentBuyerCompanyName', undefined),
           _.get(item, 'ConsigneePort', undefined),
         ),
+        Seperator1: 'x',
         Product: _.get(item, 'ShipmentProductName', ''),
+        Seperator2: 'x',
         ETD:
           etd === null || etd === ''
             ? 'Not Available'
@@ -847,7 +802,6 @@ class TableShipment extends React.Component {
           eta === null || eta === ''
             ? 'Not Available'
             : moment(eta.seconds * 1000).format('DD MMM YYYY'),
-        '': this.renderDescription(index, item),
         Status: this.renderStatusComponent(item),
         ShipmentStatus: item.ShipmentStatus,
         uid: item.ShipmentID,
