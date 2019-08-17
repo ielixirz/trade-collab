@@ -7,6 +7,7 @@ img {
 
 .text-yterminal {
   color: #16a085;
+text-align:left;
 }
 
 .right {
@@ -18,6 +19,19 @@ img {
   background-color: transparent;
   width: 100%;
 
+
+}
+.btn-ref-shipment{
+  margin-left:-0.75rem;
+  color: #23282c;
+  background-color: transparent;
+  width: 100%;
+text-align: left;
+
+}
+.btn-ref-shipment:hover{
+  background-color: #c8ced3;
+  border-color: #c8ced3;
 }
 .btn-ref:hover{
 
