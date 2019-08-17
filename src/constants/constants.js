@@ -10,7 +10,7 @@ export const selectTab = 'selectTab';
 export const closedTab = 'closedTab';
 export const addTab = 'addTab';
 
-//Notification
+// Notification
 
 export const FETCH_NOTIFICATION = 'FETCH_NOTIFICATION';
 
@@ -24,6 +24,39 @@ export const NOTIFICATIONS = 'NOTIFICATIONS';
 export const FETCH_SHIPMENT_REF_LIST = 'FETCH_SHIPMENT_REF_LIST';
 export const EDIT_SHIPMENT_REF = 'EDIT_SHIPMENT_REF';
 export const UPDATE_SHIPMENT_REF = 'UPDATE_SHIPMENT_REF';
+
+export const SHIPMENT_STATUS_UPDATE_OPTIONS = [
+  {
+    value: {
+      status: 'Planning',
+    },
+    label: 'Planning',
+  },
+  {
+    value: {
+      status: 'Order Confirmed',
+    },
+    label: 'Confirmed',
+  },
+  {
+    value: {
+      status: 'In Transit',
+    },
+    label: 'In Transit',
+  },
+  {
+    value: {
+      status: 'Delivered',
+    },
+    label: 'Delivered',
+  },
+  {
+    value: {
+      status: 'Cancelled',
+    },
+    label: 'Cancelled',
+  },
+];
 
 // File
 export const FETCH_FILES = 'FETCH_FILES';
