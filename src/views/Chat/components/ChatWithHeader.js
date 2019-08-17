@@ -446,11 +446,11 @@ class ChatWithHeader extends Component {
           {userrefs.length > 0 ? (
             <b style={{ color: 'black' }}>{userrefs[0].ShipmentReferenceID}</b>
           ) : _.isEmpty(companies) ? (
-            <b>See Refs</b>
+            <b style={{ color: 'red' }}>New Shipment!</b>
           ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (
             <b>Input your Ref#!</b>
           ) : (
-            <b>See Refs</b>
+            <b style={{ color: 'red' }}>New Shipment!</b>
           )}
         </Button>
         <UncontrolledPopover
@@ -935,7 +935,7 @@ class ChatWithHeader extends Component {
                         }}
                       >
                         {' '}
-                        <i className="fa fa-plus" />
+                        <i className="fa fa-paperclip" />
                       </Button>
                       <input
                         type="file"
@@ -1033,11 +1033,11 @@ class ChatWithHeader extends Component {
                       }}
                     />
                     <InputGroupAddon addonType="append">
-                      <Button color="default1"> @</Button>
-                      <Button color="default1">
-                        {' '}
-                        <i className="fa fa-smile-o fa-lg" />
-                      </Button>
+                      {/*<Button color="default1"> @</Button>*/}
+                      {/*<Button color="default1">*/}
+                      {/*  {' '}*/}
+                      {/*  <i className="fa fa-smile-o fa-lg" />*/}
+                      {/*</Button>*/}
                       <Button
                         color="default1"
                         onClick={() => {
