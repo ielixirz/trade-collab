@@ -49,6 +49,8 @@ import {
   GetShipmentReferenceList,
   UpdateShipmentReference
 } from '../../../service/shipment/shipment';
+import Send from '../../../component/svg/icon-send';
+import Paperclip from '../../../component/svg/paperclip';
 
 const AVAILABLE_ROLES = {
   Importer: 'Exporter',
@@ -448,8 +450,7 @@ class ChatWithHeader extends Component {
           ) : _.isEmpty(companies) ? (
             <b style={{ color: 'red' }}>New Shipment!</b>
           ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (
-            <b style={{color:'red'}}>Input Ref!</b>
-
+            <b style={{ color: 'red' }}>Input Ref!</b>
           ) : (
             <b style={{ color: 'red' }}>New Shipment!</b>
           )}
@@ -927,6 +928,7 @@ class ChatWithHeader extends Component {
                     <InputGroupAddon addonType="prepend">
                       <Button
                         color="default"
+                        className={'paperclip'}
                         onClick={() => {
                           if (_.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false) === false) {
                             browseFile(ShipmentKey);
@@ -935,8 +937,7 @@ class ChatWithHeader extends Component {
                           }
                         }}
                       >
-                        {' '}
-                        <i className="fa fa-paperclip" />
+                        <Paperclip />
                       </Button>
                       <input
                         type="file"
@@ -1033,7 +1034,7 @@ class ChatWithHeader extends Component {
                         }
                       }}
                     />
-                    <InputGroupAddon addonType="append">
+                    <InputGroupAddon addonType="append" className={'sent'}>
                       {/*<Button color="default1"> @</Button>*/}
                       {/*<Button color="default1">*/}
                       {/*  {' '}*/}
@@ -1057,8 +1058,7 @@ class ChatWithHeader extends Component {
                           }
                         }}
                       >
-                        {' '}
-                        <i className="fa fa-paper-plane-o fa-lg" />
+                        <Send />
                       </Button>
                     </InputGroupAddon>
                   </InputGroup>
