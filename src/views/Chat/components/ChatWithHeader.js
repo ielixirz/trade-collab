@@ -725,7 +725,7 @@ class ChatWithHeader extends Component {
     const isInvited = _.find(members, item => item.ShipmentMemberEmail === user.email);
     const ChatRoomMemberData = _.find(member, item => item.ChatRoomMemberEmail === user.email);
     let ref = '';
-
+    console.log('isInvited', isInvited);
     if (!_.isEmpty(isInvited)) {
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
         ref =
@@ -833,7 +833,11 @@ class ChatWithHeader extends Component {
               </div>
               <div
                 id="chathistory"
-                className="msg_history"
+                className={
+                  _.get(isInvited, 'ShipmentMemberCompanyKey', '') === ''
+                    ? 'msg_history'
+                    : 'msg_history_full'
+                }
                 onScroll={() => {
                   const div = document.getElementById('chathistory').scrollTop;
                   if (div === 0) {
