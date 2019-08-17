@@ -72,10 +72,15 @@ export const createDataTable = (input) => {
         style: {
           width: '12%',
           paddingLeft: 0,
+          color: '#6a6a6a',
+          fontWeight: 600,
+          fontStretch: 'normal',
         },
         headerStyle: {
           width: '12%',
           paddingLeft: 0,
+          fontSize: 12,
+          color: '#4a4a4a',
         },
         sortFunc: (a, b, order, dataField, rowA, rowB) => {
           const RowAETADATA = moment(rowA.ETA, 'DD MMM YYYY');
@@ -95,9 +100,14 @@ export const createDataTable = (input) => {
         align: 'center',
         style: {
           width: '12%',
+          color: '#6a6a6a',
+          fontWeight: 600,
+          fontStretch: 'normal',
         },
         headerStyle: {
           width: '12%',
+          fontSize: 12,
+          color: '#4a4a4a',
         },
         sortFunc: (a, b, order, dataField, rowA, rowB) => {
           const RowAETDDATA = moment(rowA.ETD, 'DD MMM YYYY');
@@ -165,6 +175,8 @@ export const createDataTable = (input) => {
         align: 'left',
         headerStyle: {
           width: '14.5%',
+          fontSize: 12,
+          color: '#4a4a4a',
         },
       };
     }
@@ -175,11 +187,14 @@ export const createDataTable = (input) => {
         sort: false,
         style: {
           width: '15%',
+          color: '#6a6a6a',
         },
         headerAlign: 'left',
         align: 'left',
         headerStyle: {
           width: '15%',
+          fontSize: 12,
+          color: '#4a4a4a',
         },
       };
     }
@@ -214,7 +229,16 @@ export const createDataTable = (input) => {
         headerAlign: 'left',
         align: 'left',
         sort: true,
-        style: item === 'Buyer' ? { paddingLeft: 0 } : {},
+        style:
+          item === 'Buyer'
+            ? { paddingLeft: 0, color: '#6a6a6a' }
+            : {
+              color: '#6a6a6a',
+            },
+        headerStyle: {
+          fontSize: 12,
+          color: '#4a4a4a',
+        },
       };
     }
     if (item === 'Status') {
@@ -228,6 +252,8 @@ export const createDataTable = (input) => {
         align: 'center',
         headerStyle: {
           width: '11%',
+          fontSize: 12,
+          color: '#4a4a4a',
         },
       };
     }

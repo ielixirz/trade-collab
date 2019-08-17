@@ -30,15 +30,15 @@ const ShipmentInlineStatus = ({ shipment, editShipmentHandler }) => {
   const getValueMargin = (status) => {
     switch (status) {
       case 'Planning':
-        return 11;
+        return 13;
       case 'Order Confirmed':
-        return 7;
+        return 8;
       case 'In Transit':
-        return 10;
+        return 12;
       case 'Delivered':
         return 10;
       case 'Cancelled':
-        return 9;
+        return 10;
       default:
         return 10;
     }
