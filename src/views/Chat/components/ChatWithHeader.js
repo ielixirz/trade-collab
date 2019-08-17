@@ -547,7 +547,6 @@ class ChatWithHeader extends Component {
                     onKeyPress={_.debounce(
                       async event => {
                         if (event.key === 'Enter') {
-
                           const confirmation = true;
                           console.log('Enter', confirmation);
                           if (confirmation === true) {
@@ -659,7 +658,6 @@ class ChatWithHeader extends Component {
                     }}
                     onKeyPress={async event => {
                       if (event.key === 'Enter') {
-
                         const confirmation = true;
                         if (confirmation) {
                           const update = UpdateShipmentReference(
@@ -846,6 +844,13 @@ class ChatWithHeader extends Component {
                 }
               }}
             >
+              <div>
+                {_.get(this.props.ShipmentData, 'ShipmentCreatorUserKey', false) === user.uid
+                  ? this.renderAssignCompany()
+                  : isInvited
+                  ? this.renderAssignCompany()
+                  : ''}
+              </div>
               <div
                 id="chathistory"
                 className="msg_history"
@@ -860,11 +865,6 @@ class ChatWithHeader extends Component {
                   this.msgChatRef = el;
                 }}
               >
-                {_.get(this.props.ShipmentData, 'ShipmentCreatorUserKey', false) === user.uid
-                  ? this.renderAssignCompany()
-                  : isInvited
-                  ? this.renderAssignCompany()
-                  : ''}
                 {chatMsg.map((msg, i) => {
                   const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
                   let type = _.get(msg, 'ChatRoomMessageType', 'sender');
