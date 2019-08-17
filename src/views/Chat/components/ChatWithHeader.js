@@ -444,7 +444,7 @@ class ChatWithHeader extends Component {
     const alreadyHave = !_.isEmpty(userrefs);
     return (
       <div>
-        <Button id={`popover${index}`} className="text-yterminal">
+        <Button id={`popover${index}`} className="text-yterminal" color={'secondary'}>
           {userrefs.length > 0 ? (
             <b style={{ color: 'black' }}>{userrefs[0].ShipmentReferenceID}</b>
           ) : _.isEmpty(companies) ? (
