@@ -69,7 +69,14 @@ export const createDataTable = (input) => {
         sort: true,
         headerAlign: 'center',
         align: 'center',
-        width: '15%',
+        style: {
+          width: '12%',
+          paddingLeft: 0,
+        },
+        headerStyle: {
+          width: '12%',
+          paddingLeft: 0,
+        },
         sortFunc: (a, b, order, dataField, rowA, rowB) => {
           const RowAETADATA = moment(rowA.ETA, 'DD MMM YYYY');
           const RowBETADATA = moment(rowB.ETA, 'DD MMM YYYY');
@@ -86,7 +93,12 @@ export const createDataTable = (input) => {
         sort: true,
         headerAlign: 'center',
         align: 'center',
-        width: '15%',
+        style: {
+          width: '12%',
+        },
+        headerStyle: {
+          width: '12%',
+        },
         sortFunc: (a, b, order, dataField, rowA, rowB) => {
           const RowAETDDATA = moment(rowA.ETD, 'DD MMM YYYY');
           const RowBETDDATA = moment(rowB.ETD, 'DD MMM YYYY');
@@ -118,11 +130,11 @@ export const createDataTable = (input) => {
         dataField: item,
         sort: false,
         style: {
-          width: '2.5%',
+          width: '4%',
         },
         headerAlign: 'center',
         headerStyle: {
-          width: '2.5%',
+          width: '4%',
         },
       };
     }
@@ -202,6 +214,7 @@ export const createDataTable = (input) => {
         headerAlign: 'left',
         align: 'left',
         sort: true,
+        style: item === 'Buyer' ? { paddingLeft: 0 } : {},
       };
     }
     if (item === 'Status') {
@@ -209,12 +222,51 @@ export const createDataTable = (input) => {
         text: _.get(LABEL, item, item),
         dataField: item,
         style: {
-          width: '12.5%',
+          width: '11%',
         },
         headerAlign: 'center',
         align: 'center',
         headerStyle: {
-          width: '12.5%',
+          width: '11%',
+        },
+      };
+    }
+    if (item === 'Seperator1') {
+      return {
+        style: {
+          width: '1.75%',
+        },
+        dataField: 'Blank',
+        headerAlign: 'center',
+        align: 'center',
+        headerStyle: {
+          width: '1.75%',
+        },
+      };
+    }
+    if (item === 'Seperator2') {
+      return {
+        style: {
+          width: '1.75%',
+        },
+        dataField: 'Blank',
+        headerAlign: 'center',
+        align: 'center',
+        headerStyle: {
+          width: '1.75%',
+        },
+      };
+    }
+    if (item === 'Seperator3') {
+      return {
+        style: {
+          width: '1.75%',
+        },
+        dataField: 'Blank',
+        headerAlign: 'center',
+        align: 'center',
+        headerStyle: {
+          width: '1.75%',
         },
       };
     }
