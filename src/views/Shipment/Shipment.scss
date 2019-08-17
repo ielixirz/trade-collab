@@ -1,40 +1,36 @@
 img {
   max-width: 100%;
 }
-.selectfilter{
-  width:100px
+.selectfilter {
+  width: 100px;
 }
 
 .text-yterminal {
   color: #16a085;
-text-align:left;
+  text-align: left;
 }
 
 .right {
   float: right;
 }
 
-.btn-ref{
+.btn-ref {
   color: #23282c;
   background-color: transparent;
   width: 100%;
-
-
 }
-.btn-ref-shipment{
-  margin-left:-0.75rem;
+.btn-ref-shipment {
+  margin-left: -0.75rem;
   color: #23282c;
   background-color: transparent;
   width: 100%;
-text-align: left;
-
+  text-align: left;
 }
-.btn-ref-shipment:hover{
+.btn-ref-shipment:hover {
   background-color: #c8ced3;
   border-color: #c8ced3;
 }
-.btn-ref:hover{
-
+.btn-ref:hover {
   border-color: #c8ced3;
 }
 .left {
@@ -60,7 +56,7 @@ text-align: left;
 }
 
 .shipment-table-main-container {
-  font-size: 0.8vw;
+  font-size: 14px;
 }
 
 .create-shipment > .modal-content {
