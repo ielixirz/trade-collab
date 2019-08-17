@@ -282,7 +282,7 @@ class TableShipment extends React.Component {
             </Button>
           ) : (
             <Button color="ref-shipment">
-              <b>See Refs</b>
+              <b style={{color:'red'}}>New Shipment!</b>
             </Button>
           )}
         </p>

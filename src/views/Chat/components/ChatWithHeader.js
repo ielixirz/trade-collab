@@ -446,11 +446,11 @@ class ChatWithHeader extends Component {
           {userrefs.length > 0 ? (
             <b style={{ color: 'black' }}>{userrefs[0].ShipmentReferenceID}</b>
           ) : _.isEmpty(companies) ? (
-            <b>See Refs</b>
+            <b style={{ color: 'red' }}>New Shipment!</b>
           ) : !_.isEmpty(hasCompany.ShipmentMemberCompanyName) ? (
             <b>Input your Ref#!</b>
           ) : (
-            <b>See Refs</b>
+            <b style={{ color: 'red' }}>New Shipment!</b>
           )}
         </Button>
         <UncontrolledPopover
