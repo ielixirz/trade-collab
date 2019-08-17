@@ -812,7 +812,6 @@ class TableShipment extends React.Component {
               updateHandle={this.handleCalendarUpdate}
             />
           ),
-          Seperator3: 'x',
           Status: this.renderStatusComponent(item),
           ShipmentStatus: item.ShipmentStatus,
           uid: item.ShipmentID,
