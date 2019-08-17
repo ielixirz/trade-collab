@@ -300,20 +300,19 @@ img {
   padding-bottom: 20px;
   bottom: -60px;
   width: 100%;
-
 }
 textarea {
   width: 85%;
   z-index: 0;
 }
-.btn-default:hover{
+.btn-default:hover {
   background-color: rgb(22, 160, 133) !important;
 }
-.btn-default1:hover{
+.btn-default1:hover {
   background-color: rgb(22, 160, 133) !important;
 }
-.paperclip{
-padding-right: 10px;
+.paperclip {
+  padding-right: 10px;
 }
 .text-yterminall{
   background-color: white;
@@ -496,19 +495,28 @@ h2.time-background:before {
   z-index: -1;
 }
 
+.invite-btn-trigger {
+  border-radius: 5px;
+  border: solid 1px #6a6a6a;
+  background-color: white;
+}
+
 .react-tagsinput-input {
+  padding: 0 !important;
   width: 200px;
 }
 .react-tagsinput {
   border: 0px;
-  border-bottom: 1px solid hsl(0, 0%, 90%);
-  height: 50px;
+  border-bottom: 1px solid rgb(22, 160, 133);
+  height: 40px;
   overflow: scroll;
+  width: 660px;
 }
 .react-tagsinput-tag {
   background-color: hsl(0, 0%, 90%) !important;
   border: 0px;
   color: black;
+  padding: 2px !important;
 
   &.chat-invite {
     &.exist {
