@@ -30,7 +30,6 @@ $end-bg-color: $blue-color;
 
     .DayPicker {
         &-Day {
-            border-radius: 0%;
 
             &--today {
                 position: relative;
@@ -58,11 +57,43 @@ $end-bg-color: $blue-color;
 
             &--selected {
 
+                &::after {
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    content: '';
+                    z-index: -1;
+                    box-shadow: 15px 0px 0px 0px $selected-bg-color;
+                }
+
+                &:not(.DayPicker-Day--outside),
                 &:not(.DayPicker-Day--start),
-                &:not(.DayPicker-Day--end),
-                &:not(.DayPicker-Day--outside) {
+                &:not(.DayPicker-Day--end) {
+                    border-radius: 0%;
                     background-color: $selected-bg-color;
                     color: $white-color;
+                }
+
+                &.DayPicker-Day--outside {
+                    &::before {
+                        display: none !important;
+                    }
+
+                    &::after {
+                        display: none !important;
+                    }
+                }
+
+                &:last-child,
+                &.DayPicker-Day--start,
+                &.DayPicker-Day--end {
+
+                    &::after {
+                        display: none;
+                    }
                 }
             }
 
@@ -70,11 +101,34 @@ $end-bg-color: $blue-color;
             // Range Modifiers
 
             &--start {
-                background-color: $start-bg-color !important;
                 z-index: 1;
+                border-radius: 50% !important;
+                background: $start-bg-color !important;
+
+                &+.DayPicker-Day--selected {
+                    &::before {
+                        display: block;
+                        width: 100%;
+                        height: 100%;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        content: '';
+                        z-index: -1;
+                        box-shadow: -15px 0px 0px 0px $selected-bg-color;
+                    }
+
+                    &.DayPicker-Day--end {
+                        &::after {
+                            display: block;
+                            box-shadow: inset 15px 0px 0px 0px $selected-bg-color;
+                        }
+                    }
+                }
             }
 
             &--end {
+                border-radius: 50% !important;
                 background-color: $end-bg-color !important;
             }
         }
@@ -84,7 +138,8 @@ $end-bg-color: $blue-color;
         width: 100%;
 
         &-Overlay {
-            width: 594px;
+            overflow: hidden;
+            width: 580px;
         }
     }
 
@@ -95,13 +150,29 @@ $end-bg-color: $blue-color;
     &-Input {
         position: relative;
         flex-grow: 1;
+
+        &--input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #ffffff;
+
+            &.hidden {
+                color: transparent !important;
+                background-color: transparent !important;
+            }
+        }
+    }
+
+    &-From {
+        .DayPickerInput-Overlay {
+            left: 0;
+        }
     }
 
     &-To {
         .DayPickerInput-Overlay {
-            margin: {
-                left: -297px;
-            }
+            left: -98%;
         }
     }
 
@@ -144,6 +215,10 @@ $end-bg-color: $blue-color;
         border-left-style: none !important;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
+
+        &[readonly] {
+            background-color: #ffffff;
+        }
 
         &:focus {
             border: 1px solid #ced4da;
