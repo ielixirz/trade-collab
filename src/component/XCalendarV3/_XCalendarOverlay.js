@@ -12,6 +12,7 @@ export default class XCalendarOverlay extends React.Component {
             <div className={classNames.overlayWrapper}{...props}>
                 <div className={classNames.overlay}>
                     {children}
+
                     <p className="text-center">
                         <a
                             href="javascript:void(0)"

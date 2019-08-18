@@ -66,7 +66,7 @@ import { CreateChatMultipleInvitation } from '../../service/join/invite';
 import Airplane from '../../component/svg/Airplane';
 import Boat from '../../component/svg/Boat';
 import Truck from '../../component/svg/Truck';
-import XCalendar from '../../component/XCalendar';
+import XCalendar from '../../component/XCalendarV3';
 import XSuggest from '../../component/XSuggest';
 
 const WAIT_INTERVAL = 1000;
@@ -1189,6 +1189,7 @@ class Shipment extends Component {
                     startLabel="ETD Port"
                     end={this.state.input.eta}
                     endLabel="ETA Port"
+                    tbaValue={'TBA'}
                     onStartChange={etd => this.setDateState('etd', etd)}
                     onEndChange={eta => this.setDateState('eta', eta)}
                   />

@@ -163,7 +163,8 @@ class MemberModal extends React.Component {
                   style={{
                     color: 'white',
                     borderRadius: '3px',
-                    backgroundColor: '#16A085'
+                    backgroundColor: '#16A085',
+                    height: 'max-content'
                   }}
                   onClick={() => {
                     const inviteMember = [];
