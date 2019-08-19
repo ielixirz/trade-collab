@@ -189,25 +189,28 @@ $end-bg-color: $blue-color;
 
     //
     // Bootstrap Inputs
-
-    .input-group-text {
-        font-weight: 500;
-        background-color: inherit;
-
-        padding: {
-            right: 0;
-        }
-
-        &::after {
-            display: block;
+    .input-group {
+        flex-wrap: initial;
+        
+        .input-group-text {
+            font-weight: 700;
+            background-color: inherit;
 
             padding: {
-                left: 0.25rem;
-                right: 0.25rem;
+                right: 0;
             }
 
-            content: ' : ';
-            font-weight: inherit;
+            &::after {
+                display: block;
+
+                padding: {
+                    left: 0.25rem;
+                    right: 0.25rem;
+                }
+
+                content: ' : ';
+                font-weight: inherit;
+            }
         }
     }
 
@@ -224,5 +227,22 @@ $end-bg-color: $blue-color;
             border: 1px solid #ced4da;
             box-shadow: none;
         }
+    }
+}
+
+
+//
+// Override styles
+.XCalendar {
+    .col-sm {
+        &+.col-sm {
+            padding: {
+                left: 0
+            }
+        }
+    }
+
+    .input-group-text {
+        font-weight: normal;
     }
 }

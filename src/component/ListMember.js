@@ -30,18 +30,18 @@ export default class ListMember extends React.Component {
     return (
       <div>
         <ListGroup flush>
-          <ListGroupItem tag="a" href="#">
+          <ListGroupItem>
             <Row>
+               <div style={{marginBlockStart : 'auto' , marginLeft : '40px'}}>
+                  <UserCircle/>
+                </div>
+
               <Col xs="6" sm="7" className="text-left">
                 <span>
-                  <UserCircle/>
-                </span>
-                <span style={{ marginLeft: 10 }}>
-                  <span className="invite-name">{member.ChatRoomMemberFirstnameFirstProfile}{' '}
-                  {member.ChatRoomMemberSurnameFirstProfile}</span>
+                  <span className="invite-name" style={{fontFamily : 'Muli', color: '#4a4a4a', fontSize: '12px'}}>{member.ChatRoomMemberFirstnameFirstProfile}{' '}{member.ChatRoomMemberSurnameFirstProfile}</span>
                 </span>
                 <br />
-                <span className="invite-email" style={{ marginLeft: 40, fontSize: 12 }}>{email}</span>
+                <span className="invite-email" style={{ fontFamily : 'Muli', color: '#6a6a6a', fontSize: '10px' }}>{email}</span>
               </Col>
               <Col xs="6" sm="2">
                 {/* {role.map(item => {
