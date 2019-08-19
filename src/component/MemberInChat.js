@@ -41,8 +41,9 @@ class MemberInChat extends Component {
     var message = ""
     
     _.forEach(member, item => {
-      if (roleStringList.indexOf(item.ChatRoomMemberRole) > -1){
-        message = message + item.ChatRoomMemberRole + ", "
+      if (!roleStringList[item.ChatRoomMemberRole]){
+        roleStringList[item.ChatRoomMemberRole] = true; 
+        message = message + item.ChatRoomMemberRole + ", "; 
       }
     })
 
@@ -60,7 +61,9 @@ class MemberInChat extends Component {
               </span>
             )}
             <span onClick={this.toggle} style={{}}>
-              <span style={{ cursor: 'pointer' }}>{this.props.title} ({member.length}) {message.slice(0, -2)}</span>
+              <span style={{ cursor: 'pointer' , fontWeight:'bold'}}>{this.props.title} ({member.length}) 
+                <span style={{fontSize:'12px' , marginLeft: '12px', color: '#6a6a6a'}}> {message.slice(0, -2)}</span>
+              </span>
             </span>
           </Col>
           <Col xs="6" sm="3" />

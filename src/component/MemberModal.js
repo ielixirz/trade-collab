@@ -146,7 +146,7 @@ class MemberModal extends React.Component {
                 /> */}
 
                 <XSuggest
-                    placeholder="Input your Importers E-mail address"
+                    placeholder="Invite via e-mail to join this chat of this shipment only"
                     datasets={suggestion}
                     idName={'id'}
                     labelName={'label'}
@@ -216,9 +216,12 @@ class MemberModal extends React.Component {
             </div>
             <br/>
             <div style={{textAlign : 'end', marginRight : '60px'}}>              
-              <span style={{textDecoration:'underline' ,fontWeight:'bold'}} onClick={() => {
+              <Button style={{backgroundColor: '#FFFFFFFF', 
+                              border: '0px',
+                              textDecoration:'underline' ,
+                              fontWeight:'bold'}} onClick={() => {
                 this.toggleEdit();
-              }}>Edit</span>
+              }}>Edit</Button>
             </div>
 
              {Object.keys(shipmentMember).map((key, index) => (

@@ -863,7 +863,7 @@ class Shipment extends Component {
     return (
       <div className="shipment-table-main-container">
         <Modal size="lg" isOpen={this.state.modal} toggle={this.modal}>
-          <ModalHeader toggle={this.modal}>
+          <ModalHeader style={{border : '0px'}} toggle={this.modal}>
             <h4>Create New Shipment</h4>
           </ModalHeader>
           <ModalBody>
@@ -896,7 +896,12 @@ class Shipment extends Component {
                           placeholder="Input New Company Name"
                           onChange={this.writeText}
                           value={this.state.input.newCompanyName}  
-                       />                      
+                       />
+
+                       <Button
+                        
+                       />
+
                       <Row>
                         <Col xs="4" />
                         <Col xs="3" >
@@ -1184,7 +1189,7 @@ class Shipment extends Component {
               {/* ETA & ETD Calendar */}
 
               <FormGroup row>
-                <Col sm={{size: 10, offset: 2}}>
+                <Col sm={{size: 8, offset: 2}}>
                   <XCalendar
                     start={this.state.input.etd}
                     startLabel="ETD Port"
