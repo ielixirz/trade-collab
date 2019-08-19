@@ -467,6 +467,12 @@ class Shipment extends Component {
     });
   }
 
+  toggleCompanyState = () =>  {
+    this.setState({
+      inputComapany: !this.state.inputComapany
+    });
+  }
+
   createCompany = () => {
     const userData = {
       UserMemberEmail: this.props.user.email,
@@ -550,6 +556,16 @@ class Shipment extends Component {
         ...this.state.input,
         [name]: value
       }
+    });
+  }
+
+  setDateState(name, timestamp) {
+
+    this.setState({
+      input: {
+        ...this.state.input,
+        [name]: timestamp
+      },
     });
   }
 
