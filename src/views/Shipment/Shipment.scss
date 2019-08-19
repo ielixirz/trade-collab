@@ -65,13 +65,16 @@ img {
 
 .create-shipment-field-title {
   font-weight: bold;
-}
+  text-align: center;
+  height: max-content;
+  border-radius: 3px;
+  border: solid 1px #ededed;}
 
 .create-shipment-create-btn {
   font-size: 1vw;
   font-weight: bold;
   margin-bottom: 1rem;
-  width: 40%;
+  width: 25%;
   margin: auto;
   color: white;
   border-color: #16a085;
@@ -360,15 +363,39 @@ tbody > tr:hover {
 }
 
 .XSuggest {
+  &.material {
+    &.form-control {
+      border: {
+        top: 0;
+        right: 0;
+        left: 0;
+        radius: 0;
+      }
+    }
+  }
+
   .list-unstyled {
-    top: 1.65rem;
+    top: 1.72rem;
   }
 }
 
-.modal-header {
-  .modal-title {
-    h5 {
-      margin-left: auto
-   }
- }
+.input-shipment  {
+  color: #9b9b9b;
+  border-color: #d6d6d6;
+  border-width: thin;
+  border-bottom: 1;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+  font-size: 100%;
+}
+
+.shipment-modal {
+  .modal-header {
+    .modal-title {
+      flex-grow: 1;
+      text-align: center;
+    }
+  }
 }

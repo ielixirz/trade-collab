@@ -38,7 +38,7 @@ export default class ListMember extends React.Component {
 
               <Col xs="6" sm="7" className="text-left">
                 <span>
-                  <span className="invite-name" style={{fontFamily : 'Muli', color: '#4a4a4a', fontSize: '12px'}}>{member.ChatRoomMemberFirstnameFirstProfile}{' '}{member.ChatRoomMemberSurnameFirstProfile}</span>
+                  <span className="invite-name" style={{fontFamily : 'Muli', color: '#4a4a4a', fontSize: '14px'}}>{member.ChatRoomMemberFirstnameFirstProfile}{' '}{member.ChatRoomMemberSurnameFirstProfile}</span>
                 </span>
                 <br />
                 <span className="invite-email" style={{ fontFamily : 'Muli', color: '#6a6a6a', fontSize: '10px' }}>{email}</span>

@@ -89,8 +89,8 @@ class Shipment extends Component {
         method: 1,
         type: 1,
         details: '',
-        etd: 1565446633,
-        eta: 1565446633,
+        etd: '',
+        eta: '',
         newCompanyName: '',
         importer: '',
         exporter: '',
@@ -861,9 +861,9 @@ class Shipment extends Component {
     });
     return (
       <div className="shipment-table-main-container">
-        <Modal size="lg" isOpen={this.state.modal} toggle={this.modal}>
+        <Modal size="lg" isOpen={this.state.modal} toggle={this.modal} className="shipment-modal">
           <ModalHeader style={{border : '0px'}} toggle={this.modal}>
-            <h4>Create New Shipment</h4>
+            Create New Shipment
           </ModalHeader>
           <ModalBody>
             <Row>   
@@ -1131,6 +1131,7 @@ class Shipment extends Component {
                 </Label>
                 <Col sm={10}>
                   <Input
+                    className="input-shipment"
                     type="text"
                     name="from"
                     id="from"
@@ -1157,6 +1158,7 @@ class Shipment extends Component {
                     value={this.state.input.to}
                   /> */}
                   <XSuggest
+                    className="material"
                     placeholder="Input your Importers E-mail address"
                     datasets={suggestion}
                     idName={'id'}
@@ -1174,6 +1176,7 @@ class Shipment extends Component {
                 </Label>
                 <Col sm={10}>
                   <Input
+                    className="input-shipment"
                     type="text"
                     name="ref"
                     id="ref"
@@ -1226,6 +1229,7 @@ class Shipment extends Component {
                 </Label>
                 <Col sm={10}>
                   <Input
+                    className="input-shipment"
                     type="text"
                     name="exporter"
                     id="exporter"
@@ -1244,6 +1248,7 @@ class Shipment extends Component {
                 </Label>
                 <Col sm={10}>
                   <Input
+                    className="input-shipment"
                     type="text"
                     name="importer"
                     id="importer"
