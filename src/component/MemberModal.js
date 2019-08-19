@@ -146,6 +146,7 @@ class MemberModal extends React.Component {
                 /> */}
 
                 <XSuggest
+                    style={{}}
                     placeholder="Invite via e-mail to join this chat of this shipment only"
                     datasets={suggestion}
                     idName={'id'}

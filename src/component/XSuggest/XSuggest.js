@@ -71,11 +71,11 @@ export default class XSuggest extends React.Component {
 
 
     render() {
-        const { placeholder, idName, labelName, avatarName } = this.props
+        const { className, placeholder, idName, labelName, avatarName } = this.props
         const { items, selects, keyword } = this.state
 
         return (
-            <div className="form-control XSuggest">
+            <div className={`form-control XSuggest ${className || ''}`.trim()}>
                 <div className="XSuggest-List">
                     {selects.map((item, index) => {
                         return (
@@ -135,6 +135,7 @@ export default class XSuggest extends React.Component {
 }
 
 XSuggest.propTypes = {
+    className: PropTypes.string,
     placeholder: PropTypes.string,
 
     datasets: PropTypes.array,
@@ -149,6 +150,7 @@ XSuggest.propTypes = {
 }
 
 XSuggest.defaultProps = {
+    className: null,
     placeholder: 'Enter keyword here ...',
 
     datasets: [],
