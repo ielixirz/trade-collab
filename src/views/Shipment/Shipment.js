@@ -587,7 +587,10 @@ class Shipment extends Component {
 
   validateCreateShipment() {
     const checkRole = +this.state.input.role;
-    const checkBound = +this.state.input.bound;
+
+    if (_.isEmpty(this.state.companySelect)){
+      return false;
+    }
 
     if (checkRole >= 1 && checkRole <= 6) {
       return true;

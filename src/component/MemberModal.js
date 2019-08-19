@@ -19,7 +19,7 @@ import * as _ from 'lodash';
 import TextLoading from './svg/TextLoading';
 import MemberInChat from './MemberInChat';
 import { CreateChatMultipleInvitation } from '../service/join/invite';
-import XSuggest from '../component/XSuggest';
+import XSuggest from '../component/XSuggestV2';
 
 class MemberModal extends React.Component {
   constructor(props) {
@@ -149,6 +149,7 @@ class MemberModal extends React.Component {
                     style={{}}
                     placeholder="Invite via e-mail to join this chat of this shipment only"
                     datasets={suggestion}
+                    multiple={true}
                     idName={'id'}
                     labelName={'label'}
                     avatarName={'avatar'}
