@@ -221,7 +221,7 @@ class MemberModal extends React.Component {
               <Button style={{backgroundColor: '#FFFFFFFF', 
                               border: '0px',
                               textDecoration:'underline' ,
-                              fontWeight:'bold'}} onClick={() => {
+                              fontWeight:'bold',}} onClick={() => {
                 this.toggleEdit();
               }}>Edit</Button>
             </div>

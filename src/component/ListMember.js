@@ -36,7 +36,7 @@ export default class ListMember extends React.Component {
                   <UserCircle/>
                 </div>
 
-              <Col xs="6" sm="7" className="text-left">
+              <Col xs="6" sm="6" className="text-left">
                 <span>
                   <span className="invite-name" style={{fontFamily : 'Muli', color: '#4a4a4a', fontSize: '14px'}}>{member.ChatRoomMemberFirstnameFirstProfile}{' '}{member.ChatRoomMemberSurnameFirstProfile}</span>
                 </span>
@@ -82,7 +82,7 @@ export default class ListMember extends React.Component {
                   </Button>
                   <Button 
                   className="company-shipment-button"
-                  style={{marginLeft : '8px'}}
+                  style={{marginLeft : '4px'}}
                   color="danger"
                   onClick={e => {
                     e.preventDefault();
@@ -103,7 +103,7 @@ export default class ListMember extends React.Component {
                     Remove
                   </Button>
                 </Row>: 
-                <span className="float-right" style={{marginRight : '60px'}}>         
+                <span className="float-right" style={{marginRight : '73px'}}>         
                   <Trash/>
                 </span>
                 }                 
