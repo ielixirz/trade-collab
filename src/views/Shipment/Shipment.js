@@ -45,7 +45,8 @@ import {
   CreateShipmentReference,
   EditShipment,
   SearchShipment,
-  UpdateShipmentReference
+  UpdateShipmentReference,
+  CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData
 } from '../../service/shipment/shipment';
 import {
   CombineCreateCompanyWithCreateCompanyMember,
@@ -101,7 +102,7 @@ class Shipment extends Component {
       blocking: true,
       inputCompany: false,
       swapRolePage: 0,
-      companySelectName : ''
+      companySelect : {}
     };
     this.fetchMoreShipment = this.fetchMoreShipment.bind(this);
     this.toggle = this.toggle.bind(this);
@@ -165,6 +166,8 @@ class Shipment extends Component {
   }
 */
     const parameter = {};
+    const referenceParameter = {};
+    const masterParamter = {};
     switch (input.role) {
       case 1:
         parameter.ShipmentCreatorType = 'Importer';
@@ -198,50 +201,43 @@ class Shipment extends Component {
     //     parameter.ShipmentCreatorType = `Outbound ${parameter.ShipmentCreatorType}`;
     //   }
     // }
-    parameter.ShipmentSellerCompanyName = this.state.companySelectName;
+    parameter.ShipmentSellerCompanyName = this.state.companySelect.CompanyName;
     parameter.ShipmentCreatorProfileFirstName = this.props.sender.ProfileFirstname;
     parameter.ShipmentCreatorProfileSurName = this.props.sender.ProfileSurname;
     parameter.ShipmentCreatorProfileKey = this.props.sender.id;
-    parameter.ShipmentDetailProduct = this.state.input.details;
+    parameter.ShipmentProductName = this.state.input.product;
     parameter.ShipmentCreateTimestamp = new Date().getTime();
     parameter.ShipmentETD = this.state.input.eta;
     parameter.ShipmentETAPort = this.state.input.etd;
 
-    // if (isValidEmail(input.to) && this.props.user.email !== input.to) {
-      // parameter.ShipmentPartnerEmail = input.to;
-    // }
+    if (isValidEmail(input.to) && this.props.user.email !== input.to) {
+      parameter.ShipmentPartnerEmail = input.to;
+    }
 
-    // _.forEach(this.state.input.to , (emailTo, index) => {
-    //   parameter.ShipmentPartnerEmail = emailTo;
-    //   CreateShipment(parameter).subscribe({
-    //     next: (createdShipment) => {
-    //       if (index === this.state.input.to.length){
-    //         this.fetchShipmentReload();
-    //         const shipmentKey = createdShipment.id;
-    //         const inviteMember = [];
-    
-    //         UpdateMasterData(createdShipment.id, 'DefaultTemplate', {
-    //           ShipmentDetailProduct: parameter.ShipmentProductName,
-    //         }).subscribe(() => {
-    //           this.props.history.push(`/chat/${shipmentKey}`);
-    //         });
-    //       }
-    //     },
-    //     error: () => {},
-    //   });
-    // })
+    referenceParameter.ShipmentReferenceID = this.state.input.ref
+    referenceParameter.ShipmentReferenceCompanyName = this.state.companySelect.CompanyName
+    referenceParameter.ShipmentReferenceCompanyKey = this.state.companySelect.CompanyKey
 
-    CreateShipment(parameter).subscribe({
-      next: createdShipment => {
+    masterParamter.ShipperCompanyName = this.state.companySelect.CompanyName;
+    masterParamter.ShipperETDDate = this.state.input.etd;
+    masterParamter.ShipmentDetailProduct = this.state.input.product;
+    masterParamter.ShipmentDetailPriceDescriptionOfGoods = this.state.input.details;
+
+    // ShipmentDetailShippingLine (string)
+    // ShipmentDetailPriceDescriptionOfGoods (string)
+    // ShipmentDetailContainerNumber (string)
+    // ShipmentDetailBillofLandingNumber (string)
+    // ShipmentDetailOriginalDocumentTrackingNumber (string)
+    // ShipmentDetailProduct (string)
+    // ConsigneeCompanyName (string)
+    // ConsigneePort (string)
+    // ConsigneeETAPortDate (timestamp)
+    // ConsigneeETAWarehouseDate (timestamp)
+    // ConsigneeCountry (string)
+
+    CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData(parameter, referenceParameter, masterParamter).subscribe({
+      next: data => {
         this.fetchShipmentReload();
-        const shipmentKey = createdShipment.id;
-        const inviteMember = [];
-
-        UpdateMasterData(createdShipment.id, 'DefaultTemplate', {
-          ShipmentDetailProduct: parameter.ShipmentProductName
-        }).subscribe(() => {
-          this.props.history.push(`/chat/${shipmentKey}`);
-        });
       },
       error: () => {}
     });
@@ -679,9 +675,9 @@ class Shipment extends Component {
     }
   }
 
-  setCompanyName = (companyName) => {
+  setSelectCompany = (company) => {
     this.setState({
-      companySelectName : companyName
+      companySelect: company
     });
   }
 
@@ -886,7 +882,7 @@ class Shipment extends Component {
             <Row>   
             <UncontrolledDropdown style={{marginLeft:'16px'}}>
                   <DropdownToggle tag="p" style={{textDecoration:'underline' , fontWeight:'bold'}}>
-                    {this.state.companySelectName === '' ? "Select Company" : this.state.companySelectName}
+                    {_.isEmpty(this.state.companySelect) ? "Select Company" : this.state.companySelect.CompanyName}
                   </DropdownToggle>
                     <DropdownMenu>
 
@@ -895,7 +891,7 @@ class Shipment extends Component {
                       {_.map(this.props.companies, item =>                                             
                         <DropdownItem
                             onClick={() => {
-                              this.setCompanyName(item.CompanyName);
+                              this.setSelectCompany(item);
                             }}
                             className="shipment-item-box">
                                {item.CompanyName}
@@ -912,10 +908,6 @@ class Shipment extends Component {
                           placeholder="Input New Company Name"
                           onChange={this.writeText}
                           value={this.state.input.newCompanyName}  
-                       />
-
-                       <Button
-                        
                        />
 
                       <Row>
@@ -1237,6 +1229,23 @@ class Shipment extends Component {
                     value={this.state.input.eta}
                   />
                 </Col> */}
+              </FormGroup>
+
+              <FormGroup row>
+                <Label for="Product" sm={2} className="create-shipment-field-title">
+                  Product
+                </Label>
+                <Col sm={10}>
+                  <Input
+                    className="input-shipment"
+                    type="text"
+                    name="product"
+                    id="product"
+                    placeholder="Short Description of goods. "
+                    onChange={this.writeText}
+                    value={this.state.input.product}
+                  />
+                </Col>
               </FormGroup>
 
               {(role == 1 || role >= 3) ? 
