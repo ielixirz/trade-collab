@@ -68,7 +68,7 @@ import Airplane from '../../component/svg/Airplane';
 import Boat from '../../component/svg/Boat';
 import Truck from '../../component/svg/Truck';
 import XCalendar from '../../component/XCalendarV3';
-import XSuggest from '../../component/XSuggest';
+import XSuggest from '../../component/XSuggestV2';
 
 const WAIT_INTERVAL = 1000;
 const ENTER_KEY = 13;
