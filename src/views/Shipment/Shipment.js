@@ -222,10 +222,9 @@ class Shipment extends Component {
     masterParamter.ConsigneeETAPortDate = this.state.input.eta;
     
     CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData(parameter, referenceParameter, masterParamter).subscribe({
-      next: createdShipment => {
+      next: shipmentResult => {
         this.fetchShipmentReload();
-        const shipmentKey = createdShipment.id;
-        this.props.history.push(`/chat/${shipmentKey}`);
+        this.props.history.push(`/chat/${shipmentResult[0]}`);
         
       },
       error: (error) => {
