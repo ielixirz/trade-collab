@@ -1,7 +1,6 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable filenames/match-regex */
 import React from 'react';
 import {
   Button,
@@ -20,12 +19,16 @@ import * as _ from 'lodash';
 import TextLoading from './svg/TextLoading';
 import MemberInChat from './MemberInChat';
 import { CreateChatMultipleInvitation } from '../service/join/invite';
+import XSuggest from '../component/XSuggestV2';
 
 class MemberModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      modal: false
+      modal: false,
+      isEdit: false,
+      state: 1,
+      inviteEmailList: [],
     };
   }
 
@@ -41,6 +44,10 @@ class MemberModal extends React.Component {
       &times;
     </button>
   );
+
+  toggleEdit = () => {
+    this.setState(state => ({ isEdit: !state.isEdit }));
+  }
 
   render() {
     let {
@@ -101,106 +108,130 @@ class MemberModal extends React.Component {
 
           {count === 0 ? <TextLoading /> : count}
         </Button>
-        <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
+        <Modal size="lg"
+        style={{ height: '80%'}}
+        isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>          
           <ModalHeader toggle={this.toggle} close={this.renderCloseButton()}>
-            <InputGroup>
-              <InputGroupAddon addonType="prepend">
+          <div>Members in this chat room</div>
+          </ModalHeader>
+          <ModalBody style={{
+              height: '400px',
+              overflowY: 'auto'            
+          }}>
+          <div style={{backgroundColor: '#f4f4f4' , borderRadius: '3px', 
+          paddingTop: '16px' , paddingLeft: '8px' , paddingRight: '8px', paddingBottom : '16px'}}>
+            <div style={{marginLeft: '16px' , textDecorationLine: 'underline'}}>
+                 Invite by E-mail
+            </div>
+            <InputGroup style={{marginTop: '4px'}}>
+            <Col sm={10}>
+              {/* <Autocomplete
+                  className="member-search-container"
+                  items={suggestion}
+                  shouldItemRender={(item, value) =>
+                    item.label.toLowerCase().indexOf(value.toLowerCase()) > -1
+                  }
+                  getItemValue={item => item.label}
+                  renderItem={(item, highlighted) => (
+                    <div
+                      key={item.id}
+                      style={{ backgroundColor: highlighted ? '#eee' : 'transparent' }} >
+                      {item.label}
+                    </div>
+                  )}
+                  value={this.state.value}
+                  placeholder="...input email address"
+                  onChange={e => this.setState({ value: e.target.value })}
+                  onSelect={value => this.setState({ value })}
+                /> */}
+
+                <XSuggest
+                    style={{}}
+                    placeholder="Invite via e-mail to join this chat of this shipment only"
+                    datasets={suggestion}
+                    multiple={true}
+                    idName={'id'}
+                    labelName={'label'}
+                    avatarName={'avatar'}
+                    onAdd={item => this.state.inviteEmailList.push(item)}
+                    onRemove={item => this.state.inviteEmailList.pop(item)}
+                    onChange={(selects, adds, removes) => console.log(selects, adds, removes)}
+                  />
+
+                </Col>
+            
                 <Button
                   className="invite-btn"
                   style={{
                     color: 'white',
-                    backgroundColor: '#16A085'
+                    borderRadius: '3px',
+                    backgroundColor: '#16A085',
+                    height: 'max-content'
                   }}
                   onClick={() => {
                     const inviteMember = [];
                     const role = [];
                     role.push(this.props.ChatRoomData.ChatRoomType);
-                    inviteMember.push({
-                      Email: this.state.value,
-                      Image: '',
-                      Role: role,
-                      ChatRoomMemberCompanyName: '',
-                      ChatRoomMemberCompanyKey: ''
-                    });
-
-                    const hasMember = _.find(
-                      member,
-                      (item, index) => item.ChatRoomMemberEmail === this.state.value
-                    );
-
-                    if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
+                    _.forEach(this.state.inviteEmailList , (invite) =>{
+                      const hasMember = _.find(
+                        member,
+                        (item, index) => item.ChatRoomMemberEmail === invite.id
+                      );
+ 
                       if (_.isEmpty(hasMember)) {
-                        const invite = CreateChatMultipleInvitation(
-                          inviteMember,
-                          ShipmentKey,
-                          ChatRoomKey,
-                          this.props.sender
-                        ).subscribe({
-                          next: res => {
-                            console.log(res);
-                            invite.unsubscribe();
-                          }
+                        inviteMember.push({
+                          Email: invite.id,
+                          Image: '',
+                          Role: role,
+                          ChatRoomMemberCompanyName: '',
+                          ChatRoomMemberCompanyKey: ''
                         });
-                      } else {
-                        window.alert('already in chatroom');
                       }
-                    } else {
-                      window.alert('You has been remove from the chat');
+                    })
+
+                    if (inviteMember.length > 0){
+                      if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
+                          const invite = CreateChatMultipleInvitation(
+                            inviteMember,
+                            ShipmentKey,
+                            ChatRoomKey,
+                            this.props.sender
+                          ).subscribe({
+                            next: res => {
+                              this.setState({
+                                inviteEmailList : []
+                              });
+                              invite.unsubscribe();
+                            }
+                          });
+                      } else {
+                        window.alert('You has been remove from the chat');
+                      }
+                    }else{
+                      window.alert('already in chatroom');
                     }
                   }}
                 >
-                  <span style={{ color: '#fff', fontWeight: 'bold' }}>Invite new member:</span>
+                  <span style={{ color: '#fff', fontWeight: 'bold' }}>Send Invite</span>
                 </Button>
-              </InputGroupAddon>
-              <Autocomplete
-                items={suggestion}
-                shouldItemRender={(item, value) =>
-                  item.label.toLowerCase().indexOf(value.toLowerCase()) > -1
-                }
-                getItemValue={item => item.label}
-                renderItem={(item, highlighted) => (
-                  <div
-                    key={item.id}
-                    style={{ backgroundColor: highlighted ? '#eee' : 'transparent' }}
-                  >
-                    {item.label}
-                  </div>
-                )}
-                value={this.state.value}
-                placeholder="...input email address"
-                onChange={e => this.setState({ value: e.target.value })}
-                onSelect={value => this.setState({ value })}
-              />
             </InputGroup>
-            <br />
-          </ModalHeader>
-          <ModalBody>
-            <Row>
-              <Col xs="6" sm="6">
-                <span
-                  style={{ color: '#3B3B3B', fontSize: 22, fontWeight: 'bold' }}
-                  className="float-left"
-                >
-                  Members In this chat
-                </span>
-              </Col>
-              <Col xs="6" sm="3">
-                <span style={{ color: '#707070' }} className="float-right">
-                  Role in shipment:
-                </span>
-              </Col>
-              <Col xs="6" sm="3">
-                <span style={{ color: '#16A085', textAlign: 'right' }} className="float-right">
-                  <div style={{ marginBottom: -10 }}>(what is this?)</div>
-                </span>
-              </Col>
-            </Row>
-            <hr />
-            {Object.keys(shipmentMember).map((key, index) => (
+            </div>
+            <br/>
+            <div style={{textAlign : 'end', marginRight : '60px'}}>              
+              <Button style={{backgroundColor: '#FFFFFFFF', 
+                              border: '0px',
+                              textDecoration:'underline' ,
+                              fontWeight:'bold',}} onClick={() => {
+                this.toggleEdit();
+              }}>Edit</Button>
+            </div>
+
+             {Object.keys(shipmentMember).map((key, index) => (
               <MemberInChat
                 toggleBlocking={toggleBlocking}
                 title={key}
                 member={shipmentMember[key]}
+                isEdit={this.state.isEdit}
                 {...props}
               />
             ))}
