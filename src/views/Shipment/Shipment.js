@@ -135,16 +135,16 @@ class Shipment extends Component {
     }));
   }
 
-  getLastestShipment = () => {
-    GetLastestShipment(this.props.user.uid).subscribe({
-      next: (data) => {
-        console.log("complete" + data);
-      },
-      error: (error) => {
-        console.log("error" + error);
-      },
-    });
-  }
+  // getLastestShipment = () => {
+  //   GetLastestShipment(this.props.user.uid).subscribe({
+  //     next: (data) => {
+  //       console.log("complete" + data);
+  //     },
+  //     error: (error) => {
+  //       console.log("error" + error);
+  //     },
+  //   });
+  // }
 
   createShipment() {
     const { input } = this.state;
@@ -190,6 +190,7 @@ class Shipment extends Component {
       default:
         break;
     }
+    
     parameter.ShipmentProductName = input.product;
     parameter.ShipmentStatus = 'Planning';
 
@@ -201,7 +202,7 @@ class Shipment extends Component {
     //     parameter.ShipmentCreatorType = `Outbound ${parameter.ShipmentCreatorType}`;
     //   }
     // }
-    parameter.ShipmentSellerCompanyName = this.state.companySelect.CompanyName;
+    // parameter.ShipmentSellerCompanyName = this.state.companySelect.CompanyName;
     parameter.ShipmentCreatorProfileFirstName = this.props.sender.ProfileFirstname;
     parameter.ShipmentCreatorProfileSurName = this.props.sender.ProfileSurname;
     parameter.ShipmentCreatorProfileKey = this.props.sender.id;
@@ -218,8 +219,6 @@ class Shipment extends Component {
     referenceParameter.ShipmentReferenceCompanyName = this.state.companySelect.CompanyName
     referenceParameter.ShipmentReferenceCompanyKey = this.state.companySelect.CompanyKey
 
-    masterParamter.ShipperCompanyName = this.state.companySelect.CompanyName;
-    masterParamter.ShipperETDDate = this.state.input.etd;
     masterParamter.ShipmentDetailProduct = this.state.input.product;
     masterParamter.ShipmentDetailPriceDescriptionOfGoods = this.state.input.details;
 
@@ -371,8 +370,6 @@ class Shipment extends Component {
 
   componentDidMount() {
     const { search } = this.props;
-
-    this.getLastestShipment()
 
     if (!_.isEmpty(this.fetchShipment)) {
       this.fetchShipment.unsubscribe();
@@ -1066,7 +1063,7 @@ class Shipment extends Component {
                         }}
                         className="shipment-item-box-gray-background"
                         disabled>
-                        Air Freight
+                        Air Freight <span style={{fontSize:'10px'}}>(Coming Soon)</span>
                         <span className="float-right">
                           <Airplane/>
                         </span>
@@ -1078,7 +1075,7 @@ class Shipment extends Component {
                         }}
                         className="shipment-item-box-gray-background"
                         disabled>
-                        Truck
+                        Truck <span style={{fontSize:'10px'}}>(Coming Soon)</span>
                         <span className="float-right">
                           <Truck />
                         </span>
@@ -1107,7 +1104,7 @@ class Shipment extends Component {
                         }}
                         className="shipment-item-box-gray-background"
                         disabled>
-                        LCL : Less Than Container Load
+                        LCL : Less Than Container Load <span style={{fontSize:'10px'}}>(Coming Soon)</span>
                       </DropdownItem>
                     </DropdownMenu>
                 </UncontrolledDropdown>
