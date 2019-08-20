@@ -149,7 +149,9 @@ exports.ReaderLastestMessage = CloudFunctionsRegionsAsia.firestore
             const AddItem = admin
               .firestore()
               .doc(
-                `Shipment/${context.params.ShipmentKey}/ChatRoom/${context.params.ChatRoomKey}/ChatRoomMessage/${ChatRoomMessageKeyItem}`
+                `Shipment/${context.params.ShipmentKey}/ChatRoom/${
+                  context.params.ChatRoomKey
+                }/ChatRoomMessage/${ChatRoomMessageKeyItem}`
               )
               .set(
                 {
@@ -809,21 +811,21 @@ exports.SendEmailInviteIntoShipment = CloudFunctionsRegionsAsia.firestore
       HeaderText = `Join ${RecruiterProfileFirstName} ${RecruiterProfileSurName} on a shipment ${ShipmentReference}`;
       HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${RecruiterProfileFirstName} ${RecruiterProfileSurName}</span> on a shipment ${ShipmentReference} </h2>`;
     } else {
-      HeaderText = `Join ${RecruiterProfileFirstName} ${RecruiterProfileSurName} on a shipment in yterminal`;
-      HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${RecruiterProfileFirstName} ${RecruiterProfileSurName}</span> on a shipment in yterminal </h2>`;
+      HeaderText = `Join ${RecruiterProfileFirstName} ${RecruiterProfileSurName} on a shipment in Weeklyorder`;
+      HeaderHtml = `<h2> Join <span style="color: rgba(54, 127, 238, 1);">${RecruiterProfileFirstName} ${RecruiterProfileSurName}</span> on a shipment in Weeklyorder </h2>`;
     }
 
     if (RecruiterShipmentMemberCompanyName && ShipmentReference && ProductName) {
-      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterShipmentMemberCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReference} ${ProductName} </span> </p>`;
+      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterShipmentMemberCompanyName} </span> has invited you to join Weeklyorder to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReference} ${ProductName} </span> </p>`;
     } else if (ShipmentReference && ProductName) {
-      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReference} ${ProductName} </span> </p>`;
+      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Weeklyorder to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReference} ${ProductName} </span> </p>`;
     } else if (RecruiterShipmentMemberCompanyName && ShipmentReference) {
-      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterShipmentMemberCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReference} </span> </p>`;
+      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterShipmentMemberCompanyName} </span> has invited you to join Weeklyorder to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReference} </span> </p>`;
     } else {
-      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> a shipment </span> </p>`;
+      Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Weeklyorder to work on <span style="color: rgba(234, 70, 70, 1);"> a shipment </span> </p>`;
     }
 
-    const ContentDescription = `<br><p> In Yterminal you can see a snapshot of all yourshipments and easily inform your company or your supply chain <span style="color: rgba(234, 70, 70, 1);">(Exporter, Importer, Forwarder Custom Broker)</span> about the shipment. So everyone is on the same page. Here all your files, communications are organized by shipment. <a><u>Learn more...</u></a> </p>`;
+    const ContentDescription = `<br><p> In Weeklyorder you can see a snapshot of all yourshipments and easily inform your company or your supply chain <span style="color: rgba(234, 70, 70, 1);">(Exporter, Importer, Forwarder Custom Broker)</span> about the shipment. So everyone is on the same page. Here all your files, communications are organized by shipment. <a><u>Learn more...</u></a> </p>`;
 
     Content = Content + ContentDescription;
 
@@ -837,7 +839,9 @@ exports.SendEmailInviteIntoShipment = CloudFunctionsRegionsAsia.firestore
       border-radius:8px;
       padding:18px 0;
       background-color:rgba(255, 90 , 95, 1);
-      color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/chat/${context.params.ShipmentKey}'>Join Now</a>`;
+      color:#ffffff;" class="redirectbutton" href='https://weeklyorder-staging.web.app/#/chat/${
+        context.params.ShipmentKey
+      }'>Join Now</a>`;
 
     if (RecruiterProfileFirstName && RecruiterProfileSurName) {
       const SendInviteIntoShipment = await SendEmail(
@@ -1101,9 +1105,9 @@ exports.NotiBellAndEmailInviteToJoinCompany = CloudFunctionsRegionsAsia.firestor
     let Content = `<p> ${snapshot.data().CompanyInvitationRecruiterProfileFirstName} ${
       snapshot.data().CompanyInvitationRecruiterProfileSurName
     } has invited you to join ${snapshot.data().CompanyInvitationName} on
-    Yterminal. </p>`;
+    Weeklyorder. </p>`;
 
-    const ContentDescription = `<br><p> In Yterminal you can see a snapshot of all yourshipments and easily inform your company or your supply chain <span style="color: rgba(234, 70, 70, 1);">(Exporter, Importer, Forwarder Custom Broker)</span> about the shipment. So everyone is on the same page. Here all your files, communications are organized by shipment. <a><u>Learn more...</u></a> </p>`;
+    const ContentDescription = `<br><p> In Weeklyorder you can see a snapshot of all yourshipments and easily inform your company or your supply chain <span style="color: rgba(234, 70, 70, 1);">(Exporter, Importer, Forwarder Custom Broker)</span> about the shipment. So everyone is on the same page. Here all your files, communications are organized by shipment. <a><u>Learn more...</u></a> </p>`;
 
     Content = Content + ContentDescription;
 
@@ -1117,7 +1121,7 @@ exports.NotiBellAndEmailInviteToJoinCompany = CloudFunctionsRegionsAsia.firestor
       border-radius:8px;
       padding:18px 0;
       background-color:rgba(255, 90 , 95, 1);
-      color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/network/company/${
+      color:#ffffff;" class="redirectbutton" href='https://weeklyorder-staging.web.app/#/network/company/${
         snapshot.data().CompanyInvitationCompanyKey
       }'>Join Now</a>`;
 
@@ -1457,8 +1461,8 @@ const BodyEmailTemplate = (HeaderText, Content, Button) => `<!DOCTYPE html>
 const UnreadMessageTemplate = (To, Text, HeaderText, Content, Button) => {
   return {
     to: To,
-    from: 'noreply@yterminal.com',
-    subject: 'Yterminal - Unread your message',
+    from: 'noreply@Weeklyorder.com',
+    subject: 'Weeklyorder - Unread your message',
     text: Text,
     html: BodyEmailTemplate(HeaderText, Content, Button)
   };
@@ -1467,8 +1471,8 @@ const UnreadMessageTemplate = (To, Text, HeaderText, Content, Button) => {
 const InviteIntoShipmentTemplate = (To, HeaderText, HeaderHtml, Content, Button) => {
   return {
     to: To,
-    from: 'noreply@yterminal.com',
-    subject: 'Yterminal - Invite Into Shipment',
+    from: 'noreply@Weeklyorder.com',
+    subject: 'Weeklyorder - Invite Into Shipment',
     text: HeaderText,
     html: BodyEmailTemplate(HeaderHtml, Content, Button)
   };
@@ -1477,8 +1481,8 @@ const InviteIntoShipmentTemplate = (To, HeaderText, HeaderHtml, Content, Button)
 const InviteToJoinCompanyTemplate = (To, HeaderText, HeaderHtml, Content, Button) => {
   return {
     to: To,
-    from: 'noreply@yterminal.com',
-    subject: 'Yterminal - Invite To Join Company',
+    from: 'noreply@Weeklyorder.com',
+    subject: 'Weeklyorder - Invite To Join Company',
     text: HeaderText,
     html: BodyEmailTemplate(HeaderHtml, Content, Button)
   };
@@ -1524,12 +1528,16 @@ exports.SendUnreadMessage = CloudFunctionsRegionsAsia.https.onRequest(async (req
 
       const MapTextWithProfileUnread = element.map(
         Item =>
-          `${Item.ProfileFirstname} ${Item.ProfileSurname} has ${Item.ShipmentChatCount} unread messages`
+          `${Item.ProfileFirstname} ${Item.ProfileSurname} has ${
+            Item.ShipmentChatCount
+          } unread messages`
       );
 
       const MapHtmlWithProfileUnread = element.map(
         Item =>
-          `<p class="profile-unread"> <span class="highlighttext" style="color: rgba(22, 160, 133, 1);" >${Item.ProfileFirstname} ${Item.ProfileSurname}</span> has ${Item.ShipmentChatCount} Unread Message </p>`
+          `<p class="profile-unread"> <span class="highlighttext" style="color: rgba(22, 160, 133, 1);" >${
+            Item.ProfileFirstname
+          } ${Item.ProfileSurname}</span> has ${Item.ShipmentChatCount} Unread Message </p>`
       );
 
       const ButtonRedirect = `<a style="width: 400px;
@@ -1542,7 +1550,7 @@ exports.SendUnreadMessage = CloudFunctionsRegionsAsia.https.onRequest(async (req
         border-radius:8px;
         padding:18px 0;
         background-color:rgba(255, 90 , 95, 1);
-        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/shipment'>View Messages</a>`;
+        color:#ffffff;" class="redirectbutton" href='https://weeklyorder-staging.web.app/#/shipment'>View Messages</a>`;
 
       const ProfileUnreadMergeText = MapTextWithProfileUnread.join();
       const ProfileUnreadMergeHtml = MapHtmlWithProfileUnread.join('');
@@ -1630,9 +1638,9 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
       } else if (ShipmentReferenceID && ShipmentProductName) {
         Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} </span> has invited you to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReferenceID} ${ShipmentProductName} </span> </p>`;
       } else if (NonUserInviteRecruiterCompanyName && ShipmentReferenceID) {
-        Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${NonUserInviteRecruiterCompanyName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReferenceID} </span> </p>`;
+        Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${NonUserInviteRecruiterCompanyName} </span> has invited you to join Weeklyorder to work on <span style="color: rgba(234, 70, 70, 1);"> ${ShipmentReferenceID} </span> </p>`;
       } else {
-        Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${RecruiterProfileFirstName} ${RecruiterProfileSurName} </span> has invited you to join Yterminal to work on <span style="color: rgba(234, 70, 70, 1);"> a shipment </span> </p>`;
+        Content = `<p> <span style="color: rgba(234, 70, 70, 1);"> ${NonUserInviteRecruiterProfileFirstName} ${NonUserInviteRecruiterProfileSurName} </span> has invited you to join Weeklyorder to work on <span style="color: rgba(234, 70, 70, 1);"> a shipment </span> </p>`;
       }
 
       const ContentDescription = `<br><p> In weeklyorders you get a live snapshot of all your shipments. Shipments in planning, confirmed or completed. You can easily inform your company or your external supply chain <span style="color: rgba(234, 70, 70, 1);">(Exporter, Importer, Forwarder Custom Broker)</span> about the shipment. So everyone is on the same page. Here all your files, communications are organized by shipment. <a><u>Learn more...</u></a> </p>`;
@@ -1649,7 +1657,7 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
         border-radius:8px;
         padding:18px 0;
         background-color:rgba(255, 90 , 95, 1);
-        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&sk=${ShipmentKeyEncoder}&crk=${ChatRoomKeyEncoder}&u=${isUsedEncoder}'>Join Now - Free</a>`;
+        color:#ffffff;" class="redirectbutton" href='https://weeklyorder-staging.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&sk=${ShipmentKeyEncoder}&crk=${ChatRoomKeyEncoder}&u=${isUsedEncoder}'>Join Now - Free</a>`;
 
       const SendInviteIntoShipment = await SendEmail(
         InviteIntoShipmentTemplate(
@@ -1682,7 +1690,7 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
         border-radius:8px;
         padding:18px 0;
         background-color:rgba(255, 90 , 95, 1);
-        color:#ffffff;" class="redirectbutton" href='https://weeklyorder.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&ck=${InviteRecruiterCompanyKeyEncoder}&u=${isUsedEncoder}'>Join Now - Free</a>`;
+        color:#ffffff;" class="redirectbutton" href='https://weeklyorder-staging.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&ck=${InviteRecruiterCompanyKeyEncoder}&u=${isUsedEncoder}'>Join Now - Free</a>`;
 
       const SendInviteIntoCompany = await SendEmail(
         InviteToJoinCompanyTemplate(

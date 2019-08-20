@@ -163,10 +163,10 @@ const ChatInviteBar = ({
 
   return (
     <React.Fragment>
-      <Col xs={0.5} style={{ marginTop: 15 }}>
+      <Col xs={0.5} style={{ marginTop: 12 }}>
         <span>To: </span>
       </Col>
-      <Col xs={6} style={{ height: 50, marginTop: 5 }}>
+      <Col xs={6} style={{ height: 40, marginTop: 5 }}>
         <TagsInput
           value={displayEmail}
           onChange={handleEmailInputChange}
@@ -178,16 +178,7 @@ const ChatInviteBar = ({
         />
       </Col>
       <Col xs={2}>
-        <Row>
-          <Button
-            style={{ marginLeft: 22, height: 38 }}
-            onClick={() => {
-              invite();
-            }}
-            disabled={displayEmail.length < 1}
-          >
-            Invite
-          </Button>
+        <Row style={{ paddingLeft: 40 }}>
           <i
             style={{ margin: 0 }}
             className="cui-circle-x icons font-2xl d-block mt-4 cancel-invite"
@@ -198,6 +189,24 @@ const ChatInviteBar = ({
             tabIndex="-1"
             role="button"
           />
+          <Button
+            style={
+              displayEmail.length >= 1
+                ? {
+                  marginLeft: 22,
+                  height: 38,
+                  color: 'white',
+                  backgroundColor: 'rgb(22, 160, 133)',
+                }
+                : { marginLeft: 22, height: 38 }
+            }
+            onClick={() => {
+              invite();
+            }}
+            disabled={displayEmail.length < 1}
+          >
+            Send
+          </Button>
         </Row>
       </Col>
       <Col xs={1} />
