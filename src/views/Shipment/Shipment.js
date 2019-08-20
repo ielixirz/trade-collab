@@ -844,6 +844,9 @@ class Shipment extends Component {
     const result = _.filter(shipments, item => {
       let keyword = '';
       if (_.isEmpty(typeShipment)) {
+        if (item.ShipmentStatus === 'Cancelled') {
+          return false;
+        }
         return true;
       }
 

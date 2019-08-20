@@ -1,0 +1,34 @@
+.select-shipment-status__indicators {
+  display: none !important;
+}
+
+.select-shipment-status__single-value {
+  font-size: 13px !important;
+  color: white !important;
+  :hover {
+    font-weight: bold;
+  }
+}
+
+.select-shipment-status__input {
+  color: white !important;
+}
+
+.select-shipment-status__control {
+  width: 90% !important;
+  max-height: 30px !important;
+  min-height: 30px !important;
+  border: none !important;
+  border-radius: 15px !important;
+  margin-left: 10px !important;
+  :hover {
+    opacity: 0.75;
+    font-weight: bold;
+    cursor: pointer;
+  }
+}
+
+.select-shipment-status__value-container {
+  max-height: 30px !important;
+  min-height: 30px !important;
+}
