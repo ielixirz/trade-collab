@@ -288,6 +288,11 @@ exports.OnCreateShipment = CloudFunctionsRegionsAsia.firestore
       const MasterDataDefaultTemplateData = GetMasterDataDefaultTemplate.data();
 
       delete MasterDataDefaultTemplateData.ShipmentDetailProduct;
+      delete MasterDataDefaultTemplateData.ShipperETDDate;
+      delete MasterDataDefaultTemplateData.ConsigneeETAPortDate;
+      delete MasterDataDefaultTemplateData.ConsigneeCompanyName;
+      delete MasterDataDefaultTemplateData.ShipperCompanyName;
+      delete MasterDataDefaultTemplateData.ShipmentDetailPriceDescriptionOfGoods;
 
       const CreateShipmentShareData = await admin
         .firestore()
