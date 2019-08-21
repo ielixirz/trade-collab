@@ -218,9 +218,12 @@ class Shipment extends Component {
 
     masterParamter.ShipmentDetailProduct = this.state.input.product;
     masterParamter.ShipmentDetailPriceDescriptionOfGoods = this.state.input.details;
-    masterParamter.ShipperETDDate = this.state.input.etd;
-    masterParamter.ConsigneeETAPortDate = this.state.input.eta;
-    
+    masterParamter.ShipperETDDate = parseInt(this.state.input.etd);
+    masterParamter.ConsigneeETAPortDate = parseInt(this.state.input.eta);
+    masterParamter.ShipperCompanyName = this.state.input.exporter;
+    masterParamter.ConsigneeCompanyName = this.state.input.importer;
+
+
     CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData(parameter, referenceParameter, masterParamter).subscribe({
       next: shipmentResult => {
         this.fetchShipmentReload();
