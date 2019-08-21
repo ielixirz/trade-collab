@@ -205,6 +205,8 @@ class Shipment extends Component {
     parameter.ShipmentCreatorProfileSurName = this.props.sender.ProfileSurname;
     parameter.ShipmentCreatorProfileKey = this.props.sender.id;
     parameter.ShipmentCreateTimestamp = new Date().getTime();
+    parameter.ShipmentCreatorCompanyName = this.state.companySelect.CompanyName;
+    parameter.ShipmentCreatorCompanyKey = this.state.companySelect.CompanyKey;
 
     if (isValidEmail(input.to) && this.props.user.email !== input.to) {
       parameter.ShipmentPartnerEmail = input.to;
@@ -220,25 +222,25 @@ class Shipment extends Component {
     masterParamter.ConsigneeETAPortDate = parseInt(this.state.input.eta);
     masterParamter.ShipperCompanyName = this.state.input.exporter;
     masterParamter.ConsigneeCompanyName = this.state.input.importer;
-
-    CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData(
-      parameter,
-      referenceParameter,
-      masterParamter
-    ).subscribe({
-      next: shipmentResult => {
-        this.fetchShipmentReload();
-        this.props.history.push(`/chat/${shipmentResult[0]}`);
-      },
-      error: error => {
-        console.log('error' + error);
-      }
-    });
-
-    this.setState(prevState => ({
-      modal: !prevState.modal,
-      input: {}
-    }));
+    console.log('input ', { parameter, referenceParameter, masterParamter });
+    // CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData(
+    //   parameter,
+    //   referenceParameter,
+    //   masterParamter
+    // ).subscribe({
+    //   next: shipmentResult => {
+    //     this.fetchShipmentReload();
+    //     this.props.history.push(`/chat/${shipmentResult[0]}`);
+    //   },
+    //   error: error => {
+    //     console.log('error' + error);
+    //   }
+    // });
+    //
+    // this.setState(prevState => ({
+    //   modal: !prevState.modal,
+    //   input: {}
+    // }));
   }
 
   dropdown() {
@@ -826,7 +828,7 @@ class Shipment extends Component {
     const { role, bound, method, type } = this.state.input;
     const { query: typeShipment, network, shipments } = this.props;
 
-    console.log('Shipment props', this.props);
+    console.log('Shipment state', this.state);
 
     let suggestion = _.map(network, item => {
       return {
