@@ -1541,17 +1541,8 @@ exports.SendUnreadMessage = CloudFunctionsRegionsAsia.https.onRequest(async (req
           } ${Item.ProfileSurname}</span> has ${Item.ShipmentChatCount} Unread Message </p>`
       );
 
-      const ButtonRedirect = `<a style="width: 400px;
-        font-size:14px;
-        font-weight:500;
-        letter-spacing:0.25px;
-        text-decoration:none;
-        text-transform:none;
-        display:inline-block;
-        border-radius:8px;
-        padding:18px 0;
-        background-color:rgba(255, 90 , 95, 1);
-        color:#ffffff;" class="redirectbutton" href='https://weeklyorder-staging.web.app/#/shipment'>View Messages</a>`;
+      const ButtonRedirect = `<a style="font-size:14px;"
+        href='https://weeklyorder-staging.web.app/#/shipment'>https://weeklyorder-staging.web.app/#/shipment</a>`;
 
       const ProfileUnreadMergeText = MapTextWithProfileUnread.join();
       const ProfileUnreadMergeHtml = MapHtmlWithProfileUnread.join('');
