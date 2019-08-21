@@ -221,19 +221,17 @@ class Shipment extends Component {
     masterParamter.ShipperCompanyName = this.state.input.exporter;
     masterParamter.ConsigneeCompanyName = this.state.input.importer;
 
-
     CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData(
       parameter,
       referenceParameter,
       masterParamter
     ).subscribe({
-      next: data => {
+      next: shipmentResult => {
         this.fetchShipmentReload();
         this.props.history.push(`/chat/${shipmentResult[0]}`);
-        
       },
-      error: (error) => {
-        console.log('error' + error)
+      error: error => {
+        console.log('error' + error);
       }
     });
 
