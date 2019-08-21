@@ -8,8 +8,13 @@ import { Route, Switch } from 'react-router-dom';
 import { Container } from 'reactstrap';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-
+import { ToastProvider } from 'react-toast-notifications';
 import { AppAside, AppHeader } from '@coreui/react';
+import {
+  ToteToastNotification,
+  ToteToastNotificationContainer,
+} from '../../component/ToteToastNotification';
+
 // sidebar nav config
 // routes config
 import routes from '../../routes';
@@ -41,43 +46,51 @@ class DefaultLayout extends Component {
 
   render() {
     return (
-      <div className="app" style={{ width: '1280px', height: '720px', margin: 'auto' }}>
-        <AppHeader fixed style={{ width: '1280px', marginBottom: '50px' }}>
-          <Suspense fallback={this.loading()}>
-            <DefaultHeader history={this.props.history} onLogout={e => this.signOut(e)} />
-          </Suspense>
-        </AppHeader>
-        <div className="app-body" style={{ width: '1280px', padding: 10 }}>
-          <main className="main">
-            <Container fluid>
-              <Suspense fallback={this.loading()}>
-                <Switch>
-                  {routes.map((route, idx) => (route.component ? (
-                    <Route
-                      key={idx}
-                      path={route.path}
-                      exact={route.exact}
-                      name={route.name}
-                      render={(props) => {
-                        return route.validation(
+      <ToastProvider
+        placement="top-center"
+        autoDismissTimeout={2500}
+        components={{
+          ToastContainer: ToteToastNotificationContainer,
+          Toast: ToteToastNotification,
+        }}
+      >
+        <div className="app" style={{ width: '1280px', height: '720px', margin: 'auto' }}>
+          <AppHeader fixed style={{ width: '1280px', marginBottom: '50px' }}>
+            <Suspense fallback={this.loading()}>
+              <DefaultHeader history={this.props.history} onLogout={e => this.signOut(e)} />
+            </Suspense>
+          </AppHeader>
+          <div className="app-body" style={{ width: '1280px', padding: 10 }}>
+            <main className="main">
+              <Container fluid>
+                <Suspense fallback={this.loading()}>
+                  <Switch>
+                    {routes.map((route, idx) => (route.component ? (
+                      <Route
+                        key={idx}
+                        path={route.path}
+                        exact={route.exact}
+                        name={route.name}
+                        render={props => route.validation(
                           route.isProfileRequired,
                           this.props,
                           <route.component {...props} />,
-                        );
-                      }}
-                    />
-                  ) : null))}
-                </Switch>
+                        )
+                          }
+                      />
+                    ) : null))}
+                  </Switch>
+                </Suspense>
+              </Container>
+            </main>
+            <AppAside fixed>
+              <Suspense fallback={this.loading()}>
+                <DefaultAside />
               </Suspense>
-            </Container>
-          </main>
-          <AppAside fixed>
-            <Suspense fallback={this.loading()}>
-              <DefaultAside />
-            </Suspense>
-          </AppAside>
+            </AppAside>
+          </div>
         </div>
-      </div>
+      </ToastProvider>
     );
   }
 }
