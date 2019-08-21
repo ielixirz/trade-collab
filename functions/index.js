@@ -843,19 +843,12 @@ exports.SendEmailInviteIntoShipment = CloudFunctionsRegionsAsia.firestore
 
     Content = Content + ContentDescription;
 
-    const ButtonRedirect = `<a style="width: 400px;
-      font-size:14px;
-      font-weight:500;
-      letter-spacing:0.25px;
-      text-decoration:none;
-      text-transform:none;
-      display:inline-block;
-      border-radius:8px;
-      padding:18px 0;
-      background-color:rgba(255, 90 , 95, 1);
-      color:#ffffff;" class="redirectbutton" href='https://weeklyorder-staging.web.app/#/chat/${
+    const ButtonRedirect = `<a style="font-size:16px;"
+      href='https://weeklyorder-staging.web.app/#/chat/${
         context.params.ShipmentKey
-      }'>Join Now</a>`;
+      }'>https://weeklyorder-staging.web.app/#/chat/${
+        context.params.ShipmentKey
+      }</a>`;
 
     if (RecruiterProfileFirstName && RecruiterProfileSurName) {
       const SendInviteIntoShipment = await SendEmail(
