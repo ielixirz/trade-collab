@@ -227,8 +227,19 @@ class Shipment extends Component {
     );
     console.log('etd', moment.unix(this.state.input.etd));
     console.log('eta', moment.unix(this.state.input.eta));
-    masterParamter.ShipperCompanyName = this.state.input.exporter;
-    masterParamter.ConsigneeCompanyName = this.state.input.importer;
+    if (parameter.ShipmentCreatorType === 'Importer') {
+      masterParamter.ShipperCompanyName = this.state.input.exporter;
+
+      masterParamter.ConsigneeCompanyName = this.state.companySelect.CompanyName;
+    } else if (parameter.ShipmentCreatorType === 'Exporter') {
+      masterParamter.ShipperCompanyName = this.state.companySelect.CompanyName;
+
+      masterParamter.ConsigneeCompanyName = this.state.input.importer;
+    } else {
+      masterParamter.ShipperCompanyName = this.state.input.exporter;
+      masterParamter.ConsigneeCompanyName = this.state.input.importer;
+    }
+
     console.log('input ', { parameter, referenceParameter, masterParamter });
     CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData(
       parameter,
