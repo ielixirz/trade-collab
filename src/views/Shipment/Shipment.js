@@ -207,9 +207,9 @@ class Shipment extends Component {
     parameter.ShipmentCreateTimestamp = new Date().getTime();
     parameter.ShipmentCreatorCompanyName = this.state.companySelect.CompanyName;
     parameter.ShipmentCreatorCompanyKey = this.state.companySelect.CompanyKey;
-
-    if (isValidEmail(input.to) && this.props.user.email !== input.to) {
-      parameter.ShipmentPartnerEmail = input.to;
+    const partnerMail = input.to[0].id;
+    if (isValidEmail(partnerMail) && this.props.user.email !== partnerMail) {
+      parameter.ShipmentPartnerEmail = partnerMail;
     }
 
     referenceParameter.ShipmentReferenceID = this.state.input.ref;
