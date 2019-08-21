@@ -1118,19 +1118,13 @@ exports.NotiBellAndEmailInviteToJoinCompany = CloudFunctionsRegionsAsia.firestor
 
     Content = Content + ContentDescription;
 
-    const ButtonRedirect = `<a style="width: 400px;
-      font-size:14px;
-      font-weight:500;
-      letter-spacing:0.25px;
-      text-decoration:none;
-      text-transform:none;
-      display:inline-block;
-      border-radius:8px;
-      padding:18px 0;
-      background-color:rgba(255, 90 , 95, 1);
-      color:#ffffff;" class="redirectbutton" href='https://weeklyorder-staging.web.app/#/network/company/${
+    const ButtonRedirect = `<a style="
+      font-size:14px;"
+      href='https://weeklyorder-staging.web.app/#/network/company/${
         snapshot.data().CompanyInvitationCompanyKey
-      }'>Join Now</a>`;
+      }'>https://weeklyorder-staging.web.app/#/network/company/${
+        snapshot.data().CompanyInvitationCompanyKey
+      }</a>`;
 
     const SendNotiEmail = await SendEmail(
       InviteToJoinCompanyTemplate(UserInfoEmail, HeaderText, HeaderHtml, Content, ButtonRedirect)
