@@ -370,8 +370,8 @@ exports.OnCreateShipment = CloudFunctionsRegionsAsia.firestore
 
       const ChatRoomID = AddChatRoom.id;
 
-      const CreatorCompanyName = snapshot.data().ShipmentCompanyName;
-      const CreatorCompanyKey = snapshot.data().ShipmentCompanyKey;
+      const CreatorCompanyName = snapshot.data().ShipmentCreatorCompanyName;
+      const CreatorCompanyKey = snapshot.data().ShipmentCreatorCompanyKey;
       const CreatorProfileFirstName = snapshot.data().ShipmentCreatorProfileFirstName;
       const CreatorProfileSurName = snapshot.data().ShipmentCreatorProfileSurName;
 
