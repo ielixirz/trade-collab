@@ -88,8 +88,8 @@ class Shipment extends Component {
         method: 1,
         type: 1,
         details: '',
-        etd: '',
-        eta: '',
+        etd: 0,
+        eta: 0,
         newCompanyName: '',
         importer: '',
         exporter: ''
@@ -204,10 +204,7 @@ class Shipment extends Component {
     parameter.ShipmentCreatorProfileFirstName = this.props.sender.ProfileFirstname;
     parameter.ShipmentCreatorProfileSurName = this.props.sender.ProfileSurname;
     parameter.ShipmentCreatorProfileKey = this.props.sender.id;
-    parameter.ShipmentProductName = this.state.input.product;
     parameter.ShipmentCreateTimestamp = new Date().getTime();
-    parameter.ShipmentETD = this.state.input.eta;
-    parameter.ShipmentETAPort = this.state.input.etd;
 
     if (isValidEmail(input.to) && this.props.user.email !== input.to) {
       parameter.ShipmentPartnerEmail = input.to;
@@ -219,18 +216,11 @@ class Shipment extends Component {
 
     masterParamter.ShipmentDetailProduct = this.state.input.product;
     masterParamter.ShipmentDetailPriceDescriptionOfGoods = this.state.input.details;
+    masterParamter.ShipperETDDate = parseInt(this.state.input.etd);
+    masterParamter.ConsigneeETAPortDate = parseInt(this.state.input.eta);
+    masterParamter.ShipperCompanyName = this.state.input.exporter;
+    masterParamter.ConsigneeCompanyName = this.state.input.importer;
 
-    // ShipmentDetailShippingLine (string)
-    // ShipmentDetailPriceDescriptionOfGoods (string)
-    // ShipmentDetailContainerNumber (string)
-    // ShipmentDetailBillofLandingNumber (string)
-    // ShipmentDetailOriginalDocumentTrackingNumber (string)
-    // ShipmentDetailProduct (string)
-    // ConsigneeCompanyName (string)
-    // ConsigneePort (string)
-    // ConsigneeETAPortDate (timestamp)
-    // ConsigneeETAWarehouseDate (timestamp)
-    // ConsigneeCountry (string)
 
     CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData(
       parameter,
@@ -239,8 +229,12 @@ class Shipment extends Component {
     ).subscribe({
       next: data => {
         this.fetchShipmentReload();
+        this.props.history.push(`/chat/${shipmentResult[0]}`);
+        
       },
-      error: () => {}
+      error: (error) => {
+        console.log('error' + error)
+      }
     });
 
     this.setState(prevState => ({
