@@ -481,15 +481,6 @@ class ChatWithHeader extends Component {
                   )}
                 </DropdownMenu>
               </UncontrolledDropdown>
-              <Select
-                onChange={e => {
-                  this.setState({ company: e });
-                }}
-                name="company"
-                placeholder="Select Company"
-                options={options}
-                value={this.state.company}
-              />
             </Col>
             <Col xs={3}>
               <Select
