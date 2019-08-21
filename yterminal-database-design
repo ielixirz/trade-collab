@@ -12,6 +12,9 @@
         ShipmentPriceDescription (string)
         ShipmentCreatorType (string) *Importer or Exporter
         ShipmentCreatorUserKey (string)
+        ShipmentCreatorCompanyName (string)
+        ShipmentCreatorCompanyKey (string)
+        ShipmentCreatorUserKey (string)
         ShipmentCreateTimestamp (timestamp)
         ShipmentLastestUpdateTimestamp (timestamp)
         ShipmentMemberList (array <string>)
