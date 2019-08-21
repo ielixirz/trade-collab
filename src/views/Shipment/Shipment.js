@@ -218,29 +218,36 @@ class Shipment extends Component {
 
     masterParamter.ShipmentDetailProduct = this.state.input.product;
     masterParamter.ShipmentDetailPriceDescriptionOfGoods = this.state.input.details;
-    masterParamter.ShipperETDDate = parseInt(this.state.input.etd);
-    masterParamter.ConsigneeETAPortDate = parseInt(this.state.input.eta);
+    masterParamter.ShipperETDDate = firebase.firestore.Timestamp.fromDate(
+      moment.unix(this.state.input.etd).toDate()
+    );
+
+    masterParamter.ConsigneeETAPortDate = firebase.firestore.Timestamp.fromDate(
+      moment.unix(this.state.input.eta).toDate()
+    );
+    console.log('etd', moment.unix(this.state.input.etd));
+    console.log('eta', moment.unix(this.state.input.eta));
     masterParamter.ShipperCompanyName = this.state.input.exporter;
     masterParamter.ConsigneeCompanyName = this.state.input.importer;
     console.log('input ', { parameter, referenceParameter, masterParamter });
-    // CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData(
-    //   parameter,
-    //   referenceParameter,
-    //   masterParamter
-    // ).subscribe({
-    //   next: shipmentResult => {
-    //     this.fetchShipmentReload();
-    //     this.props.history.push(`/chat/${shipmentResult[0]}`);
-    //   },
-    //   error: error => {
-    //     console.log('error' + error);
-    //   }
-    // });
-    //
-    // this.setState(prevState => ({
-    //   modal: !prevState.modal,
-    //   input: {}
-    // }));
+    CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData(
+      parameter,
+      referenceParameter,
+      masterParamter
+    ).subscribe({
+      next: shipmentResult => {
+        this.fetchShipmentReload();
+        this.props.history.push(`/chat/${shipmentResult[0]}`);
+      },
+      error: error => {
+        console.log('error' + error);
+      }
+    });
+
+    this.setState(prevState => ({
+      modal: !prevState.modal,
+      input: {}
+    }));
   }
 
   dropdown() {
