@@ -18,7 +18,11 @@ import {
   PopoverBody,
   Label,
   Form,
-  FormGroup
+  FormGroup,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
 } from 'reactstrap';
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
@@ -37,7 +41,10 @@ import {
   UpdateChatRoomMember,
   UpdateChatRoomMessageReader
 } from '../../../service/chat/chat';
-import { GetCompanyMember } from '../../../service/company/company';
+import {
+  CombineCreateCompanyWithCreateCompanyMember,
+  GetCompanyMember
+} from '../../../service/company/company';
 import { CreateChatMultipleInvitation } from '../../../service/join/invite';
 import { ClearUnReadChatMessage } from '../../../service/personalize/personalize';
 import TableLoading from '../../../component/svg/TableLoading';
@@ -81,13 +88,69 @@ class ChatWithHeader extends Component {
           ShipmentReferenceCompanyKey: ''
         }
       },
+      companyinput: {
+        role: 1,
+        from: '',
+        to: [],
+        product: '',
+        ref: '',
+        bound: '',
+        method: 1,
+        type: 1,
+        details: '',
+        etd: '',
+        eta: '',
+        newCompanyName: '',
+        importer: '',
+        exporter: ''
+      },
+      inputComapany: false,
 
       submiting: {},
       sideCollpase: 'SHIPMENT'
     };
 
     this.msgChatRef = React.createRef();
+    this.writeText = this.writeText.bind(this);
   }
+
+  toggleCompanyState = () => {
+    this.setState({
+      inputComapany: !this.state.inputComapany
+    });
+  };
+
+  createCompany = () => {
+    const userData = {
+      UserMemberEmail: this.props.user.email,
+      UserMemberPosition: '-',
+      UserMemberRoleName: 'Owner',
+      CompanyUserAccessibilityRolePermissionCode: '11111111111111',
+      UserMemberCompanyStandingStatus: 'Active',
+      UserMemberJoinedTimestamp: new Date()
+    };
+
+    const companyData = {
+      CompanyName: this.state.companyinput.newCompanyName,
+      CompanyID: this.state.companyinput.newCompanyName
+    };
+
+    CombineCreateCompanyWithCreateCompanyMember(
+      companyData,
+      this.props.user.uid,
+      userData
+    ).subscribe(res => {
+      console.log('Add company res', _.compact(res));
+      this.props.companies.push({ ...companyData, CompanyKey: _.compact(res)[1] });
+      this.setState({
+        inputComapany: false,
+        companyinput: {
+          ...this.state.companyinput,
+          newCompanyName: ''
+        }
+      });
+    });
+  };
 
   componentWillMount() {
     const { ShipmentKey } = this.props;
@@ -297,7 +360,16 @@ class ChatWithHeader extends Component {
       });
     }
   }
+  writeText(e) {
+    const { name, value } = e.target;
 
+    this.setState({
+      companyinput: {
+        ...this.state.companyinput,
+        [name]: value
+      }
+    });
+  }
   renderAssignCompany() {
     const { user, ShipmentData, ShipmentKey, ChatRoomKey, members: member, shipments } = this.props;
     const members = _.get(shipments, `${ShipmentKey}.ShipmentMember`, []);
@@ -310,7 +382,7 @@ class ChatWithHeader extends Component {
       value: item.CompanyKey,
       label: item.CompanyName
     }));
-
+    console.log(options, 'options');
     const roleOption = [];
     _.forEach(this.state.availableRole, (role, index) => {
       if (!role) {
@@ -348,15 +420,94 @@ class ChatWithHeader extends Component {
 
           <Row>
             <Col xs={4}>
-              <Select
-                onChange={e => {
-                  this.setState({ company: e });
-                }}
-                name="company"
-                placeholder="Select Company"
-                options={options}
-                value={this.state.company}
-              />
+              <UncontrolledDropdown style={{ marginLeft: '16px' }}>
+                <DropdownToggle tag={'p'}>
+                  <Select
+                    className={'companySelect'}
+                    onChange={e => {
+                      this.setState({ company: e });
+                    }}
+                    name="company"
+                    placeholder="Select Company"
+                    options={options}
+                    value={this.state.company}
+                    isDisabled={true}
+                  />
+                </DropdownToggle>
+
+                <DropdownMenu
+                  modifiers={{
+                    setMaxHeight: {
+                      enabled: true,
+                      order: 890,
+                      fn: data => {
+                        return {
+                          ...data,
+                          styles: {
+                            ...data.styles,
+                            overflow: 'auto',
+                            maxHeight: 500
+                          }
+                        };
+                      }
+                    }
+                  }}
+                >
+                  <DropdownItem disabled className="shipment-header">
+                    Share with shipping with people in
+                  </DropdownItem>
+
+                  {_.map(options, item => (
+                    <DropdownItem
+                      onClick={() => {
+                        this.setState({ company: item });
+                      }}
+                      className="shipment-item-box"
+                    >
+                      {item.label}
+                    </DropdownItem>
+                  ))}
+                  {this.state.inputComapany ? (
+                    <div>
+                      <Input
+                        style={{ marginLeft: '8px', marginRight: '8px', width: '90%' }}
+                        type="text"
+                        name="newCompanyName"
+                        id="newCompanyName"
+                        placeholder="Input New Company Name"
+                        onChange={this.writeText}
+                        value={this.state.companyinput.newCompanyName}
+                      />
+
+                      <Row>
+                        <Col xs="4" />
+                        <Col xs="3">
+                          <Button
+                            className="company-shipment-button"
+                            color="white"
+                            onClick={this.toggleCompanyState}
+                          >
+                            Cancel
+                          </Button>
+                        </Col>
+                        <Col xs="3">
+                          <Button
+                            className="company-shipment-button"
+                            color="danger"
+                            onClick={this.createCompany}
+                          >
+                            Save
+                          </Button>
+                        </Col>
+                      </Row>
+                    </div>
+                  ) : (
+                    <Button className="company-shipment" onClick={this.toggleCompanyState}>
+                      + Create New Company
+                    </Button>
+                  )}
+                </DropdownMenu>
+              </UncontrolledDropdown>
             </Col>
             <Col xs={3}>
               <Select
@@ -721,6 +872,7 @@ class ChatWithHeader extends Component {
       onFileDrop,
       shipments
     } = this.props;
+    console.log('this.state', this.state);
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
     const members = _.get(shipments, `${ShipmentKey}.ShipmentMember`, []);
 

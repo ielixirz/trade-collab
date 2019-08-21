@@ -308,6 +308,7 @@ textarea {
 .btn-default:hover {
   background-color: rgb(22, 160, 133) !important;
 }
+
 .btn-default1:hover {
   background-color: rgb(22, 160, 133) !important;
 }
@@ -333,7 +334,18 @@ textarea {
   width: 33px;
   margin-right: 10px;
 }
+.company-shipment{
+  margin: 4px;
+  border-radius: 3px;
+  background-color: #d6d6d6;
+  width: -webkit-fill-available;
+}
 
+
+.company-shipment-button{
+  margin: 4px;
+  border-radius: 3px;
+}
 .messaging {
   padding: 0 0 50px 0;
 }
@@ -385,6 +397,21 @@ textarea {
   background-color: #ffffff;
   border-color: #e4e7ea;
   width: 50px;
+}
+.btn-white{
+  color: hsl(0,0%,50%);
+  background-color: #ffffff;
+  border-color: #e4e7ea;
+}
+.companySelect div:first-child{
+  background-color: #ffffff !important;
+
+}
+
+.btn-white:hover{
+  color: hsl(0,0%,50%);
+  background-color: #ffffff;
+  border-color: #e4e7ea;
 }
 
 .btn-default1 {
@@ -609,4 +636,10 @@ h2.time-background:before {
 i.cancel-invite {
   margin: 8px 0px 0px 10px !important;
   cursor: pointer;
+}
+
+.XSuggest {
+  .list-unstyled {
+    top: 1.7rem;
+  }
 }

@@ -36,7 +36,16 @@ class MemberInChat extends Component {
   }
 
   render() {
-    let { member, toggleBlocking } = this.props;
+    let { member, isEdit, toggleBlocking } = this.props;    
+    let roleStringList = [];
+    var message = ""
+    
+    _.forEach(member, item => {
+      if (!roleStringList[item.ChatRoomMemberRole]){
+        roleStringList[item.ChatRoomMemberRole] = true; 
+        message = message + item.ChatRoomMemberRole + ", "; 
+      }
+    })
 
     return (
       <div>
@@ -52,22 +61,20 @@ class MemberInChat extends Component {
               </span>
             )}
             <span onClick={this.toggle} style={{}}>
-              <span style={{ cursor: 'pointer' }}>{this.props.title}</span>
+              <span style={{ cursor: 'pointer' , fontWeight:'bold'}}>{this.props.title} ({member.length}) 
+                <span style={{fontSize:'12px' , marginLeft: '12px', color: '#6a6a6a'}}> {message.slice(0, -2)}</span>
+              </span>
             </span>
           </Col>
           <Col xs="6" sm="3" />
           <Col xs="6" sm="2" />
         </Row>
-        {this.props.individual ? (
-          <div />
-        ) : (
-          <hr style={{ borderTopWidth: 1, borderStyle: 'solid', borderColor: '#333' }} />
-        )}
         <Collapse isOpen={this.state.collapse}>
           {member.map(item => {
-            return <ListMember toggleBlocking={toggleBlocking} item={item} {...this.props} />;
+            return <ListMember toggleBlocking={toggleBlocking} item={item} {...this.props} isEdit={isEdit}/>;
           })}
         </Collapse>
+
       </div>
     );
   }

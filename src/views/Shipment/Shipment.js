@@ -4,7 +4,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/sort-comp */
-/* eslint-disable filenames/match-regex */
 import firebase from 'firebase';
 import React, { Component } from 'react';
 import {
@@ -42,11 +41,15 @@ import { fetchShipments, fetchMoreShipments, searching } from '../../actions/shi
 import {
   CombineShipmentAndShipmentReference,
   CreateShipment,
+  GetLastestShipment,
   CreateShipmentReference,
   EditShipment,
   SearchShipment,
-  UpdateShipmentReference
+  UpdateShipmentReference,
+  CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData
 } from '../../service/shipment/shipment';
+import { CombineCreateCompanyWithCreateCompanyMember } from '../../service/company/company';
+
 import { UpdateMasterData } from '../../service/masterdata/masterdata';
 import './Shipment.scss';
 import { GetUserCompany } from '../../service/user/user';
@@ -59,9 +62,15 @@ import DatePicker from 'react-date-picker';
 import moment from 'moment';
 import { isValidEmail } from '../../utils/validation';
 import { CreateChatMultipleInvitation } from '../../service/join/invite';
+import Airplane from '../../component/svg/Airplane';
+import Boat from '../../component/svg/Boat';
+import Truck from '../../component/svg/Truck';
+import XCalendar from '../../component/XCalendarV3';
+import XSuggest from '../../component/XSuggestV2';
 
 const WAIT_INTERVAL = 1000;
 const ENTER_KEY = 13;
+
 class Shipment extends Component {
   constructor(props) {
     super(props);
@@ -72,17 +81,26 @@ class Shipment extends Component {
       input: {
         role: 1,
         from: '',
-        to: '',
+        to: [],
         product: '',
         ref: '',
         bound: '',
-        method: '',
-        type: ''
+        method: 1,
+        type: 1,
+        details: '',
+        etd: 0,
+        eta: 0,
+        newCompanyName: '',
+        importer: '',
+        exporter: ''
       },
       companies: {},
       modal: false,
       dropdownOpen: false,
-      blocking: true
+      blocking: true,
+      inputCompany: false,
+      swapRolePage: 0,
+      companySelect: {}
     };
     this.fetchMoreShipment = this.fetchMoreShipment.bind(this);
     this.toggle = this.toggle.bind(this);
@@ -105,11 +123,26 @@ class Shipment extends Component {
     this.setState({ blocking: block });
   }
 
+  toggleSwapPage = () => {
+    this.setState({ swapRolePage: !this.state.swapRolePage });
+  };
+
   modal() {
     this.setState(prevState => ({
       modal: !prevState.modal
     }));
   }
+
+  // getLastestShipment = () => {
+  //   GetLastestShipment(this.props.user.uid).subscribe({
+  //     next: (data) => {
+  //       console.log("complete" + data);
+  //     },
+  //     error: (error) => {
+  //       console.log("error" + error);
+  //     },
+  //   });
+  // }
 
   createShipment() {
     const { input } = this.state;
@@ -131,6 +164,8 @@ class Shipment extends Component {
   }
 */
     const parameter = {};
+    const referenceParameter = {};
+    const masterParamter = {};
     switch (input.role) {
       case 1:
         parameter.ShipmentCreatorType = 'Importer';
@@ -139,46 +174,85 @@ class Shipment extends Component {
         parameter.ShipmentCreatorType = 'Exporter';
         break;
       case 3:
-        parameter.ShipmentCreatorType = 'Freight Forwarder';
+        parameter.ShipmentCreatorType = 'Inbound Forwarder';
         break;
       case 4:
-        parameter.ShipmentCreatorType = 'Custom Broker';
+        parameter.ShipmentCreatorType = 'Outbound Forwarder';
+        break;
+      case 5:
+        parameter.ShipmentCreatorType = 'Inbound Custom Broker';
+        break;
+      case 6:
+        parameter.ShipmentCreatorType = 'Outbound Custom Broker';
         break;
       default:
         break;
     }
+
     parameter.ShipmentProductName = input.product;
     parameter.ShipmentStatus = 'Planning';
 
     parameter.ShipmentCreatorUserKey = this.props.user.uid;
-    if (input.role > 2) {
-      if (input.bound === 1) {
-        parameter.ShipmentCreatorType = `Inbound ${parameter.ShipmentCreatorType}`;
-      } else {
-        parameter.ShipmentCreatorType = `Outbound ${parameter.ShipmentCreatorType}`;
-      }
-    }
-    if (isValidEmail(input.to) && this.props.user.email !== input.to) {
-      parameter.ShipmentPartnerEmail = input.to;
-    }
+    // if (input.role > 2) {
+    //   if (input.bound === 1) {
+    //     parameter.ShipmentCreatorType = `Inbound ${parameter.ShipmentCreatorType}`;
+    //   } else {
+    //     parameter.ShipmentCreatorType = `Outbound ${parameter.ShipmentCreatorType}`;
+    //   }
+    // }
+    // parameter.ShipmentSellerCompanyName = this.state.companySelect.CompanyName;
     parameter.ShipmentCreatorProfileFirstName = this.props.sender.ProfileFirstname;
     parameter.ShipmentCreatorProfileSurName = this.props.sender.ProfileSurname;
     parameter.ShipmentCreatorProfileKey = this.props.sender.id;
-
     parameter.ShipmentCreateTimestamp = new Date().getTime();
-    CreateShipment(parameter).subscribe({
-      next: createdShipment => {
-        this.fetchShipmentReload();
-        const shipmentKey = createdShipment.id;
-        const inviteMember = [];
+    parameter.ShipmentCreatorCompanyName = this.state.companySelect.CompanyName;
+    parameter.ShipmentCreatorCompanyKey = this.state.companySelect.CompanyKey;
+    const partnerMail = input.to[0].id;
+    if (isValidEmail(partnerMail) && this.props.user.email !== partnerMail) {
+      parameter.ShipmentPartnerEmail = partnerMail;
+    }
 
-        UpdateMasterData(createdShipment.id, 'DefaultTemplate', {
-          ShipmentDetailProduct: parameter.ShipmentProductName
-        }).subscribe(() => {
-          this.props.history.push(`/chat/${shipmentKey}`);
-        });
+    referenceParameter.ShipmentReferenceID = this.state.input.ref;
+    referenceParameter.ShipmentReferenceCompanyName = this.state.companySelect.CompanyName;
+    referenceParameter.ShipmentReferenceCompanyKey = this.state.companySelect.CompanyKey;
+
+    masterParamter.ShipmentDetailProduct = this.state.input.product;
+    masterParamter.ShipmentDetailPriceDescriptionOfGoods = this.state.input.details;
+    masterParamter.ShipperETDDate = firebase.firestore.Timestamp.fromDate(
+      moment.unix(this.state.input.etd).toDate()
+    );
+
+    masterParamter.ConsigneeETAPortDate = firebase.firestore.Timestamp.fromDate(
+      moment.unix(this.state.input.eta).toDate()
+    );
+    console.log('etd', moment.unix(this.state.input.etd));
+    console.log('eta', moment.unix(this.state.input.eta));
+    if (parameter.ShipmentCreatorType === 'Importer') {
+      masterParamter.ShipperCompanyName = this.state.input.exporter;
+
+      masterParamter.ConsigneeCompanyName = this.state.companySelect.CompanyName;
+    } else if (parameter.ShipmentCreatorType === 'Exporter') {
+      masterParamter.ShipperCompanyName = this.state.companySelect.CompanyName;
+
+      masterParamter.ConsigneeCompanyName = this.state.input.importer;
+    } else {
+      masterParamter.ShipperCompanyName = this.state.input.exporter;
+      masterParamter.ConsigneeCompanyName = this.state.input.importer;
+    }
+
+    console.log('input ', { parameter, referenceParameter, masterParamter });
+    CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData(
+      parameter,
+      referenceParameter,
+      masterParamter
+    ).subscribe({
+      next: shipmentResult => {
+        this.fetchShipmentReload();
+        this.props.history.push(`/chat/${shipmentResult[0]}`);
       },
-      error: () => {}
+      error: error => {
+        console.log('error' + error);
+      }
     });
 
     this.setState(prevState => ({
@@ -310,6 +384,7 @@ class Shipment extends Component {
 
   componentDidMount() {
     const { search } = this.props;
+
     if (!_.isEmpty(this.fetchShipment)) {
       this.fetchShipment.unsubscribe();
       if (!_.isEmpty(this.combineShipment)) {
@@ -319,7 +394,7 @@ class Shipment extends Component {
     if (_.isEmpty(search)) {
       this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
         next: notification => {
-          this.combineShipment = CombineShipmentAndShipmentReference(
+          this.combinnfeShipment = CombineShipmentAndShipmentReference(
             '',
             '',
             'asc',
@@ -393,6 +468,48 @@ class Shipment extends Component {
     });
   }
 
+  toggleCompanyState = () => {
+    this.setState({
+      inputComapany: !this.state.inputComapany
+    });
+  };
+
+  toggleCompanyState = () => {
+    this.setState({
+      inputComapany: !this.state.inputComapany
+    });
+  };
+
+  createCompany = () => {
+    const userData = {
+      UserMemberEmail: this.props.user.email,
+      UserMemberPosition: '-',
+      UserMemberRoleName: 'Owner',
+      CompanyUserAccessibilityRolePermissionCode: '11111111111111',
+      UserMemberCompanyStandingStatus: 'Active',
+      UserMemberJoinedTimestamp: new Date()
+    };
+
+    const companyData = {
+      CompanyName: this.state.input.newCompanyName,
+      CompanyID: this.state.input.newCompanyName
+    };
+
+    CombineCreateCompanyWithCreateCompanyMember(
+      companyData,
+      this.props.user.uid,
+      userData
+    ).subscribe(() => {
+      this.props.companies.push(companyData);
+      this.setState({
+        input: {
+          ...this.state.input,
+          newCompanyName: ''
+        }
+      });
+    });
+  };
+
   componentDidUpdate(prevProps, prevState) {
     if (prevState.activeTab !== this.state.activeTab) {
     }
@@ -453,6 +570,24 @@ class Shipment extends Component {
     });
   }
 
+  setDateState(name, timestamp) {
+    this.setState({
+      input: {
+        ...this.state.input,
+        [name]: timestamp
+      }
+    });
+  }
+
+  setDateState(name, timestamp) {
+    this.setState({
+      input: {
+        ...this.state.input,
+        [name]: timestamp
+      }
+    });
+  }
+
   handleChange = selectedOption => {
     console.log(selectedOption);
     this.setState({
@@ -465,17 +600,24 @@ class Shipment extends Component {
 
   validateCreateShipment() {
     const checkRole = +this.state.input.role;
-    const checkBound = +this.state.input.bound;
 
-    if (checkRole === 1 || checkRole === 2) {
+    if (_.isEmpty(this.state.companySelect)) {
+      return false;
+    }
+
+    if (checkRole >= 1 && checkRole <= 6) {
       return true;
     }
-    if (checkRole === 3 || checkRole === 4) {
-      if (checkBound === '' || checkBound === 0) {
-        return false;
-      }
-      return true;
-    }
+
+    // if (checkRole === 1 || checkRole === 2) {
+    //   return true;
+    // }
+    // if (checkRole === 3 || checkRole === 4) {
+    //   if (checkBound === '' || checkBound === 0) {
+    //     return false;
+    //   }
+    //   return true;
+    // }
     return false;
   }
 
@@ -508,6 +650,51 @@ class Shipment extends Component {
       this.triggerChange();
     }
   }
+
+  getRoleMessage = role => {
+    switch (role) {
+      case 1:
+        return 'Importer';
+      case 2:
+        return 'Exporter';
+      case 3:
+        return 'Inbound Forwarder';
+      case 4:
+        return 'Outbound Forwarder';
+      case 5:
+        return 'Inbound Custom Broker';
+      case 6:
+        return 'Outbound Custom Broker';
+      default:
+        break;
+    }
+  };
+
+  getShippingMessage = type => {
+    switch (type) {
+      case 1:
+        return 'Sea Ocean Freight';
+      case 3:
+        return 'Air Freight';
+      case 4:
+        return 'Truck';
+    }
+  };
+
+  getContainerMessage = type => {
+    switch (type) {
+      case 1:
+        return 'LCL';
+      case 2:
+        return 'FCL';
+    }
+  };
+
+  setSelectCompany = company => {
+    this.setState({
+      companySelect: company
+    });
+  };
 
   triggerChange() {
     this.props.fetchShipments({}, []);
@@ -657,7 +844,17 @@ class Shipment extends Component {
 
   render() {
     const { role, bound, method, type } = this.state.input;
-    const { query: typeShipment, shipments } = this.props;
+    const { query: typeShipment, network, shipments } = this.props;
+
+    console.log('Shipment state', this.state);
+
+    let suggestion = _.map(network, item => {
+      return {
+        id: item.UserMemberEmail,
+        label: item.UserMemberEmail
+      };
+    });
+
     console.log('shipments', shipments);
     const result = _.filter(shipments, item => {
       let keyword = '';
@@ -695,13 +892,264 @@ class Shipment extends Component {
     });
     return (
       <div className="shipment-table-main-container">
-        <Modal isOpen={this.state.modal} toggle={this.modal} className="create-shipment">
-          <ModalHeader toggle={this.modal}>
-            <h2>Create New Shipment</h2>
+        <Modal size="lg" isOpen={this.state.modal} toggle={this.modal} className="shipment-modal">
+          <ModalHeader style={{ border: '0px' }} toggle={this.modal}>
+            Create New Shipment
           </ModalHeader>
-          <ModalBody>
-            {role > 2 ? (
-              <div>
+          <ModalBody style={{ margin: '8px' }}>
+            <Row>
+              <UncontrolledDropdown style={{ marginLeft: '16px' }}>
+                <DropdownToggle tag="p" style={{ textDecoration: 'underline', fontWeight: 'bold' }}>
+                  {_.isEmpty(this.state.companySelect)
+                    ? 'Select Company'
+                    : this.state.companySelect.CompanyName}
+                </DropdownToggle>
+                <DropdownMenu>
+                  <DropdownItem disabled className="shipment-header">
+                    Share with shipping with people in
+                  </DropdownItem>
+
+                  {_.map(this.props.companies, item => (
+                    <DropdownItem
+                      onClick={() => {
+                        this.setSelectCompany(item);
+                      }}
+                      className="shipment-item-box"
+                    >
+                      {item.CompanyName}
+                    </DropdownItem>
+                  ))}
+                  {this.state.inputComapany ? (
+                    <div>
+                      <Input
+                        style={{ marginLeft: '8px', marginRight: '8px', width: '90%' }}
+                        type="text"
+                        name="newCompanyName"
+                        id="newCompanyName"
+                        placeholder="Input New Company Name"
+                        onChange={this.writeText}
+                        value={this.state.input.newCompanyName}
+                      />
+
+                      <Row>
+                        <Col xs="4" />
+                        <Col xs="3">
+                          <Button
+                            className="company-shipment-button"
+                            color="white"
+                            onClick={this.toggleCompanyState}
+                          >
+                            Cancel
+                          </Button>
+                        </Col>
+                        <Col xs="3">
+                          <Button
+                            className="company-shipment-button"
+                            color="danger"
+                            onClick={this.createCompany}
+                          >
+                            Save
+                          </Button>
+                        </Col>
+                      </Row>
+                    </div>
+                  ) : (
+                    <Button className="company-shipment" onClick={this.toggleCompanyState}>
+                      + Create New Company
+                    </Button>
+                  )}
+                </DropdownMenu>
+              </UncontrolledDropdown>
+
+              <div style={{ marginLeft: '8px', marginRight: '8px' }}>is</div>
+              <UncontrolledDropdown>
+                <DropdownToggle tag="p" style={{ textDecoration: 'underline', fontWeight: 'bold' }}>
+                  {this.getRoleMessage(this.state.input.role)}
+                </DropdownToggle>
+                {this.state.swapRolePage == 0 ? (
+                  <DropdownMenu>
+                    <DropdownItem disabled className="shipment-header">
+                      Switch role for this shipment
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={() => {
+                        this.setRole(3);
+                      }}
+                      className="shipment-item-box"
+                    >
+                      Inbound Forwarder
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={() => {
+                        this.setRole(4);
+                      }}
+                      className="shipment-item-box"
+                    >
+                      Outbound Forwarder
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={() => {
+                        this.setRole(5);
+                      }}
+                      className="shipment-item-box"
+                    >
+                      Inbound Custom Broker
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={() => {
+                        this.setRole(6);
+                      }}
+                      className="shipment-item-box"
+                    >
+                      Outbound Custom Broker
+                    </DropdownItem>
+
+                    <DropdownItem
+                      toggle={false}
+                      onClick={() => {
+                        this.toggleSwapPage();
+                      }}
+                      className="shipment-item-box"
+                    >
+                      Neither of These
+                    </DropdownItem>
+                  </DropdownMenu>
+                ) : (
+                  <DropdownMenu>
+                    <DropdownItem disabled className="shipment-header">
+                      Switch role for this shipment
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={() => {
+                        this.setRole(1);
+                      }}
+                      className="shipment-item-box"
+                    >
+                      Importer
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={() => {
+                        this.setRole(2);
+                      }}
+                      className="shipment-item-box"
+                    >
+                      Exporter
+                    </DropdownItem>
+
+                    <DropdownItem
+                      toggle={false}
+                      onClick={() => {
+                        this.toggleSwapPage();
+                      }}
+                      className="shipment-item-box"
+                    >
+                      Neither of These
+                    </DropdownItem>
+                  </DropdownMenu>
+                )}
+              </UncontrolledDropdown>
+              <div style={{ marginLeft: '8px', marginRight: '8px' }}>for</div>
+              <UncontrolledDropdown>
+                <DropdownToggle
+                  tag="p"
+                  style={{ textDecoration: 'underline', marginRight: '8px', fontWeight: 'bold' }}
+                >
+                  {this.getShippingMessage(this.state.input.method)}
+                </DropdownToggle>
+
+                <DropdownMenu style={{ width: '200%' }}>
+                  <DropdownItem disabled className="shipment-header">
+                    Freight Method
+                  </DropdownItem>
+                  <DropdownItem
+                    onClick={() => {
+                      this.setMethod(1);
+                    }}
+                    className="shipment-item-box-gray-background"
+                  >
+                    Sea Ocean Freight
+                    <span className="float-right">
+                      <Boat />
+                    </span>
+                  </DropdownItem>
+
+                  {/* <DropdownItem
+                        onClick={() => {
+                          this.setMethod(2);
+                        }}
+                        className="shipment-item-box-gray-background">
+                        Show Both
+                      </DropdownItem> */}
+
+                  <DropdownItem
+                    onClick={() => {
+                      this.setMethod(3);
+                    }}
+                    className="shipment-item-box-gray-background"
+                    disabled
+                  >
+                    Air Freight <span style={{ fontSize: '10px' }}>(Coming Soon)</span>
+                    <span className="float-right">
+                      <Airplane />
+                    </span>
+                  </DropdownItem>
+
+                  <DropdownItem
+                    onClick={() => {
+                      this.setMethod(4);
+                    }}
+                    className="shipment-item-box-gray-background"
+                    disabled
+                  >
+                    Truck <span style={{ fontSize: '10px' }}>(Coming Soon)</span>
+                    <span className="float-right">
+                      <Truck />
+                    </span>
+                  </DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
+
+              <UncontrolledDropdown>
+                <DropdownToggle
+                  tag="p"
+                  style={{ textDecoration: 'underline', marginRight: '8px', fontWeight: 'bold' }}
+                >
+                  {this.getContainerMessage(this.state.input.type)}
+                </DropdownToggle>
+
+                <DropdownMenu>
+                  <DropdownItem disabled className="shipment-header">
+                    Container Load
+                  </DropdownItem>
+                  <DropdownItem
+                    onClick={() => {
+                      this.setType(2);
+                    }}
+                    className="shipment-item-box-gray-background"
+                  >
+                    FCL : Full Container Load
+                  </DropdownItem>
+
+                  <DropdownItem
+                    onClick={() => {
+                      this.setType(1);
+                    }}
+                    className="shipment-item-box-gray-background"
+                    disabled
+                  >
+                    LCL : Less Than Container Load{' '}
+                    <span style={{ fontSize: '10px' }}>(Coming Soon)</span>
+                  </DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
+
+              <div style={{ marginRight: '16px' }}>Container</div>
+            </Row>
+            {/* <div>
                 <FormGroup row>
                   <Label for="To" sm={6}>
                     Your role in this shipment
@@ -720,130 +1168,15 @@ class Shipment extends Component {
                   </Col>
                 </FormGroup>
                 <br />
-              </div>
-            ) : null}
-            <div>
-              <span className="left" style={{ fontWeight: 'bold' }}>
-                {role > 2
-                  ? 'Is this an inbound Shipment or an Outbound Shipment'
-                  : 'Are you Exporting or Importing (Select One)'}
-              </span>
-              <span className="right">
-                <UncontrolledDropdown>
-                  <DropdownToggle tag="p" caret>
-                    Neither one of these?
-                  </DropdownToggle>
-                  {role < 3 ? (
-                    <DropdownMenu>
-                      <DropdownItem disabled>Switch role for this shipment</DropdownItem>
-                      <DropdownItem
-                        onClick={() => {
-                          this.setRole(3);
-                        }}
-                        className="create-shipment-dropdown-item-role"
-                      >
-                        Freight Forwarder
-                      </DropdownItem>
-
-                      <DropdownItem
-                        onClick={() => {
-                          this.setRole(4);
-                        }}
-                        className="create-shipment-dropdown-item-role"
-                      >
-                        Custom Broker
-                      </DropdownItem>
-                    </DropdownMenu>
-                  ) : (
-                    <DropdownMenu>
-                      <DropdownItem disabled>Switch role for this shipment</DropdownItem>
-                      <DropdownItem
-                        onClick={() => {
-                          this.setRole(1);
-                        }}
-                        className="create-shipment-dropdown-item-role"
-                      >
-                        Importer
-                      </DropdownItem>
-
-                      <DropdownItem
-                        onClick={() => {
-                          this.setRole(2);
-                        }}
-                        className="create-shipment-dropdown-item-role"
-                      >
-                        Exporter
-                      </DropdownItem>
-                    </DropdownMenu>
-                  )}
-                </UncontrolledDropdown>
-              </span>
-            </div>
-            <br />
-            <Form>
-              {role > 2 ? (
-                <Row form style={{ marginTop: '7px' }}>
-                  <Col md={3} style={{ marginRight: '10px' }}>
-                    <Button
-                      color="yterminal"
-                      className="create-shipment-role-btn"
-                      onClick={() => {
-                        this.setBound(1);
-                      }}
-                      disabled={bound === 1}
-                    >
-                      Inbound
-                    </Button>
-                  </Col>
-                  <Col md={3}>
-                    <Button
-                      color="yterminal"
-                      className="create-shipment-role-btn"
-                      onClick={() => {
-                        this.setBound(2);
-                      }}
-                      disabled={bound === 2}
-                    >
-                      Outbound
-                    </Button>
-                  </Col>
-                </Row>
-              ) : (
-                <Row form style={{ marginTop: '7px' }}>
-                  <Col md={3} style={{ marginRight: '10px' }}>
-                    <Button
-                      color="yterminal"
-                      className="create-shipment-role-btn"
-                      onClick={() => {
-                        this.setRole(2);
-                      }}
-                      disabled={role === 2}
-                    >
-                      Exporting
-                    </Button>
-                  </Col>
-                  <Col md={3}>
-                    <Button
-                      color="yterminal"
-                      className="create-shipment-role-btn"
-                      style={{ width: '100%' }}
-                      onClick={() => {
-                        this.setRole(1);
-                      }}
-                      disabled={role === 1}
-                    >
-                      Importing
-                    </Button>
-                  </Col>
-                </Row>
-              )}
-              <br />
+              </div> */}
+            <Form style={{ margin: '16px' }}>
               <FormGroup row>
                 <Label for="From" sm={2} className="create-shipment-field-title">
                   From
                 </Label>
                 <Col sm={10}>
                   <Input
+                    className="input-shipment"
                     type="text"
                     name="from"
                     id="from"
@@ -851,139 +1184,159 @@ class Shipment extends Component {
                     value={`${this.props.user.email} (You)`}
                     readonly
                     disabled
+                    autoCorrect="off"
                   />
                 </Col>
               </FormGroup>
 
+              {/* Send E-mail to */}
               <FormGroup row>
                 <Label for="To" sm={2} className="create-shipment-field-title">
                   To
                 </Label>
                 <Col sm={10}>
-                  <Input
+                  {/* <Input
                     type="email"
                     name="to"
                     id="to"
                     onChange={this.writeText}
                     value={this.state.input.to}
+                  /> */}
+                  <XSuggest
+                    className="material"
+                    placeholder="Input your Importers E-mail address"
+                    datasets={suggestion}
+                    idName={'id'}
+                    labelName={'label'}
+                    avatarName={'avatar'}
+                    onAdd={item => this.state.input.to.push(item)}
+                    onRemove={item => this.state.input.to.pop(item)}
+                    onChange={(selects, adds, removes) => console.log(selects, adds, removes)}
                   />
                 </Col>
               </FormGroup>
+              <FormGroup row>
+                <Label for="Product" sm={2} className="create-shipment-field-title">
+                  Ref#
+                </Label>
+                <Col sm={10}>
+                  <Input
+                    className="input-shipment"
+                    type="text"
+                    name="ref"
+                    id="ref"
+                    placeholder="PO, Invoice No. Shipment Name etc. "
+                    onChange={this.writeText}
+                    value={this.state.input.ref}
+                  />
+                </Col>
+              </FormGroup>
+              <br />
+
+              {/* ETA & ETD Calendar */}
+
+              <FormGroup row>
+                <Col sm={{ size: 8, offset: 2 }}>
+                  <XCalendar
+                    start={this.state.input.etd}
+                    startLabel="ETD Port"
+                    end={this.state.input.eta}
+                    endLabel="ETA Port"
+                    tbaValue={'TBA'}
+                    onStartChange={etd => this.setDateState('etd', etd)}
+                    onEndChange={eta => this.setDateState('eta', eta)}
+                  />
+                </Col>
+                {/* <Col sm={{size: 3, offset: 2}}>
+                  <Input
+                    type="text"
+                    name="etd"
+                    id="etd"
+                    onChange={this.writeText}
+                    value={this.state.input.etd}
+                  />
+                </Col>
+                <Col sm={3}>
+                  <Input
+                    type="text"
+                    name="eta"
+                    id="eta"
+                    onChange={this.writeText}
+                    value={this.state.input.eta}
+                  />
+                </Col> */}
+              </FormGroup>
+
               <FormGroup row>
                 <Label for="Product" sm={2} className="create-shipment-field-title">
                   Product
                 </Label>
                 <Col sm={10}>
                   <Input
+                    className="input-shipment"
                     type="text"
                     name="product"
                     id="product"
+                    placeholder="Short Description of goods. "
                     onChange={this.writeText}
                     value={this.state.input.product}
                   />
                 </Col>
               </FormGroup>
 
-              <Row className="show-grid">
-                <Col md={3} />
-                <Col md={6}>
-                  <a id="toggler" href="#" style={{ marginBottom: '1rem' }}>
-                    More details on Freight method and type
-                  </a>
-                </Col>
-                <Col md={3} />
-              </Row>
-
-              <UncontrolledCollapse toggler="#toggler" style={{ marginLeft: '20px' }}>
-                <Row form style={{ marginTop: '15px' }}>
-                  <Label for="freight-method" sm={4} className="create-shipment-field-title">
-                    Freight Method
-                  </Label>
-                </Row>
-                <Row>
-                  <Col md="auto">
-                    <Button
-                      color="yterminal"
-                      onClick={() => {
-                        this.setMethod(1);
-                      }}
-                      style={{
-                        marginRight: '5px'
-                      }}
-                      disabled={method === 1}
-                    >
-                      Ocean Freight
-                    </Button>{' '}
-                    <Button
-                      color="yterminal"
-                      onClick={() => {
-                        this.setMethod(2);
-                      }}
-                      style={{
-                        marginRight: '5px'
-                      }}
-                      disabled={method === 2}
-                    >
-                      Show Both
-                    </Button>{' '}
-                    <Button
-                      color="yterminal"
-                      onClick={() => {
-                        this.setMethod(3);
-                      }}
-                      style={{
-                        marginRight: '5px'
-                      }}
-                      disabled={method === 3}
-                    >
-                      Air Freight
-                    </Button>
-                    <Button
-                      color="yterminal"
-                      onClick={() => {
-                        this.setMethod(4);
-                      }}
-                      style={{
-                        marginRight: '5px'
-                      }}
-                      disabled={method === 4}
-                    >
-                      Truck
-                    </Button>
-                  </Col>
-                  <Col md={3} />
-                </Row>
-                <br />
+              {role == 1 || role >= 3 ? (
                 <FormGroup row>
-                  <Label for="Ref" sm={4} className="create-shipment-field-title">
-                    Shipment Type
+                  <Label for="Exporter" sm={2} className="create-shipment-field-title">
+                    Exporter
                   </Label>
-                  <Col sm={3}>
-                    <Button
-                      color="yterminal"
-                      onClick={() => {
-                        this.setType(1);
-                      }}
-                      className="create-shipment-role-btn"
-                      disabled={type === 1}
-                    >
-                      LCL
-                    </Button>
-                  </Col>
-                  <Col sm={3}>
-                    <Button
-                      color="yterminal"
-                      onClick={() => {
-                        this.setType(2);
-                      }}
-                      className="create-shipment-role-btn"
-                      disabled={type === 2}
-                    >
-                      FCL
-                    </Button>
+                  <Col sm={10}>
+                    <Input
+                      className="input-shipment"
+                      type="text"
+                      name="exporter"
+                      id="exporter"
+                      placeholder="Input Exporter Company Name"
+                      onChange={this.writeText}
+                      value={this.state.input.exporter}
+                    />
                   </Col>
                 </FormGroup>
-              </UncontrolledCollapse>
+              ) : null}
+
+              {role == 2 || role >= 3 ? (
+                <FormGroup row>
+                  <Label for="Importer" sm={2} className="create-shipment-field-title">
+                    Importer
+                  </Label>
+                  <Col sm={10}>
+                    <Input
+                      className="input-shipment"
+                      type="text"
+                      name="importer"
+                      id="importer"
+                      placeholder="Input Importer Company Name"
+                      onChange={this.writeText}
+                      value={this.state.input.importer}
+                    />
+                  </Col>
+                </FormGroup>
+              ) : null}
+              <FormGroup row>
+                <Label for="Details" sm={2} className="create-shipment-field-title">
+                  Details
+                </Label>
+                <Col sm={10}>
+                  <Input
+                    type="textarea"
+                    name="details"
+                    id="details"
+                    rows="4"
+                    placeholder="Description of order, quantity, price of goods etc."
+                    onChange={this.writeText}
+                    value={this.state.input.details}
+                  />
+                </Col>
+              </FormGroup>
             </Form>
           </ModalBody>
           <ModalFooter style={{ border: 'none' }}>
@@ -1099,7 +1452,8 @@ const mapStateToProps = state => {
     sender,
     companies: companyReducer.UserCompany,
     query,
-    search
+    search,
+    network: companyReducer.NetworkEmail
   };
 };
 

@@ -1,12 +1,24 @@
 import React from 'react';
-import { ListGroup, ListGroupItem, Row, Col } from 'reactstrap';
+import { Button ,ListGroup, ListGroupItem, Row, Col } from 'reactstrap';
 import RoleBadges from './RoleBadges.js';
 import _ from 'lodash';
 import { LeaveChatRoomMember } from '../service/chat/chat';
+import UserCircle from '../component/svg/User';
+import Trash from '../component/svg/Trash';
 
 export default class ListMember extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = { deleteStateEnable: false };
+  }
+
+  toggleDeleteState = () => {
+    this.setState(state => ({ deleteStateEnable: !state.deleteStateEnable }));
+  }
+
   render() {
-    const { item: member, toggleBlocking } = this.props;
+    const { item: member, toggleBlocking , isEdit} = this.props;
 
     let email = _.get(member, 'ChatRoomMemberEmail', '');
     let role = _.map(member.ChatRoomMemberRole, item => {
@@ -18,27 +30,21 @@ export default class ListMember extends React.Component {
     return (
       <div>
         <ListGroup flush>
-          <ListGroupItem tag="a" href="#">
+          <ListGroupItem>
             <Row>
-              <Col xs="6" sm="7" className="text-left">
+               <div style={{marginBlockStart : 'auto' , marginLeft : '40px'}}>
+                  <UserCircle/>
+                </div>
+
+              <Col xs="6" sm="6" className="text-left">
                 <span>
-                  <img
-                    style={{ borderRadius: 15 }}
-                    src="https://image.flaticon.com/icons/svg/21/21104.svg"
-                    alt="image"
-                    width="30"
-                    height="30"
-                  />
-                </span>
-                <span style={{ marginLeft: 10 }}>
-                  {member.ChatRoomMemberFirstnameFirstProfile}{' '}
-                  {member.ChatRoomMemberSurnameFirstProfile}
+                  <span className="invite-name" style={{fontFamily : 'Muli', color: '#4a4a4a', fontSize: '14px'}}>{member.ChatRoomMemberFirstnameFirstProfile}{' '}{member.ChatRoomMemberSurnameFirstProfile}</span>
                 </span>
                 <br />
-                <span style={{ marginLeft: 40, fontSize: 12 }}>{email}</span>
+                <span className="invite-email" style={{ fontFamily : 'Muli', color: '#6a6a6a', fontSize: '10px' }}>{email}</span>
               </Col>
-              <Col xs="6" sm="3">
-                {role.map(item => {
+              <Col xs="6" sm="2">
+                {/* {role.map(item => {
                   return (
                     <span
                       className="badge-role"
@@ -53,15 +59,31 @@ export default class ListMember extends React.Component {
                       {item}
                     </span>
                   );
-                })}
+                })} */}
               </Col>
               <Col
                 style={{
                   'z-index': 10
-                }}
-              >
-                <a
-                  href="#"
+                }}>
+
+                { isEdit === true ? 
+                 <span                 
+                   onClick={e => {
+                   e.preventDefault()
+                   this.toggleDeleteState()
+                 }}>
+              {this.state.deleteStateEnable ? 
+              <Row>
+                  <Button 
+                    className="company-shipment-button"
+                    style={{borderRadius : "5px" , border : "solid 1px #070707"}}
+                    color="white" onClick={this.toggleCompanyState}>
+                    Cancel
+                  </Button>
+                  <Button 
+                  className="company-shipment-button"
+                  style={{marginLeft : '4px'}}
+                  color="danger"
                   onClick={e => {
                     e.preventDefault();
                     toggleBlocking(true);
@@ -77,15 +99,22 @@ export default class ListMember extends React.Component {
                       },
                       complete: res => {}
                     });
-                  }}
-                >
-                  <i className="fa fa-trash-o" style={{ opacity: 0.7, marginLeft: 60 }} />
-                </a>
+                  }}>
+                    Remove
+                  </Button>
+                </Row>: 
+                <span className="float-right" style={{marginRight : '73px'}}>         
+                  <Trash/>
+                </span>
+                }                 
+               </span>
+                  :
+                  null}
+              
               </Col>
             </Row>
           </ListGroupItem>
         </ListGroup>
-        <hr className="listHr" />
       </div>
     );
   }

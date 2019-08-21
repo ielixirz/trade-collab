@@ -288,6 +288,11 @@ exports.OnCreateShipment = CloudFunctionsRegionsAsia.firestore
       const MasterDataDefaultTemplateData = GetMasterDataDefaultTemplate.data();
 
       delete MasterDataDefaultTemplateData.ShipmentDetailProduct;
+      delete MasterDataDefaultTemplateData.ShipperETDDate;
+      delete MasterDataDefaultTemplateData.ConsigneeETAPortDate;
+      delete MasterDataDefaultTemplateData.ConsigneeCompanyName;
+      delete MasterDataDefaultTemplateData.ShipperCompanyName;
+      delete MasterDataDefaultTemplateData.ShipmentDetailPriceDescriptionOfGoods;
 
       const CreateShipmentShareData = await admin
         .firestore()
@@ -365,6 +370,11 @@ exports.OnCreateShipment = CloudFunctionsRegionsAsia.firestore
 
       const ChatRoomID = AddChatRoom.id;
 
+      const CreatorCompanyName = snapshot.data().ShipmentCreatorCompanyName;
+      const CreatorCompanyKey = snapshot.data().ShipmentCreatorCompanyKey;
+      const CreatorProfileFirstName = snapshot.data().ShipmentCreatorProfileFirstName;
+      const CreatorProfileSurName = snapshot.data().ShipmentCreatorProfileSurName;
+
       const AddChatRoomMember = await admin
         .firestore()
         .collection('Shipment')
@@ -375,7 +385,11 @@ exports.OnCreateShipment = CloudFunctionsRegionsAsia.firestore
         .add({
           ChatRoomMemberUserKey: ShipmentMemberUserKey,
           ChatRoomMemberEmail: UserEmail,
-          ChatRoomMemberRole: [ShipmetMemberRole]
+          ChatRoomMemberRole: [ShipmetMemberRole],
+          ChatRoomMemberCompanyKey: CreatorCompanyKey,
+          ChatRoomMemberCompanyName: CreatorCompanyName,
+          ChatRoomMemberFirstName: CreatorProfileFirstName,
+          ChatRoomMemberSurName: CreatorProfileSurName
         });
 
       const ShipmentPartnerEmail = snapshot.data().ShipmentPartnerEmail;

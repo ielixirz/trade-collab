@@ -2,7 +2,7 @@ import {
   collection, doc, collectionData, docData,
 } from 'rxfire/firestore';
 import {
-  from, combineLatest, merge, forkJoin,
+  from, combineLatest, merge, forkJoin, of,
 } from 'rxjs';
 import {
   take, concatMap, map, tap, mergeMap, toArray, switchMap, filter,
@@ -95,6 +95,14 @@ export const GetShipmentList = (
 
 export const GetShipmentDetail = ShipmentKey => doc(ShipmentRefPath().doc(ShipmentKey));
 
+export const GetLastestShipment = (ShipmentMemberUserKey) => {
+  const DefaultQuery = ShipmentRefPath()
+  .where('ShipmentMemberList', 'array-contains', ShipmentMemberUserKey)
+  .orderBy('ShipmentCreateTimestamp', 'desc');
+
+  return collectionData(DefaultQuery.limit(1) , 'ShipmentID')
+}
+
 /* Example data CreateShipmentFile
   {
     FileName (string)
@@ -142,7 +150,7 @@ export const GetShipmentMasterDataDetail = (ShipmentKey, GroupType) => doc(Shipm
 export const UpdateShipmentMasterDataDetail = (ShipmentKey, GroupType, Data) => from(
   ShipmentMasterDataRefPath(ShipmentKey)
     .doc(GroupType)
-    .update(Data),
+    .set(Data, { merge: true }),
 );
 
 export const CombineShipmentAndShipmentReference = (
@@ -269,6 +277,7 @@ export const CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMaster
 ) => from(ShipmentRefPath().add(ShipmentData)).pipe(
   map(ShipmentDocResult => ShipmentDocResult.id),
   switchMap(ShipmentId => forkJoin(
+    of(ShipmentId).pipe(take(1)),
     CreateShipmentReference(ShipmentId, ShipmentReferenceData).pipe(take(1)),
     UpdateShipmentMasterDataDetail(ShipmentId, 'DefaultTemplate', ShipmentMasterData).pipe(take(1)),
   )),
