@@ -141,9 +141,10 @@ class ChatWithHeader extends Component {
       userData
     ).subscribe(res => {
       console.log('Add company res', _.compact(res));
-      this.props.companies.push(companyData);
+      this.props.companies.push({ ...companyData, CompanyKey: _.compact(res)[1] });
       this.setState({
-        input: {
+        inputComapany: false,
+        companyinput: {
           ...this.state.companyinput,
           newCompanyName: ''
         }
@@ -420,12 +421,38 @@ class ChatWithHeader extends Component {
           <Row>
             <Col xs={4}>
               <UncontrolledDropdown style={{ marginLeft: '16px' }}>
-                <DropdownToggle tag="p" style={{ textDecoration: 'underline', fontWeight: 'bold' }}>
-                  {_.isEmpty(this.state.company)
-                    ? 'Select Company'
-                    : _.find(options, company => company.value === this.state.company).label}
+                <DropdownToggle tag={'p'}>
+                  <Select
+                    className={'companySelect'}
+                    onChange={e => {
+                      this.setState({ company: e });
+                    }}
+                    name="company"
+                    placeholder="Select Company"
+                    options={options}
+                    value={this.state.company}
+                    isDisabled={true}
+                  />
                 </DropdownToggle>
-                <DropdownMenu>
+
+                <DropdownMenu
+                  modifiers={{
+                    setMaxHeight: {
+                      enabled: true,
+                      order: 890,
+                      fn: data => {
+                        return {
+                          ...data,
+                          styles: {
+                            ...data.styles,
+                            overflow: 'auto',
+                            maxHeight: 500
+                          }
+                        };
+                      }
+                    }
+                  }}
+                >
                   <DropdownItem disabled className="shipment-header">
                     Share with shipping with people in
                   </DropdownItem>
@@ -433,7 +460,7 @@ class ChatWithHeader extends Component {
                   {_.map(options, item => (
                     <DropdownItem
                       onClick={() => {
-                        this.setState({ company: item.value });
+                        this.setState({ company: item });
                       }}
                       className="shipment-item-box"
                     >
@@ -845,6 +872,7 @@ class ChatWithHeader extends Component {
       onFileDrop,
       shipments
     } = this.props;
+    console.log('this.state', this.state);
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
     const members = _.get(shipments, `${ShipmentKey}.ShipmentMember`, []);
 
