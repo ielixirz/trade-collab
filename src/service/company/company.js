@@ -20,6 +20,10 @@ const CompanyUserAccessibilityRefPath = CompanyKey => FirebaseApp.firestore()
   .doc(CompanyKey)
   .collection('CompanyUserAccessibility');
 
+const InternalChatRoomCallableRefFunction = FirebaseApp.functions().httpsCallable(
+  'CreateInternalChatRoomFromFeatureBox',
+);
+
 /* Example CreateCompany
     {
         CompanyName (string)
@@ -148,3 +152,6 @@ export const CompanyUserAccessibilityIsOnlyOneOwner = CompanyKey => collection(C
   take(1),
   map(CompanyUserAccessibilityDoc => CompanyUserAccessibilityDoc.length === 1),
 );
+
+// eslint-disable-next-line max-len
+export const CreateInternalChatRoomFromFeatureBox = (CompanyKey, ShipmentKey) => from(InternalChatRoomCallableRefFunction({ CompanyKey, ShipmentKey }));
