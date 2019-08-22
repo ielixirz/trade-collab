@@ -1868,3 +1868,96 @@ exports.CreateInternalChatRoomWhenCreateShipment = CloudFunctionsRegionsAsia.fir
       });
     });
   });
+
+exports.CreateInternalChatRoomFromFeatureBox = CloudFunctionsRegionsAsia.https.onCall(
+  async (data, context) => {
+    const ShipmentKey = data.ShipmentKey;
+    const CompanyKey = data.CompanyKey;
+    const CompanyName = data.CompanyName;
+    const UserKey = data.UserKey;
+    const UserEmail = data.UserEmail;
+    const ProfileFirstName = data.ProfileFirstName;
+    const ProfileSurName = data.ProfileSurName;
+
+    const isExistChatRoomCompanyInternal = await admin
+      .firestore()
+      .collection('Shipment')
+      .doc(ShipmentKey)
+      .collection('ChatRoom')
+      .where('ChatRoomCompanyKey', '==', CompanyKey)
+      .get();
+
+    if (isExistChatRoomCompanyInternal.size === 0) {
+      const GetAllCompanyMember = await admin
+        .firestore()
+        .collection('Company')
+        .doc(CreatorCompanyKey)
+        .collection('CompanyMember')
+        .get();
+
+      const CreateInternalChatRoom = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(ShipmentKey)
+        .collection('ChatRoom')
+        .add({
+          ChatRoomName: 'Internal',
+          ChatRoomType: 'Internal',
+          ChatRoomIsInternal: true,
+          ChatRoomCompanyKey: CreatorCompanyKey
+        });
+
+      const InternalChatRoomKey = CreateInternalChatRoom.id;
+
+      const ChatRoomMemberRef = admin
+        .firestore()
+        .collection('Shipment')
+        .doc(ShipmentKey)
+        .collection('ChatRoom')
+        .doc(InternalChatRoomKey)
+        .collection('ChatRoomMember');
+
+      return GetAllCompanyMember.docs.map(async CompanyMemberDoc => {
+        const GetUserProfileList = await admin
+          .firestore()
+          .collection('UserInfo')
+          .doc(CompanyMemberDoc.id)
+          .collection('Profile')
+          .get();
+
+        const FirstProfile = GetUserProfileList.docs[0].data();
+
+        const FirstnameFirstProfile = FirstProfile.ProfileFirstname;
+        const SurnameFirstProfile = FirstProfile.ProfileSurname;
+
+        return ChatRoomMemberRef.add({
+          ChatRoomMemberUserKey: CompanyMemberDoc.id,
+          ChatRoomMemberFirstName: FirstnameFirstProfile,
+          ChatRoomMemberSurName: SurnameFirstProfile,
+          ChatRoomMemberCompanyName: CompanyKey,
+          ChatRoomMemberCompanyKey: CompanyName,
+          ChatRoomMemberEmail: CompanyMemberDoc.data().UserMemberEmail
+        });
+      });
+    } else if (isExistChatRoomCompanyInternal.size > 1) {
+      const InternalChatRoomKey = isExistChatRoomCompanyInternal.docs[0].id;
+
+      const ChatRoomMemberRef = admin
+        .firestore()
+        .collection('Shipment')
+        .doc(ShipmentKey)
+        .collection('ChatRoom')
+        .doc(InternalChatRoomKey)
+        .collection('ChatRoomMember');
+
+      return ChatRoomMemberRef.add({
+        ChatRoomMemberUserKey: UserKey,
+        ChatRoomMemberFirstName: ProfileFirstName,
+        ChatRoomMemberSurName: ProfileSurName,
+        ChatRoomMemberCompanyName: CompanyName,
+        ChatRoomMemberCompanyKey: CompanyKey,
+        ChatRoomMemberEmail: UserEmail
+      });
+    }
+  }
+);
