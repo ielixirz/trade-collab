@@ -1854,14 +1854,14 @@ exports.ManageShipmentRole = CloudFunctionsRegionsAsia.firestore
         const FirstnameFirstProfile = FirstProfile.ProfileFirstname;
         const SurnameFirstProfile = FirstProfile.ProfileSurname;
 
-        InviteCompanyMemberToInternalChatRoomBatch.create(ChatRoomMemberRef,{
+        InviteCompanyMemberToInternalChatRoomBatch.set(ChatRoomMemberRef.doc(CompanyMemberDoc.id),{
           ChatRoomMemberUserKey: CompanyMemberDoc.id,
           ChatRoomMemberFirstName: FirstnameFirstProfile,
           ChatRoomMemberSurName: SurnameFirstProfile,
           ChatRoomMemberCompanyName: CreatorCompanyName,
           ChatRoomMemberCompanyKey: CreatorCompanyKey,
           ChatRoomMemberEmail: CompanyMemberDoc.data().UserMemberEmail,
-        })
+        },{ merge: true })
       })
 
       return InviteCompanyMemberToInternalChatRoomBatch.commit()
