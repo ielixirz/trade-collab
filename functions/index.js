@@ -846,9 +846,7 @@ exports.SendEmailInviteIntoShipment = CloudFunctionsRegionsAsia.firestore
     const ButtonRedirect = `<a style="font-size:16px;"
       href='https://weeklyorder-staging.web.app/#/chat/${
         context.params.ShipmentKey
-      }'>https://weeklyorder-staging.web.app/#/chat/${
-        context.params.ShipmentKey
-      }</a>`;
+      }'>https://weeklyorder-staging.web.app/#/chat/${context.params.ShipmentKey}</a>`;
 
     if (RecruiterProfileFirstName && RecruiterProfileSurName) {
       const SendInviteIntoShipment = await SendEmail(
@@ -1123,8 +1121,8 @@ exports.NotiBellAndEmailInviteToJoinCompany = CloudFunctionsRegionsAsia.firestor
       href='https://weeklyorder-staging.web.app/#/network/company/${
         snapshot.data().CompanyInvitationCompanyKey
       }'>https://weeklyorder-staging.web.app/#/network/company/${
-        snapshot.data().CompanyInvitationCompanyKey
-      }</a>`;
+      snapshot.data().CompanyInvitationCompanyKey
+    }</a>`;
 
     const SendNotiEmail = await SendEmail(
       InviteToJoinCompanyTemplate(UserInfoEmail, HeaderText, HeaderHtml, Content, ButtonRedirect)
@@ -1810,59 +1808,63 @@ exports.ManageShipmentRole = CloudFunctionsRegionsAsia.firestore
     }
   });
 
-  exports.CreateInternalChatRoomWhenCreateShipment = CloudFunctionsRegionsAsia.firestore
-    .document('Shipment/{ShipmentKey}')
-    .onCreate(async (snapshot, context) => {
+exports.CreateInternalChatRoomWhenCreateShipment = CloudFunctionsRegionsAsia.firestore
+  .document('Shipment/{ShipmentKey}')
+  .onCreate(async (snapshot, context) => {
+    const ShipmentKey = context.params.ShipmentKey;
 
-      const ShipmentKey = context.params.ShipmentKey
+    const CreatorCompanyName = snapshot.data().ShipmentCreatorCompanyName;
+    const CreatorCompanyKey = snapshot.data().ShipmentCreatorCompanyKey;
 
-      const CreatorCompanyName = snapshot.data().ShipmentCreatorCompanyName
-      const CreatorCompanyKey = snapshot.data().ShipmentCreatorCompanyKey
+    const GetAllCompanyMember = await admin
+      .firestore()
+      .collection('Company')
+      .doc(CreatorCompanyKey)
+      .collection('CompanyMember')
+      .get();
 
-      const GetAllCompanyMember = await admin.firestore().collection('Company').doc(CreatorCompanyKey).collection('CompanyMember').get()
-
-      const CreateInternalChatRoom = await admin.firestore().collection('Shipment').doc(ShipmentKey).collection('ChatRoom').add({
+    const CreateInternalChatRoom = await admin
+      .firestore()
+      .collection('Shipment')
+      .doc(ShipmentKey)
+      .collection('ChatRoom')
+      .add({
         ChatRoomName: 'Internal',
         ChatRoomType: 'Internal',
         ChatRoomIsInternal: true,
         ChatRoomCompanyKey: CreatorCompanyKey
-      })
+      });
 
-      const InternalChatRoomKey = CreateInternalChatRoom.id
+    const InternalChatRoomKey = CreateInternalChatRoom.id;
 
-      const InviteCompanyMemberToInternalChatRoomBatch = admin.firestore().batch();
+    const ChatRoomMemberRef = admin
+      .firestore()
+      .collection('Shipment')
+      .doc(ShipmentKey)
+      .collection('ChatRoom')
+      .doc(InternalChatRoomKey)
+      .collection('ChatRoomMember');
 
-      const ChatRoomMemberRef = admin
-        .firestore()
-        .collection('Shipment')
-        .doc(ShipmentKey)
-        .collection('ChatRoom')
-        .doc(InternalChatRoomKey)
-        .collection('ChatRoomMember')
-        
-      await GetAllCompanyMember.docs.map( async CompanyMemberDoc => {
-
-        const GetUserProfileList = await admin
+    return GetAllCompanyMember.docs.map(async CompanyMemberDoc => {
+      const GetUserProfileList = await admin
         .firestore()
         .collection('UserInfo')
         .doc(CompanyMemberDoc.id)
         .collection('Profile')
         .get();
-  
-        const FirstProfile = GetUserProfileList.docs[0].data();
-  
-        const FirstnameFirstProfile = FirstProfile.ProfileFirstname;
-        const SurnameFirstProfile = FirstProfile.ProfileSurname;
 
-        InviteCompanyMemberToInternalChatRoomBatch.set(ChatRoomMemberRef.doc(CompanyMemberDoc.id),{
-          ChatRoomMemberUserKey: CompanyMemberDoc.id,
-          ChatRoomMemberFirstName: FirstnameFirstProfile,
-          ChatRoomMemberSurName: SurnameFirstProfile,
-          ChatRoomMemberCompanyName: CreatorCompanyName,
-          ChatRoomMemberCompanyKey: CreatorCompanyKey,
-          ChatRoomMemberEmail: CompanyMemberDoc.data().UserMemberEmail,
-        },{ merge: true })
-      })
+      const FirstProfile = GetUserProfileList.docs[0].data();
 
-      return InviteCompanyMemberToInternalChatRoomBatch.commit()
-    })
+      const FirstnameFirstProfile = FirstProfile.ProfileFirstname;
+      const SurnameFirstProfile = FirstProfile.ProfileSurname;
+
+      return ChatRoomMemberRef.add({
+        ChatRoomMemberUserKey: CompanyMemberDoc.id,
+        ChatRoomMemberFirstName: FirstnameFirstProfile,
+        ChatRoomMemberSurName: SurnameFirstProfile,
+        ChatRoomMemberCompanyName: CreatorCompanyName,
+        ChatRoomMemberCompanyKey: CreatorCompanyKey,
+        ChatRoomMemberEmail: CompanyMemberDoc.data().UserMemberEmail
+      });
+    });
+  });
