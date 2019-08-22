@@ -153,5 +153,22 @@ export const CompanyUserAccessibilityIsOnlyOneOwner = CompanyKey => collection(C
   map(CompanyUserAccessibilityDoc => CompanyUserAccessibilityDoc.length === 1),
 );
 
-// eslint-disable-next-line max-len
-export const CreateInternalChatRoomFromFeatureBox = (CompanyKey, ShipmentKey) => from(InternalChatRoomCallableRefFunction({ CompanyKey, ShipmentKey }));
+export const CreateInternalChatRoomFromFeatureBox = (
+  CompanyKey,
+  CompanyName,
+  ShipmentKey,
+  UserKey,
+  UserEmail,
+  ProfileFirstName,
+  ProfileSurName,
+) => from(
+  InternalChatRoomCallableRefFunction({
+    CompanyKey,
+    CompanyName,
+    ShipmentKey,
+    UserKey,
+    UserEmail,
+    ProfileFirstName,
+    ProfileSurName,
+  }),
+);
