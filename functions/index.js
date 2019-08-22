@@ -1809,3 +1809,60 @@ exports.ManageShipmentRole = CloudFunctionsRegionsAsia.firestore
       return UpdateCompanyMemberBatch.commit();
     }
   });
+
+  exports.CreateInternalChatRoomWhenCreateShipment = CloudFunctionsRegionsAsia.firestore
+    .document('Shipment/{ShipmentKey}')
+    .onCreate(async (snapshot, context) => {
+
+      const ShipmentKey = context.params.ShipmentKey
+
+      const CreatorCompanyName = snapshot.data().ShipmentCreatorCompanyName
+      const CreatorCompanyKey = snapshot.data().ShipmentCreatorCompanyKey
+
+      const GetAllCompanyMember = await admin.firestore().collection('Company').doc(CreatorCompanyKey).collection('CompanyMember').get()
+
+      const CreateInternalChatRoom = await admin.firestore().collection('Shipment').doc(ShipmentKey).collection('ChatRoom').add({
+        ChatRoomName: 'Internal',
+        ChatRoomType: 'Internal',
+        ChatRoomIsInternal: true,
+        ChatRoomCompanyKey: CreatorCompanyKey
+      })
+
+      const InternalChatRoomKey = CreateInternalChatRoom.id
+
+      const InviteCompanyMemberToInternalChatRoomBatch = admin.firestore().batch();
+
+      const ChatRoomMemberRef = admin
+        .firestore()
+        .collection('Shipment')
+        .doc(ShipmentKey)
+        .collection('ChatRoom')
+        .doc(InternalChatRoomKey)
+        .collection('ChatRoomMember')
+        
+      await GetAllCompanyMember.docs.map( async CompanyMemberDoc => {
+
+        const GetUserProfileList = await admin
+        .firestore()
+        .collection('UserInfo')
+        .doc(CompanyMemberDoc.id)
+        .collection('Profile')
+        .get();
+  
+        const FirstProfile = GetUserProfileList.docs[0].data();
+  
+        const FirstnameFirstProfile = FirstProfile.ProfileFirstname;
+        const SurnameFirstProfile = FirstProfile.ProfileSurname;
+
+        InviteCompanyMemberToInternalChatRoomBatch.create(ChatRoomMemberRef,{
+          ChatRoomMemberUserKey: CompanyMemberDoc.id,
+          ChatRoomMemberFirstName: FirstnameFirstProfile,
+          ChatRoomMemberSurName: SurnameFirstProfile,
+          ChatRoomMemberCompanyName: CreatorCompanyName,
+          ChatRoomMemberCompanyKey: CreatorCompanyKey,
+          ChatRoomMemberEmail: CompanyMemberDoc.data().UserMemberEmail,
+        })
+      })
+
+      return InviteCompanyMemberToInternalChatRoomBatch.commit()
+    })
