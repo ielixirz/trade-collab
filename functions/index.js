@@ -843,19 +843,10 @@ exports.SendEmailInviteIntoShipment = CloudFunctionsRegionsAsia.firestore
 
     Content = Content + ContentDescription;
 
-    const ButtonRedirect = `<a style="width: 400px;
-      font-size:14px;
-      font-weight:500;
-      letter-spacing:0.25px;
-      text-decoration:none;
-      text-transform:none;
-      display:inline-block;
-      border-radius:8px;
-      padding:18px 0;
-      background-color:rgba(255, 90 , 95, 1);
-      color:#ffffff;" class="redirectbutton" href='https://weeklyorder-staging.web.app/#/chat/${
+    const ButtonRedirect = `<a style="font-size:16px;"
+      href='https://weeklyorder-staging.web.app/#/chat/${
         context.params.ShipmentKey
-      }'>Join Now</a>`;
+      }'>https://weeklyorder-staging.web.app/#/chat/${context.params.ShipmentKey}</a>`;
 
     if (RecruiterProfileFirstName && RecruiterProfileSurName) {
       const SendInviteIntoShipment = await SendEmail(
@@ -1125,19 +1116,13 @@ exports.NotiBellAndEmailInviteToJoinCompany = CloudFunctionsRegionsAsia.firestor
 
     Content = Content + ContentDescription;
 
-    const ButtonRedirect = `<a style="width: 400px;
-      font-size:14px;
-      font-weight:500;
-      letter-spacing:0.25px;
-      text-decoration:none;
-      text-transform:none;
-      display:inline-block;
-      border-radius:8px;
-      padding:18px 0;
-      background-color:rgba(255, 90 , 95, 1);
-      color:#ffffff;" class="redirectbutton" href='https://weeklyorder-staging.web.app/#/network/company/${
+    const ButtonRedirect = `<a style="
+      font-size:16px;"
+      href='https://weeklyorder-staging.web.app/#/network/company/${
         snapshot.data().CompanyInvitationCompanyKey
-      }'>Join Now</a>`;
+      }'>https://weeklyorder-staging.web.app/#/network/company/${
+      snapshot.data().CompanyInvitationCompanyKey
+    }</a>`;
 
     const SendNotiEmail = await SendEmail(
       InviteToJoinCompanyTemplate(UserInfoEmail, HeaderText, HeaderHtml, Content, ButtonRedirect)
@@ -1554,17 +1539,8 @@ exports.SendUnreadMessage = CloudFunctionsRegionsAsia.https.onRequest(async (req
           } ${Item.ProfileSurname}</span> has ${Item.ShipmentChatCount} Unread Message </p>`
       );
 
-      const ButtonRedirect = `<a style="width: 400px;
-        font-size:14px;
-        font-weight:500;
-        letter-spacing:0.25px;
-        text-decoration:none;
-        text-transform:none;
-        display:inline-block;
-        border-radius:8px;
-        padding:18px 0;
-        background-color:rgba(255, 90 , 95, 1);
-        color:#ffffff;" class="redirectbutton" href='https://weeklyorder-staging.web.app/#/shipment'>View Messages</a>`;
+      const ButtonRedirect = `<a style="font-size:16px;"
+        href='https://weeklyorder-staging.web.app/#/shipment'>https://weeklyorder-staging.web.app/#/shipment</a>`;
 
       const ProfileUnreadMergeText = MapTextWithProfileUnread.join();
       const ProfileUnreadMergeHtml = MapHtmlWithProfileUnread.join('');
@@ -1661,17 +1637,8 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
 
       Content = Content + ContentDescription;
 
-      const ButtonRedirect = `<a style="width: 400px;
-        font-size:14px;
-        font-weight:500;
-        letter-spacing:0.25px;
-        text-decoration:none;
-        text-transform:none;
-        display:inline-block;
-        border-radius:8px;
-        padding:18px 0;
-        background-color:rgba(255, 90 , 95, 1);
-        color:#ffffff;" class="redirectbutton" href='https://weeklyorder-staging.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&sk=${ShipmentKeyEncoder}&crk=${ChatRoomKeyEncoder}&u=${isUsedEncoder}'>Join Now - Free</a>`;
+      const ButtonRedirect = `<a style="font-size:16px;"
+        href='https://weeklyorder-staging.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&sk=${ShipmentKeyEncoder}&crk=${ChatRoomKeyEncoder}&u=${isUsedEncoder}'>https://weeklyorder-staging.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&sk=${ShipmentKeyEncoder}&crk=${ChatRoomKeyEncoder}&u=${isUsedEncoder}</a>`;
 
       const SendInviteIntoShipment = await SendEmail(
         InviteIntoShipmentTemplate(
@@ -1694,17 +1661,7 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
 
       Content = Content + ContentDescription;
 
-      const ButtonRedirect = `<a style="width: 400px;
-        font-size:14px;
-        font-weight:500;
-        letter-spacing:0.25px;
-        text-decoration:none;
-        text-transform:none;
-        display:inline-block;
-        border-radius:8px;
-        padding:18px 0;
-        background-color:rgba(255, 90 , 95, 1);
-        color:#ffffff;" class="redirectbutton" href='https://weeklyorder-staging.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&ck=${InviteRecruiterCompanyKeyEncoder}&u=${isUsedEncoder}'>Join Now - Free</a>`;
+      const ButtonRedirect = `<a style="font-size:16px;" href='https://weeklyorder-staging.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&ck=${InviteRecruiterCompanyKeyEncoder}&u=${isUsedEncoder}'>https://weeklyorder-staging.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&ck=${InviteRecruiterCompanyKeyEncoder}&u=${isUsedEncoder}</a>`;
 
       const SendInviteIntoCompany = await SendEmail(
         InviteToJoinCompanyTemplate(
@@ -1850,3 +1807,157 @@ exports.ManageShipmentRole = CloudFunctionsRegionsAsia.firestore
       return UpdateCompanyMemberBatch.commit();
     }
   });
+
+exports.CreateInternalChatRoomWhenCreateShipment = CloudFunctionsRegionsAsia.firestore
+  .document('Shipment/{ShipmentKey}')
+  .onCreate(async (snapshot, context) => {
+    const ShipmentKey = context.params.ShipmentKey;
+
+    const CreatorCompanyName = snapshot.data().ShipmentCreatorCompanyName;
+    const CreatorCompanyKey = snapshot.data().ShipmentCreatorCompanyKey;
+
+    const GetAllCompanyMember = await admin
+      .firestore()
+      .collection('Company')
+      .doc(CreatorCompanyKey)
+      .collection('CompanyMember')
+      .get();
+
+    const CreateInternalChatRoom = await admin
+      .firestore()
+      .collection('Shipment')
+      .doc(ShipmentKey)
+      .collection('ChatRoom')
+      .add({
+        ChatRoomName: 'Internal',
+        ChatRoomType: 'Internal',
+        ChatRoomIsInternal: true,
+        ChatRoomCompanyKey: CreatorCompanyKey
+      });
+
+    const InternalChatRoomKey = CreateInternalChatRoom.id;
+
+    const ChatRoomMemberRef = admin
+      .firestore()
+      .collection('Shipment')
+      .doc(ShipmentKey)
+      .collection('ChatRoom')
+      .doc(InternalChatRoomKey)
+      .collection('ChatRoomMember');
+
+    return GetAllCompanyMember.docs.map(async CompanyMemberDoc => {
+      const GetUserProfileList = await admin
+        .firestore()
+        .collection('UserInfo')
+        .doc(CompanyMemberDoc.id)
+        .collection('Profile')
+        .get();
+
+      const FirstProfile = GetUserProfileList.docs[0].data();
+
+      const FirstnameFirstProfile = FirstProfile.ProfileFirstname;
+      const SurnameFirstProfile = FirstProfile.ProfileSurname;
+
+      return ChatRoomMemberRef.add({
+        ChatRoomMemberUserKey: CompanyMemberDoc.id,
+        ChatRoomMemberFirstName: FirstnameFirstProfile,
+        ChatRoomMemberSurName: SurnameFirstProfile,
+        ChatRoomMemberCompanyName: CreatorCompanyName,
+        ChatRoomMemberCompanyKey: CreatorCompanyKey,
+        ChatRoomMemberEmail: CompanyMemberDoc.data().UserMemberEmail
+      });
+    });
+  });
+
+exports.CreateInternalChatRoomFromFeatureBox = CloudFunctionsRegionsAsia.https.onCall(
+  async (data, context) => {
+    const ShipmentKey = data.ShipmentKey;
+    const CompanyKey = data.CompanyKey;
+    const CompanyName = data.CompanyName;
+    const UserKey = data.UserKey;
+    const UserEmail = data.UserEmail;
+    const ProfileFirstName = data.ProfileFirstName;
+    const ProfileSurName = data.ProfileSurName;
+
+    const isExistChatRoomCompanyInternal = await admin
+      .firestore()
+      .collection('Shipment')
+      .doc(ShipmentKey)
+      .collection('ChatRoom')
+      .where('ChatRoomCompanyKey', '==', CompanyKey)
+      .get();
+
+    if (isExistChatRoomCompanyInternal.size === 0) {
+      const GetAllCompanyMember = await admin
+        .firestore()
+        .collection('Company')
+        .doc(CreatorCompanyKey)
+        .collection('CompanyMember')
+        .get();
+
+      const CreateInternalChatRoom = await admin
+        .firestore()
+        .collection('Shipment')
+        .doc(ShipmentKey)
+        .collection('ChatRoom')
+        .add({
+          ChatRoomName: 'Internal',
+          ChatRoomType: 'Internal',
+          ChatRoomIsInternal: true,
+          ChatRoomCompanyKey: CreatorCompanyKey
+        });
+
+      const InternalChatRoomKey = CreateInternalChatRoom.id;
+
+      const ChatRoomMemberRef = admin
+        .firestore()
+        .collection('Shipment')
+        .doc(ShipmentKey)
+        .collection('ChatRoom')
+        .doc(InternalChatRoomKey)
+        .collection('ChatRoomMember');
+
+      return GetAllCompanyMember.docs.map(async CompanyMemberDoc => {
+        const GetUserProfileList = await admin
+          .firestore()
+          .collection('UserInfo')
+          .doc(CompanyMemberDoc.id)
+          .collection('Profile')
+          .get();
+
+        const FirstProfile = GetUserProfileList.docs[0].data();
+
+        const FirstnameFirstProfile = FirstProfile.ProfileFirstname;
+        const SurnameFirstProfile = FirstProfile.ProfileSurname;
+
+        return ChatRoomMemberRef.add({
+          ChatRoomMemberUserKey: CompanyMemberDoc.id,
+          ChatRoomMemberFirstName: FirstnameFirstProfile,
+          ChatRoomMemberSurName: SurnameFirstProfile,
+          ChatRoomMemberCompanyName: CompanyKey,
+          ChatRoomMemberCompanyKey: CompanyName,
+          ChatRoomMemberEmail: CompanyMemberDoc.data().UserMemberEmail
+        });
+      });
+    } else if (isExistChatRoomCompanyInternal.size > 1) {
+      const InternalChatRoomKey = isExistChatRoomCompanyInternal.docs[0].id;
+
+      const ChatRoomMemberRef = admin
+        .firestore()
+        .collection('Shipment')
+        .doc(ShipmentKey)
+        .collection('ChatRoom')
+        .doc(InternalChatRoomKey)
+        .collection('ChatRoomMember');
+
+      return ChatRoomMemberRef.add({
+        ChatRoomMemberUserKey: UserKey,
+        ChatRoomMemberFirstName: ProfileFirstName,
+        ChatRoomMemberSurName: ProfileSurName,
+        ChatRoomMemberCompanyName: CompanyName,
+        ChatRoomMemberCompanyKey: CompanyKey,
+        ChatRoomMemberEmail: UserEmail
+      });
+    }
+  }
+);

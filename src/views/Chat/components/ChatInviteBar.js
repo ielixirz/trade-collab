@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
 import React, { useState } from 'react';
+import { useToasts } from 'react-toast-notifications';
 import { Row, Col, Button } from 'reactstrap';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
@@ -23,6 +24,8 @@ const ChatInviteBar = ({
   const [emails, setEmails] = useState([]);
   const [notExistEmails, setNotExistEmails] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { addToast } = useToasts();
 
   const isExistingMember = (invited) => {
     const found = _.find(member, m => invited === m.ChatRoomMemberEmail);
@@ -86,6 +89,11 @@ const ChatInviteBar = ({
     result.subscribe({
       next: (res) => {
         toggleInvite();
+        addToast('Invitation Sent', {
+          appearance: 'success',
+          autoDismiss: true,
+          pauseOnHover: true,
+        });
       },
     });
 
@@ -126,6 +134,11 @@ const ChatInviteBar = ({
     });
     if (inviteData.length === 0) {
       toggleInvite();
+      addToast('Invitation Sent', {
+        appearance: 'success',
+        autoDismiss: true,
+        pauseOnHover: true,
+      });
     }
   };
 
