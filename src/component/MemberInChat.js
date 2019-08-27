@@ -28,7 +28,7 @@ class MemberInChat extends Component {
   constructor(props) {
     super(props);
     this.toggle = this.toggle.bind(this);
-    this.state = { collapse: false };
+    this.state = { collapse: true };
   }
 
   toggle() {
@@ -39,7 +39,7 @@ class MemberInChat extends Component {
     let { member, isEdit, toggleBlocking } = this.props;    
     let roleStringList = [];
     var message = ""
-    
+
     _.forEach(member, item => {
       if (!roleStringList[item.ChatRoomMemberRole]){
         roleStringList[item.ChatRoomMemberRole] = true; 
@@ -62,7 +62,7 @@ class MemberInChat extends Component {
             )}
             <span onClick={this.toggle} style={{}}>
               <span style={{ cursor: 'pointer' , fontWeight:'bold'}}>{this.props.title} ({member.length}) 
-                <span style={{fontSize:'12px' , marginLeft: '12px', color: '#6a6a6a'}}> {message.slice(0, -2)}</span>
+                <span style={{fontSize:'12px' , marginLeft: '12px', color: '#6a6a6a'}}> {this.props.title === 'Individual' ? ("") : (message.slice(0, -2))}</span>
               </span>
             </span>
           </Col>

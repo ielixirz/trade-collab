@@ -61,6 +61,7 @@ class MemberModal extends React.Component {
     } = this.props;
     const shipmentMember = [];
     console.log('Member Modal props', this.props);
+
     let suggestion = _.map(network, item => {
       return {
         id: item.UserMemberEmail,
@@ -71,6 +72,17 @@ class MemberModal extends React.Component {
     member = _.filter(member, item => _.get(item, 'ChatRoomMemberIsLeave', false) === false);
 
     _.forEach(member, item => {
+      if (!_.isEmpty(item.ChatRoomMemberCompanyName)) {
+        if (_.isEmpty(shipmentMember[item.ChatRoomMemberCompanyName])) {
+          shipmentMember[item.ChatRoomMemberCompanyName] = [];
+          shipmentMember[item.ChatRoomMemberCompanyName].push(item);
+        } else {
+          shipmentMember[item.ChatRoomMemberCompanyName].push(item);
+        }
+      }
+    });
+
+    _.forEach(member,item => {
       if (_.isEmpty(item.ChatRoomMemberCompanyName)) {
         if (_.isEmpty(shipmentMember.Individual)) {
           shipmentMember.Individual = [];
@@ -78,11 +90,6 @@ class MemberModal extends React.Component {
         } else {
           shipmentMember.Individual.push(item);
         }
-      } else if (_.isEmpty(shipmentMember[item.ChatRoomMemberCompanyName])) {
-        shipmentMember[item.ChatRoomMemberCompanyName] = [];
-        shipmentMember[item.ChatRoomMemberCompanyName].push(item);
-      } else {
-        shipmentMember[item.ChatRoomMemberCompanyName].push(item);
       }
     });
 
@@ -155,8 +162,7 @@ class MemberModal extends React.Component {
                     avatarName={'avatar'}
                     onAdd={item => this.state.inviteEmailList.push(item)}
                     onRemove={item => this.state.inviteEmailList.pop(item)}
-                    onChange={(selects, adds, removes) => console.log(selects, adds, removes)}
-                  />
+                    onChange={(selects, adds, removes) => console.log(selects, adds, removes)}/>
 
                 </Col>
             
@@ -173,14 +179,17 @@ class MemberModal extends React.Component {
                     const role = [];
                     role.push(this.props.ChatRoomData.ChatRoomType);
                     _.forEach(this.state.inviteEmailList , (invite) =>{
+
+                      console.log("email" + JSON.stringify(invite));
+
                       const hasMember = _.find(
                         member,
-                        (item, index) => item.ChatRoomMemberEmail === invite.id
+                        (item, index) => item.ChatRoomMemberEmail === invite.label
                       );
  
                       if (_.isEmpty(hasMember)) {
                         inviteMember.push({
-                          Email: invite.id,
+                          Email: invite.label,
                           Image: '',
                           Role: role,
                           ChatRoomMemberCompanyName: '',
@@ -216,10 +225,10 @@ class MemberModal extends React.Component {
                 </Button>
             </InputGroup>
             </div>
-            <br/>
             <div style={{textAlign : 'end', marginRight : '60px'}}>              
               <Button style={{backgroundColor: '#FFFFFFFF', 
                               border: '0px',
+                              marginTop: '8px',
                               textDecoration:'underline' ,
                               fontWeight:'bold',}} onClick={() => {
                 this.toggleEdit();
