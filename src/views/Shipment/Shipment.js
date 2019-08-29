@@ -896,7 +896,7 @@ class Shipment extends Component {
           <ModalHeader style={{border : '0px'}} toggle={this.modal}>
             Create New Shipment
           </ModalHeader>
-          <ModalBody style={{margin : '8px'}}>
+          <ModalBody style={{marginLeft : '40px' , marginRight : '40px'}}>
             <Row>   
             <UncontrolledDropdown style={{marginLeft:'16px'}}>
                   <DropdownToggle tag="p" style={{textDecoration:'underline' , fontWeight:'bold'}}>
