@@ -101,7 +101,7 @@ class Shipment extends Component {
       dropdownOpen: false,
       blocking: true,
       inputCompany: false,
-      swapRolePage: 0,
+      swapRolePage: 1,
       companySelect : {}
     };
     this.fetchMoreShipment = this.fetchMoreShipment.bind(this);
@@ -120,6 +120,8 @@ class Shipment extends Component {
     this.writeText = this.writeText.bind(this);
     this.modal = this.modal.bind(this);
   }
+
+  $xsuggest = null
 
   toggleBlocking(block) {
     this.setState({ blocking: block });
@@ -237,6 +239,8 @@ class Shipment extends Component {
         this.fetchShipmentReload();
         this.props.history.push(`/chat/${shipmentResult[0]}`);
         
+        // Clear sugguest input
+        this.$xsuggest && this.$xsuggest.clearSelects()     
       },
       error: (error) => {
         console.log('error' + error)
@@ -1181,6 +1185,7 @@ class Shipment extends Component {
                     value={this.state.input.to}
                   /> */}
                   <XSuggest
+                    ref={$el => this.$xsuggest = $el}
                     className="material"
                     placeholder="Input your Importers E-mail address"
                     datasets={suggestion}

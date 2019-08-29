@@ -13,6 +13,7 @@ export default class XSuggest extends React.Component {
 
         const { datasets } = this.props
         this.state = {
+            datasets,
             items: datasets,
             tags: [],
             selects: [],
@@ -24,9 +25,17 @@ export default class XSuggest extends React.Component {
     tagName = 'virtual'
 
 
+    updateDatasets(datasets) {
+        const { keyword } = this.state
+
+        this.setState({
+            datasets: datasets || []
+        }, () => this.updateItems(keyword))
+    }
+
     updateItems(keyword = '') {
-        const { datasets, idName, labelName } = this.props
-        const { tags, selectIds } = this.state
+        const { idName, labelName } = this.props
+        const { datasets, tags, selectIds } = this.state
         const itemsets = datasets.concat(tags)
 
         this.setState({
@@ -39,8 +48,8 @@ export default class XSuggest extends React.Component {
     buildTag(value) {
         if (!(value || '').length) { return null }
 
-        const { datasets, idName, labelName } = this.props
-        const { tags } = this.state
+        const { idName, labelName } = this.props
+        const { datasets, tags } = this.state
         const itemsets = datasets.concat(tags)
         let tag = itemsets.find(u => u[labelName] === value)
 
@@ -81,6 +90,40 @@ export default class XSuggest extends React.Component {
     }
 
 
+    clearTags() {
+        const { onChange, idName } = this.props
+        const { tags, selects, selectIds, keyword } = this.state
+        let removes = []
+
+        tags.forEach(u => {
+            const idx = selects.findIndex(v => v[idName] === u[idName])
+            selectIds.splice(idx, 1)
+            removes = removes.concat(selects.splice(idx, 1))
+        })
+
+        this.setState({
+            tags: [],
+            selects,
+            selectIds
+        }, () => this.updateItems(keyword))
+
+        onChange.call(this, selects, null, removes)
+    }
+
+    clearSelects() {
+        const { onChange } = this.props
+        const { selects, keyword } = this.state
+
+        this.setState({
+            tags: [],
+            selects: [],
+            selectIds: []
+        }, () => this.updateItems(keyword))
+
+        onChange.call(this, [], null, selects)
+    }
+
+
     handleChange(keyword) {
         this.updateItems(keyword)
     }
@@ -90,10 +133,10 @@ export default class XSuggest extends React.Component {
         const { tags, selects, selectIds } = this.state
 
         if (!multiple) {
-            const tag = selects.splice(0, 1)
+            const tagItem = selects.splice(0, 1)
             selectIds.splice(0, 1)
 
-            tag && this.spliceTag(tag[0])
+            tagItem && this.spliceTag(tagItem[0])
         }
 
         selects.push(item)
@@ -111,8 +154,7 @@ export default class XSuggest extends React.Component {
 
     handleDelete(index, item = null) {
         const { tag, onRemove, onChange } = this.props
-        const { keyword } = this.state
-        const { tags, selects, selectIds } = this.state
+        const { tags, selects, selectIds, keyword } = this.state
         item = item || selects[index]
 
         selects.splice(index, 1)
@@ -145,10 +187,23 @@ export default class XSuggest extends React.Component {
             const { tag } = this.props
 
             if (tag && (value || '').length) {
-                const tag = this.buildTag(value)
+                const tagItem = this.buildTag(value)
 
-                this.handleSelect(tag)
+                this.handleSelect(tagItem)
             }
+        }
+    }
+
+    handleBlur(event) {
+        event.stopPropagation()
+
+        const { value } = event.target
+        const { tag } = this.props
+
+        if (tag && (value || '').length) {
+            const tagItem = this.buildTag(value)
+
+            this.handleSelect(tagItem)
         }
     }
 
@@ -158,7 +213,7 @@ export default class XSuggest extends React.Component {
         const { items, selects, keyword } = this.state
 
         return (
-            <div className={`form-control XSuggest ${className || ''}`}>
+            <div className={`form-control XSuggest ${className || ''}`.trim()}>
                 {selects.map((item, index) => {
                     return (
                         <div key={`xsuggest-selected-${index}`} className="chip XSuggest-Item">
@@ -184,7 +239,8 @@ export default class XSuggest extends React.Component {
                     wrapperProps={{ className: 'XSuggest-Input' }}
                     inputProps={{
                         placeholder: selects.length ? '' : placeholder,
-                        onKeyDown: e => this.handleKeyDown(e)
+                        onKeyDown: e => this.handleKeyDown(e),
+                        onBlur: e => this.handleBlur(e)
                     }}
                     renderInput={props => <input
                         {...props}
@@ -239,7 +295,7 @@ XSuggest.defaultProps = {
 
     datasets: [],
     selects: [],
-    multiple: false,
+    multiple: true,
     tag: true,
     idName: 'id',
     labelName: 'label',

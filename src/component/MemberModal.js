@@ -32,6 +32,8 @@ class MemberModal extends React.Component {
     };
   }
 
+  xsuggest = null;
+
   toggle = () => {
     console.log('toggle');
     this.setState(prevState => ({
@@ -153,6 +155,7 @@ class MemberModal extends React.Component {
                 /> */}
 
                 <XSuggest
+                    ref={$el => this.xsuggest = $el}
                     style={{}}
                     placeholder="Invite via e-mail to join this chat of this shipment only"
                     datasets={suggestion}
@@ -210,6 +213,9 @@ class MemberModal extends React.Component {
                               this.setState({
                                 inviteEmailList : []
                               });
+                              // Clear sugguest input
+                              this.xsuggest && this.xsuggest.clearSelects()     
+
                               invite.unsubscribe();
                             }
                           });
