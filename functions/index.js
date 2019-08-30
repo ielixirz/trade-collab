@@ -846,7 +846,7 @@ exports.SendEmailInviteIntoShipment = CloudFunctionsRegionsAsia.firestore
     const ButtonRedirect = `<a style="font-size:16px;"
       href='https://weeklyorder-staging.web.app/#/chat/${
         context.params.ShipmentKey
-      }'>https://weeklyorder-staging.web.app/#/chat/${context.params.ShipmentKey}</a>`;
+      }'>Join Now</a>`;
 
     if (RecruiterProfileFirstName && RecruiterProfileSurName) {
       const SendInviteIntoShipment = await SendEmail(
@@ -1120,9 +1120,7 @@ exports.NotiBellAndEmailInviteToJoinCompany = CloudFunctionsRegionsAsia.firestor
       font-size:16px;"
       href='https://weeklyorder-staging.web.app/#/network/company/${
         snapshot.data().CompanyInvitationCompanyKey
-      }'>https://weeklyorder-staging.web.app/#/network/company/${
-      snapshot.data().CompanyInvitationCompanyKey
-    }</a>`;
+      }'>Join Now</a>`;
 
     const SendNotiEmail = await SendEmail(
       InviteToJoinCompanyTemplate(UserInfoEmail, HeaderText, HeaderHtml, Content, ButtonRedirect)
@@ -1540,7 +1538,7 @@ exports.SendUnreadMessage = CloudFunctionsRegionsAsia.https.onRequest(async (req
       );
 
       const ButtonRedirect = `<a style="font-size:16px;"
-        href='https://weeklyorder-staging.web.app/#/shipment'>https://weeklyorder-staging.web.app/#/shipment</a>`;
+        href='https://weeklyorder-staging.web.app/#/shipment'>Join Now</a>`;
 
       const ProfileUnreadMergeText = MapTextWithProfileUnread.join();
       const ProfileUnreadMergeHtml = MapHtmlWithProfileUnread.join('');
@@ -1638,7 +1636,7 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
       Content = Content + ContentDescription;
 
       const ButtonRedirect = `<a style="font-size:16px;"
-        href='https://weeklyorder-staging.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&sk=${ShipmentKeyEncoder}&crk=${ChatRoomKeyEncoder}&u=${isUsedEncoder}'>https://weeklyorder-staging.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&sk=${ShipmentKeyEncoder}&crk=${ChatRoomKeyEncoder}&u=${isUsedEncoder}</a>`;
+        href='https://weeklyorder-staging.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&sk=${ShipmentKeyEncoder}&crk=${ChatRoomKeyEncoder}&u=${isUsedEncoder}'>Join Now</a>`;
 
       const SendInviteIntoShipment = await SendEmail(
         InviteIntoShipmentTemplate(
@@ -1661,7 +1659,7 @@ exports.SendEmailInviteNonSystemUser = CloudFunctionsRegionsAsia.firestore
 
       Content = Content + ContentDescription;
 
-      const ButtonRedirect = `<a style="font-size:16px;" href='https://weeklyorder-staging.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&ck=${InviteRecruiterCompanyKeyEncoder}&u=${isUsedEncoder}'>https://weeklyorder-staging.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&ck=${InviteRecruiterCompanyKeyEncoder}&u=${isUsedEncoder}</a>`;
+      const ButtonRedirect = `<a style="font-size:16px;" href='https://weeklyorder-staging.web.app/#/nu/?dke=${DocumentKeyEncoder}&ed=${ExpiryDateEncoder}&e=${EmailEncoder}&f=${InviteTypeEncoder}&ck=${InviteRecruiterCompanyKeyEncoder}&u=${isUsedEncoder}'>Join Now</a>`;
 
       const SendInviteIntoCompany = await SendEmail(
         InviteToJoinCompanyTemplate(
