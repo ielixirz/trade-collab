@@ -1219,7 +1219,7 @@ class Shipment extends Component {
               {/* ETA & ETD Calendar */}
 
               <FormGroup row>
-                <Col sm={{size: 8, offset: 2}}>
+                <Col sm={{size: 9, offset: 2}}>
                   <XCalendar
                     start={this.state.input.etd}
                     startLabel="ETD Port"
