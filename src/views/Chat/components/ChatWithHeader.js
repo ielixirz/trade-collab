@@ -385,10 +385,8 @@ class ChatWithHeader extends Component {
       value: item.CompanyKey,
       label: item.CompanyName
     }));
-    console.log('this.state.availableRole', this.state.availableRole);
     const roleOption = [];
     _.forEach(this.state.availableRole, (role, index) => {
-      console.log('this.state.availableRole', role, index);
       if (!role) {
         roleOption.push({
           value: index,
