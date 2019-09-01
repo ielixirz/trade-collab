@@ -7,9 +7,10 @@ $light-blue-color: #99ccff;
 $red-color: #ff3333;
 $light-red-color: #ffcccc;
 $white-color: #ffffff;
+$green-color: #80D2DE;
 
-$today-color: $red-color;
-$today-bg-color: $light-red-color;
+$today-color: $white-color;
+$today-bg-color: $red-color;
 
 $disabled-color: $white-color;
 $disabled-bg-color: $light-red-color;
@@ -20,6 +21,7 @@ $selected-bg-color: $light-blue-color;
 $start-bg-color: $blue-color;
 $end-bg-color: $blue-color;
 
+$input-focus-color: $green-color;
 
 //
 // Styles
@@ -30,33 +32,28 @@ $end-bg-color: $blue-color;
 
     .DayPicker {
         &-Day {
-
             &--today {
                 position: relative;
                 color: $today-color !important;
-                background-color: $today-bg-color;
-
-                &::before {
-                    display: block;
-                    width: 100%;
-                    height: 100%;
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    border: 2px solid $today-color;
-                    z-index: 1;
-                }
+                background-color: $today-bg-color !important;
             }
 
             &--disabled {
                 background-color: $disabled-bg-color;
                 color: inherit;
                 opacity: 0.65;
-                border-radius: 0% !important;
+            }
+
+            &--outside {
+                visibility: hidden;
             }
 
             &--selected {
+                &:not(.DayPicker-Day--today):not(.DayPicker-Day--start):not(.DayPicker-Day--end) {
+                    border-radius: 0%;
+                    background-color: $selected-bg-color;
+                    color: $white-color;
+                }
 
                 &::after {
                     display: block;
@@ -70,28 +67,9 @@ $end-bg-color: $blue-color;
                     box-shadow: 15px 0px 0px 0px $selected-bg-color;
                 }
 
-                &:not(.DayPicker-Day--outside),
-                &:not(.DayPicker-Day--start),
-                &:not(.DayPicker-Day--end) {
-                    border-radius: 0%;
-                    background-color: $selected-bg-color;
-                    color: $white-color;
-                }
-
-                &.DayPicker-Day--outside {
-                    &::before {
-                        display: none !important;
-                    }
-
-                    &::after {
-                        display: none !important;
-                    }
-                }
-
                 &:last-child,
                 &.DayPicker-Day--start,
                 &.DayPicker-Day--end {
-
                     &::after {
                         display: none;
                     }
@@ -101,11 +79,8 @@ $end-bg-color: $blue-color;
 
             // Range Modifiers
 
+            &--today,
             &--start {
-                z-index: 1;
-                border-radius: 50% !important;
-                background: $start-bg-color !important;
-
                 &+.DayPicker-Day--selected {
                     &::before {
                         display: block;
@@ -124,6 +99,31 @@ $end-bg-color: $blue-color;
                             display: block;
                             box-shadow: inset 15px 0px 0px 0px $selected-bg-color;
                         }
+                    }
+                }
+            }
+
+            &--today {
+                &+.DayPicker-Day--start {
+                    &::before {
+                        display: none !important;
+                    }
+
+                    &::after {
+                        display: none !important;
+                    }
+                }
+            }
+
+            &--start {
+                z-index: 1;
+                border-radius: 50% !important;
+                background: $start-bg-color !important;
+
+                &+.DayPicker-Day--today {
+                    &::after {
+                        display: block;
+                        box-shadow: inset 15px 0px 0px 0px $selected-bg-color;
                     }
                 }
             }
@@ -163,6 +163,36 @@ $end-bg-color: $blue-color;
                 background-color: transparent !important;
             }
         }
+
+        &--clear {
+            display: none;
+            align-items: center;
+            width: 24px;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            right: 0.25rem;
+            z-index: 2;
+
+            &.visible {
+                display: flex !important;
+            }
+
+            button {
+                padding: 0;
+                border: none;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+
+                margin: {
+                    top: -2px;
+                }
+
+                line-height: 1;
+                font-size: 18px;
+            }
+        }
     }
 
     &-From {
@@ -190,11 +220,22 @@ $end-bg-color: $blue-color;
 
     //
     // Bootstrap Inputs
+
     .input-group {
         flex-wrap: initial;
-        
+        border: 1px solid #ced4da;
+
+        &-focused {
+            border: 1px solid $input-focus-color;
+
+            .form-control {
+                font-weight: 500;
+            }
+        }
+
         .input-group-text {
-            font-weight: 700;
+            font-weight: 500;
+            border: none !important;
             background-color: inherit;
 
             padding: {
@@ -213,37 +254,17 @@ $end-bg-color: $blue-color;
                 font-weight: inherit;
             }
         }
-    }
 
-    .form-control {
-        border-left-style: none !important;
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
+        .form-control {
+            border: none !important;
 
-        &[readonly] {
-            background-color: #ffffff;
-        }
+            &[readonly] {
+                background-color: #ffffff;
+            }
 
-        &:focus {
-            border: 1px solid #ced4da;
-            box-shadow: none;
-        }
-    }
-}
-
-
-//
-// Override styles
-.XCalendar {
-    .col-sm {
-        &+.col-sm {
-            padding: {
-                left: 0
+            &:focus {
+                box-shadow: none;
             }
         }
-    }
-
-    .input-group-text {
-        font-weight: normal;
     }
 }
