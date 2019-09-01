@@ -257,7 +257,10 @@ class ChatWithHeader extends Component {
     AddShipmentRole(ShipmentKey, role.value, {
       ShipmentRoleCompanyName: pickedCompany.CompanyName,
       ShipmentRoleCompanyKey: pickedCompany.CompanyKey
+    }).subscribe({
+      next: res => {}
     });
+
     let userRole;
     if (pickedCompany) {
       const getCompany = GetCompanyMember(e.value).subscribe({
@@ -382,7 +385,6 @@ class ChatWithHeader extends Component {
       value: item.CompanyKey,
       label: item.CompanyName
     }));
-    console.log(options, 'options');
     const roleOption = [];
     _.forEach(this.state.availableRole, (role, index) => {
       if (!role) {
