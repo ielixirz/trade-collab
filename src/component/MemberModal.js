@@ -28,7 +28,7 @@ class MemberModal extends React.Component {
       modal: false,
       isEdit: false,
       state: 1,
-      inviteEmailList: [],
+      inviteEmailList: []
     };
   }
 
@@ -49,7 +49,7 @@ class MemberModal extends React.Component {
 
   toggleEdit = () => {
     this.setState(state => ({ isEdit: !state.isEdit }));
-  }
+  };
 
   render() {
     let {
@@ -84,7 +84,7 @@ class MemberModal extends React.Component {
       }
     });
 
-    _.forEach(member,item => {
+    _.forEach(member, item => {
       if (_.isEmpty(item.ChatRoomMemberCompanyName)) {
         if (_.isEmpty(shipmentMember.Individual)) {
           shipmentMember.Individual = [];
@@ -117,24 +117,38 @@ class MemberModal extends React.Component {
 
           {count === 0 ? <TextLoading /> : count}
         </Button>
-        <Modal size="lg"
-        style={{ height: '80%'}}
-        isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>          
+        <Modal
+          size="lg"
+          style={{ height: '80%' }}
+          isOpen={this.state.modal}
+          toggle={this.toggle}
+          className={this.props.className}
+        >
           <ModalHeader toggle={this.toggle} close={this.renderCloseButton()}>
-          <div>Members in this chat room</div>
+            <div>Members in this chat room</div>
           </ModalHeader>
-          <ModalBody style={{
+          <ModalBody
+            style={{
               height: '400px',
-              overflowY: 'auto'            
-          }}>
-          <div style={{backgroundColor: '#f4f4f4' , borderRadius: '3px', 
-          paddingTop: '16px' , paddingLeft: '8px' , paddingRight: '8px', paddingBottom : '16px'}}>
-            <div style={{marginLeft: '16px' , textDecorationLine: 'underline'}}>
-                 Invite by E-mail
-            </div>
-            <InputGroup style={{marginTop: '4px'}}>
-            <Col sm={10}>
-              {/* <Autocomplete
+              overflowY: 'auto'
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: '#f4f4f4',
+                borderRadius: '3px',
+                paddingTop: '16px',
+                paddingLeft: '8px',
+                paddingRight: '8px',
+                paddingBottom: '16px'
+              }}
+            >
+              <div style={{ marginLeft: '16px', textDecorationLine: 'underline' }}>
+                Invite by E-mail
+              </div>
+              <InputGroup style={{ marginTop: '4px' }}>
+                <Col sm={10}>
+                  {/* <Autocomplete
                   className="member-search-container"
                   items={suggestion}
                   shouldItemRender={(item, value) =>
@@ -154,8 +168,8 @@ class MemberModal extends React.Component {
                   onSelect={value => this.setState({ value })}
                 /> */}
 
-                <XSuggest
-                    ref={$el => this.xsuggest = $el}
+                  <XSuggest
+                    ref={$el => (this.xsuggest = $el)}
                     style={{}}
                     placeholder="Invite via e-mail to join this chat of this shipment only"
                     datasets={suggestion}
@@ -165,10 +179,10 @@ class MemberModal extends React.Component {
                     avatarName={'avatar'}
                     onAdd={item => this.state.inviteEmailList.push(item)}
                     onRemove={item => this.state.inviteEmailList.pop(item)}
-                    onChange={(selects, adds, removes) => console.log(selects, adds, removes)}/>
-
+                    onChange={(selects, adds, removes) => console.log(selects, adds, removes)}
+                  />
                 </Col>
-            
+
                 <Button
                   className="invite-btn"
                   style={{
@@ -181,15 +195,14 @@ class MemberModal extends React.Component {
                     const inviteMember = [];
                     const role = [];
                     role.push(this.props.ChatRoomData.ChatRoomType);
-                    _.forEach(this.state.inviteEmailList , (invite) =>{
-
-                      console.log("email" + JSON.stringify(invite));
+                    _.forEach(this.state.inviteEmailList, invite => {
+                      console.log('email' + JSON.stringify(invite));
 
                       const hasMember = _.find(
                         member,
                         (item, index) => item.ChatRoomMemberEmail === invite.label
                       );
- 
+
                       if (_.isEmpty(hasMember)) {
                         inviteMember.push({
                           Email: invite.label,
@@ -199,49 +212,54 @@ class MemberModal extends React.Component {
                           ChatRoomMemberCompanyKey: ''
                         });
                       }
-                    })
+                    });
 
-                    if (inviteMember.length > 0){
+                    if (inviteMember.length > 0) {
                       if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
-                          const invite = CreateChatMultipleInvitation(
-                            inviteMember,
-                            ShipmentKey,
-                            ChatRoomKey,
-                            this.props.sender
-                          ).subscribe({
-                            next: res => {
-                              this.setState({
-                                inviteEmailList : []
-                              });
-                              // Clear sugguest input
-                              this.xsuggest && this.xsuggest.clearSelects()     
-
-                              invite.unsubscribe();
-                            }
-                          });
+                        const invite = CreateChatMultipleInvitation(
+                          inviteMember,
+                          ShipmentKey,
+                          ChatRoomKey,
+                          this.props.sender
+                        ).subscribe({
+                          next: res => {
+                            this.setState({
+                              inviteEmailList: []
+                            });
+                            // Clear sugguest input
+                            this.xsuggest && this.xsuggest.clearSelects();
+                          }
+                        });
                       } else {
                         window.alert('You has been remove from the chat');
                       }
-                    }else{
+                    } else {
                       window.alert('already in chatroom');
                     }
                   }}
                 >
                   <span style={{ color: '#fff', fontWeight: 'bold' }}>Send Invite</span>
                 </Button>
-            </InputGroup>
+              </InputGroup>
             </div>
-            <div style={{textAlign : 'end', marginRight : '60px'}}>              
-              <Button style={{backgroundColor: '#FFFFFFFF', 
-                              border: '0px',
-                              marginTop: '8px',
-                              textDecoration:'underline' ,
-                              fontWeight:'bold',}} onClick={() => {
-                this.toggleEdit();
-              }}>Edit</Button>
+            <div style={{ textAlign: 'end', marginRight: '60px' }}>
+              <Button
+                style={{
+                  backgroundColor: '#FFFFFFFF',
+                  border: '0px',
+                  marginTop: '8px',
+                  textDecoration: 'underline',
+                  fontWeight: 'bold'
+                }}
+                onClick={() => {
+                  this.toggleEdit();
+                }}
+              >
+                Edit
+              </Button>
             </div>
 
-             {Object.keys(shipmentMember).map((key, index) => (
+            {Object.keys(shipmentMember).map((key, index) => (
               <MemberInChat
                 toggleBlocking={toggleBlocking}
                 title={key}
