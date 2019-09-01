@@ -10,7 +10,9 @@ import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 import '../../scss/ResetPassword.scss';
 
-import { Row, Col, DropdownToggle, Dropdown, Button, Input, ButtonGroup, Badge } from 'reactstrap';
+import {
+  Row, Col, DropdownToggle, Dropdown, Button, Input, ButtonGroup, Badge,
+} from 'reactstrap';
 import { TrimLongText } from '../../utils/string';
 
 import MainDataTable from '../../component/MainDataTable';
@@ -31,13 +33,13 @@ import { GetUserRequest } from '../../service/join/request';
 import {
   GetUserInvitation,
   UpdateCompanyInvitationStatus,
-  UpdateUserInvitationStatus
+  UpdateUserInvitationStatus,
 } from '../../service/join/invite';
 
 import {
   PutFile,
   GetMetaDataFromStorageRefPath,
-  GetURLFromStorageRefPath
+  GetURLFromStorageRefPath,
 } from '../../service/storage/managestorage';
 
 import { isValidProfileImg } from '../../utils/validation';
@@ -48,7 +50,7 @@ const renderStatus = (status, data, listener) => {
       <div>
         <ButtonGroup>
           <Button
-            onClick={e => {
+            onClick={(e) => {
               e.stopPropagation();
               listener(data, 'Reject');
             }}
@@ -59,7 +61,7 @@ const renderStatus = (status, data, listener) => {
         </ButtonGroup>
         <ButtonGroup>
           <Button
-            onClick={e => {
+            onClick={(e) => {
               e.stopPropagation();
               listener(data, 'Approve');
             }}
@@ -102,7 +104,9 @@ const renderStatus = (status, data, listener) => {
   return '';
 };
 
-const ProfilePanel = ({ currentProfile, auth, user, history }) => {
+const ProfilePanel = ({
+  currentProfile, auth, user, history,
+}) => {
   const [userProfile, setUserProfile] = useState({});
   const [companyList, setCompanyList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -131,7 +135,7 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
     });
   };
 
-  const fetchCompany = userKey => {
+  const fetchCompany = (userKey) => {
     const requestList = [];
     const inviteList = [];
     const joinedList = [];
@@ -139,29 +143,27 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
     zip(
       GetUserRequest(userKey),
       GetUserInvitation(userKey).pipe(
-        map(docs =>
-          docs.map(d => {
-            const data = d.data();
-            data.key = d.id;
-            return data;
-          })
-        )
+        map(docs => docs.map((d) => {
+          const data = d.data();
+          data.key = d.id;
+          return data;
+        })),
       ),
-      GetUserCompany(userKey)
+      GetUserCompany(userKey),
     ).subscribe(([requests, invitations, joins]) => {
-      requests.forEach(item => {
+      requests.forEach((item) => {
         requestList.push({
           key: item.CompanyRequestCompanyKey,
           company: item.CompanyRequestCompanyName,
           position: '-',
           role: '-',
           status: renderStatus(item.CompanyRequestStatus),
-          button: ''
+          button: '',
         });
       });
 
       let invitedIndex = 0;
-      invitations.forEach(item => {
+      invitations.forEach((item) => {
         const status = item.CompanyInvitationStatus === 'Pending' ? 'Invited' : 'Reject';
         if (status === 'Invited') {
           const inviteData = {
@@ -171,7 +173,7 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
             cName: item.CompanyInvitationName,
             position: item.CompanyInvitationPosition,
             role: item.CompanyInvitationRole,
-            invitedIndex
+            invitedIndex,
           };
           inviteList.push({
             key: item.CompanyInvitationCompanyKey,
@@ -180,7 +182,7 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
             role: item.CompanyInvitationRole,
             // eslint-disable-next-line no-use-before-define
             status: renderStatus(status, inviteData, responseToInvite),
-            button: ''
+            button: '',
           });
           invitedIndex += 1;
         }
@@ -201,23 +203,27 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
                 options={[
                   {
                     text: 'Leave',
-                    function: e => {
+                    function: (e) => {
                       confirmPopupRef.current.triggerError(
                         <span>
-                          Are you leaving <b>{item.CompanyName}</b> ?
+                          Are you leaving
+                          {' '}
+                          <b>{item.CompanyName}</b>
+                          {' '}
+?
                         </span>,
                         'Leave Company',
-                        confirm => {
+                        (confirm) => {
                           if (confirm) {
                             leaveCompany(e, item.CompanyKey, userKey, index);
                           }
-                        }
+                        },
                       );
-                    }
-                  }
+                    },
+                  },
                 ]}
               />
-            )
+            ),
           });
         }
       });
@@ -231,18 +237,18 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
     UpdateUserInvitationStatus(data.uKey, data.iKey, status);
     setAcceptedInvite({
       data,
-      status
+      status,
     });
   };
 
-  const responseToCreate = company => {
+  const responseToCreate = (company) => {
     toggleBlocking();
     setNewCompany({
-      company
+      company,
     });
   };
 
-  const updateCompanyList = update => {
+  const updateCompanyList = (update) => {
     const currentList = companyList;
     if (update.status === 'Approve') {
       currentList[1].splice(update.data.index, 1);
@@ -258,23 +264,27 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
             options={[
               {
                 text: 'Leave',
-                function: e => {
+                function: (e) => {
                   confirmPopupRef.current.triggerError(
                     <span>
-                      Are you leaving <b>{update.data.cName}</b> ?
+                      Are you leaving
+                      {' '}
+                      <b>{update.data.cName}</b>
+                      {' '}
+?
                     </span>,
                     'Leave Company',
-                    confirm => {
+                    (confirm) => {
                       if (confirm) {
                         leaveCompany(e, update.data.cKey, update.data.uKey, update.data.index);
                       }
-                    }
+                    },
                   );
-                }
-              }
+                },
+              },
             ]}
           />
-        )
+        ),
       });
     } else {
       currentList[1].splice(update.data.index, 1);
@@ -300,7 +310,7 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
     setIsEdit(!isEdit);
   };
 
-  const handleProfileInputChange = event => {
+  const handleProfileInputChange = (event) => {
     const editedUserProfile = { ...userProfile };
     const inputName = event.target.id;
     const inputValue = event.target.value;
@@ -323,7 +333,7 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
     fileInput.current.click();
   };
 
-  const changeProfilePic = file => {
+  const changeProfilePic = (file) => {
     if (isValidProfileImg(file)) {
       setBlocking(true);
       const editedUserProfile = userProfile;
@@ -332,44 +342,45 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
         next: () => {
           console.log('TODO: UPLOAD PROGRESS');
         },
-        error: err => {
+        error: (err) => {
           console.log(err);
           alert(err.message);
         },
         complete: () => {
           GetMetaDataFromStorageRefPath(storageRefPath).subscribe({
-            next: metaData => {
+            next: (metaData) => {
               GetURLFromStorageRefPath(metaData.ref).subscribe({
-                next: url => {
+                next: (url) => {
                   editedUserProfile.UserInfoProfileImageLink = url;
                   UpdateProfile(auth.uid, currentProfile.id, editedUserProfile).subscribe(() => {
                     setBlocking(false);
                   });
                 },
-                complete: () => {}
+                complete: () => {},
               });
-            }
+            },
           });
-        }
+        },
       });
     } else {
       errorPopupRef.current.triggerError(
         <span>
-          <b>Profile image is not valid</b>, Please upload only .jpg and .png files.
+          <b>Profile image is not valid</b>
+, Please upload only .jpg and .png files.
         </span>,
-        'WARN'
+        'WARN',
       );
     }
   };
 
-  const routeToCompany = key => {
+  const routeToCompany = (key) => {
     history.push(`network/company/${key}`);
   };
 
   const tableRowEvents = {
     onClick: (e, row) => {
       routeToCompany(row.key);
-    }
+    },
   };
 
   return (
@@ -516,8 +527,7 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
                   <span
                     role="button"
                     className="button-as-link"
-                    onClick={() =>
-                      resetPasswordModalRef.current.triggerResetPassword(user.UserInfoEmail)
+                    onClick={() => resetPasswordModalRef.current.triggerResetPassword(user.UserInfoEmail)
                     }
                     onKeyDown={null}
                     tabIndex="-1"
@@ -531,8 +541,7 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
               <Row>
                 <Button
                   className="profile-btn"
-                  onClick={() =>
-                    inviteToCompanyModalRef.current.triggerInviteToCompany([], companyList)
+                  onClick={() => inviteToCompanyModalRef.current.triggerInviteToCompany([], companyList)
                   }
                 >
                   <i className="cui-user-follow icons network-btn-icon" />
@@ -565,7 +574,7 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
           style={{
             marginLeft: '5rem',
             marginRight: '5rem',
-            height: '65%'
+            height: '65%',
           }}
         >
           <MainDataTable
@@ -584,16 +593,16 @@ const ProfilePanel = ({ currentProfile, auth, user, history }) => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { authReducer, userReducer, profileReducer } = state;
   const profile = _.find(
     profileReducer.ProfileList,
-    item => item.id === profileReducer.ProfileDetail.id
+    item => item.id === profileReducer.ProfileDetail.id,
   );
   return {
     auth: authReducer.user,
     user: userReducer.UserInfo,
-    currentProfile: profile
+    currentProfile: profile,
   };
 };
 
