@@ -1,4 +1,4 @@
-const html = function(opts) {
+const landingPage = function(opts) {
   return `
     <!DOCTYLE html>
     <html>
@@ -7,4 +7,4 @@ const html = function(opts) {
     `;
 };
 
-module.exports = html;
+module.exports = landingPage;
