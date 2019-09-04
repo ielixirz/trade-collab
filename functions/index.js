@@ -11,12 +11,24 @@ const AES = require('crypto-js/aes');
 
 var serviceAccount = require('./weeklyorder0-firebase-adminsdk-aruhg-0fd4837a53.json');
 
+const app = require('express')();
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: 'https://weeklyorder0.firebaseio.com'
 });
 
 const CloudFunctionsRegionsAsia = functions.region('asia-east2');
+
+// LANDING PAGE SSR
+const landingPage = require('./ssr/landingPage');
+
+app.get('/main', (req, res) => {
+  res.set('Cache-Control', 'public, max-age=60, s-maxage=180');
+  res.send(landingPage);
+});
+exports.app = functions.https.onRequest(app);
+///////////////////
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
@@ -149,9 +161,7 @@ exports.ReaderLastestMessage = CloudFunctionsRegionsAsia.firestore
             const AddItem = admin
               .firestore()
               .doc(
-                `Shipment/${context.params.ShipmentKey}/ChatRoom/${
-                  context.params.ChatRoomKey
-                }/ChatRoomMessage/${ChatRoomMessageKeyItem}`
+                `Shipment/${context.params.ShipmentKey}/ChatRoom/${context.params.ChatRoomKey}/ChatRoomMessage/${ChatRoomMessageKeyItem}`
               )
               .set(
                 {
@@ -1523,16 +1533,12 @@ exports.SendUnreadMessage = CloudFunctionsRegionsAsia.https.onRequest(async (req
 
       const MapTextWithProfileUnread = element.map(
         Item =>
-          `${Item.ProfileFirstname} ${Item.ProfileSurname} has ${
-            Item.ShipmentChatCount
-          } unread messages`
+          `${Item.ProfileFirstname} ${Item.ProfileSurname} has ${Item.ShipmentChatCount} unread messages`
       );
 
       const MapHtmlWithProfileUnread = element.map(
         Item =>
-          `<p class="profile-unread"> <span class="highlighttext" style="color: rgba(22, 160, 133, 1);" >${
-            Item.ProfileFirstname
-          } ${Item.ProfileSurname}</span> has ${Item.ShipmentChatCount} Unread Message </p>`
+          `<p class="profile-unread"> <span class="highlighttext" style="color: rgba(22, 160, 133, 1);" >${Item.ProfileFirstname} ${Item.ProfileSurname}</span> has ${Item.ShipmentChatCount} Unread Message </p>`
       );
 
       const ButtonRedirect = `<a style="font-size:16px;"
