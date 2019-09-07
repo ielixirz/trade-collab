@@ -401,6 +401,14 @@ tbody > tr:hover {
   }
 }
 
+.XCalendar {
+  .DayPickerInput {
+    &-Overlay {
+      margin-top: 0.5rem;
+    }
+  }
+}
+
 .input-shipment  {
   color: #9b9b9b;
   border-color: #d6d6d6;

@@ -28,11 +28,19 @@ class MemberInChat extends Component {
   constructor(props) {
     super(props);
     this.toggle = this.toggle.bind(this);
-    this.state = { collapse: true };
+    this.state = { collapse: false };
   }
 
   toggle() {
     this.setState(state => ({ collapse: !state.collapse }));
+  }
+
+  componentDidMount(){
+    if (this.props.title === 'Individual'){
+      this.setState({
+        collapse: true,
+      });
+    }
   }
 
   render() {

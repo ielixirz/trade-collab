@@ -102,6 +102,7 @@ class Shipment extends Component {
       blocking: true,
       inputCompany: false,
       swapRolePage: 1,
+      isCreating: false,
       companySelect : {}
     };
     this.fetchMoreShipment = this.fetchMoreShipment.bind(this);
@@ -137,18 +138,47 @@ class Shipment extends Component {
     }));
   }
 
-  GetLastestShipment = () => {
+  getLastestShipment = () => {
     GetLastestShipment(this.props.user.uid).subscribe({
       next: (data) => {
-        console.log("complete" + JSON.stringify(data[0]));
-        
+        const lastest_role_selected = 0
+
+        switch (data.ShipmentCreatorType) {
+          case 'Importer':
+              lastest_role_selected = 1;
+            break;
+          case 'Exporter':
+              lastest_role_selected = 2;
+            break;
+          case 'Inbound Forwarder':
+              lastest_role_selected = 3;
+            break;
+          case 'Outbound Forwarder':
+              lastest_role_selected = 4;
+            break;
+          case 'Inbound Custom Broker':
+              lastest_role_selected = 5;
+            break;
+          case 'Outbound Custom Broker':
+              lastest_role_selected = 6;
+            break;
+          default:
+            break;
+        }
+
+        const lastest_companySelect = {
+          ShipmentCreatorCompanyName : data.ShipmentCreatorCompanyName,
+          ShipmentCreatorCompanyKey: data.ShipmentCreatorCompanyKey
+        }
+
         this.setState({
-          input:{
-            ...this.state.input,
-            role : this.getRoleMessage(data[0].ShipmentCreatorType)
-          }
-        
+          ...this.state.input,
+          input: {
+            role : lastest_role_selected
+           },
+           companySelect : lastest_companySelect,
         })
+        console.log("complete" + JSON.stringify(data));
       },
       error: (error) => {
         console.log("error" + error);
@@ -377,6 +407,8 @@ class Shipment extends Component {
   componentDidMount() {
     const { search } = this.props;
 
+    // this.getLastestShipment();
+
     if (!_.isEmpty(this.fetchShipment)) {
       this.fetchShipment.unsubscribe();
       if (!_.isEmpty(this.combineShipment)) {
@@ -468,17 +500,15 @@ class Shipment extends Component {
     });
   }
 
-  toggleCompanyState = () =>  {
-    this.setState({
-      inputComapany: !this.state.inputComapany
-    });
-  }
-
   createCompany = () => {
     if (this.state.input.newCompanyName === ''){
       alert('Input name invalid');
       return;
     }
+
+    this.setState({
+      isCreating : true
+    })
 
     const userData = {
       UserMemberEmail: this.props.user.email,
@@ -502,6 +532,7 @@ class Shipment extends Component {
           ...this.state.input,
           newCompanyName : '',
         },
+        isCreating : false,
       });
     });
   };
@@ -900,11 +931,11 @@ class Shipment extends Component {
             <Row>   
             <UncontrolledDropdown style={{marginLeft:'16px'}}>
                   <DropdownToggle tag="p" style={{textDecoration:'underline' , fontWeight:'bold'}}>
-                    {_.isEmpty(this.state.companySelect) ? "Select Company" : this.state.companySelect.CompanyName}
+                    {_.isEmpty(this.state.companySelect) ? <div style={{color: 'green'}}>Select Company</div> : this.state.companySelect.CompanyName}
                   </DropdownToggle>
-                    <DropdownMenu>
+                    <DropdownMenu style={{padding: {top: 40, bottom: 40}, maxHeight: `${40 * 10}px`, overflowY: 'auto'}}>
 
-                      <DropdownItem disabled className="shipment-header">Share with shipping with people in</DropdownItem>
+                      <DropdownItem disabled className="shipment-header bg-white" style={{position: 'sticky', top: 0, zIndex: 1}}>Share with shipping with people in</DropdownItem>
 
                       {_.map(this.props.companies, item =>                                             
                         <DropdownItem
@@ -916,42 +947,47 @@ class Shipment extends Component {
                           </DropdownItem>
                       )
                       }
-                      {this.state.inputComapany ?(
-                        <div>
-                       <Input
-                          style={{marginLeft:'8px' , marginRight:'8px', width: '90%'}}
-                          type="text"
-                          name="newCompanyName"
-                          id="newCompanyName"
-                          placeholder="Input New Company Name"
-                          onChange={this.writeText}
-                          value={this.state.input.newCompanyName}  
-                       />
 
-                      <Row>
-                        <Col xs="4" />
-                        <Col xs="3" >
-                          <Button 
+
+                      <div className="bg-white" style={{position: 'sticky', bottom: 0, zIndex: 1}}>
+                        {this.state.inputComapany ?(
+                          <div>
+                        <Input
+                            style={{marginLeft:'8px' , marginRight:'8px', width: '90%'}}
+                            type="text"
+                            name="newCompanyName"
+                            id="newCompanyName"
+                            placeholder="Input New Company Name"
+                            onChange={this.writeText}
+                            value={this.state.input.newCompanyName}  
+                        />
+
+                        <Row>
+                          <Col xs="4" />
+                          <Col xs="3" >
+                            <Button 
+                              className="company-shipment-button"
+                              color="white" onClick={this.toggleCompanyState}>
+                              Cancel
+                            </Button>
+                          </Col>
+                          <Col xs="3" >
+                            <Button 
                             className="company-shipment-button"
-                            color="white" onClick={this.toggleCompanyState}>
-                            Cancel
+                            color="danger"
+                            disabled={this.state.isCreating}
+                            onClick={this.createCompany}>
+                              Save
+                            </Button>
+                          </Col>
+                        </Row> 
+                        </div>
+                        ):(                        
+                          <Button className="company-shipment" onClick={this.toggleCompanyState}>
+                          + Create New Company
                           </Button>
-                        </Col>
-                        <Col xs="3" >
-                          <Button 
-                          className="company-shipment-button"
-                          color="danger"
-                          onClick={this.createCompany}>
-                            Save
-                          </Button>
-                        </Col>
-                      </Row> 
+                        )}
                       </div>
-                      ):(                        
-                        <Button className="company-shipment" onClick={this.toggleCompanyState}>
-                        + Create New Company
-                        </Button>
-                      )}
                     </DropdownMenu>
                 </UncontrolledDropdown>
 
@@ -1187,7 +1223,7 @@ class Shipment extends Component {
                   <XSuggest
                     ref={$el => this.$xsuggest = $el}
                     className="material"
-                    placeholder="Input your Importers E-mail address"
+                    placeholder="Input your E-mail address"
                     datasets={suggestion}
                     idName={'id'}
                     labelName={'label'}
