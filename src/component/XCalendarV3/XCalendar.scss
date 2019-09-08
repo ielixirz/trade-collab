@@ -157,10 +157,19 @@ $input-focus-color: $green-color;
             top: 0;
             left: 0;
             background-color: #ffffff;
+            padding: {
+                left: 0.125rem
+            }
 
             &.hidden {
                 color: transparent !important;
                 background-color: transparent !important;
+            }
+        }
+
+        &--display {
+            padding: {
+                left: 0.125rem
             }
         }
 

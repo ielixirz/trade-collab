@@ -844,9 +844,7 @@ exports.SendEmailInviteIntoShipment = CloudFunctionsRegionsAsia.firestore
     Content = Content + ContentDescription;
 
     const ButtonRedirect = `<a style="font-size:16px;"
-      href='https://weeklyorder-staging.web.app/#/chat/${
-        context.params.ShipmentKey
-      }'>Join Now</a>`;
+      href='https://weeklyorder-staging.web.app/#/chat/${context.params.ShipmentKey}'>Join Now</a>`;
 
     if (RecruiterProfileFirstName && RecruiterProfileSurName) {
       const SendInviteIntoShipment = await SendEmail(
@@ -1959,3 +1957,25 @@ exports.CreateInternalChatRoomFromFeatureBox = CloudFunctionsRegionsAsia.https.o
     }
   }
 );
+
+exports.AddShipmentRoleWhenCreateShipment = CloudFunctionsRegionsAsia.firestore
+  .document('Shipment/{ShipmentKey}')
+  .onCreate(async (snapshot, context) => {
+    const ShipmentKey = context.params.ShipmentKey;
+
+    const CreatorType = snapshot.data().ShipmentCreatorType;
+    const CreatorUserKey = snapshot.data().ShipmentCreatorUserKey;
+    const CompanyName = snapshot.data().ShipmentCreatorCompanyName;
+    const CompanyKey = snapshot.data().ShipmentCreatorCompanyKey;
+
+    return admin
+      .firestore()
+      .collection('Shipment')
+      .doc(ShipmentKey)
+      .collection('ShipmentRole')
+      .doc(CreatorType)
+      .set({
+        ShipmentRoleCompanyName: CompanyName,
+        ShipmentRoleCompanyKey: CompanyKey
+      });
+  });

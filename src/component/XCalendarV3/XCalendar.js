@@ -229,7 +229,7 @@ export default class XCalendar extends React.Component {
                                     format={displayFormat}
                                     formatDate={formatDate}
                                     parseDate={parseDate}
-                                    hideOnDayClick={false}
+                                    hideOnDayClick={true}
                                     overlayComponent={XCalendarOverlay}
                                     inputProps={{
                                         readOnly: true,
@@ -239,7 +239,6 @@ export default class XCalendar extends React.Component {
                                         modifiers,
                                         numberOfMonths: 2,
                                         selectedDays: [from, { from, to }],
-                                        disabledDays: { after: to },
                                         toMonth: to,
                                         format: displayFormat,
                                         tbaLabel: tbaLabel,
@@ -288,7 +287,7 @@ export default class XCalendar extends React.Component {
                                     format={displayFormat}
                                     formatDate={formatDate}
                                     parseDate={parseDate}
-                                    hideOnDayClick={false}
+                                    hideOnDayClick={true}
                                     overlayComponent={XCalendarOverlay}
                                     inputProps={{
                                         readOnly: true,
