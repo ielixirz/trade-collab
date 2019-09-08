@@ -119,18 +119,25 @@ class MemberModal extends React.Component {
         </Button>
         <Modal
           size="lg"
-          style={{ height: '80%' }}
+          style={{ height: '80%'}}
           isOpen={this.state.modal}
           toggle={this.toggle}
           className={this.props.className}
         >
-          <ModalHeader toggle={this.toggle} close={this.renderCloseButton()}>
-            <div>Members in this chat room</div>
+          <ModalHeader toggle={this.toggle} close={this.renderCloseButton()} className="border-0">
+            <div className="ml-3">Members in this chat room</div>
           </ModalHeader>
+
+          <div className="ml-3 px-3">
+            <hr style={{margin: '0', borderTop: 'solid 2px #9b9b9b'}}/>
+          </div>
+
           <ModalBody
             style={{
-              height: '400px',
-              overflowY: 'auto'
+              height: '500px',
+              overflowY: 'auto',
+              marginLeft: '16px',
+              marginRight: '16px'
             }}
           >
             <div
@@ -168,7 +175,7 @@ class MemberModal extends React.Component {
                   onSelect={value => this.setState({ value })}
                 /> */}
 
-                  <XSuggest
+                <XSuggest
                     ref={$el => (this.xsuggest = $el)}
                     style={{}}
                     placeholder="Invite via e-mail to join this chat of this shipment only"
@@ -268,6 +275,7 @@ class MemberModal extends React.Component {
                 {...props}
               />
             ))}
+            <br/>
           </ModalBody>
         </Modal>
       </div>
