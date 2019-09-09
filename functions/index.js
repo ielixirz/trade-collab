@@ -1,6 +1,10 @@
 const _ = require('lodash');
 
 const firebase = require('firebase');
+const express = require('express');
+
+const app = express();
+const router = express.Router();
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
@@ -17,6 +21,36 @@ admin.initializeApp({
 });
 
 const CloudFunctionsRegionsAsia = functions.region('asia-east2');
+
+// LANDING PAGE SSR
+const indexPage = require('./ssr/index');
+const aboutPage = require('./ssr/about');
+const pricingPage = require('./ssr/pricing');
+const supportPage = require('./ssr/support');
+
+router.get('/index', (req, res) => {
+  res.set('Cache-Control', 'public, max-age=60, s-maxage=180');
+  res.send(indexPage);
+});
+
+router.get('/about', (req, res) => {
+  res.set('Cache-Control', 'public, max-age=60, s-maxage=180');
+  res.send(aboutPage);
+});
+
+router.get('/pricing', (req, res) => {
+  res.set('Cache-Control', 'public, max-age=60, s-maxage=180');
+  res.send(pricingPage);
+});
+
+router.get('/support', (req, res) => {
+  res.set('Cache-Control', 'public, max-age=60, s-maxage=180');
+  res.send(supportPage);
+});
+
+app.use('/ssr', router);
+exports.LandingPageSSR = functions.https.onRequest(app);
+///////////////////
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
@@ -149,9 +183,7 @@ exports.ReaderLastestMessage = CloudFunctionsRegionsAsia.firestore
             const AddItem = admin
               .firestore()
               .doc(
-                `Shipment/${context.params.ShipmentKey}/ChatRoom/${
-                  context.params.ChatRoomKey
-                }/ChatRoomMessage/${ChatRoomMessageKeyItem}`
+                `Shipment/${context.params.ShipmentKey}/ChatRoom/${context.params.ChatRoomKey}/ChatRoomMessage/${ChatRoomMessageKeyItem}`
               )
               .set(
                 {
@@ -1523,16 +1555,12 @@ exports.SendUnreadMessage = CloudFunctionsRegionsAsia.https.onRequest(async (req
 
       const MapTextWithProfileUnread = element.map(
         Item =>
-          `${Item.ProfileFirstname} ${Item.ProfileSurname} has ${
-            Item.ShipmentChatCount
-          } unread messages`
+          `${Item.ProfileFirstname} ${Item.ProfileSurname} has ${Item.ShipmentChatCount} unread messages`
       );
 
       const MapHtmlWithProfileUnread = element.map(
         Item =>
-          `<p class="profile-unread"> <span class="highlighttext" style="color: rgba(22, 160, 133, 1);" >${
-            Item.ProfileFirstname
-          } ${Item.ProfileSurname}</span> has ${Item.ShipmentChatCount} Unread Message </p>`
+          `<p class="profile-unread"> <span class="highlighttext" style="color: rgba(22, 160, 133, 1);" >${Item.ProfileFirstname} ${Item.ProfileSurname}</span> has ${Item.ShipmentChatCount} Unread Message </p>`
       );
 
       const ButtonRedirect = `<a style="font-size:16px;"
