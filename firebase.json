@@ -11,17 +11,35 @@
     {
       "target": "develop",
       "public": "build-dev",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "/ssr/**",
+          "function": "LandingPageSSR"
+        }
+      ]
     },
     {
       "target": "staging",
       "public": "build-staging",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "/ssr/**",
+          "function": "LandingPageSSR"
+        }
+      ]
     },
     {
       "target": "production",
       "public": "build-production",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "/ssr/**",
+          "function": "LandingPageSSR"
+        }
+      ]
     },
     {
       "public": "build",
