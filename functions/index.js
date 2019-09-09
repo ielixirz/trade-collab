@@ -49,7 +49,7 @@ router.get('/support', (req, res) => {
 });
 
 app.use('/ssr', router);
-exports.LandingPageSSR = functions.https.onRequest(app);
+exports.LandingPageSSR = functions.region('asia-east2').https.onRequest(app);
 ///////////////////
 
 // // Create and Deploy Your First Cloud Functions
