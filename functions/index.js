@@ -1,6 +1,10 @@
 const _ = require('lodash');
 
 const firebase = require('firebase');
+const express = require('express');
+
+const app = express();
+const router = express.Router();
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
@@ -11,8 +15,6 @@ const AES = require('crypto-js/aes');
 
 var serviceAccount = require('./weeklyorder0-firebase-adminsdk-aruhg-0fd4837a53.json');
 
-const app = require('express')();
-
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: 'https://weeklyorder0.firebaseio.com'
@@ -21,13 +23,33 @@ admin.initializeApp({
 const CloudFunctionsRegionsAsia = functions.region('asia-east2');
 
 // LANDING PAGE SSR
-const landingPage = require('./ssr/landingPage');
+const indexPage = require('./ssr/index');
+const aboutPage = require('./ssr/about');
+const pricingPage = require('./ssr/pricing');
+const supportPage = require('./ssr/support');
 
-app.get('/main', (req, res) => {
+router.get('/index', (req, res) => {
   res.set('Cache-Control', 'public, max-age=60, s-maxage=180');
-  res.send(landingPage);
+  res.send(indexPage);
 });
-exports.app = functions.https.onRequest(app);
+
+router.get('/about', (req, res) => {
+  res.set('Cache-Control', 'public, max-age=60, s-maxage=180');
+  res.send(aboutPage);
+});
+
+router.get('/pricing', (req, res) => {
+  res.set('Cache-Control', 'public, max-age=60, s-maxage=180');
+  res.send(pricingPage);
+});
+
+router.get('/support', (req, res) => {
+  res.set('Cache-Control', 'public, max-age=60, s-maxage=180');
+  res.send(supportPage);
+});
+
+app.use('/ssr', router);
+exports.LandingPageSSR = functions.https.onRequest(app);
 ///////////////////
 
 // // Create and Deploy Your First Cloud Functions
