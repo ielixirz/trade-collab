@@ -31,7 +31,7 @@ const about = `
         <!-- Navbar -->
           <nav class="navbar navbar-expand-lg navbar-light bg-white" id="top-nav">
           <div class="container">
-            <a class="navbar-brand" href="index.html">
+            <a class="navbar-brand" href="index">
               <div class="brand-img">
                 <img src="assets/images/logo-weekly.png">
               </div>
@@ -43,16 +43,16 @@ const about = `
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav ml-lg-auto">
                 <li class="nav-item">
-                  <a class="nav-link" href="index.html">Home</a>
+                  <a class="nav-link" href="index">Home</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link active" href="about.html">About</a>
+                  <a class="nav-link active" href="about">About</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="pricing.html">Pricing</a>
+                  <a class="nav-link" href="pricing">Pricing</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="support.html">Sales & Support</a>
+                  <a class="nav-link" href="support">Sales & Support</a>
                 </li>
               </ul>
               <div class="form-inline my-2 my-lg-0">
@@ -104,13 +104,13 @@ const about = `
               <div class="footer-nav">
                 <ul class="footer-nav-menu">
                   <li class="ft-nav-item">
-                    <a href="about.html" class="ft-link">About</a>
+                    <a href="about" class="ft-link">About</a>
                   </li>
                   <li class="ft-nav-item">
-                    <a href="pricing.html" class="ft-link">Pricing</a>
+                    <a href="pricing" class="ft-link">Pricing</a>
                   </li>
                   <li class="ft-nav-item">
-                    <a href="support.html" class="ft-link">Sales & Support</a>
+                    <a href="support" class="ft-link">Sales & Support</a>
                   </li>
                 </ul>
               </div>
