@@ -511,7 +511,7 @@ class ChatWithHeader extends Component {
                 </DropdownMenu>
               </UncontrolledDropdown>
             </Col>
-            <Col xs={3}>
+            <Col xs={3} className={'roleForm'}>
               <Select
                 onChange={e => {
                   this.setState({ role: e });
