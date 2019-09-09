@@ -55,9 +55,9 @@ const pricing = `
                   </li>
                 </ul>
                 <div class="form-inline my-2 my-lg-0">
-                  <a class="btn-login my-2 my-sm-0" href="#">Log-In</a> 
+                  <a class="btn-login my-2 my-sm-0" href="/#/login">Log-In</a> 
                   <span class="pr-3" style="color: #ff5a5f; font-weight: 600;">|</span>   
-                  <a class="btn-signup my-2 my-sm-0" href="#">Sign-Up Free</a>
+                  <a class="btn-signup my-2 my-sm-0" href="/#/register">Sign-Up Free</a>
                 </div>
               </div>
             </div>
