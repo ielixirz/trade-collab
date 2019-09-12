@@ -57,7 +57,7 @@ class MemberInChat extends Component {
 
     return (
       <div>
-        <Row>
+        <Row style={{marginTop : '-10px', marginBottom: '8px'}}>
           <Col xs="6" sm="7" className="text-left">
             {this.state.collapse ? (
               <span style={styles.arrow}>

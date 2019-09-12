@@ -254,7 +254,7 @@ class MemberModal extends React.Component {
                 style={{
                   backgroundColor: '#FFFFFFFF',
                   border: '0px',
-                  marginTop: '8px',
+                  marginTop: '4px',
                   textDecoration: 'underline',
                   fontWeight: 'bold'
                 }}
