@@ -526,14 +526,12 @@ class Shipment extends Component {
       CompanyName: this.state.input.newCompanyName,
       CompanyID: this.state.input.newCompanyName
     };
-
     CombineCreateCompanyWithCreateCompanyMember(
       companyData,
       this.props.user.uid,
       userData
-    ).subscribe(() => {
-      this.toggleCompanyState();
-      this.props.companies.push(companyData);
+    ).subscribe(res => {
+      this.props.companies.push({ ...companyData, CompanyKey: _.compact(res)[1] });
       this.setState({
         input: {
           ...this.state.input,
