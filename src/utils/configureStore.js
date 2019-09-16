@@ -14,17 +14,12 @@ import reducers from '../reducers';
 
 const persistConfig = {
   key: 'root',
-  storage
+  storage,
+  blacklist: ['shipmentReducer', 'companyReducer']
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
 const composeEnhancers = composeWithDevTools({});
-
-const authPersistConfig = {
-  key: 'auth',
-  storage: storage,
-  blacklist: ['shipmentReducer', 'companyReducer']
-};
 
 export const configureStore = () => {
   const store = createStore(persistedReducer, composeEnhancers(applyMiddleware(logger, thunk)));
