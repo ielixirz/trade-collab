@@ -64,7 +64,6 @@ class MainRegister extends Component {
       },
       error: (err) => {
         console.log('err', err);
-        window.location.replace('#/login');
       },
     });
   };
