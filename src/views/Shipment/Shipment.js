@@ -258,8 +258,14 @@ class Shipment extends Component {
 
     masterParamter.ShipmentDetailProduct = this.state.input.product;
     masterParamter.ShipmentDetailPriceDescriptionOfGoods = this.state.input.details;
-    masterParamter.ShipperETDDate = parseInt(this.state.input.etd);
-    masterParamter.ConsigneeETAPortDate = parseInt(this.state.input.eta);
+
+    masterParamter.ShipperETDDate = firebase.firestore.Timestamp.fromDate(
+      moment.unix(this.state.input.etd).toDate()
+    );
+
+    masterParamter.ConsigneeETAPortDate = firebase.firestore.Timestamp.fromDate(
+      moment.unix(this.state.input.eta).toDate()
+    );
     masterParamter.ShipperCompanyName = this.state.input.exporter;
     masterParamter.ConsigneeCompanyName = this.state.input.importer;
 

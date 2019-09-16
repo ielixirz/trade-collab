@@ -318,7 +318,6 @@ exports.OnCreateShipment = CloudFunctionsRegionsAsia.firestore
         .get();
 
       const MasterDataDefaultTemplateData = GetMasterDataDefaultTemplate.data();
-
       delete MasterDataDefaultTemplateData.ShipmentDetailProduct;
       delete MasterDataDefaultTemplateData.ShipperETDDate;
       delete MasterDataDefaultTemplateData.ConsigneeETAPortDate;
