@@ -30,14 +30,18 @@ import {
   ModalFooter,
   InputGroupAddon,
   InputGroupText,
-  InputGroup
+  InputGroup,
 } from 'reactstrap';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 import TableShipment from './TableShipment';
-import { fetchShipments, fetchMoreShipments, searching } from '../../actions/shipmentActions';
+import {
+  fetchShipments,
+  fetchMoreShipments,
+  searching,
+} from '../../actions/shipmentActions';
 import {
   CombineShipmentAndShipmentReference,
   CreateShipment,
@@ -46,7 +50,7 @@ import {
   EditShipment,
   SearchShipment,
   UpdateShipmentReference,
-  CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData
+  CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData,
 } from '../../service/shipment/shipment';
 import { CombineCreateCompanyWithCreateCompanyMember } from '../../service/company/company';
 
@@ -92,7 +96,7 @@ class Shipment extends Component {
         eta: 0,
         newCompanyName: '',
         importer: '',
-        exporter: ''
+        exporter: '',
       },
       companies: {},
       modal: false,
@@ -101,7 +105,7 @@ class Shipment extends Component {
       inputCompany: false,
       swapRolePage: 1,
       isCreating: false,
-      companySelect: {}
+      companySelect: {},
     };
     this.fetchMoreShipment = this.fetchMoreShipment.bind(this);
     this.toggle = this.toggle.bind(this);
@@ -132,7 +136,7 @@ class Shipment extends Component {
 
   modal() {
     this.setState(prevState => ({
-      modal: !prevState.modal
+      modal: !prevState.modal,
     }));
   }
 
@@ -166,21 +170,21 @@ class Shipment extends Component {
 
         const lastest_companySelect = {
           ShipmentCreatorCompanyName: data.ShipmentCreatorCompanyName,
-          ShipmentCreatorCompanyKey: data.ShipmentCreatorCompanyKey
+          ShipmentCreatorCompanyKey: data.ShipmentCreatorCompanyKey,
         };
 
         this.setState({
           ...this.state.input,
           input: {
-            role: lastest_role_selected
+            role: lastest_role_selected,
           },
-          companySelect: lastest_companySelect
+          companySelect: lastest_companySelect,
         });
         console.log('complete' + JSON.stringify(data));
       },
       error: error => {
         console.log('error' + error);
-      }
+      },
     });
   };
 
@@ -258,21 +262,28 @@ class Shipment extends Component {
 
     masterParamter.ShipmentDetailProduct = this.state.input.product;
     masterParamter.ShipmentDetailPriceDescriptionOfGoods = this.state.input.details;
+    if (!_.isEmpty(this.state.input.etd)) {
+      masterParamter.ShipperETDDate = firebase.firestore.Timestamp.fromDate(
+        moment.unix(this.state.input.etd).toDate(),
+      );
+    } else {
+      masterParamter.ShipperETDDate = '';
+    }
+    if (!_.isEmpty(this.state.input.eta)) {
+      masterParamter.ConsigneeETAPortDate = firebase.firestore.Timestamp.fromDate(
+        moment.unix(this.state.input.eta).toDate(),
+      );
+    } else {
+      masterParamter.ConsigneeETAPortDate = '';
+    }
 
-    masterParamter.ShipperETDDate = firebase.firestore.Timestamp.fromDate(
-      moment.unix(this.state.input.etd).toDate()
-    );
-
-    masterParamter.ConsigneeETAPortDate = firebase.firestore.Timestamp.fromDate(
-      moment.unix(this.state.input.eta).toDate()
-    );
     masterParamter.ShipperCompanyName = this.state.input.exporter;
     masterParamter.ConsigneeCompanyName = this.state.input.importer;
 
     CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMasterData(
       parameter,
       referenceParameter,
-      masterParamter
+      masterParamter,
     ).subscribe({
       next: shipmentResult => {
         this.fetchShipmentReload();
@@ -283,18 +294,18 @@ class Shipment extends Component {
       },
       error: error => {
         console.log('error' + error);
-      }
+      },
     });
 
     this.setState(prevState => ({
       modal: !prevState.modal,
-      input: {}
+      input: {},
     }));
   }
 
   dropdown() {
     this.setState(prevState => ({
-      dropdownOpen: !prevState.dropdownOpen
+      dropdownOpen: !prevState.dropdownOpen,
     }));
   }
 
@@ -310,14 +321,16 @@ class Shipment extends Component {
 
     if (_.isEmpty(search)) {
       console.log('normal fetch');
-      this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
+      this.fetchShipment = GetShipmentTotalCount(
+        this.props.sender.id,
+      ).subscribe({
         next: notification => {
           this.combineShipment = CombineShipmentAndShipmentReference(
             '',
             '',
             'asc',
             _.size(this.props.shipments) + 10,
-            this.props.user.uid
+            this.props.user.uid,
           ).subscribe({
             next: shipment => {
               const { query: typeShipment } = this.props;
@@ -330,37 +343,47 @@ class Shipment extends Component {
               console.log(err);
               this.setState({ blocking: false });
             },
-            complete: () => {}
+            complete: () => {},
           });
-        }
+        },
       });
     } else {
-      this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
+      this.fetchShipment = GetShipmentTotalCount(
+        this.props.sender.id,
+      ).subscribe({
         next: notification => {
           this.combineShipment = SearchShipment(
             this.props.user.uid,
             search,
             this.state.filterKeyword,
-            _.size(this.props.shipments) + 10
+            _.size(this.props.shipments) + 10,
           ).subscribe({
             next: res => {
               let shipment = _.map(res, item => ({
                 id: item.ShipmentID,
-                ...item
+                ...item,
               }));
               console.log('Search Result ', shipment);
               if (_.includes(this.state.filterKeyword, 'Date')) {
                 shipment = _.filter(
                   shipment,
                   item =>
-                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName') >= search
+                    _.get(
+                      item,
+                      `${this.state.filterKeyword}`,
+                      'ShipmentProductName',
+                    ) >= search,
                 );
               } else if (this.state.filterKeyword !== 'ShipmentReferenceList') {
                 shipment = _.filter(shipment, item =>
                   _.includes(
-                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName').toLowerCase(),
-                    search.toLowerCase()
-                  )
+                    _.get(
+                      item,
+                      `${this.state.filterKeyword}`,
+                      'ShipmentProductName',
+                    ).toLowerCase(),
+                    search.toLowerCase(),
+                  ),
                 );
               }
 
@@ -369,9 +392,9 @@ class Shipment extends Component {
               this.setState({ blocking: false });
 
               this.props.fetchShipments(result, notification);
-            }
+            },
           });
-        }
+        },
       });
     }
   }
@@ -390,7 +413,7 @@ class Shipment extends Component {
           '',
           'asc',
           _.size(this.props.shipments) + 10,
-          this.props.user.uid
+          this.props.user.uid,
         ).subscribe({
           next: shipment => {
             const { query: typeShipment } = this.props;
@@ -403,9 +426,9 @@ class Shipment extends Component {
             console.log(err);
             this.setState({ blocking: false });
           },
-          complete: () => {}
+          complete: () => {},
         });
-      }
+      },
     });
   }
 
@@ -425,14 +448,16 @@ class Shipment extends Component {
       }
     }
     if (_.isEmpty(search)) {
-      this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
+      this.fetchShipment = GetShipmentTotalCount(
+        this.props.sender.id,
+      ).subscribe({
         next: notification => {
           this.combinnfeShipment = CombineShipmentAndShipmentReference(
             '',
             '',
             'asc',
             20,
-            this.props.user.uid
+            this.props.user.uid,
           ).subscribe({
             next: shipment => {
               // Alert : All Status
@@ -449,37 +474,47 @@ class Shipment extends Component {
             error: err => {
               this.setState({ blocking: false });
             },
-            complete: () => {}
+            complete: () => {},
           });
-        }
+        },
       });
     } else {
-      this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
+      this.fetchShipment = GetShipmentTotalCount(
+        this.props.sender.id,
+      ).subscribe({
         next: notification => {
           this.combineShipment = SearchShipment(
             this.props.user.uid,
             search,
             this.state.filterKeyword,
-            15
+            15,
           ).subscribe({
             next: res => {
               let shipment = _.map(res, item => ({
                 id: item.ShipmentID,
-                ...item
+                ...item,
               }));
               console.log('Search Result ', shipment);
               if (_.includes(this.state.filterKeyword, 'Date')) {
                 shipment = _.filter(
                   shipment,
                   item =>
-                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName') >= search
+                    _.get(
+                      item,
+                      `${this.state.filterKeyword}`,
+                      'ShipmentProductName',
+                    ) >= search,
                 );
               } else if (this.state.filterKeyword !== 'ShipmentReferenceList') {
                 shipment = _.filter(shipment, item =>
                   _.includes(
-                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName').toLowerCase(),
-                    search.toLowerCase()
-                  )
+                    _.get(
+                      item,
+                      `${this.state.filterKeyword}`,
+                      'ShipmentProductName',
+                    ).toLowerCase(),
+                    search.toLowerCase(),
+                  ),
                 );
               }
 
@@ -488,16 +523,16 @@ class Shipment extends Component {
               this.setState({ blocking: false });
 
               this.props.fetchShipments(result, notification);
-            }
+            },
           });
-        }
+        },
       });
     }
 
     GetUserCompany(this.props.user.uid).subscribe({
       next: res => {
         this.props.fetchCompany(res);
-      }
+      },
     });
 
     // this.GetLastestShipment();
@@ -505,7 +540,7 @@ class Shipment extends Component {
 
   toggleCompanyState = () => {
     this.setState({
-      inputComapany: !this.state.inputComapany
+      inputComapany: !this.state.inputComapany,
     });
   };
 
@@ -516,7 +551,7 @@ class Shipment extends Component {
     }
 
     this.setState({
-      isCreating: true
+      isCreating: true,
     });
 
     const userData = {
@@ -525,25 +560,28 @@ class Shipment extends Component {
       UserMemberRoleName: 'Owner',
       CompanyUserAccessibilityRolePermissionCode: '11111111111111',
       UserMemberCompanyStandingStatus: 'Active',
-      UserMemberJoinedTimestamp: new Date()
+      UserMemberJoinedTimestamp: new Date(),
     };
 
     const companyData = {
       CompanyName: this.state.input.newCompanyName,
-      CompanyID: this.state.input.newCompanyName
+      CompanyID: this.state.input.newCompanyName,
     };
     CombineCreateCompanyWithCreateCompanyMember(
       companyData,
       this.props.user.uid,
-      userData
+      userData,
     ).subscribe(res => {
-      this.props.companies.push({ ...companyData, CompanyKey: _.compact(res)[1] });
+      this.props.companies.push({
+        ...companyData,
+        CompanyKey: _.compact(res)[1],
+      });
       this.setState({
         input: {
           ...this.state.input,
-          newCompanyName: ''
+          newCompanyName: '',
         },
-        isCreating: false
+        isCreating: false,
       });
     });
   };
@@ -556,7 +594,7 @@ class Shipment extends Component {
   toggle(tab) {
     if (this.state.activeTab !== tab) {
       this.setState({
-        activeTab: tab
+        activeTab: tab,
       });
     }
   }
@@ -565,8 +603,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        role
-      }
+        role,
+      },
     });
   }
 
@@ -574,8 +612,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        bound
-      }
+        bound,
+      },
     });
   }
 
@@ -583,8 +621,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        method
-      }
+        method,
+      },
     });
   }
 
@@ -592,8 +630,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        type
-      }
+        type,
+      },
     });
   }
 
@@ -603,8 +641,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        [name]: value
-      }
+        [name]: value,
+      },
     });
   }
 
@@ -612,8 +650,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        [name]: timestamp
-      }
+        [name]: timestamp,
+      },
     });
   }
 
@@ -621,8 +659,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        [name]: timestamp
-      }
+        [name]: timestamp,
+      },
     });
   }
 
@@ -631,8 +669,8 @@ class Shipment extends Component {
     this.setState({
       input: {
         ...this.state.input,
-        role: selectedOption.value
-      }
+        role: selectedOption.value,
+      },
     });
   };
 
@@ -731,7 +769,7 @@ class Shipment extends Component {
   setSelectCompany = company => {
     console.log('company' + JSON.stringify(company));
     this.setState({
-      companySelect: company
+      companySelect: company,
     });
   };
 
@@ -755,32 +793,42 @@ class Shipment extends Component {
       const { typeShipment } = this.state;
       this.toggleBlocking(true);
 
-      this.fetchShipment = GetShipmentTotalCount(this.props.sender.id).subscribe({
+      this.fetchShipment = GetShipmentTotalCount(
+        this.props.sender.id,
+      ).subscribe({
         next: notification => {
           this.combineShipment = SearchShipment(
             this.props.user.uid,
             search,
             this.state.filterKeyword,
-            15
+            15,
           ).subscribe({
             next: res => {
               let shipment = _.map(res, item => ({
                 id: item.ShipmentID,
-                ...item
+                ...item,
               }));
               console.log('Search Result ', shipment);
               if (_.includes(this.state.filterKeyword, 'Date')) {
                 shipment = _.filter(
                   shipment,
                   item =>
-                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName') >= search
+                    _.get(
+                      item,
+                      `${this.state.filterKeyword}`,
+                      'ShipmentProductName',
+                    ) >= search,
                 );
               } else if (this.state.filterKeyword !== 'ShipmentReferenceList') {
                 shipment = _.filter(shipment, item =>
                   _.includes(
-                    _.get(item, `${this.state.filterKeyword}`, 'ShipmentProductName').toLowerCase(),
-                    search.toLowerCase()
-                  )
+                    _.get(
+                      item,
+                      `${this.state.filterKeyword}`,
+                      'ShipmentProductName',
+                    ).toLowerCase(),
+                    search.toLowerCase(),
+                  ),
                 );
               }
 
@@ -789,9 +837,9 @@ class Shipment extends Component {
               this.setState({ blocking: false });
 
               this.props.fetchShipments(result, notification);
-            }
+            },
           });
-        }
+        },
       });
     }
   }
@@ -807,7 +855,7 @@ class Shipment extends Component {
       { value: 'ShipmentBuyerCompanyName', label: 'Buyer' },
       { value: 'ShipmentSellerCompanyName', label: 'Seller' },
       // { value: 'ShipmentStatus', label: 'Status' },
-      { value: 'ShipmentReferenceList', label: 'Ref' }
+      { value: 'ShipmentReferenceList', label: 'Ref' },
     ];
 
     const SearchShipmentFilter = () => (
@@ -815,12 +863,18 @@ class Shipment extends Component {
         options={options}
         className="basic-multi-select search-filter-select selectfilter"
         classNamePrefix="select"
-        defaultValue={_.find(options, option => option.value === 'ShipmentProductName')}
-        value={_.find(options, option => option.value === this.state.filterKeyword)}
+        defaultValue={_.find(
+          options,
+          option => option.value === 'ShipmentProductName',
+        )}
+        value={_.find(
+          options,
+          option => option.value === this.state.filterKeyword,
+        )}
         onChange={option => {
           this.setState({
             filterKeyword: option.value,
-            keyword: ''
+            keyword: '',
           });
           this.props.searching('');
         }}
@@ -831,11 +885,13 @@ class Shipment extends Component {
       <div
         className="search-filter-select-container"
         style={{
-          width: 'auto'
+          width: 'auto',
         }}
       >
         <InputGroup>
-          <InputGroupAddon addonType={'prepend'}>{SearchShipmentFilter()}</InputGroupAddon>
+          <InputGroupAddon addonType={'prepend'}>
+            {SearchShipmentFilter()}
+          </InputGroupAddon>
           {_.includes(this.state.filterKeyword, 'Date') ? (
             <DatePicker
               className="search-filter-select-date"
@@ -847,7 +903,10 @@ class Shipment extends Component {
             <>
               <Input
                 placeholder={` Search by ${
-                  _.find(options, option => option.value === this.state.filterKeyword).label
+                  _.find(
+                    options,
+                    option => option.value === this.state.filterKeyword,
+                  ).label
                 }`}
                 type="text"
                 className="search-filter-select-input"
@@ -863,7 +922,7 @@ class Shipment extends Component {
                     borderWidth: 0,
                     borderLeft: 1,
                     borderColor: ' #cccccc',
-                    borderStyle: 'solid'
+                    borderStyle: 'solid',
                   }}
                   onClick={() => {
                     this.setState({ keyword: '', blocking: true });
@@ -890,7 +949,7 @@ class Shipment extends Component {
     let suggestion = _.map(network, item => {
       return {
         id: item.UserMemberEmail,
-        label: item.UserMemberEmail
+        label: item.UserMemberEmail,
       };
     });
 
@@ -912,7 +971,7 @@ class Shipment extends Component {
             'In Transit',
             'Delayed',
             'Delivered',
-            'Completed'
+            'Completed',
           ];
           return _.some(keyword, el => _.includes(item.ShipmentStatus, el));
         case 'Plan':
@@ -931,14 +990,22 @@ class Shipment extends Component {
     });
     return (
       <div className="shipment-table-main-container">
-        <Modal size="lg" isOpen={this.state.modal} toggle={this.modal} className="shipment-modal">
+        <Modal
+          size="lg"
+          isOpen={this.state.modal}
+          toggle={this.modal}
+          className="shipment-modal"
+        >
           <ModalHeader style={{ border: '0px' }} toggle={this.modal}>
             Create New Shipment
           </ModalHeader>
           <ModalBody style={{ marginLeft: '40px', marginRight: '40px' }}>
             <Row>
               <UncontrolledDropdown style={{ marginLeft: '16px' }}>
-                <DropdownToggle tag="p" style={{ textDecoration: 'underline', fontWeight: 'bold' }}>
+                <DropdownToggle
+                  tag="p"
+                  style={{ textDecoration: 'underline', fontWeight: 'bold' }}
+                >
                   {_.isEmpty(this.state.companySelect) ? (
                     <div style={{ color: 'green' }}>Select Company</div>
                   ) : (
@@ -949,7 +1016,7 @@ class Shipment extends Component {
                   style={{
                     padding: { top: 40, bottom: 40 },
                     maxHeight: `${40 * 10}px`,
-                    overflowY: 'auto'
+                    overflowY: 'auto',
                   }}
                 >
                   <DropdownItem
@@ -971,11 +1038,18 @@ class Shipment extends Component {
                     </DropdownItem>
                   ))}
 
-                  <div className="bg-white" style={{ position: 'sticky', bottom: 0, zIndex: 1 }}>
+                  <div
+                    className="bg-white"
+                    style={{ position: 'sticky', bottom: 0, zIndex: 1 }}
+                  >
                     {this.state.inputComapany ? (
                       <div>
                         <Input
-                          style={{ marginLeft: '8px', marginRight: '8px', width: '90%' }}
+                          style={{
+                            marginLeft: '8px',
+                            marginRight: '8px',
+                            width: '90%',
+                          }}
                           type="text"
                           name="newCompanyName"
                           id="newCompanyName"
@@ -1008,7 +1082,10 @@ class Shipment extends Component {
                         </Row>
                       </div>
                     ) : (
-                      <Button className="company-shipment" onClick={this.toggleCompanyState}>
+                      <Button
+                        className="company-shipment"
+                        onClick={this.toggleCompanyState}
+                      >
                         + Create New Company
                       </Button>
                     )}
@@ -1018,7 +1095,10 @@ class Shipment extends Component {
 
               <div style={{ marginLeft: '8px', marginRight: '8px' }}>is</div>
               <UncontrolledDropdown>
-                <DropdownToggle tag="p" style={{ textDecoration: 'underline', fontWeight: 'bold' }}>
+                <DropdownToggle
+                  tag="p"
+                  style={{ textDecoration: 'underline', fontWeight: 'bold' }}
+                >
                   {this.getRoleMessage(this.state.input.role)}
                 </DropdownToggle>
                 {this.state.swapRolePage == 0 ? (
@@ -1111,7 +1191,11 @@ class Shipment extends Component {
               <UncontrolledDropdown>
                 <DropdownToggle
                   tag="p"
-                  style={{ textDecoration: 'underline', marginRight: '8px', fontWeight: 'bold' }}
+                  style={{
+                    textDecoration: 'underline',
+                    marginRight: '8px',
+                    fontWeight: 'bold',
+                  }}
                 >
                   {this.getShippingMessage(this.state.input.method)}
                 </DropdownToggle>
@@ -1147,7 +1231,8 @@ class Shipment extends Component {
                     className="shipment-item-box-gray-background"
                     disabled
                   >
-                    Air Freight <span style={{ fontSize: '10px' }}>(Coming Soon)</span>
+                    Air Freight{' '}
+                    <span style={{ fontSize: '10px' }}>(Coming Soon)</span>
                     <span className="float-right">
                       <Airplane />
                     </span>
@@ -1160,7 +1245,8 @@ class Shipment extends Component {
                     className="shipment-item-box-gray-background"
                     disabled
                   >
-                    Truck <span style={{ fontSize: '10px' }}>(Coming Soon)</span>
+                    Truck{' '}
+                    <span style={{ fontSize: '10px' }}>(Coming Soon)</span>
                     <span className="float-right">
                       <Truck />
                     </span>
@@ -1171,7 +1257,11 @@ class Shipment extends Component {
               <UncontrolledDropdown>
                 <DropdownToggle
                   tag="p"
-                  style={{ textDecoration: 'underline', marginRight: '8px', fontWeight: 'bold' }}
+                  style={{
+                    textDecoration: 'underline',
+                    marginRight: '8px',
+                    fontWeight: 'bold',
+                  }}
                 >
                   {this.getContainerMessage(this.state.input.type)}
                 </DropdownToggle>
@@ -1226,7 +1316,11 @@ class Shipment extends Component {
               </div> */}
             <Form style={{ margin: '16px' }}>
               <FormGroup row>
-                <Label for="From" sm={2} className="create-shipment-field-title">
+                <Label
+                  for="From"
+                  sm={2}
+                  className="create-shipment-field-title"
+                >
                   From
                 </Label>
                 <Col sm={10}>
@@ -1267,12 +1361,18 @@ class Shipment extends Component {
                     avatarName={'avatar'}
                     onAdd={item => this.state.input.to.push(item)}
                     onRemove={item => this.state.input.to.pop(item)}
-                    onChange={(selects, adds, removes) => console.log(selects, adds, removes)}
+                    onChange={(selects, adds, removes) =>
+                      console.log(selects, adds, removes)
+                    }
                   />
                 </Col>
               </FormGroup>
               <FormGroup row>
-                <Label for="Product" sm={2} className="create-shipment-field-title">
+                <Label
+                  for="Product"
+                  sm={2}
+                  className="create-shipment-field-title"
+                >
                   Ref#
                 </Label>
                 <Col sm={10}>
@@ -1324,7 +1424,11 @@ class Shipment extends Component {
               </FormGroup>
 
               <FormGroup row>
-                <Label for="Product" sm={2} className="create-shipment-field-title">
+                <Label
+                  for="Product"
+                  sm={2}
+                  className="create-shipment-field-title"
+                >
                   Product
                 </Label>
                 <Col sm={10}>
@@ -1342,7 +1446,11 @@ class Shipment extends Component {
 
               {role == 1 || role >= 3 ? (
                 <FormGroup row>
-                  <Label for="Exporter" sm={2} className="create-shipment-field-title">
+                  <Label
+                    for="Exporter"
+                    sm={2}
+                    className="create-shipment-field-title"
+                  >
                     Exporter
                   </Label>
                   <Col sm={10}>
@@ -1361,7 +1469,11 @@ class Shipment extends Component {
 
               {role == 2 || role >= 3 ? (
                 <FormGroup row>
-                  <Label for="Importer" sm={2} className="create-shipment-field-title">
+                  <Label
+                    for="Importer"
+                    sm={2}
+                    className="create-shipment-field-title"
+                  >
                     Importer
                   </Label>
                   <Col sm={10}>
@@ -1378,7 +1490,11 @@ class Shipment extends Component {
                 </FormGroup>
               ) : null}
               <FormGroup row>
-                <Label for="Details" sm={2} className="create-shipment-field-title">
+                <Label
+                  for="Details"
+                  sm={2}
+                  className="create-shipment-field-title"
+                >
                   Details
                 </Label>
                 <Col sm={10}>
@@ -1417,7 +1533,8 @@ class Shipment extends Component {
                 this.props.setQuery('');
               }}
             >
-              <span style={styles.title}>Alert</span> <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>Alert</span>{' '}
+              <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -1428,7 +1545,8 @@ class Shipment extends Component {
                 this.props.setQuery('All');
               }}
             >
-              <span style={styles.title}>All</span> <span style={styles.lineTab}>|</span>
+              <span style={styles.title}>All</span>{' '}
+              <span style={styles.lineTab}>|</span>
             </NavLink>
           </NavItem>
 
@@ -1440,23 +1558,34 @@ class Shipment extends Component {
                 this.props.setQuery('Cancel');
               }}
             >
-              <i className="icon-close" /> <span style={styles.title}>Cancel</span>
+              <i className="icon-close" />{' '}
+              <span style={styles.title}>Cancel</span>
             </NavLink>
           </NavItem>
           <Col>
             <Button
-              style={{ backgroundColor: '#16A085', marginTop: 2, marginRight: 29 }}
+              style={{
+                backgroundColor: '#16A085',
+                marginTop: 2,
+                marginRight: 29,
+              }}
               className="float-right"
               onClick={this.modal}
             >
               <i className="fa fa-plus-circle" style={{ color: 'white' }} />
-              <span style={{ fontWeight: 'bold', color: 'white', marginLeft: 5 }}>
+              <span
+                style={{ fontWeight: 'bold', color: 'white', marginLeft: 5 }}
+              >
                 Create New Shipment
               </span>
             </Button>
           </Col>
         </Nav>
-        <TabContent activeTab={this.state.activeTab} id="content" className="boo">
+        <TabContent
+          activeTab={this.state.activeTab}
+          id="content"
+          className="boo"
+        >
           <TabPane tabId="1">
             <Row>
               <Col sm="12">
@@ -1485,21 +1614,27 @@ const styles = {
   title: {
     fontSize: 16,
     color: '#707070',
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
   lineTab: {
     color: '#EAEAEA',
     opacity: 0.8,
-    marginLeft: 20
-  }
+    marginLeft: 20,
+  },
 };
 
 const mapStateToProps = state => {
-  const { ChatReducer, authReducer, profileReducer, companyReducer, shipmentReducer } = state;
+  const {
+    ChatReducer,
+    authReducer,
+    profileReducer,
+    companyReducer,
+    shipmentReducer,
+  } = state;
   const { query = '', search = '' } = shipmentReducer;
   const sender = _.find(
     profileReducer.ProfileList,
-    item => item.id === profileReducer.ProfileDetail.id
+    item => item.id === profileReducer.ProfileDetail.id,
   );
 
   return {
@@ -1509,7 +1644,7 @@ const mapStateToProps = state => {
     companies: companyReducer.UserCompany,
     query,
     search,
-    network: companyReducer.NetworkEmail
+    network: companyReducer.NetworkEmail,
   };
 };
 
@@ -1520,6 +1655,6 @@ export default connect(
     fetchShipments,
     fetchMoreShipments,
     fetchCompany,
-    setQuery
-  }
+    setQuery,
+  },
 )(Shipment);

@@ -1,8 +1,8 @@
 /* @flow */
 /* global ErrorUtils */
-import _ from 'lodash';
+
 /* Redux */
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import logger from 'redux-logger';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web and AsyncStorage for react-native
@@ -15,19 +15,22 @@ import reducers from '../reducers';
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['shipmentReducer', 'companyReducer']
+  blacklist: ['shipmentReducer', 'companyReducer'],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
 const composeEnhancers = composeWithDevTools({});
 
 export const configureStore = () => {
-  const store = createStore(persistedReducer, composeEnhancers(applyMiddleware(logger, thunk)));
+  const store = createStore(
+    persistedReducer,
+    composeEnhancers(applyMiddleware(logger, thunk)),
+  );
   const persistor = persistStore(store);
 
   return {
     store,
-    persistor
+    persistor,
   };
 };
 

@@ -9,13 +9,13 @@ import {
   TOGGLE_LOAD,
   SELECT_ROOM,
   TOGGLE_CHAT,
-  NEW_ROOM
+  NEW_ROOM,
 } from '../constants/constants';
 import {
   GetChatMessage,
   CreateChatMessage,
   GetChatRoomList,
-  GetChatRoomMemberList
+  GetChatRoomMemberList,
 } from '../service/chat/chat';
 import { ClearUnReadChatMessage } from '../service/personalize/personalize';
 
@@ -24,7 +24,7 @@ export const typing = data => dispatch => {
 
   dispatch({
     type: TYPING_TEXT,
-    text
+    text,
   });
 };
 
@@ -33,17 +33,21 @@ let chatMessage = null;
 
 export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
   dispatch,
-  getState
+  getState,
 ) => {
   const { authReducer, profileReducer } = getState();
   // eslint-disable-next-line prefer-destructuring
 
   const sender = _.find(
     profileReducer.ProfileList,
-    item => item.id === profileReducer.ProfileDetail.id
+    item => item.id === profileReducer.ProfileDetail.id,
   );
   const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.message`, false);
-  const members = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.members`, false);
+  const members = _.get(
+    chatroom,
+    `${ShipmentKey}.${ChatRoomKey}.members`,
+    false,
+  );
   if (room) {
     room.unsubscribe();
     if (members) {
@@ -58,7 +62,7 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
         dispatch({
           type: FETCH_CHAT,
           id: ChatRoomKey,
-          payload: res
+          payload: res,
         });
         _.set(
           chatroom,
@@ -68,20 +72,20 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
               const members = _.map(res, item => {
                 return {
                   ChatRoomMemberKey: item.id,
-                  ...item.data()
+                  ...item.data(),
                 };
               });
               dispatch({
                 type: TOGGLE_LOAD,
-                payload: false
+                payload: false,
               });
               dispatch({
                 type: FETCH_CHAT_MEMBER,
                 id: ChatRoomKey,
-                payload: members
+                payload: members,
               });
-            }
-          })
+            },
+          }),
         );
       },
       error: err => {
@@ -91,10 +95,10 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
       complete: () => {
         dispatch({
           type: TOGGLE_LOAD,
-          payload: false
+          payload: false,
         });
-      }
-    })
+      },
+    }),
   );
 
   if (!_.isEmpty(ChatKey)) {
@@ -108,13 +112,13 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
         ChatRoomKey: item.ChatRoomKey,
         ShipmentKey: item.ShipmentKey,
         ChatRoomData: item.ChatRoomData,
-        position: _.get(chats, `${item.ChatRoomKey}.position`, _.size(chats))
+        position: _.get(chats, `${item.ChatRoomKey}.position`, _.size(chats)),
       });
     });
 
     const newTabs = tabs.map(tab => ({
       ...tab,
-      active: tab.ChatRoomKey === ChatKey
+      active: tab.ChatRoomKey === ChatKey,
     }));
     const originalReducer = [];
     _.forEach(newTabs, (item, index) => {
@@ -124,16 +128,27 @@ export const fetchChatMessage = (ChatRoomKey, ShipmentKey, ChatKey = '') => (
         roomName: item.roomName,
         active: item.active,
         ChatRoomData: item.ChatRoomData,
-        position: item.position
+        position: item.position,
       };
     });
     dispatch({ type: MOVE_TAB, payload: originalReducer });
   }
 };
-export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getState) => {
-  const chats = _.get(getState().ChatReducer, `chatroomsMsg.${ChatRoomKey}.chatMsg`, []).length;
+export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (
+  dispatch,
+  getState,
+) => {
+  const chats = _.get(
+    getState().ChatReducer,
+    `chatroomsMsg.${ChatRoomKey}.chatMsg`,
+    [],
+  ).length;
   const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.message`, false);
-  const members = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.members`, false);
+  const members = _.get(
+    chatroom,
+    `${ShipmentKey}.${ChatRoomKey}.members`,
+    false,
+  );
   if (room) {
     room.unsubscribe();
     if (members) {
@@ -148,7 +163,7 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
         dispatch({
           type: FETCH_CHAT,
           id: ChatRoomKey,
-          payload: res
+          payload: res,
         });
         _.set(
           chatroom,
@@ -158,17 +173,17 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
               const members = _.map(res, item => {
                 return {
                   ChatRoomMemberKey: item.id,
-                  ...item.data()
+                  ...item.data(),
                 };
               });
 
               dispatch({
                 type: FETCH_CHAT_MEMBER,
                 id: ChatRoomKey,
-                payload: members
+                payload: members,
               });
-            }
-          })
+            },
+          }),
         );
       },
       error: err => {
@@ -178,10 +193,10 @@ export const fetchMoreMessage = (ChatRoomKey, ShipmentKey) => (dispatch, getStat
       complete: () => {
         dispatch({
           type: TOGGLE_LOAD,
-          payload: false
+          payload: false,
         });
-      }
-    })
+      },
+    }),
   );
 };
 
@@ -196,7 +211,7 @@ export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
       ShipmentKey: item.ShipmentKey,
       ChatRoomData: item.ChatRoomData,
       position: _.get(chats, `${item.ChatRoomKey}.position`, _.size(chats)),
-      member: item.member
+      member: item.member,
     });
   });
 
@@ -206,7 +221,7 @@ export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
   tabs = _.map(tabs, (item, index) => {
     return {
       ...item,
-      position: index
+      position: index,
     };
   });
 
@@ -220,7 +235,7 @@ export const moveTab = (dragIndex, hoverIndex, chats) => dispatch => {
       active: item.active,
       ChatRoomData: item.ChatRoomData,
       position: item.position,
-      member: item.member
+      member: item.member,
     };
   });
 
@@ -241,20 +256,20 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
       ChatRoomData: item.ChatRoomData,
       position: _.get(chats, `${item.ChatRoomKey}.position`, _.size(chats)),
 
-      member: item.member
+      member: item.member,
     });
   });
   let hasRoom = false;
   if (Chatkey !== '') {
     hasRoom = _.some(tabs, {
-      ChatRoomKey: Chatkey
+      ChatRoomKey: Chatkey,
     });
   }
   if (hasRoom) {
     let newTabs = tabs.map(tab => {
       return {
         ...tab,
-        active: tab.ChatRoomKey === Chatkey
+        active: tab.ChatRoomKey === Chatkey,
       };
     });
 
@@ -267,11 +282,19 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
         roomName: item.roomName,
         active: item.active,
         ChatRoomData: item.ChatRoomData,
-        member: item.member
+        member: item.member,
       };
       const { ChatRoomKey, ShipmentKey } = item;
-      const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.message`, false);
-      const members = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.members`, false);
+      const room = _.get(
+        chatroom,
+        `${ShipmentKey}.${ChatRoomKey}.message`,
+        false,
+      );
+      const members = _.get(
+        chatroom,
+        `${ShipmentKey}.${ChatRoomKey}.members`,
+        false,
+      );
       if (room) {
         room.unsubscribe();
         if (members) {
@@ -286,7 +309,7 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
             dispatch({
               type: FETCH_CHAT,
               id: ChatRoomKey,
-              payload: res
+              payload: res,
             });
             _.set(
               chatroom,
@@ -296,20 +319,20 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
                   const members = _.map(res, item => {
                     return {
                       ChatRoomMemberKey: item.id,
-                      ...item.data()
+                      ...item.data(),
                     };
                   });
                   dispatch({
                     type: TOGGLE_LOAD,
-                    payload: false
+                    payload: false,
                   });
                   dispatch({
                     type: FETCH_CHAT_MEMBER,
                     id: ChatRoomKey,
-                    payload: members
+                    payload: members,
                   });
-                }
-              })
+                },
+              }),
             );
           },
           error: err => {
@@ -318,26 +341,29 @@ export const selectChatRoom = Chatkey => (dispatch, getState) => {
           complete: () => {
             dispatch({
               type: TOGGLE_LOAD,
-              payload: false
+              payload: false,
             });
-          }
-        })
+          },
+        }),
       );
     });
     dispatch({ type: MOVE_TAB, payload: originalReducer });
   }
 };
-export const selectTab = (selectedIndex, selectedID, tabs) => (dispatch, getState) => {
+export const selectTab = (selectedIndex, selectedID, tabs) => (
+  dispatch,
+  getState,
+) => {
   const newTabs = _.map(tabs, (item, index) => {
     if (index === selectedIndex) {
       dispatch({
         type: SELECT_ROOM,
-        payload: item.ChatRoomKey
+        payload: item.ChatRoomKey,
       });
     }
     return {
       ...item,
-      active: index === selectedIndex
+      active: index === selectedIndex,
     };
   });
 
@@ -350,7 +376,7 @@ export const selectTab = (selectedIndex, selectedID, tabs) => (dispatch, getStat
       active: item.active,
       ChatRoomData: item.ChatRoomData,
       position: item.position,
-      member: item.member
+      member: item.member,
     };
   });
   dispatch({ type: MOVE_TAB, payload: originalReducer });
@@ -359,19 +385,19 @@ export const selectTab = (selectedIndex, selectedID, tabs) => (dispatch, getStat
 export const toggleLoading = toggle => (dispatch, getState) => {
   dispatch({
     type: TOGGLE_LOAD,
-    payload: toggle
+    payload: toggle,
   });
 };
 export const toggleCreateChat = toggle => (dispatch, getState) => {
   dispatch({
     type: TOGGLE_CHAT,
-    payload: toggle
+    payload: toggle,
   });
 
   setTimeout(() => {
     dispatch({
       type: TOGGLE_CHAT,
-      payload: false
+      payload: false,
     });
   }, 3000);
 };
@@ -379,24 +405,27 @@ export const toggleCreateChat = toggle => (dispatch, getState) => {
 export const newChat = chatkey => (dispatch, getState) => {
   dispatch({
     type: SELECT_ROOM,
-    payload: chatkey
+    payload: chatkey,
   });
   dispatch({
     type: NEW_ROOM,
-    payload: chatkey
+    payload: chatkey,
   });
 };
 export const sortChat = chatkey => (dispatch, getState) => {
   dispatch({
     type: NEW_ROOM,
-    payload: chatkey
+    payload: chatkey,
   });
 };
 
-export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch, getState) => {
+export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (
+  dispatch,
+  getState,
+) => {
   dispatch({
     type: SELECT_ROOM,
-    payload: ChatRoomKey
+    payload: ChatRoomKey,
   });
   // ShipmentKey,ChatRoomKey,Data
   // {
@@ -411,16 +440,16 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch
 
   const sender = _.find(
     profileReducer.ProfileList,
-    item => item.id === profileReducer.ProfileDetail.id
+    item => item.id === profileReducer.ProfileDetail.id,
   );
   let clearUnReadChatMessage = ClearUnReadChatMessage(
     sender.id,
     ShipmentKey,
-    ChatRoomKey
+    ChatRoomKey,
   ).subscribe({
     next: res => {
       clearUnReadChatMessage.unsubscribe();
-    }
+    },
   });
   if (_.get(user, 'uid', false)) {
     let msg = {};
@@ -430,11 +459,11 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch
         ChatRoomMessageSenderKey: sender.id,
         ChatRoomMessageContext: text,
         ChatRoomMessageType: 'Text',
-        ChatRoomMessageTimestamp: new Date()
+        ChatRoomMessageTimestamp: new Date(),
       };
       dispatch({
         type: SEND_MESSAGE,
-        payload: { ...msg, isSending: true, isSuccess: false }
+        payload: { ...msg, isSending: true, isSuccess: false },
       });
     } else {
       msg = {
@@ -442,17 +471,17 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch
         ChatRoomMessageSenderKey: sender.id,
         ChatRoomMessageContext: text, // File in the form of Text; Maybe this need to be refactor later.
         ChatRoomMessageType: 'File',
-        ChatRoomMessageTimestamp: new Date()
+        ChatRoomMessageTimestamp: new Date(),
       };
       dispatch({
         type: SEND_MESSAGE,
-        payload: { ...msg, isSending: true, isSuccess: false }
+        payload: { ...msg, isSending: true, isSuccess: false },
       });
     }
     if (text === 'test error') {
       dispatch({
         type: SEND_MESSAGE,
-        payload: { ...msg, isSending: true, isSuccess: false }
+        payload: { ...msg, isSending: true, isSuccess: false },
       });
       _.delay(() => {
         dispatch({
@@ -462,18 +491,22 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch
             isSending: false,
             isSuccess: false,
             ShipmentKey,
-            ChatRoomKey
-          }
+            ChatRoomKey,
+          },
         });
       }, 1000);
     } else {
       _.delay(() => {
         dispatch({
           type: SEND_MESSAGE,
-          payload: {}
+          payload: {},
         });
 
-        chatMessage = CreateChatMessage(ShipmentKey, ChatRoomKey, msg).subscribe({
+        chatMessage = CreateChatMessage(
+          ShipmentKey,
+          ChatRoomKey,
+          msg,
+        ).subscribe({
           next: res => {
             console.log(res);
           },
@@ -485,8 +518,8 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch
                 isSending: false,
                 isSuccess: false,
                 ShipmentKey,
-                ChatRoomKey
-              }
+                ChatRoomKey,
+              },
             });
             console.log(err);
             alert(err.message);
@@ -494,16 +527,16 @@ export const sendMessage = (ChatRoomKey, ShipmentKey, text, isFile) => (dispatch
           complete: () => {
             dispatch({
               type: TOGGLE_LOAD,
-              payload: false
+              payload: false,
             });
-          }
+          },
         });
       }, 1000);
     }
 
     dispatch({
       type: TYPING_TEXT,
-      text: ''
+      text: '',
     });
   } else {
     alert('please Sign in');
@@ -516,7 +549,9 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
   const tabs = [];
 
   if (_.get(chatroomList, 'selectedShipment', shipmentKey) !== shipmentKey) {
-    chatroomList[_.get(chatroomList, 'selectedShipment', shipmentKey)].unsubscribe();
+    chatroomList[
+      _.get(chatroomList, 'selectedShipment', shipmentKey)
+    ].unsubscribe();
   } else {
     if (!_.isEmpty(chatroomList[shipmentKey])) {
       chatroomList[shipmentKey].unsubscribe();
@@ -538,7 +573,7 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
           ChatRoomKey: chatRoomKey,
           ShipmentKey: shipmentKey,
           ChatRoomData: data,
-          position: _.get(chats, `${chatRoomKey}.position`, index)
+          position: _.get(chats, `${chatRoomKey}.position`, index),
         });
         return true;
       });
@@ -565,7 +600,7 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
             chatrooms.push(chatrooms.splice(x, 1)[0]);
             chatrooms = _.map(chatrooms, (item, index) => ({
               ...item,
-              position: index
+              position: index,
             }));
           }
         });
@@ -578,11 +613,19 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
           roomName: c.ChatRoomData.ChatRoomName,
           active: c.active,
           position: c.position,
-          ChatRoomData: c.ChatRoomData
+          ChatRoomData: c.ChatRoomData,
         };
         const { ChatRoomKey, ShipmentKey } = c;
-        const room = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.message`, false);
-        const members = _.get(chatroom, `${ShipmentKey}.${ChatRoomKey}.members`, false);
+        const room = _.get(
+          chatroom,
+          `${ShipmentKey}.${ChatRoomKey}.message`,
+          false,
+        );
+        const members = _.get(
+          chatroom,
+          `${ShipmentKey}.${ChatRoomKey}.members`,
+          false,
+        );
         if (room) {
           room.unsubscribe();
           if (members) {
@@ -599,7 +642,7 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
               dispatch({
                 type: FETCH_CHAT,
                 id: ChatRoomKey,
-                payload: res
+                payload: res,
               });
               _.set(
                 chatroom,
@@ -611,28 +654,28 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
                       console.log(item);
                       return {
                         ChatRoomMemberKey: item.id,
-                        ...item.data()
+                        ...item.data(),
                       };
                     });
                     dispatch({
                       type: TOGGLE_LOAD,
-                      payload: false
+                      payload: false,
                     });
                     dispatch({
                       type: FETCH_CHAT_MEMBER,
                       id: ChatRoomKey,
-                      payload: members
+                      payload: members,
                     });
-                  }
-                })
+                  },
+                }),
               );
             },
             error: err => {
               console.log(err);
               alert(err.message);
             },
-            complete: () => {}
-          })
+            complete: () => {},
+          }),
         );
       });
 
@@ -642,12 +685,12 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
         roomName: '+',
         active: false,
         ChatRoomData: [],
-        position: chatrooms.length
+        position: chatrooms.length,
       };
 
       dispatch({
         type: FETCH_CHAT_ROOMS,
-        payload: originalReducer
+        payload: originalReducer,
       });
     },
     error: err => {
@@ -657,12 +700,12 @@ export const getChatRoomList = (shipmentKey, uid) => (dispatch, getState) => {
     complete: () => {
       dispatch({
         type: TOGGLE_CHAT,
-        payload: false
+        payload: false,
       });
       dispatch({
         type: TOGGLE_LOAD,
-        payload: false
+        payload: false,
       });
-    }
+    },
   });
 };

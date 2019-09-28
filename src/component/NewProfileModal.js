@@ -81,6 +81,9 @@ class NewProfileModal extends React.Component {
   };
 
   complete = () => {
+    this.setState({
+      isWorking: false,
+    });
     this.toggle();
   };
 
@@ -173,6 +176,13 @@ class NewProfileModal extends React.Component {
   toggle() {
     this.setState(prevState => ({
       modal: !prevState.modal,
+      ProfileFirstname: '',
+      ProfileSurname: '',
+      selectedPic: undefined,
+      invalid: {
+        Firstname: { isInvalid: undefined, msg: '' },
+        Surname: { isInvalid: undefined, msg: '' },
+      },
     }));
   }
 
