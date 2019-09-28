@@ -40,7 +40,6 @@ import { GetUserCompany } from '../../service/user/user';
 import { fetchCompany } from '../../actions/companyAction';
 import './Chat.scss';
 import { editShipmentRef, fetchShipments, updateShipmentRef } from '../../actions/shipmentActions';
-import undefined from 'firebase/empty-import';
 
 class Chat extends Component {
   constructor(props) {
@@ -203,7 +202,7 @@ class Chat extends Component {
   onFileDrop = (event, ShipmentKey, ChatRoomKey) => {
     event.preventDefault();
     const fileItems = event.dataTransfer.items;
-    if (fileItems !== undefined && fileItems !== null) {
+    if (fileItems !== undefined && fileItems !== null && fileItems[0].kind === 'file') {
       const files = [];
       _.forEach(fileItems, (i) => {
         files.push(i.getAsFile());
