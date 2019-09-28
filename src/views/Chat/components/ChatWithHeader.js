@@ -248,123 +248,152 @@ class ChatWithHeader extends Component {
   }
 
   handleAssignCompany(e, role, ref) {
-    console.log('Chat room data', this.props.members);
     const { ShipmentKey, ChatRoomKey, members, user } = this.props;
     const { companies } = this.props;
 
     const memberData = _.find(members, (item, index) => index === user.uid);
-    const pickedCompany = _.find(
-      companies,
-      item => item.CompanyKey === e.value,
+
+    const { ShipmentData } = this.props;
+    const ShipmentMember = ShipmentData.ShipmentMember;
+
+    let companyItem = _.find(
+      ShipmentMember,
+      item => item.ShipmentMemberCompanyKey === e.value,
     );
+    const chatMember = _.find(
+      members,
+      item => item.ChatRoomMemberEmail === user.email,
+    );
+    if (companyItem) {
+      UpdateChatRoomMember(
+        ShipmentKey,
+        ChatRoomKey,
+        chatMember.ChatRoomMemberKey,
+        {
+          ...chatMember,
+          ChatRoomMemberCompanyName: companyItem.ShipmentMemberCompanyName,
+          ChatRoomMemberCompanyKey: companyItem.ShipmentMemberCompanyKey,
+        },
+      );
+    } else {
+      const pickedCompany = _.find(
+        companies,
+        item => item.CompanyKey === e.value,
+      );
 
-    AddShipmentRole(ShipmentKey, role.value, {
-      ShipmentRoleCompanyName: pickedCompany.CompanyName,
-      ShipmentRoleCompanyKey: pickedCompany.CompanyKey,
-    }).subscribe({
-      next: res => {},
-    });
+      AddShipmentRole(ShipmentKey, role.value, {
+        ShipmentRoleCompanyName: pickedCompany.CompanyName,
+        ShipmentRoleCompanyKey: pickedCompany.CompanyKey,
+      }).subscribe({
+        next: res => {},
+      });
 
-    let userRole;
-    if (pickedCompany) {
-      const getCompany = GetCompanyMember(e.value).subscribe({
-        next: res => {
-          const CompanyMember = _.map(res, item => ({
-            ...item.data(),
-          }));
-          const inviteRole = [];
-          inviteRole.push(role.value);
-          const inviteMember = [];
-          if (memberData) {
-            const result = UpdateChatRoomMember(
-              ShipmentKey,
-              ChatRoomKey,
-              memberData.ChatRoomMemberKey,
-              {
-                ...memberData,
-                ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
-              },
-            );
-          }
-          _.forEach(CompanyMember, memberItem => {
-            const chatMember = _.find(
-              members,
-              item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail,
-            );
-
-            if (chatMember) {
+      let userRole;
+      if (pickedCompany) {
+        const getCompany = GetCompanyMember(e.value).subscribe({
+          next: res => {
+            const CompanyMember = _.map(res, item => ({
+              ...item.data(),
+            }));
+            const inviteRole = [];
+            inviteRole.push(role.value);
+            const inviteMember = [];
+            if (memberData) {
               const result = UpdateChatRoomMember(
                 ShipmentKey,
                 ChatRoomKey,
-                chatMember.ChatRoomMemberKey,
+                memberData.ChatRoomMemberKey,
                 {
-                  ...chatMember,
+                  ...memberData,
                   ChatRoomMemberCompanyName: pickedCompany.CompanyName,
                   ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
                 },
               );
             }
-            inviteMember.push({
-              Email: memberItem.UserMemberEmail,
-              Image: '',
-              Role: inviteRole,
-              ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-              ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
-            });
-          });
-          if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
-            this.props.toggleCreateChat(true);
-            CreateChatRoom(ShipmentKey, {
-              ChatRoomType: 'Internal',
-              ChatRoomName: 'Internal',
-            }).subscribe({
-              next: result => {
-                const data = result.path.split('/');
-                const chatkey = result.id;
-                const invite = CreateChatMultipleInvitation(
-                  _.filter(inviteMember, item => item.Email !== user.email),
-                  ShipmentKey,
-                  chatkey,
-                  this.props.sender,
-                ).subscribe({
-                  next: res => {
-                    this.props.fetchMoreMessage(chatkey, ShipmentKey);
-                  },
-                });
-                const ChatRoomMember = AddChatRoomMember(ShipmentKey, chatkey, {
-                  ChatRoomMemberUserKey: this.props.user.uid,
-                  ChatRoomMemberEmail: this.props.user.email,
-                  ChatRoomMemberImageUrl: '',
-                  ChatRoomMemberRole: inviteRole,
-                  ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
-                }).subscribe({
-                  next: result => {},
-                  complete: () => {
-                    if (!_.isEmpty(this.state.refID)) {
-                      CreateShipmentReference(ShipmentKey, {
-                        ShipmentReferenceID: ref,
-                        ShipmentReferenceCompanyKey: pickedCompany.CompanyKey,
-                        ShipmentReferenceCompanyName: pickedCompany.CompanyName,
-                        ShipmentKey,
-                      }).subscribe({});
-                    }
+            _.forEach(CompanyMember, memberItem => {
+              const chatMember = _.find(
+                members,
+                item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail,
+              );
 
-                    ChatRoomMember.unsubscribe();
+              if (chatMember) {
+                const result = UpdateChatRoomMember(
+                  ShipmentKey,
+                  ChatRoomKey,
+                  chatMember.ChatRoomMemberKey,
+                  {
+                    ...chatMember,
+                    ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+                    ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
                   },
-                });
-              },
-              complete: result => {
-                this.props.toggleCreateChat(false);
-              },
+                );
+              }
+              inviteMember.push({
+                Email: memberItem.UserMemberEmail,
+                Image: '',
+                Role: inviteRole,
+                ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
+              });
             });
-            getCompany.unsubscribe();
-          } else {
-            window.alert('You has been remove from the chat');
-          }
-        },
-      });
+            if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
+              this.props.toggleCreateChat(true);
+              CreateChatRoom(ShipmentKey, {
+                ChatRoomType: 'Internal',
+                ChatRoomName: 'Internal',
+              }).subscribe({
+                next: result => {
+                  const data = result.path.split('/');
+                  const chatkey = result.id;
+                  const invite = CreateChatMultipleInvitation(
+                    _.filter(inviteMember, item => item.Email !== user.email),
+                    ShipmentKey,
+                    chatkey,
+                    this.props.sender,
+                  ).subscribe({
+                    next: res => {
+                      this.props.fetchMoreMessage(chatkey, ShipmentKey);
+                    },
+                  });
+                  const ChatRoomMember = AddChatRoomMember(
+                    ShipmentKey,
+                    chatkey,
+                    {
+                      ChatRoomMemberUserKey: this.props.user.uid,
+                      ChatRoomMemberEmail: this.props.user.email,
+                      ChatRoomMemberImageUrl: '',
+                      ChatRoomMemberRole: inviteRole,
+                      ChatRoomMemberCompanyName: pickedCompany.CompanyName,
+                      ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
+                    },
+                  ).subscribe({
+                    next: result => {},
+                    complete: () => {
+                      if (!_.isEmpty(this.state.refID)) {
+                        CreateShipmentReference(ShipmentKey, {
+                          ShipmentReferenceID: ref,
+                          ShipmentReferenceCompanyKey: pickedCompany.CompanyKey,
+                          ShipmentReferenceCompanyName:
+                            pickedCompany.CompanyName,
+                          ShipmentKey,
+                        }).subscribe({});
+                      }
+
+                      ChatRoomMember.unsubscribe();
+                    },
+                  });
+                },
+                complete: result => {
+                  this.props.toggleCreateChat(false);
+                },
+              });
+              getCompany.unsubscribe();
+            } else {
+              window.alert('You has been remove from the chat');
+            }
+          },
+        });
+      }
     }
   }
   writeText(e) {
