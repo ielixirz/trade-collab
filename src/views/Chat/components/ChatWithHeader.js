@@ -22,13 +22,11 @@ import {
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
 } from 'reactstrap';
 import Select from 'react-select';
-import Autocomplete from 'react-autocomplete';
 import MemberModal from '../../../component/MemberModal';
 import UploadModal from '../../../component/UploadModal';
-import TextLoading from '../../../component/svg/TextLoading';
 import FileSide from '../FileSide';
 import ShipmentSide from '../ShipmentSide';
 import ChatMessage from './ChatMessage';
@@ -37,32 +35,26 @@ import ChatInviteBar from './ChatInviteBar';
 import {
   AddChatRoomMember,
   CreateChatRoom,
-  EditChatRoom,
   UpdateChatRoomMember,
-  UpdateChatRoomMessageReader
+  UpdateChatRoomMessageReader,
 } from '../../../service/chat/chat';
 import {
   CombineCreateCompanyWithCreateCompanyMember,
-  GetCompanyMember
+  GetCompanyMember,
 } from '../../../service/company/company';
 import { CreateChatMultipleInvitation } from '../../../service/join/invite';
 import { ClearUnReadChatMessage } from '../../../service/personalize/personalize';
-import TableLoading from '../../../component/svg/TableLoading';
 import {
   AddShipmentRole,
   CreateShipmentReference,
   GetAvailableRole,
   GetShipmentDetail,
   GetShipmentReferenceList,
-  UpdateShipmentReference
+  UpdateShipmentReference,
 } from '../../../service/shipment/shipment';
 import Send from '../../../component/svg/icon-send';
 import Paperclip from '../../../component/svg/paperclip';
 
-const AVAILABLE_ROLES = {
-  Importer: 'Exporter',
-  Exporter: 'Importer'
-};
 let lastkey = '';
 class ChatWithHeader extends Component {
   constructor(props) {
@@ -85,8 +77,8 @@ class ChatWithHeader extends Component {
         newRef: {
           ShipmentReferenceID: '',
           ShipmentReferenceCompanyName: '',
-          ShipmentReferenceCompanyKey: ''
-        }
+          ShipmentReferenceCompanyKey: '',
+        },
       },
       companyinput: {
         role: 1,
@@ -102,12 +94,12 @@ class ChatWithHeader extends Component {
         eta: '',
         newCompanyName: '',
         importer: '',
-        exporter: ''
+        exporter: '',
       },
       inputComapany: false,
 
       submiting: {},
-      sideCollpase: 'SHIPMENT'
+      sideCollpase: 'SHIPMENT',
     };
 
     this.msgChatRef = React.createRef();
@@ -116,7 +108,7 @@ class ChatWithHeader extends Component {
 
   toggleCompanyState = () => {
     this.setState({
-      inputComapany: !this.state.inputComapany
+      inputComapany: !this.state.inputComapany,
     });
   };
 
@@ -127,27 +119,30 @@ class ChatWithHeader extends Component {
       UserMemberRoleName: 'Owner',
       CompanyUserAccessibilityRolePermissionCode: '11111111111111',
       UserMemberCompanyStandingStatus: 'Active',
-      UserMemberJoinedTimestamp: new Date()
+      UserMemberJoinedTimestamp: new Date(),
     };
 
     const companyData = {
       CompanyName: this.state.companyinput.newCompanyName,
-      CompanyID: this.state.companyinput.newCompanyName
+      CompanyID: this.state.companyinput.newCompanyName,
     };
 
     CombineCreateCompanyWithCreateCompanyMember(
       companyData,
       this.props.user.uid,
-      userData
+      userData,
     ).subscribe(res => {
       console.log('Add company res', _.compact(res));
-      this.props.companies.push({ ...companyData, CompanyKey: _.compact(res)[1] });
+      this.props.companies.push({
+        ...companyData,
+        CompanyKey: _.compact(res)[1],
+      });
       this.setState({
         inputComapany: false,
         companyinput: {
           ...this.state.companyinput,
-          newCompanyName: ''
-        }
+          newCompanyName: '',
+        },
       });
     });
   };
@@ -165,15 +160,15 @@ class ChatWithHeader extends Component {
             result[0] = {
               ...shipments,
               ShipmentID: ShipmentKey,
-              ShipmentReferenceList: refres
+              ShipmentReferenceList: refres,
             };
             this.props.fetchShipments(result, {});
-          }
+          },
         });
         this.setState({
-          shipment: res.data()
+          shipment: res.data(),
         });
-      }
+      },
     });
   }
 
@@ -183,15 +178,15 @@ class ChatWithHeader extends Component {
       this.multilineTextarea.style.height = '50px ';
     }
     ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
-      next: () => {}
+      next: () => {},
     });
 
     GetAvailableRole(ShipmentKey, ChatRoomKey).subscribe({
       next: res => {
         this.setState({
-          availableRole: res
+          availableRole: res,
         });
-      }
+      },
     });
   }
 
@@ -209,11 +204,16 @@ class ChatWithHeader extends Component {
         this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
           ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
           ChatRoomMessageReaderSurName: sender.ProfileSurname,
-          ChatRoomMessageReaderProfileImageUrl: _.get(sender, 'UserInfoProfileImageLink', ''),
-          ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+          ChatRoomMessageReaderProfileImageUrl: _.get(
+            sender,
+            'UserInfoProfileImageLink',
+            '',
+          ),
+          ChatRoomMessageReaderLastestMessageKey:
+            chatMsg[chatMsg.length - 1].id,
         });
         ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
-          next: () => {}
+          next: () => {},
         });
       }
       lastkey = chatMsg[chatMsg.length - 1].id;
@@ -222,7 +222,7 @@ class ChatWithHeader extends Component {
 
   triggerSideCollapse = side => {
     this.setState({
-      sideCollpase: side
+      sideCollpase: side,
     });
   };
 
@@ -236,7 +236,7 @@ class ChatWithHeader extends Component {
 
   toggleInviteComponent(toggle) {
     this.setState({
-      toggleInvite: !toggle
+      toggleInvite: !toggle,
     });
   }
 
@@ -252,13 +252,16 @@ class ChatWithHeader extends Component {
     const { companies } = this.props;
 
     const memberData = _.find(members, (item, index) => index === user.uid);
-    const pickedCompany = _.find(companies, item => item.CompanyKey === e.value);
+    const pickedCompany = _.find(
+      companies,
+      item => item.CompanyKey === e.value,
+    );
 
     AddShipmentRole(ShipmentKey, role.value, {
       ShipmentRoleCompanyName: pickedCompany.CompanyName,
-      ShipmentRoleCompanyKey: pickedCompany.CompanyKey
+      ShipmentRoleCompanyKey: pickedCompany.CompanyKey,
     }).subscribe({
-      next: res => {}
+      next: res => {},
     });
 
     let userRole;
@@ -266,7 +269,7 @@ class ChatWithHeader extends Component {
       const getCompany = GetCompanyMember(e.value).subscribe({
         next: res => {
           const CompanyMember = _.map(res, item => ({
-            ...item.data()
+            ...item.data(),
           }));
           const inviteRole = [];
           inviteRole.push(role.value);
@@ -279,14 +282,14 @@ class ChatWithHeader extends Component {
               {
                 ...memberData,
                 ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
-              }
+                ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
+              },
             );
           }
           _.forEach(CompanyMember, memberItem => {
             const chatMember = _.find(
               members,
-              item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail
+              item => item.ChatRoomMemberEmail === memberItem.UserMemberEmail,
             );
 
             if (chatMember) {
@@ -297,8 +300,8 @@ class ChatWithHeader extends Component {
                 {
                   ...chatMember,
                   ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
-                }
+                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
+                },
               );
             }
             inviteMember.push({
@@ -306,14 +309,14 @@ class ChatWithHeader extends Component {
               Image: '',
               Role: inviteRole,
               ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-              ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+              ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
             });
           });
           if (_.get(memberData, 'ChatRoomMemberIsLeave', false) === false) {
             this.props.toggleCreateChat(true);
             CreateChatRoom(ShipmentKey, {
               ChatRoomType: 'Internal',
-              ChatRoomName: 'Internal'
+              ChatRoomName: 'Internal',
             }).subscribe({
               next: result => {
                 const data = result.path.split('/');
@@ -322,11 +325,11 @@ class ChatWithHeader extends Component {
                   _.filter(inviteMember, item => item.Email !== user.email),
                   ShipmentKey,
                   chatkey,
-                  this.props.sender
+                  this.props.sender,
                 ).subscribe({
                   next: res => {
                     this.props.fetchMoreMessage(chatkey, ShipmentKey);
-                  }
+                  },
                 });
                 const ChatRoomMember = AddChatRoomMember(ShipmentKey, chatkey, {
                   ChatRoomMemberUserKey: this.props.user.uid,
@@ -334,7 +337,7 @@ class ChatWithHeader extends Component {
                   ChatRoomMemberImageUrl: '',
                   ChatRoomMemberRole: inviteRole,
                   ChatRoomMemberCompanyName: pickedCompany.CompanyName,
-                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey
+                  ChatRoomMemberCompanyKey: pickedCompany.CompanyKey,
                 }).subscribe({
                   next: result => {},
                   complete: () => {
@@ -343,23 +346,23 @@ class ChatWithHeader extends Component {
                         ShipmentReferenceID: ref,
                         ShipmentReferenceCompanyKey: pickedCompany.CompanyKey,
                         ShipmentReferenceCompanyName: pickedCompany.CompanyName,
-                        ShipmentKey
+                        ShipmentKey,
                       }).subscribe({});
                     }
 
                     ChatRoomMember.unsubscribe();
-                  }
+                  },
                 });
               },
               complete: result => {
                 this.props.toggleCreateChat(false);
-              }
+              },
             });
             getCompany.unsubscribe();
           } else {
             window.alert('You has been remove from the chat');
           }
-        }
+        },
       });
     }
   }
@@ -369,28 +372,38 @@ class ChatWithHeader extends Component {
     this.setState({
       companyinput: {
         ...this.state.companyinput,
-        [name]: value
-      }
+        [name]: value,
+      },
     });
   }
   renderAssignCompany() {
-    const { user, ShipmentData, ShipmentKey, ChatRoomKey, members: member, shipments } = this.props;
+    const {
+      user,
+      ShipmentData,
+      ShipmentKey,
+      ChatRoomKey,
+      members: member,
+      shipments,
+    } = this.props;
     const members = _.get(shipments, `${ShipmentKey}.ShipmentMember`, []);
-    const memberData = _.find(members, (item, index) => item.ShipmentMemberEmail === user.email);
+    const memberData = _.find(
+      members,
+      (item, index) => item.ShipmentMemberEmail === user.email,
+    );
     // const isHaveRole = _.get(ShipmentData, `ShipmentMember.${user.uid}`, {});
     const { companies } = this.props;
 
     let options = [];
     options = _.map(companies, item => ({
       value: item.CompanyKey,
-      label: item.CompanyName
+      label: item.CompanyName,
     }));
     const roleOption = [];
     _.forEach(this.state.availableRole, (role, index) => {
       if (!role) {
         roleOption.push({
           value: index,
-          label: index
+          label: index,
         });
       }
     });
@@ -407,18 +420,20 @@ class ChatWithHeader extends Component {
             height: 'auto',
             padding: '10px',
             borderRadius: '5px',
-            zIndex: '100'
+            zIndex: '100',
           }}
         >
           <p
             style={{
               fontWeight: 700,
-              color: '#000000'
+              color: '#000000',
             }}
           >
             You have been invite to this shipment
           </p>
-          <p>Select a Company and Role, to inform your team about this shipment</p>
+          <p>
+            Select a Company and Role, to inform your team about this shipment
+          </p>
 
           <Row>
             <Col xs={4}>
@@ -448,11 +463,11 @@ class ChatWithHeader extends Component {
                           styles: {
                             ...data.styles,
                             overflow: 'auto',
-                            maxHeight: 500
-                          }
+                            maxHeight: 500,
+                          },
                         };
-                      }
-                    }
+                      },
+                    },
                   }}
                 >
                   <DropdownItem disabled className="shipment-header">
@@ -472,7 +487,11 @@ class ChatWithHeader extends Component {
                   {this.state.inputComapany ? (
                     <div>
                       <Input
-                        style={{ marginLeft: '8px', marginRight: '8px', width: '90%' }}
+                        style={{
+                          marginLeft: '8px',
+                          marginRight: '8px',
+                          width: '90%',
+                        }}
                         type="text"
                         name="newCompanyName"
                         id="newCompanyName"
@@ -504,7 +523,10 @@ class ChatWithHeader extends Component {
                       </Row>
                     </div>
                   ) : (
-                    <Button className="company-shipment" onClick={this.toggleCompanyState}>
+                    <Button
+                      className="company-shipment"
+                      onClick={this.toggleCompanyState}
+                    >
                       + Create New Company
                     </Button>
                   )}
@@ -529,14 +551,20 @@ class ChatWithHeader extends Component {
                   marginLeft: '2rem',
                   marginRight: '1rem',
                   color: 'white',
-                  backgroundColor: '#16A085'
+                  backgroundColor: '#16A085',
                 }}
                 disabled={
-                  _.isEmpty(this.state.company) || _.isEmpty(this.state.role) || this.state.isAssign
+                  _.isEmpty(this.state.company) ||
+                  _.isEmpty(this.state.role) ||
+                  this.state.isAssign
                 }
                 onClick={() => {
                   this.setState({ isAssign: true });
-                  this.handleAssignCompany(this.state.company, this.state.role, this.state.refID);
+                  this.handleAssignCompany(
+                    this.state.company,
+                    this.state.role,
+                    this.state.refID,
+                  );
                 }}
               >
                 Confirm
@@ -590,14 +618,20 @@ class ChatWithHeader extends Component {
     let refs = [];
     refs = _.map(ref, item => item);
     const userrefs = _.filter(ref, refItem =>
-      _.some(companies, item => _.includes(refItem.ShipmentReferenceCompanyKey, item.CompanyKey))
+      _.some(companies, item =>
+        _.includes(refItem.ShipmentReferenceCompanyKey, item.CompanyKey),
+      ),
     );
     const hasCompany = _.get(ShipmentMember, `${user.uid}`, {});
 
     const alreadyHave = !_.isEmpty(userrefs);
     return (
       <div>
-        <Button id={`popover${index}`} className="text-yterminall" color={'secondary'}>
+        <Button
+          id={`popover${index}`}
+          className="text-yterminall"
+          color={'secondary'}
+        >
           {userrefs.length > 0 ? (
             <b style={{ color: 'black' }}>{userrefs[0].ShipmentReferenceID}</b>
           ) : _.isEmpty(companies) ? (
@@ -618,7 +652,7 @@ class ChatWithHeader extends Component {
             {!alreadyHave ? (
               <Row
                 style={{
-                  marginBottom: '5px'
+                  marginBottom: '5px',
                 }}
               >
                 <Col xs={1} />
@@ -647,41 +681,62 @@ class ChatWithHeader extends Component {
                           newRef: {
                             ...this.state.input.newRef,
                             ShipmentReferenceID: value,
-                            ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
-                            ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
-                            ShipmentKey: shipmentKey
-                          }
-                        }
+                            ShipmentReferenceCompanyKey:
+                              hasCompany.ShipmentMemberCompanyKey,
+                            ShipmentReferenceCompanyName:
+                              hasCompany.ShipmentMemberCompanyName,
+                            ShipmentKey: shipmentKey,
+                          },
+                        },
                       });
                     }}
                     onBlur={e => {
-                      if (_.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) === false) {
+                      if (
+                        _.get(
+                          this.state.submiting,
+                          `${shipmentKey}.isSubmit`,
+                          false,
+                        ) === false
+                      ) {
                         this.setState({
                           submiting: {
                             ...this.state.submiting,
                             [shipmentKey]: {
-                              isSubmit: true
-                            }
-                          }
+                              isSubmit: true,
+                            },
+                          },
                         });
-                        CreateShipmentReference(shipmentKey, this.state.input.newRef).subscribe({
+                        CreateShipmentReference(
+                          shipmentKey,
+                          this.state.input.newRef,
+                        ).subscribe({
                           next: res => {
                             this.setState({
                               submiting: {
                                 ...this.state.submiting,
                                 [shipmentKey]: {
                                   refid: res.id,
-                                  isSubmit: true
-                                }
-                              }
+                                  isSubmit: true,
+                                },
+                              },
                             });
-                          }
+                          },
                         });
-                      } else if (_.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0) {
+                      } else if (
+                        _.get(
+                          this.state.submiting,
+                          `${shipmentKey}.refid`,
+                          0,
+                        ) !== 0
+                      ) {
                         UpdateShipmentReference(
                           shipmentKey,
-                          _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
-                          this.state.input.newRef
+                          _.get(
+                            this.state.submiting,
+                            `${shipmentKey}.refid`,
+                            0,
+                          ),
+                          this.state.input.newRef,
                         );
                       }
                     }}
@@ -691,20 +746,23 @@ class ChatWithHeader extends Component {
                           const confirmation = true;
                           if (confirmation === true) {
                             if (
-                              _.get(this.state.submiting, `${shipmentKey}.isSubmit`, false) ===
-                              false
+                              _.get(
+                                this.state.submiting,
+                                `${shipmentKey}.isSubmit`,
+                                false,
+                              ) === false
                             ) {
                               this.setState({
                                 submiting: {
                                   ...this.state.submiting,
                                   [shipmentKey]: {
-                                    isSubmit: true
-                                  }
-                                }
+                                    isSubmit: true,
+                                  },
+                                },
                               });
                               CreateShipmentReference(
                                 shipmentKey,
-                                this.state.input.newRef
+                                this.state.input.newRef,
                               ).subscribe({
                                 next: res => {
                                   this.setState({
@@ -712,19 +770,27 @@ class ChatWithHeader extends Component {
                                       ...this.state.submiting,
                                       [shipmentKey]: {
                                         refid: res.id,
-                                        isSubmit: true
-                                      }
-                                    }
+                                        isSubmit: true,
+                                      },
+                                    },
                                   });
-                                }
+                                },
                               });
                             } else if (
-                              _.get(this.state.submiting, `${shipmentKey}.refid`, 0) !== 0
+                              _.get(
+                                this.state.submiting,
+                                `${shipmentKey}.refid`,
+                                0,
+                              ) !== 0
                             ) {
                               UpdateShipmentReference(
                                 shipmentKey,
-                                _.get(this.state.submiting, `${shipmentKey}.refid`, 0),
-                                this.state.input.newRef
+                                _.get(
+                                  this.state.submiting,
+                                  `${shipmentKey}.refid`,
+                                  0,
+                                ),
+                                this.state.input.newRef,
                               );
                             }
                           }
@@ -733,8 +799,8 @@ class ChatWithHeader extends Component {
                       2000,
                       {
                         leading: true,
-                        trailing: false
-                      }
+                        trailing: false,
+                      },
                     )}
                     maxLength={50}
                     bsSize="sm"
@@ -748,7 +814,7 @@ class ChatWithHeader extends Component {
               <Row
                 key={refIndex}
                 style={{
-                  marginBottom: '5px'
+                  marginBottom: '5px',
                 }}
               >
                 <Col xs={1} />
@@ -766,35 +832,48 @@ class ChatWithHeader extends Component {
                         refItem.ShipmentReferenceKey,
                         {
                           ...refItem,
-                          ShipmentReferenceID: refItem.ShipmentReferenceIDInput
-                        }
+                          ShipmentReferenceID: refItem.ShipmentReferenceIDInput,
+                        },
                       ).subscribe({
                         next: res => {
                           console.log('Update Ref', res);
                         },
                         complete: res => {
-                          this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
-                            ...refItem,
-                            ShipmentReferenceID: refItem.ShipmentReferenceIDInput,
-                            ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
-                            ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
-                            ShipmentKey: shipmentKey
-                          });
+                          this.props.editShipmentRef(
+                            shipmentKey,
+                            refItem.ShipmentReferenceKey,
+                            {
+                              ...refItem,
+                              ShipmentReferenceID:
+                                refItem.ShipmentReferenceIDInput,
+                              ShipmentReferenceCompanyKey:
+                                hasCompany.ShipmentMemberCompanyKey,
+                              ShipmentReferenceCompanyName:
+                                hasCompany.ShipmentMemberCompanyName,
+                              ShipmentKey: shipmentKey,
+                            },
+                          );
                           update.unsubscribe();
-                        }
+                        },
                       });
                     }}
                     value={refItem.ShipmentReferenceIDInput}
                     onChange={e => {
                       const { value } = e.target;
                       // (ShipmentKey, refKey, Data)
-                      this.props.editShipmentRef(shipmentKey, refItem.ShipmentReferenceKey, {
-                        ...refItem,
-                        ShipmentReferenceIDInput: value,
-                        ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
-                        ShipmentReferenceCompanyName: hasCompany.ShipmentMemberCompanyName,
-                        ShipmentKey: shipmentKey
-                      });
+                      this.props.editShipmentRef(
+                        shipmentKey,
+                        refItem.ShipmentReferenceKey,
+                        {
+                          ...refItem,
+                          ShipmentReferenceIDInput: value,
+                          ShipmentReferenceCompanyKey:
+                            hasCompany.ShipmentMemberCompanyKey,
+                          ShipmentReferenceCompanyName:
+                            hasCompany.ShipmentMemberCompanyName,
+                          ShipmentKey: shipmentKey,
+                        },
+                      );
                     }}
                     onKeyPress={async event => {
                       if (event.key === 'Enter') {
@@ -805,8 +884,9 @@ class ChatWithHeader extends Component {
                             refItem.ShipmentReferenceKey,
                             {
                               ...refItem,
-                              ShipmentReferenceID: refItem.ShipmentReferenceIDInput
-                            }
+                              ShipmentReferenceID:
+                                refItem.ShipmentReferenceIDInput,
+                            },
                           ).subscribe({
                             next: res => {
                               console.log('Update Ref', res);
@@ -817,15 +897,17 @@ class ChatWithHeader extends Component {
                                 refItem.ShipmentReferenceKey,
                                 {
                                   ...refItem,
-                                  ShipmentReferenceID: refItem.ShipmentReferenceIDInput,
-                                  ShipmentReferenceCompanyKey: hasCompany.ShipmentMemberCompanyKey,
+                                  ShipmentReferenceID:
+                                    refItem.ShipmentReferenceIDInput,
+                                  ShipmentReferenceCompanyKey:
+                                    hasCompany.ShipmentMemberCompanyKey,
                                   ShipmentReferenceCompanyName:
                                     hasCompany.ShipmentMemberCompanyName,
-                                  ShipmentKey: shipmentKey
-                                }
+                                  ShipmentKey: shipmentKey,
+                                },
                               );
                               update.unsubscribe();
-                            }
+                            },
                           });
                         }
                       }
@@ -833,7 +915,8 @@ class ChatWithHeader extends Component {
                     maxLength={50}
                     bsSize="sm"
                     disabled={
-                      hasCompany.ShipmentMemberCompanyKey !== refItem.ShipmentReferenceCompanyKey
+                      hasCompany.ShipmentMemberCompanyKey !==
+                      refItem.ShipmentReferenceCompanyKey
                     }
                   />
                 </Col>
@@ -843,7 +926,11 @@ class ChatWithHeader extends Component {
         </UncontrolledPopover>
       </div>
     );
-    return <span style={{ color: '#b5b2b2', fontStyle: 'italic' }}>Please Assign company</span>;
+    return (
+      <span style={{ color: '#b5b2b2', fontStyle: 'italic' }}>
+        Please Assign company
+      </span>
+    );
   }
 
   render() {
@@ -872,14 +959,20 @@ class ChatWithHeader extends Component {
       onDragOver,
       onDragLeave,
       onFileDrop,
-      shipments
+      shipments,
     } = this.props;
     console.log('this.state', this.state);
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
     const members = _.get(shipments, `${ShipmentKey}.ShipmentMember`, []);
 
-    const isInvited = _.find(members, item => item.ShipmentMemberEmail === user.email);
-    const ChatRoomMemberData = _.find(member, item => item.ChatRoomMemberEmail === user.email);
+    const isInvited = _.find(
+      members,
+      item => item.ShipmentMemberEmail === user.email,
+    );
+    const ChatRoomMemberData = _.find(
+      member,
+      item => item.ChatRoomMemberEmail === user.email,
+    );
     let ref = '';
     console.log('isInvited', isInvited);
     if (!_.isEmpty(isInvited)) {
@@ -887,18 +980,23 @@ class ChatWithHeader extends Component {
         ref =
           _.find(
             _.get(ship, 'ShipmentReferenceList', []),
-            item => item.ShipmentReferenceCompanyKey === isInvited.ShipmentMemberCompanyKey
+            item =>
+              item.ShipmentReferenceCompanyKey ===
+              isInvited.ShipmentMemberCompanyKey,
           ) || 'loading';
       }
     } else {
       ref = 'loading';
     }
     return (
-      <div className="inbox_msg" style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
+      <div
+        className="inbox_msg"
+        style={{ backgroundColor: 'rgb(247, 247, 247)' }}
+      >
         <Row
           style={{
             backgroundColor: 'white',
-            borderBottom: '1px solid #707070'
+            borderBottom: '1px solid #707070',
           }}
         >
           <Breadcrumb className="chat-toolbar">
@@ -912,7 +1010,7 @@ class ChatWithHeader extends Component {
                       1,
                       _.get(ship, 'ShipmentReferenceList', []),
                       ShipmentKey,
-                      _.get(ship, 'ShipmentMember', [])
+                      _.get(ship, 'ShipmentMember', []),
                     )}
                   </Col>
                   <Col>
@@ -922,7 +1020,9 @@ class ChatWithHeader extends Component {
                         count={
                           _.filter(
                             member,
-                            item => _.get(item, 'ChatRoomMemberIsLeave', false) === false
+                            item =>
+                              _.get(item, 'ChatRoomMemberIsLeave', false) ===
+                              false,
                           ).length
                         }
                         toggleBlocking={toggleBlocking}
@@ -947,7 +1047,7 @@ class ChatWithHeader extends Component {
         </Row>
         <Row
           style={{
-            height: 'auto'
+            height: 'auto',
           }}
         >
           <Col
@@ -955,7 +1055,7 @@ class ChatWithHeader extends Component {
             style={{
               backgroundColor: 'white',
               marginTop: '16px',
-              paddingRight: '5px'
+              paddingRight: '5px',
             }}
           >
             <div
@@ -973,9 +1073,10 @@ class ChatWithHeader extends Component {
                       ChatRoomMessageReaderProfileImageUrl: _.get(
                         sender,
                         'UserInfoProfileImageLink',
-                        ''
+                        '',
                       ),
-                      ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
+                      ChatRoomMessageReaderLastestMessageKey:
+                        chatMsg[chatMsg.length - 1].id,
                     });
                   }
                   lastkey = chatMsg[chatMsg.length - 1].id;
@@ -983,7 +1084,11 @@ class ChatWithHeader extends Component {
               }}
             >
               <div>
-                {_.get(this.props.ShipmentData, 'ShipmentCreatorUserKey', false) === user.uid
+                {_.get(
+                  this.props.ShipmentData,
+                  'ShipmentCreatorUserKey',
+                  false,
+                ) === user.uid
                   ? this.renderAssignCompany()
                   : isInvited
                   ? this.renderAssignCompany()
@@ -1007,9 +1112,13 @@ class ChatWithHeader extends Component {
                 }}
               >
                 {chatMsg.map((msg, i) => {
-                  const t = new Date(msg.ChatRoomMessageTimestamp.seconds * 1000);
+                  const t = new Date(
+                    msg.ChatRoomMessageTimestamp.seconds * 1000,
+                  );
                   let type = _.get(msg, 'ChatRoomMessageType', 'sender');
-                  if (_.get(sender, 'id', '0') === msg.ChatRoomMessageSenderKey) {
+                  if (
+                    _.get(sender, 'id', '0') === msg.ChatRoomMessageSenderKey
+                  ) {
                     type = 'reciever';
                   } else if (type !== 'System') {
                     type = 'sender';
@@ -1028,7 +1137,7 @@ class ChatWithHeader extends Component {
                       prev: chatMsg[i - 1],
                       isLast: chatMsg.length - 1 === i,
                       hasFile: true,
-                      files: msgJson.files
+                      files: msgJson.files,
                     };
                   } else {
                     message = {
@@ -1039,7 +1148,7 @@ class ChatWithHeader extends Component {
                       readers: msg.ChatRoomMessageReader,
                       prev: chatMsg[i - 1],
                       isLast: chatMsg.length - 1 === i,
-                      hasFile: false
+                      hasFile: false,
                     };
                   }
 
@@ -1047,7 +1156,7 @@ class ChatWithHeader extends Component {
                     <div
                       style={{
                         padding: '20px',
-                        marginBottom: '-70px'
+                        marginBottom: '-70px',
                       }}
                     >
                       <ChatMessage message={message} i={i} />
@@ -1058,14 +1167,14 @@ class ChatWithHeader extends Component {
                   <div
                     style={{
                       padding: '20px',
-                      marginBottom: '-70px'
+                      marginBottom: '-70px',
                     }}
                   />
                 ) : (
                   <div
                     style={{
                       padding: '20px',
-                      marginBottom: '-70px'
+                      marginBottom: '-70px',
                     }}
                   >
                     <PreMessage message={sending} callback={sendMessage} />
@@ -1086,7 +1195,13 @@ class ChatWithHeader extends Component {
                         color="default"
                         className="paperclip"
                         onClick={() => {
-                          if (_.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false) === false) {
+                          if (
+                            _.get(
+                              ChatRoomMemberData,
+                              'ChatRoomMemberIsLeave',
+                              false,
+                            ) === false
+                          ) {
                             browseFile(ShipmentKey);
                           } else {
                             window.alert('You has been remove from the chat');
@@ -1105,7 +1220,7 @@ class ChatWithHeader extends Component {
                           uploadModalRef.current.triggerUploading(
                             event.target.files,
                             ShipmentKey,
-                            ChatRoomKey
+                            ChatRoomKey,
                           )
                         }
                       />
@@ -1114,30 +1229,50 @@ class ChatWithHeader extends Component {
                     <textarea
                       className="chat-message-input"
                       placeholder={
-                        _.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false)
+                        _.get(
+                          ChatRoomMemberData,
+                          'ChatRoomMemberIsLeave',
+                          false,
+                        )
                           ? 'You has been remove from the chat'
                           : 'type...'
                       }
                       ref={ref => (this.multilineTextarea = ref)}
                       type="textarea"
                       value={text}
-                      disabled={_.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false)}
+                      disabled={_.get(
+                        ChatRoomMemberData,
+                        'ChatRoomMemberIsLeave',
+                        false,
+                      )}
                       onMouseEnter={() => {
-                        ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
-                          next: res => {}
+                        ClearUnReadChatMessage(
+                          sender.id,
+                          ShipmentKey,
+                          ChatRoomKey,
+                        ).subscribe({
+                          next: res => {},
                         });
                         if (chatMsg.length > 0) {
                           if (chatMsg[chatMsg.length - 1].id !== lastkey) {
-                            this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
-                              ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
-                              ChatRoomMessageReaderSurName: sender.ProfileSurname,
-                              ChatRoomMessageReaderProfileImageUrl: _.get(
-                                sender,
-                                'UserInfoProfileImageLink',
-                                ''
-                              ),
-                              ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
-                            });
+                            this.UpdateReader(
+                              ShipmentKey,
+                              ChatRoomKey,
+                              sender.id,
+                              {
+                                ChatRoomMessageReaderFirstName:
+                                  sender.ProfileFirstname,
+                                ChatRoomMessageReaderSurName:
+                                  sender.ProfileSurname,
+                                ChatRoomMessageReaderProfileImageUrl: _.get(
+                                  sender,
+                                  'UserInfoProfileImageLink',
+                                  '',
+                                ),
+                                ChatRoomMessageReaderLastestMessageKey:
+                                  chatMsg[chatMsg.length - 1].id,
+                              },
+                            );
                           }
                           lastkey = chatMsg[chatMsg.length - 1].id;
                         }
@@ -1150,21 +1285,33 @@ class ChatWithHeader extends Component {
                           this.multilineTextarea.style.height = `${this.multilineTextarea.scrollHeight}px`;
                         }
 
-                        ClearUnReadChatMessage(sender.id, ShipmentKey, ChatRoomKey).subscribe({
-                          next: res => {}
+                        ClearUnReadChatMessage(
+                          sender.id,
+                          ShipmentKey,
+                          ChatRoomKey,
+                        ).subscribe({
+                          next: res => {},
                         });
                         if (chatMsg.length > 0) {
                           if (chatMsg[chatMsg.length - 1].id !== lastkey) {
-                            this.UpdateReader(ShipmentKey, ChatRoomKey, sender.id, {
-                              ChatRoomMessageReaderFirstName: sender.ProfileFirstname,
-                              ChatRoomMessageReaderSurName: sender.ProfileSurname,
-                              ChatRoomMessageReaderProfileImageUrl: _.get(
-                                sender,
-                                'UserInfoProfileImageLink',
-                                ''
-                              ),
-                              ChatRoomMessageReaderLastestMessageKey: chatMsg[chatMsg.length - 1].id
-                            });
+                            this.UpdateReader(
+                              ShipmentKey,
+                              ChatRoomKey,
+                              sender.id,
+                              {
+                                ChatRoomMessageReaderFirstName:
+                                  sender.ProfileFirstname,
+                                ChatRoomMessageReaderSurName:
+                                  sender.ProfileSurname,
+                                ChatRoomMessageReaderProfileImageUrl: _.get(
+                                  sender,
+                                  'UserInfoProfileImageLink',
+                                  '',
+                                ),
+                                ChatRoomMessageReaderLastestMessageKey:
+                                  chatMsg[chatMsg.length - 1].id,
+                              },
+                            );
                           }
                           lastkey = chatMsg[chatMsg.length - 1].id;
                         }
@@ -1176,14 +1323,18 @@ class ChatWithHeader extends Component {
                           event.preventDefault(); // Stops enter from creating a new line
                           if (
                             !_.isEmpty(_.trim(text)) &&
-                            _.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false) === false
+                            _.get(
+                              ChatRoomMemberData,
+                              'ChatRoomMemberIsLeave',
+                              false,
+                            ) === false
                           ) {
                             sendMessage(
                               ChatRoomKey,
                               ShipmentKey,
                               text,
                               undefined,
-                              this.scrollChatToBottom
+                              this.scrollChatToBottom,
                             );
                             this.multilineTextarea.style.height = '50px';
                           }
@@ -1201,14 +1352,18 @@ class ChatWithHeader extends Component {
                         onClick={() => {
                           if (
                             !_.isEmpty(_.trim(text)) &&
-                            _.get(ChatRoomMemberData, 'ChatRoomMemberIsLeave', false) === false
+                            _.get(
+                              ChatRoomMemberData,
+                              'ChatRoomMemberIsLeave',
+                              false,
+                            ) === false
                           ) {
                             sendMessage(
                               ChatRoomKey,
                               ShipmentKey,
                               text,
                               undefined,
-                              this.scrollChatToBottom
+                              this.scrollChatToBottom,
                             );
                             this.multilineTextarea.style.height = '50px';
                           }
