@@ -248,6 +248,7 @@ class ChatWithHeader extends Component {
   }
 
   handleAssignCompany(e, role, ref) {
+    console.log('Chat room data', this.props.members);
     const { ShipmentKey, ChatRoomKey, members, user } = this.props;
     const { companies } = this.props;
 
@@ -938,7 +939,7 @@ class ChatWithHeader extends Component {
       user,
       network,
       msg: sending,
-      chatMsg,
+
       text,
       typing,
       uploadModalRef,
@@ -961,7 +962,9 @@ class ChatWithHeader extends Component {
       onFileDrop,
       shipments,
     } = this.props;
-    console.log('this.state', this.state);
+    let { chatMsg } = this.props;
+    chatMsg = _.orderBy(chatMsg, ['ChatRoomMessageTimestamp'], ['asc']);
+    console.log('this.chatMsg', chatMsg);
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
     const members = _.get(shipments, `${ShipmentKey}.ShipmentMember`, []);
 
