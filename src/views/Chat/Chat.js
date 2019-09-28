@@ -7,7 +7,9 @@ import React, { Component } from 'react';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 
-import { TabContent, Input, TabPane, Badge } from 'reactstrap';
+import {
+  TabContent, Input, TabPane, Badge,
+} from 'reactstrap';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import Tabs from 'react-draggable-tabs';
@@ -24,7 +26,7 @@ import {
   newChat,
   selectChatRoom,
   toggleCreateChat,
-  sortChat
+  sortChat,
 } from '../../actions/chatActions';
 
 import ChatWithHeader from './components/ChatWithHeader';
@@ -38,6 +40,7 @@ import { GetUserCompany } from '../../service/user/user';
 import { fetchCompany } from '../../actions/companyAction';
 import './Chat.scss';
 import { editShipmentRef, fetchShipments, updateShipmentRef } from '../../actions/shipmentActions';
+import undefined from 'firebase/empty-import';
 
 class Chat extends Component {
   constructor(props) {
@@ -58,7 +61,7 @@ class Chat extends Component {
       shipments: {},
       chatAlert: [],
       blocking: false,
-      toggleChat: false
+      toggleChat: false,
     };
     this.toggleBlocking = this.toggleBlocking.bind(this);
     this.toggleCreateChat = this.toggleCreateChat.bind(this);
@@ -74,11 +77,11 @@ class Chat extends Component {
     const hasNewChat = _.get(this.props, 'ChatReducer.selectedChat', '');
   }
 
-  toggleBlocking = toggle => {
+  toggleBlocking = (toggle) => {
     this.props.toggleLoading(toggle);
   };
 
-  toggleCreateChat = toggle => {
+  toggleCreateChat = (toggle) => {
     this.setState({ toggleChat: toggle });
   };
 
@@ -91,9 +94,9 @@ class Chat extends Component {
     const shipmentkey = _.get(param, 'shipmentkey', 'HDTPONlnceJeG5yAA1Zy');
     CreateChatRoom(shipmentkey, {
       ChatRoomType: room,
-      ChatRoomName: room
+      ChatRoomName: room,
     }).subscribe({
-      next: result => {
+      next: (result) => {
         const data = result.path.split('/');
         const chatkey = result.id;
 
@@ -105,25 +108,25 @@ class Chat extends Component {
           ChatRoomMemberImageUrl: '',
           ChatRoomMemberRole: memberData.ShipmentMemberRole,
           ChatRoomMemberCompanyName: memberData.ShipmentMemberCompanyName || '',
-          ChatRoomMemberCompanyKey: memberData.ShipmentMemberCompanyKey || ''
+          ChatRoomMemberCompanyKey: memberData.ShipmentMemberCompanyKey || '',
         }).subscribe({
-          next: res => {
+          next: (res) => {
             fetchChatMessage(data[data.length - 1], shipmentkey, chatkey);
             this.props.newChat(chatkey);
             this.props.toggleCreateChat(false);
 
             ChatRoomMember.unsubscribe();
-          }
+          },
         });
       },
-      complete: result => {}
+      complete: (result) => {},
     });
   }
 
   renderChat(ChatRoomKey = '', ShipmentKey = '') {
     if (ShipmentKey === 'custom') {
       const {
-        match: { params }
+        match: { params },
       } = this.props;
       return (
         <ChatCreateRoom
@@ -141,7 +144,7 @@ class Chat extends Component {
       onSendMessage,
       onFetchMoreMessage,
       sender,
-      companies
+      companies,
     } = this.props;
     const { text, chatrooms, msg } = ChatReducer;
     const chat = _.get(this.props, `ChatReducer.chatroomsMsg.${ChatRoomKey}`, []);
@@ -200,16 +203,18 @@ class Chat extends Component {
   onFileDrop = (event, ShipmentKey, ChatRoomKey) => {
     event.preventDefault();
     const fileItems = event.dataTransfer.items;
-    const files = [];
-    _.forEach(fileItems, i => {
-      files.push(i.getAsFile());
-    });
+    if (fileItems !== undefined && fileItems !== null) {
+      const files = [];
+      _.forEach(fileItems, (i) => {
+        files.push(i.getAsFile());
+      });
 
-    // eslint-disable-next-line no-param-reassign
-    event.target.value = null;
-    this.uploadModalRef.current.triggerUploading(files, ShipmentKey, ChatRoomKey);
+      // eslint-disable-next-line no-param-reassign
+      event.target.value = null;
+      this.uploadModalRef.current.triggerUploading(files, ShipmentKey, ChatRoomKey);
+    }
     this.setState({
-      onDropChatStyle: false
+      onDropChatStyle: false,
     });
   };
 
@@ -217,28 +222,28 @@ class Chat extends Component {
     this.chatWithHeader.current.scrollChatToBottom();
   };
 
-  onDragOver = event => {
+  onDragOver = (event) => {
     event.stopPropagation();
     event.preventDefault();
     this.setState({
-      onDropChatStyle: true
+      onDropChatStyle: true,
     });
   };
 
-  onDragLeave = event => {
+  onDragLeave = (event) => {
     event.stopPropagation();
     event.preventDefault();
     this.setState({
-      onDropChatStyle: false
+      onDropChatStyle: false,
     });
   };
 
-  onDragEnter = event => {
+  onDragEnter = (event) => {
     event.preventDefault();
   };
 
   closedTab(removedIndex) {
-    this.setState(state => {
+    this.setState((state) => {
       const newTabs = [...state.tabs];
       newTabs.splice(removedIndex, 1);
 
@@ -253,12 +258,12 @@ class Chat extends Component {
   }
 
   addTab() {
-    this.setState(state => {
+    this.setState((state) => {
       const newTabs = [...state.tabs];
       newTabs.push({
         id: newTabs.length + 1,
         content: 'Cute *',
-        display: <div key={newTabs.length + 1}>Cute *</div>
+        display: <div key={newTabs.length + 1}>Cute *</div>,
       });
 
       return { tabs: newTabs };
@@ -269,7 +274,7 @@ class Chat extends Component {
     const newArray = this.state.activeTab.slice();
     newArray[tabPane] = tab;
     this.setState({
-      activeTab: newArray
+      activeTab: newArray,
     });
   }
 
@@ -285,44 +290,44 @@ class Chat extends Component {
 
   componentDidMount() {
     const {
-      match: { params }
+      match: { params },
     } = this.props;
 
     this.props.getChatRoomList(params.shipmentkey, this.props.user.uid); // MOCK SHIPMENT KEY
-    const chats = _.filter(this.props.ChatReducer.chatrooms, item => {
+    const chats = _.filter(this.props.ChatReducer.chatrooms, (item) => {
       if (item.ShipmentKey === 'custom') return true;
       return item.ShipmentKey === params.shipmentkey;
     });
     GetShipmentDetail(params.shipmentkey).subscribe({
-      next: res => {
+      next: (res) => {
         this.setState({
           shipments: {
-            ...res.data()
-          }
+            ...res.data(),
+          },
         });
-      }
+      },
     });
     GetShipmentNotificationCount(this.props.sender.id, params.shipmentkey).subscribe({
-      next: res => {
+      next: (res) => {
         this.setState({
-          chatAlert: res.data()
+          chatAlert: res.data(),
         });
-      }
+      },
     });
     const tabs = [];
-    _.forEach(chats, item => {
+    _.forEach(chats, (item) => {
       tabs.push({
         ChatRoomKey: item.ChatRoomKey,
-        ShipmentKey: item.ShipmentKey
+        ShipmentKey: item.ShipmentKey,
       });
     });
-    _.forEach(tabs, tab => {
+    _.forEach(tabs, (tab) => {
       this.props.fetchChatMessage(tab.ChatRoomKey, tab.ShipmentKey, this.scrollChildChatToBottom);
     });
     GetUserCompany(this.props.user.uid).subscribe({
-      next: res => {
+      next: (res) => {
         this.props.fetchCompany(res);
-      }
+      },
     });
   }
 
@@ -332,9 +337,9 @@ class Chat extends Component {
 
   render() {
     const {
-      match: { params }
+      match: { params },
     } = this.props;
-    let chats = _.filter(this.props.ChatReducer.chatrooms, item => {
+    let chats = _.filter(this.props.ChatReducer.chatrooms, (item) => {
       if (item.ShipmentKey === 'custom') {
         return true;
       }
@@ -349,14 +354,13 @@ class Chat extends Component {
           if (item.ChatRoomKey === hasNewChat) {
             return {
               ...item,
-              active: true
-            };
-          } else {
-            return {
-              ...item,
-              active: false
+              active: true,
             };
           }
+          return {
+            ...item,
+            active: false,
+          };
         });
       }
     }
@@ -369,17 +373,17 @@ class Chat extends Component {
             chats.push(chats.splice(x, 1)[0]);
             chats = _.map(chats, (item, index) => ({
               ...item,
-              position: index
+              position: index,
             }));
           }
         });
       }
     }
 
-    let newChat = chats;
+    const newChat = chats;
     let tabs = [];
 
-    _.forEach(chats, item => {
+    _.forEach(chats, (item) => {
       let content = (
         <div
           className={item.roomName === '+' ? 'create-new-chat-tab' : 'noti'}
@@ -389,8 +393,8 @@ class Chat extends Component {
                 roomeditor: {
                   roomName: item.roomName,
                   ChatRoomKey: item.ChatRoomKey,
-                  ShipmentKey: item.ShipmentKey
-                }
+                  ShipmentKey: item.ShipmentKey,
+                },
               });
             }
           }}
@@ -408,37 +412,37 @@ class Chat extends Component {
         </div>
       );
       if (
-        this.state.roomeditor.ShipmentKey === item.ShipmentKey &&
-        this.state.roomeditor.ChatRoomKey === item.ChatRoomKey
+        this.state.roomeditor.ShipmentKey === item.ShipmentKey
+        && this.state.roomeditor.ChatRoomKey === item.ChatRoomKey
       ) {
         content = (
           <div className="noti">
             <Input
-              ref={input => {
+              ref={(input) => {
                 this.nameInput = input;
               }}
               value={this.state.roomeditor.roomName}
               type="text"
               maxLength={40}
-              onChange={e => {
+              onChange={(e) => {
                 this.setState({
                   roomeditor: {
                     ...this.state.roomeditor,
-                    roomName: e.target.value
-                  }
+                    roomName: e.target.value,
+                  },
                 });
               }}
-              onBlur={e => {
+              onBlur={(e) => {
                 console.log('Un Focus');
                 EditChatRoom(item.ShipmentKey, item.ChatRoomKey, {
-                  ChatRoomName: this.state.roomeditor.roomName
+                  ChatRoomName: this.state.roomeditor.roomName,
                 });
                 this.setState({ roomeditor: {} });
               }}
-              onKeyDown={button => {
+              onKeyDown={(button) => {
                 if (button.key === 'Enter') {
                   EditChatRoom(item.ShipmentKey, item.ChatRoomKey, {
-                    ChatRoomName: this.state.roomeditor.roomName
+                    ChatRoomName: this.state.roomeditor.roomName,
                   });
                   this.setState({ roomeditor: {} });
                 }
@@ -454,12 +458,12 @@ class Chat extends Component {
         ChatRoomKey: item.ChatRoomKey,
         ShipmentKey: item.ShipmentKey,
         position: item.position,
-        member: item.member
+        member: item.member,
       });
     });
     tabs = _.orderBy(tabs, ['position'], ['asc']);
     const activeTab = tabs.filter(tab => tab.active === true);
-    const toggle = this.props.ChatReducer.toggle;
+    const { toggle } = this.props.ChatReducer;
     const createChat = this.props.ChatReducer.createChat || false;
     return (
       <div className="animated fadeIn chatbox">
@@ -489,14 +493,16 @@ class Chat extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  const { ChatReducer, authReducer, profileReducer, companyReducer, shipmentReducer } = state;
+const mapStateToProps = (state) => {
+  const {
+    ChatReducer, authReducer, profileReducer, companyReducer, shipmentReducer,
+  } = state;
 
   const sender = _.find(
     profileReducer.ProfileList,
-    item => item.id === profileReducer.ProfileDetail.id
+    item => item.id === profileReducer.ProfileDetail.id,
   );
-  const user = authReducer.user;
+  const { user } = authReducer;
   sender.uid = user.uid;
   return {
     ChatReducer,
@@ -504,7 +510,7 @@ const mapStateToProps = state => {
     sender,
     shipments: shipmentReducer.Shipments,
     companies: companyReducer.UserCompany,
-    network: companyReducer.NetworkEmail
+    network: companyReducer.NetworkEmail,
   };
 };
 
@@ -526,6 +532,6 @@ export default connect(
     selectChat: selectChatRoom,
     getChatRoomList,
     fetchCompany,
-    fetchShipments
-  }
+    fetchShipments,
+  },
 )(Chat);
