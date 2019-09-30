@@ -35,6 +35,16 @@ const ChatInviteBar = ({
     return false;
   };
 
+  const isExistingEntered = (entry) => {
+    const found1 = _.find(emails, e => e.Email === entry);
+    const found2 = _.find(notExistEmails, e => e.Email === entry);
+
+    if (found1 || found2) {
+      return true;
+    }
+    return false;
+  };
+
   const processInvitedEmail = (email) => {
     GetUserInfoFromEmail(email).subscribe((data) => {
       if (data.length > 0) {
@@ -45,7 +55,11 @@ const ChatInviteBar = ({
             { Email: email, isExist: true, dataIndex: emails.length },
           ]);
         } else {
-          // TO-DO alert warning for existing member
+          addToast('Person using this email is already a member', {
+            appearance: 'warning',
+            autoDismiss: true,
+            pauseOnHover: true,
+          });
         }
       } else {
         setNotExistEmails([
@@ -63,7 +77,15 @@ const ChatInviteBar = ({
   const handleEmailInputChange = (tags) => {
     const inputTag = tags[tags.length - 1];
     if (isValidEmail(inputTag)) {
-      processInvitedEmail(inputTag);
+      if (!isExistingEntered(inputTag)) {
+        processInvitedEmail(inputTag);
+      }
+    } else {
+      addToast('Email you enter is an invalid format', {
+        appearance: 'warning',
+        autoDismiss: true,
+        pauseOnHover: true,
+      });
     }
   };
 
@@ -84,6 +106,7 @@ const ChatInviteBar = ({
 
   const invite = () => {
     // Send Existing User Invites
+    setIsLoading(true);
     const inviteData = _.filter(emails, e => e.isMarkRemove === false);
     const result = CreateChatMultipleInvitation(inviteData, shipmentKey, chatRoomKey, sender);
     result.subscribe({
@@ -181,6 +204,7 @@ const ChatInviteBar = ({
       </Col>
       <Col xs={6} style={{ height: 40, marginTop: 5 }}>
         <TagsInput
+          addKeys={[9, 13, 32]}
           value={displayEmail}
           onChange={handleEmailInputChange}
           inputProps={{
@@ -216,7 +240,7 @@ const ChatInviteBar = ({
             onClick={() => {
               invite();
             }}
-            disabled={displayEmail.length < 1}
+            disabled={displayEmail.length < 1 || isLoading}
           >
             Send
           </Button>
