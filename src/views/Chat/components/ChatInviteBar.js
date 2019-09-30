@@ -182,6 +182,7 @@ const ChatInviteBar = ({
       </Col>
       <Col xs={6} style={{ height: 40, marginTop: 5 }}>
         <TagsInput
+          addKeys={[9, 13, 32]}
           value={displayEmail}
           onChange={handleEmailInputChange}
           inputProps={{
