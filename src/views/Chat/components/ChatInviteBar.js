@@ -84,6 +84,7 @@ const ChatInviteBar = ({
 
   const invite = () => {
     // Send Existing User Invites
+    setIsLoading(true);
     const inviteData = _.filter(emails, e => e.isMarkRemove === false);
     const result = CreateChatMultipleInvitation(inviteData, shipmentKey, chatRoomKey, sender);
     result.subscribe({
@@ -216,7 +217,7 @@ const ChatInviteBar = ({
             onClick={() => {
               invite();
             }}
-            disabled={displayEmail.length < 1}
+            disabled={displayEmail.length < 1 || isLoading}
           >
             Send
           </Button>
