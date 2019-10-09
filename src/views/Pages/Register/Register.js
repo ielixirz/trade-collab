@@ -75,7 +75,7 @@ const Register = (props) => {
       if (!isValidPassword(values.Password)) {
         valid = valid && false;
         i.Password.isInvalid = true;
-        i.Password.msg = '*Invalid';
+        i.Password.msg = '*6 - 24 characters required';
       } else {
         i.Password.isInvalid = false;
       }
@@ -215,7 +215,7 @@ const Register = (props) => {
 
                   <div style={styles.marginInput}>
                     <Row>
-                      <Col md="9">
+                      <Col md="8">
                         <h4>Password</h4>
                       </Col>
                       {invalid.Password.isInvalid ? (
