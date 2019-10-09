@@ -36,8 +36,8 @@ const ChatInviteBar = ({
   };
 
   const isExistingEntered = (entry) => {
-    const found1 = _.find(emails, e => e.Email === entry);
-    const found2 = _.find(notExistEmails, e => e.Email === entry);
+    const found1 = _.find(emails, e => e.Email === entry && e.isMarkRemove === false);
+    const found2 = _.find(notExistEmails, e => e.Email === entry && e.isMarkRemove === false);
 
     if (found1 || found2) {
       return true;
