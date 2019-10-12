@@ -144,7 +144,7 @@ class Login extends Component {
                           style={{ color: '#367FEE', marginLeft: '10px' }}
                         >
                           <p>
-                            <b>Sign Up here!</b>
+                            Sign Up here!
                           </p>
                         </Link>
                       </div>

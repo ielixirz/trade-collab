@@ -47,3 +47,13 @@ select {
 input[type='email']:focus {
   background-color: rgb(235, 247, 244);
 }
+
+.forgot-password-link {
+  width: 130px;
+  float: right;
+  cursor: pointer;
+}
+
+.forgot-password-link:hover {
+  font-weight: bold;
+}
