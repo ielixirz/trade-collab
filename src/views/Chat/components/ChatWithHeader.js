@@ -721,6 +721,16 @@ class ChatWithHeader extends Component {
                       });
                     }}
                     onBlur={e => {
+                      const { value } = e.target;
+                      const input = {
+                        ...this.state.input.newRef,
+                        ShipmentReferenceID: value,
+                        ShipmentReferenceCompanyKey:
+                          hasCompany.ShipmentMemberCompanyKey,
+                        ShipmentReferenceCompanyName:
+                          hasCompany.ShipmentMemberCompanyName,
+                        ShipmentKey: shipmentKey,
+                      };
                       if (
                         _.get(
                           this.state.submiting,
@@ -736,10 +746,7 @@ class ChatWithHeader extends Component {
                             },
                           },
                         });
-                        CreateShipmentReference(
-                          shipmentKey,
-                          this.state.input.newRef,
-                        ).subscribe({
+                        CreateShipmentReference(shipmentKey, input).subscribe({
                           next: res => {
                             this.setState({
                               submiting: {
@@ -993,7 +1000,6 @@ class ChatWithHeader extends Component {
     } = this.props;
     let { chatMsg } = this.props;
     chatMsg = _.orderBy(chatMsg, ['ChatRoomMessageTimestamp'], ['asc']);
-    console.log('this.chatMsg', chatMsg);
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
     const members = _.get(shipments, `${ShipmentKey}.ShipmentMember`, []);
 
@@ -1006,7 +1012,6 @@ class ChatWithHeader extends Component {
       item => item.ChatRoomMemberEmail === user.email,
     );
     let ref = '';
-    console.log('isInvited', isInvited);
     if (!_.isEmpty(isInvited)) {
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
         ref =
