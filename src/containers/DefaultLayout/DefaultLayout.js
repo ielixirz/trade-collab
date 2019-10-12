@@ -48,7 +48,7 @@ class DefaultLayout extends Component {
     return (
       <ToastProvider
         placement="top-right"
-        autoDismissTimeout={2500}
+        autoDismissTimeout={5000}
         components={{
           ToastContainer: ToteToastNotificationContainer,
           Toast: ToteToastNotification,
