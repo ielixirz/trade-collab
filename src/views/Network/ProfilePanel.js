@@ -158,7 +158,7 @@ const ProfilePanel = ({
           position: '-',
           role: '-',
           status: renderStatus(item.CompanyRequestStatus),
-          button: '',
+          button: <div style={{ height: 33, width: 88 }} />,
         });
       });
 
@@ -182,7 +182,7 @@ const ProfilePanel = ({
             role: item.CompanyInvitationRole,
             // eslint-disable-next-line no-use-before-define
             status: renderStatus(status, inviteData, responseToInvite),
-            button: '',
+            button: <div style={{ height: 33, width: 88 }} />,
           });
           invitedIndex += 1;
         }
