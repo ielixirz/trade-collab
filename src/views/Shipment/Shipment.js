@@ -1558,7 +1558,6 @@ class Shipment extends Component {
                 this.props.setQuery('Cancel');
               }}
             >
-              <i className="icon-close" />{' '}
               <span style={styles.title}>Cancel</span>
             </NavLink>
           </NavItem>
