@@ -1067,7 +1067,7 @@ class ChatWithHeader extends Component {
                           this.toggleInviteComponent(this.state.toggleInvite);
                         }}
                       >
-                        Invite
+                        <b>Invite</b>
                       </Button>
                     </Row>
                   </Col>

@@ -279,7 +279,6 @@ class NewProfileModal extends React.Component {
                   </div>
                 </form>
                 <p style={{ color: '#16A085', marginTop: 20 }}>
-                  <b>Edit profile setting</b>
                 </p>
                 <div className="col-sm-12 text-center">
                   <Button
