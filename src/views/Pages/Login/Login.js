@@ -74,9 +74,7 @@ class Login extends Component {
                 <Card className="p-4">
                   <CardBody>
                     <Form>
-                      <div className="login-header">
-                        <h1>Log In</h1>
-                      </div>
+                      <div className="login-header" />
                       {this.state.isError ? (
                         <Row style={{ margin: 'auto', marginBottom: '15px' }}>
                           <Alert style={{ margin: 'auto' }} color="danger">
@@ -129,27 +127,10 @@ class Login extends Component {
                           </FormGroup>
                         </Col>
                       </Row>
-                      <div
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          justifyContent: 'center',
-                          marginTop: '20px',
-                        }}
+                      <Row
+                        className="justify-content-center full-height align-items-center "
+                        style={{ marginTop: '2.5rem' }}
                       >
-                        <p>
-                          <b>Don't have an account?</b>
-                        </p>
-                        <Link
-                          className="cool-link"
-                          to="register"
-                          style={{ color: '#367FEE', marginLeft: '10px' }}
-                        >
-                          <p>Sign Up here!</p>
-                        </Link>
-                      </div>
-                      <br />
-                      <Row className="justify-content-center full-height align-items-center ">
                         <Button
                           style={{
                             backgroundColor: '#16A085',
@@ -171,6 +152,25 @@ class Login extends Component {
                           LOG IN
                         </Button>
                       </Row>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          justifyContent: 'center',
+                          marginTop: '20px',
+                        }}
+                      >
+                        <p>
+                          <b>Don't have an account?</b>
+                        </p>
+                        <Link
+                          className="cool-link"
+                          to="register"
+                          style={{ color: '#367FEE', marginLeft: '10px' }}
+                        >
+                          <p>Sign Up here!</p>
+                        </Link>
+                      </div>
                     </Form>
                   </CardBody>
                 </Card>
