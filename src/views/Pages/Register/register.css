@@ -86,3 +86,7 @@ input[type='password'].register-form:focus {
   text-align: center;
   margin: 25px 25px 25px 25px;
 }
+
+.input-regis-label {
+  font-size: 14px;
+}

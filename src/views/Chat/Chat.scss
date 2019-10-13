@@ -315,7 +315,7 @@ textarea {
 .paperclip {
   padding-right: 10px;
 }
-.text-yterminall{
+.text-yterminall {
   background-color: white;
   border: 0px;
 }
@@ -334,15 +334,14 @@ textarea {
   width: 33px;
   margin-right: 10px;
 }
-.company-shipment{
+.company-shipment {
   margin: 4px;
   border-radius: 3px;
   background-color: #d6d6d6;
   width: -webkit-fill-available;
 }
 
-
-.company-shipment-button{
+.company-shipment-button {
   margin: 4px;
   border-radius: 3px;
 }
@@ -391,7 +390,7 @@ textarea {
   border-color: #16a085;
   opacity: 1;
 }
-.roleForm{
+.roleForm {
   z-index: 100;
 }
 
@@ -401,18 +400,17 @@ textarea {
   border-color: #e4e7ea;
   width: 50px;
 }
-.btn-white{
-  color: hsl(0,0%,50%);
+.btn-white {
+  color: hsl(0, 0%, 50%);
   background-color: #ffffff;
   border-color: #e4e7ea;
 }
-.companySelect div:first-child{
+.companySelect div:first-child {
   background-color: #ffffff !important;
-
 }
 
-.btn-white:hover{
-  color: hsl(0,0%,50%);
+.btn-white:hover {
+  color: hsl(0, 0%, 50%);
   background-color: #ffffff;
   border-color: #e4e7ea;
 }
@@ -534,6 +532,7 @@ h2.time-background:before {
 .react-tagsinput-input {
   padding: 0 !important;
   width: 200px;
+  overflow-x: hidden;
 }
 .react-tagsinput {
   border: 0px;

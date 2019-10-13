@@ -24,6 +24,7 @@ const ChatInviteBar = ({
   const [emails, setEmails] = useState([]);
   const [notExistEmails, setNotExistEmails] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentValue, setCurrentValue] = useState('');
 
   const { addToast } = useToasts();
 
@@ -36,8 +37,8 @@ const ChatInviteBar = ({
   };
 
   const isExistingEntered = (entry) => {
-    const found1 = _.find(emails, e => e.Email === entry);
-    const found2 = _.find(notExistEmails, e => e.Email === entry);
+    const found1 = _.find(emails, e => e.Email === entry && e.isMarkRemove === false);
+    const found2 = _.find(notExistEmails, e => e.Email === entry && e.isMarkRemove === false);
 
     if (found1 || found2) {
       return true;
@@ -80,13 +81,21 @@ const ChatInviteBar = ({
       if (!isExistingEntered(inputTag)) {
         processInvitedEmail(inputTag);
       }
+      setCurrentValue('');
+    } else if (typeof inputTag === 'object') {
+      setCurrentValue('');
     } else {
+      setCurrentValue(inputTag);
       addToast('Email you enter is an invalid format', {
         appearance: 'warning',
         autoDismiss: true,
         pauseOnHover: true,
       });
     }
+  };
+
+  const handleChangeInput = (input) => {
+    setCurrentValue(input);
   };
 
   const handleEmailInputRemove = (index, dataIndex, isExist) => {
@@ -206,12 +215,14 @@ const ChatInviteBar = ({
         <TagsInput
           addKeys={[9, 13, 32]}
           value={displayEmail}
+          currentValue={currentValue}
           onChange={handleEmailInputChange}
           inputProps={{
             className: 'react-tagsinput-input',
             placeholder: 'Input email address',
           }}
           renderTag={tagRenderer}
+          onChangeInput={handleChangeInput}
         />
       </Col>
       <Col xs={2}>
@@ -242,7 +253,7 @@ const ChatInviteBar = ({
             }}
             disabled={displayEmail.length < 1 || isLoading}
           >
-            Send
+            <b>Send</b>
           </Button>
         </Row>
       </Col>

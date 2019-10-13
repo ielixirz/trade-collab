@@ -23,6 +23,7 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  Modal,
 } from 'reactstrap';
 import Select from 'react-select';
 import MemberModal from '../../../component/MemberModal';
@@ -54,6 +55,7 @@ import {
 } from '../../../service/shipment/shipment';
 import Send from '../../../component/svg/icon-send';
 import Paperclip from '../../../component/svg/paperclip';
+import BlockUi from 'react-block-ui';
 
 let lastkey = '';
 class ChatWithHeader extends Component {
@@ -72,6 +74,7 @@ class ChatWithHeader extends Component {
       toggleInvite: false,
       availableRole: {},
       isAssign: false,
+      isLoadingShipment: true,
       input: {
         refs: [],
         newRef: {
@@ -188,6 +191,12 @@ class ChatWithHeader extends Component {
         });
       },
     });
+    setTimeout(() => {
+      console.log('Toggle Loading');
+      this.setState({
+        isLoadingShipment: false,
+      });
+    }, 3000);
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -415,6 +424,11 @@ class ChatWithHeader extends Component {
       members: member,
       shipments,
     } = this.props;
+    const isLoadingShipment = this.state.isLoadingShipment;
+    if (isLoadingShipment) {
+      return <BlockUi blocking />;
+    }
+
     const members = _.get(shipments, `${ShipmentKey}.ShipmentMember`, []);
     const memberData = _.find(
       members,
@@ -721,6 +735,16 @@ class ChatWithHeader extends Component {
                       });
                     }}
                     onBlur={e => {
+                      const { value } = e.target;
+                      const input = {
+                        ...this.state.input.newRef,
+                        ShipmentReferenceID: value,
+                        ShipmentReferenceCompanyKey:
+                          hasCompany.ShipmentMemberCompanyKey,
+                        ShipmentReferenceCompanyName:
+                          hasCompany.ShipmentMemberCompanyName,
+                        ShipmentKey: shipmentKey,
+                      };
                       if (
                         _.get(
                           this.state.submiting,
@@ -736,10 +760,7 @@ class ChatWithHeader extends Component {
                             },
                           },
                         });
-                        CreateShipmentReference(
-                          shipmentKey,
-                          this.state.input.newRef,
-                        ).subscribe({
+                        CreateShipmentReference(shipmentKey, input).subscribe({
                           next: res => {
                             this.setState({
                               submiting: {
@@ -993,7 +1014,6 @@ class ChatWithHeader extends Component {
     } = this.props;
     let { chatMsg } = this.props;
     chatMsg = _.orderBy(chatMsg, ['ChatRoomMessageTimestamp'], ['asc']);
-    console.log('this.chatMsg', chatMsg);
     const ship = _.find(shipments, item => item.ShipmentID === ShipmentKey);
     const members = _.get(shipments, `${ShipmentKey}.ShipmentMember`, []);
 
@@ -1006,7 +1026,6 @@ class ChatWithHeader extends Component {
       item => item.ChatRoomMemberEmail === user.email,
     );
     let ref = '';
-    console.log('isInvited', isInvited);
     if (!_.isEmpty(isInvited)) {
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
         ref =
@@ -1020,6 +1039,7 @@ class ChatWithHeader extends Component {
     } else {
       ref = 'loading';
     }
+    const isLoadingShipment = this.state.isLoadingShipment;
     return (
       <div
         className="inbox_msg"
@@ -1038,11 +1058,15 @@ class ChatWithHeader extends Component {
               ) : (
                 <React.Fragment>
                   <Col xs={6}>
-                    {this.renderRefComponent(
-                      1,
-                      _.get(ship, 'ShipmentReferenceList', []),
-                      ShipmentKey,
-                      _.get(ship, 'ShipmentMember', []),
+                    {isLoadingShipment ? (
+                      <BlockUi tag="div" blocking />
+                    ) : (
+                      this.renderRefComponent(
+                        1,
+                        _.get(ship, 'ShipmentReferenceList', []),
+                        ShipmentKey,
+                        _.get(ship, 'ShipmentMember', []),
+                      )
                     )}
                   </Col>
                   <Col>
@@ -1067,7 +1091,7 @@ class ChatWithHeader extends Component {
                           this.toggleInviteComponent(this.state.toggleInvite);
                         }}
                       >
-                        Invite
+                        <b>Invite</b>
                       </Button>
                     </Row>
                   </Col>
@@ -1115,17 +1139,7 @@ class ChatWithHeader extends Component {
                 }
               }}
             >
-              <div>
-                {_.get(
-                  this.props.ShipmentData,
-                  'ShipmentCreatorUserKey',
-                  false,
-                ) === user.uid
-                  ? this.renderAssignCompany()
-                  : isInvited
-                  ? this.renderAssignCompany()
-                  : ''}
-              </div>
+              <div>{this.renderAssignCompany()}</div>
               <div
                 id="chathistory"
                 className={

@@ -75,7 +75,7 @@ const Register = (props) => {
       if (!isValidPassword(values.Password)) {
         valid = valid && false;
         i.Password.isInvalid = true;
-        i.Password.msg = '*Invalid';
+        i.Password.msg = '*6 - 24 characters required';
       } else {
         i.Password.isInvalid = false;
       }
@@ -119,12 +119,12 @@ const Register = (props) => {
                   paddingBottom: 40,
                 }}
               >
-                <h2 style={{ marginLeft: 0 }}>Create new account for free!</h2>
+                <h2 style={{ marginLeft: 0, marginBottom: '2.5rem' }}><b>Create new account for FREE!</b></h2>
                 <Form>
                   <div style={styles.marginInput}>
                     <Row>
                       <Col md="9">
-                        <h4>Firstname</h4>
+                        <b className="input-regis-label">Firstname</b>
                       </Col>
                       {invalid.Firstname.isInvalid ? (
                         <Col className="field-error-container-regis">
@@ -152,7 +152,7 @@ const Register = (props) => {
                   <div style={styles.marginInput}>
                     <Row>
                       <Col md="9">
-                        <h4>Surname</h4>
+                        <b className="input-regis-label">Surname</b>
                       </Col>
                       {invalid.Surname.isInvalid ? (
                         <Col className="field-error-container-regis">
@@ -179,7 +179,7 @@ const Register = (props) => {
                   <div style={styles.marginInput}>
                     <Row>
                       <Col md="2">
-                        <h4>Email</h4>
+                        <b className="input-regis-label">Email</b>
                       </Col>
                       <Col md="7">
                         {isDuplicate ? (
@@ -215,8 +215,8 @@ const Register = (props) => {
 
                   <div style={styles.marginInput}>
                     <Row>
-                      <Col md="9">
-                        <h4>Password</h4>
+                      <Col md="8">
+                        <b className="input-regis-label">Password</b>
                       </Col>
                       {invalid.Password.isInvalid ? (
                         <Col className="field-error-container-regis">
@@ -240,7 +240,7 @@ const Register = (props) => {
                     />
                   </div>
 
-                  <div className="col-sm-12 text-center">
+                  <div className="col-sm-12 text-center" style={{ marginTop: '1.5rem' }}>
                     <button
                       className="regis-button button1"
                       type="submit"

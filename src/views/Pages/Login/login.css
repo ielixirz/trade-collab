@@ -1,3 +1,17 @@
-.login-header{
+.login-header {
   text-align: center;
+}
+
+.cool-link {
+  text-decoration: none !important;
+}
+
+.cool-link:hover {
+  font-weight: bold;
+}
+
+.login-btn:hover {
+  background-color: rgb(57, 212, 181) !important;
+  color: black !important;
+  color: white !important;
 }
