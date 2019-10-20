@@ -11,15 +11,42 @@ const FileCard = ({ fileInfo, mode, progress }) => {
   const [selected, setSelected] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
 
+  const getFileImgType = (extension) => {
+    if (extension === 'PDF') {
+      return 'PDF';
+    }
+
+    if (extension === 'XLS' || extension === 'XLSX' || extension === 'CSV') {
+      return 'EXCEL';
+    }
+
+    if (extension === 'DOCX') {
+      return 'WORD';
+    }
+
+    if (
+      extension === 'PNG'
+      || extension === 'JPG'
+      || extension === 'GIF'
+      || extension === 'BMP'
+      || extension === 'TIFF'
+      || extension === 'SVG'
+    ) {
+      return 'IMAGES';
+    }
+    return 'DEFAULT';
+  };
+
   const getFileImg = (extension) => {
-    switch (extension) {
+    const fileType = getFileImgType(extension);
+    switch (fileType) {
       case 'PDF':
         return 'assets/img/file-pdf-regular.png';
-      case 'XLS' || 'CSV':
+      case 'EXCEL':
         return 'assets/img/file-excel-regular.png';
-      case 'DOCX':
+      case 'WORD':
         return 'assets/img/file-word-regular.png';
-      case 'JPG' || 'PNG' || 'JPEG' || 'GIF' || '.BMP' || '.TIFF' || '.SVG':
+      case 'IMAGES':
         return 'assets/img/file-image-regular.png';
       default:
         return 'assets/img/file-any-other-type.png';
@@ -58,7 +85,11 @@ const FileCard = ({ fileInfo, mode, progress }) => {
               marginLeft: 7,
               marginTop: 5,
             }}
-            src="assets/img/file-any-other-type.png"
+            src={getFileImg(
+              fileInfo.FileName.substr(fileInfo.FileName.lastIndexOf('.'), fileInfo.FileName.length)
+                .toUpperCase()
+                .replace('.', ''),
+            )}
             alt=""
             height="30"
             width="22.5"
