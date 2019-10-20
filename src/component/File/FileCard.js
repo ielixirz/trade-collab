@@ -2,49 +2,91 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
 import React, { useState } from 'react';
-import { Row, Col, Input } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
+import moment from 'moment';
+import FileCardButtonGroup from './FileCardButtonGroup';
+import './FileCard.scss';
 
-const FileCard = ({ fileInfo }) => {
-  const [mode, setMode] = useState(false);
+const FileCard = ({ fileInfo, mode, progress }) => {
   const [selected, setSelected] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+
+  const getFileImg = (extension) => {
+    switch (extension) {
+      case 'PDF':
+        return 'assets/img/file-pdf-regular.png';
+      case 'XLS' || 'CSV':
+        return 'assets/img/file-excel-regular.png';
+      case 'DOCX':
+        return 'assets/img/file-word-regular.png';
+      case 'JPG' || 'PNG' || 'JPEG' || 'GIF' || '.BMP' || '.TIFF' || '.SVG':
+        return 'assets/img/file-image-regular.png';
+      default:
+        return 'assets/img/file-any-other-type.png';
+    }
+  };
+
+  const trimFileName = (fileName) => {
+    if (fileName.length > 21) {
+      const lastIndex = fileName.lastIndexOf('.');
+      const subFileName = fileName.substr(0, lastIndex);
+      const fileExt = fileName.substr(lastIndex, fileName.length);
+      const newFileName = subFileName.substring(0, 20);
+      return `${newFileName}...${fileExt}`;
+    }
+    return fileName;
+  };
 
   return (
-    <Row className="file-row">
-      {/* <span style={fileListDateStyle}>
-        {moment(new Date(s.FileCreateTimestamp)).format('D-M-YYYY HH:mm:ss')}
-      </span> */}
+    <Row
+      className="file-row"
+      onMouseOver={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+      onFocus={() => null}
+    >
+      <div
+        className="file-upload-progress"
+        style={{ width: progress === 100 ? '97.5%' : `${progress}%` }}
+      />
       {mode === 'DELETE' ? (
         // TO-DO DELETE MODE RENDERER
         <div />
       ) : (
-        <Col xs="1">
-          <svg
-            id="icon_file-text"
-            data-name="icon/file-text"
-            xmlns="http://www.w3.org/2000/svg"
-            width="9.818"
-            height="12"
-            viewBox="0 0 9.818 12"
-          >
-            {' '}
-            <path
-              id="Combined-Shape"
-              d="M11.727,5.364H9a.545.545,0,0,1-.545-.545V2.091H4.636a.545.545,0,0,0-.545.545v8.727a.545.545,0,0,0,.545.545h6.545a.545.545,0,0,0,.545-.545v-6h.545a.546.546,0,0,0,.5-.758.553.553,0,0,1,.043.212v6.545A1.636,1.636,0,0,1,11.182,13H4.636A1.636,1.636,0,0,1,3,11.364V2.636A1.636,1.636,0,0,1,4.636,1H9a.545.545,0,0,1,.386.16l3.273,3.273a.545.545,0,0,1,.118.177Zm-2.182-2.5v1.41h1.41ZM10.091,7a.545.545,0,0,1,0,1.091H5.727A.545.545,0,0,1,5.727,7Zm0,2.182a.545.545,0,0,1,0,1.091H5.727a.545.545,0,1,1,0-1.091ZM6.818,4.818a.545.545,0,0,1,0,1.091H5.727a.545.545,0,1,1,0-1.091Z"
-              transform="translate(-3 -1)"
-              fill="#3b3b3b"
-            />
-            {' '}
-          </svg>
+        <Col xs="1.5" style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <img
+            style={{
+              marginLeft: 7,
+              marginTop: 5,
+            }}
+            src="assets/img/file-any-other-type.png"
+            alt=""
+            height="30"
+            width="22.5"
+          />
         </Col>
       )}
       <Col
-        style={{ cursor: 'pointer', fontSize: 14, fontWeight: 'bold' }}
-        xs="7"
+        style={{
+          marginLeft: 10,
+          cursor: 'pointer',
+          fontSize: 14,
+          fontWeight: 'bold',
+        }}
+        xs="6"
         className="text-left"
       >
-        {fileInfo.FileName}
+        <Row>{trimFileName(fileInfo.FileName)}</Row>
+        <Row style={{ fontSize: 10, color: '#808080' }}>
+          {fileInfo.Uploader === undefined ? 'Unknown' : fileInfo.Uploader}
+          {' '}
+-
+          {' '}
+          {moment(new Date(fileInfo.FileCreateTimestamp)).format('D MMM YYYY HH:mm')}
+        </Row>
       </Col>
-      <Col xs="4" style={{ left: '10px' }} />
+      <Col xs="4" style={{ left: '10px', paddingLeft: 0 }}>
+        {isHovering ? <FileCardButtonGroup /> : ''}
+      </Col>
     </Row>
   );
 };

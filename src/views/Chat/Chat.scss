@@ -574,10 +574,16 @@ h2.time-background:before {
   border: 1px solid #e2e2e2;
   border-radius: 3px;
   padding: 3px;
+  &.selected {
+    border-color: #367fee;
+    background-color: #f5f9ff;
+    border-radius: 5px;
+  }
 }
 
 .file-row:hover {
-  background-color: #367fee1c;
+  border-color: #367fee;
+  background-color: #f5f9ff;
   border-radius: 5px;
 }
 
