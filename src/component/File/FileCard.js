@@ -59,7 +59,7 @@ const FileCard = ({ fileInfo, mode, progress }) => {
       const subFileName = fileName.substr(0, lastIndex);
       const fileExt = fileName.substr(lastIndex, fileName.length);
       const newFileName = subFileName.substring(0, 20);
-      return `${newFileName}...${fileExt}`;
+      return `${newFileName}..${fileExt}`;
     }
     return fileName;
   };
