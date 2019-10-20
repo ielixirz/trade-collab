@@ -28,7 +28,7 @@ const ChatInviteBar = ({
 
   const { addToast } = useToasts();
 
-  const isExistingMember = (invited) => {
+  const isExistingMember = invited => {
     const found = _.find(member, m => invited === m.ChatRoomMemberEmail);
     if (found) {
       return true;
@@ -36,9 +36,15 @@ const ChatInviteBar = ({
     return false;
   };
 
-  const isExistingEntered = (entry) => {
-    const found1 = _.find(emails, e => e.Email === entry && e.isMarkRemove === false);
-    const found2 = _.find(notExistEmails, e => e.Email === entry && e.isMarkRemove === false);
+  const isExistingEntered = entry => {
+    const found1 = _.find(
+      emails,
+      e => e.Email === entry && e.isMarkRemove === false,
+    );
+    const found2 = _.find(
+      notExistEmails,
+      e => e.Email === entry && e.isMarkRemove === false,
+    );
 
     if (found1 || found2) {
       return true;
@@ -46,11 +52,14 @@ const ChatInviteBar = ({
     return false;
   };
 
-  const processInvitedEmail = (email) => {
-    GetUserInfoFromEmail(email).subscribe((data) => {
+  const processInvitedEmail = email => {
+    GetUserInfoFromEmail(email).subscribe(data => {
       if (data.length > 0) {
         if (!isExistingMember(email)) {
-          setEmails([...emails, { Email: email, isExist: true, isMarkRemove: false }]);
+          setEmails([
+            ...emails,
+            { Email: email, isExist: true, isMarkRemove: false },
+          ]);
           setDisplayEmail([
             ...displayEmail,
             { Email: email, isExist: true, dataIndex: emails.length },
@@ -75,7 +84,7 @@ const ChatInviteBar = ({
     });
   };
 
-  const handleEmailInputChange = (tags) => {
+  const handleEmailInputChange = tags => {
     const inputTag = tags[tags.length - 1];
     if (isValidEmail(inputTag)) {
       if (!isExistingEntered(inputTag)) {
@@ -94,7 +103,7 @@ const ChatInviteBar = ({
     }
   };
 
-  const handleChangeInput = (input) => {
+  const handleChangeInput = input => {
     setCurrentValue(input);
   };
 
@@ -117,9 +126,14 @@ const ChatInviteBar = ({
     // Send Existing User Invites
     setIsLoading(true);
     const inviteData = _.filter(emails, e => e.isMarkRemove === false);
-    const result = CreateChatMultipleInvitation(inviteData, shipmentKey, chatRoomKey, sender);
+    const result = CreateChatMultipleInvitation(
+      inviteData,
+      shipmentKey,
+      chatRoomKey,
+      sender,
+    );
     result.subscribe({
-      next: (res) => {
+      next: res => {
         toggleInvite();
         addToast('Invitation Sent', {
           appearance: 'success',
@@ -136,15 +150,17 @@ const ChatInviteBar = ({
       CompanyInvitationRecruiterProfileFirstName: sender.ProfileFirstname,
       CompanyInvitationRecruiterProfileSurName: sender.ProfileSurname,
       CompanyInvitationRecruiterCompanyName:
-        shipmentData.ShipmentMember[sender.uid].ShipmentMemberCompanyName === undefined
+        shipmentData.ShipmentMember[sender.uid].ShipmentMemberCompanyName ===
+        undefined
           ? ''
           : shipmentData.ShipmentMember[sender.uid].ShipmentMemberCompanyName,
       CompanyInvitationRecruiterCompanyKey:
-        shipmentData.ShipmentMember[sender.uid].ShipmentMemberCompanyKey === undefined
+        shipmentData.ShipmentMember[sender.uid].ShipmentMemberCompanyKey ===
+        undefined
           ? ''
           : shipmentData.ShipmentMember[sender.uid].ShipmentMemberCompanyKey,
     };
-    _.forEach(notExistEmails, (email) => {
+    _.forEach(notExistEmails, email => {
       if (!email.isMarkRemove) {
         CreateNonUserInvite({
           ShipmentKey: shipmentKey,
@@ -153,13 +169,18 @@ const ChatInviteBar = ({
           ChatRoomKey: chatRoomKey,
           NonUserInviteType: 'Shipment',
           NonUserInviteEmail: email.Email,
-          NonUserInviteRecruiterUserKey: recruiter.CompanyInvitationRecruiterUserKey,
-          NonUserInviteRecruiterProfileKey: recruiter.CompanyInvitationRecruiterProfileKey,
+          NonUserInviteRecruiterUserKey:
+            recruiter.CompanyInvitationRecruiterUserKey,
+          NonUserInviteRecruiterProfileKey:
+            recruiter.CompanyInvitationRecruiterProfileKey,
           NonUserInviteRecruiterProfileFirstName:
             recruiter.CompanyInvitationRecruiterProfileFirstName,
-          NonUserInviteRecruiterProfileSurName: recruiter.CompanyInvitationRecruiterProfileSurName,
-          NonUserInviteRecruiterCompanyName: recruiter.CompanyInvitationRecruiterCompanyName,
-          NonUserInviteRecruiterCompanyKey: recruiter.CompanyInvitationRecruiterCompanyKey,
+          NonUserInviteRecruiterProfileSurName:
+            recruiter.CompanyInvitationRecruiterProfileSurName,
+          NonUserInviteRecruiterCompanyName:
+            recruiter.CompanyInvitationRecruiterCompanyName,
+          NonUserInviteRecruiterCompanyKey:
+            recruiter.CompanyInvitationRecruiterCompanyKey,
           NonUserInviteExpiryDate: AddDay(new Date(), 28).toDate(),
         });
       }
@@ -174,7 +195,7 @@ const ChatInviteBar = ({
     }
   };
 
-  const tagRenderer = (props) => {
+  const tagRenderer = props => {
     const {
       tag,
       key,
@@ -199,7 +220,9 @@ const ChatInviteBar = ({
         {!disabled && (
           <a
             className={classNameRemove}
-            onClick={e => handleEmailInputRemove(key, tag.dataIndex, tag.isExist)}
+            onClick={e =>
+              handleEmailInputRemove(key, tag.dataIndex, tag.isExist)
+            }
           />
         )}
       </span>
@@ -211,7 +234,7 @@ const ChatInviteBar = ({
       <Col xs={0.5} style={{ marginTop: 12 }}>
         <span>To: </span>
       </Col>
-      <Col xs={6} style={{ height: 40, marginTop: 5 }}>
+      <Col xs={8.5} style={{ height: 40, marginTop: 5 }}>
         <TagsInput
           addKeys={[9, 13, 32]}
           value={displayEmail}
@@ -241,11 +264,11 @@ const ChatInviteBar = ({
             style={
               displayEmail.length >= 1
                 ? {
-                  marginLeft: 22,
-                  height: 38,
-                  color: 'white',
-                  backgroundColor: 'rgb(22, 160, 133)',
-                }
+                    marginLeft: 22,
+                    height: 38,
+                    color: 'white',
+                    backgroundColor: 'rgb(22, 160, 133)',
+                  }
                 : { marginLeft: 22, height: 38 }
             }
             onClick={() => {
