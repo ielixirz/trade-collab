@@ -234,7 +234,7 @@ const ChatInviteBar = ({
       <Col xs={0.5} style={{ marginTop: 12 }}>
         <span>To: </span>
       </Col>
-      <Col xs={8.5} style={{ height: 40, marginTop: 5 }}>
+      <Col xs={7} style={{ height: 40, marginTop: 5 }}>
         <TagsInput
           addKeys={[9, 13, 32]}
           value={displayEmail}
@@ -248,7 +248,7 @@ const ChatInviteBar = ({
           onChangeInput={handleChangeInput}
         />
       </Col>
-      <Col xs={2}>
+      <Col xs={3}>
         <Row style={{ paddingLeft: 40 }}>
           <i
             style={{ margin: 0 }}
