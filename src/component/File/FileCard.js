@@ -74,7 +74,11 @@ const FileCard = ({ fileInfo, mode, progress }) => {
       onMouseOver={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       onFocus={() => null}
-      onClick={() => setSelected(!selected)}
+      onClick={() => {
+        if (mode !== 'MESSAGE') {
+          setSelected(!selected);
+        }
+      }}
     >
       <div
         className="file-upload-progress"

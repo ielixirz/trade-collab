@@ -109,7 +109,7 @@ const FileList = forwardRef(
           <EditFileModal ref={editModalRef} shipmentKey={shipmentKey} chatroomKey={chatroomKey} />
           {_.map(chatFile, (s, index) => (
             <ListGroupItem style={{ border: 0, paddingBottom: 5, paddingTop: 5 }} tag="a">
-              <FileCard fileInfo={s} />
+              <FileCard fileInfo={s} mode="FILE" />
             </ListGroupItem>
           ))}
         </ListGroup>
