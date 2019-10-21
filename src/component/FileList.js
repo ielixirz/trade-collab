@@ -79,22 +79,11 @@ const FileList = forwardRef(
       setHoveringFile(undefined);
     };
 
-    const openFile = (url) => {
-      window.open(url, 'Download');
-    };
-
     const restoreFile = (restoreIndex) => {
       const updatingFile = [...chatFiles];
       updatingFile[restoreIndex].FileIsDelete = false;
       EditChatRoomFileLink(shipmentKey, chatroomKey, updatingFile);
       setToggle(!toggle);
-    };
-
-    const downloadFile = (url) => {
-      const xhr = new XMLHttpRequest();
-      xhr.responseType = 'blob';
-      xhr.open('GET', url);
-      xhr.send();
     };
 
     const fileListDateStyle = {

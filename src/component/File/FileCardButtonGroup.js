@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
@@ -6,7 +7,7 @@ import { ButtonGroup, Button } from 'reactstrap';
 
 const FileCardButtonGroup = props => (
   <ButtonGroup style={{ marginTop: 3, marginRight: 10 }}>
-    <Button className="file-options-btn" title="Download">
+    <Button className="file-options-btn" title="Download" onClick={props.downloadFn}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="18.125"

@@ -64,12 +64,17 @@ const FileCard = ({ fileInfo, mode, progress }) => {
     return fileName;
   };
 
+  const openFile = (url) => {
+    window.open(url, 'Download');
+  };
+
   return (
     <Row
-      className="file-row"
+      className={selected ? 'file-row selected' : 'file-row'}
       onMouseOver={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       onFocus={() => null}
+      onClick={() => setSelected(!selected)}
     >
       <div
         className="file-upload-progress"
@@ -116,7 +121,7 @@ const FileCard = ({ fileInfo, mode, progress }) => {
         </Row>
       </Col>
       <Col xs="4" style={{ left: '10px', paddingLeft: 0 }}>
-        {isHovering ? <FileCardButtonGroup /> : ''}
+        {isHovering ? <FileCardButtonGroup downloadFn={() => openFile(fileInfo.FileUrl)} /> : ''}
       </Col>
     </Row>
   );
