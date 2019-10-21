@@ -2,6 +2,11 @@
   background-color: white !important;
   border-color: #e6e6e6 !important;
   width: 42px !important;
+  &:hover {
+    border-color: #367fee !important;
+    background-color: #f5f9ff !important;
+    border-radius: 5px;
+  }
 }
 
 .file-upload-progress {

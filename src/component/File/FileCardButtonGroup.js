@@ -6,7 +6,7 @@ import { ButtonGroup, Button } from 'reactstrap';
 
 const FileCardButtonGroup = props => (
   <ButtonGroup style={{ marginTop: 3, marginRight: 10 }}>
-    <Button className="file-options-btn">
+    <Button className="file-options-btn" title="Download">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="18.125"
@@ -22,7 +22,7 @@ const FileCardButtonGroup = props => (
         />
       </svg>
     </Button>
-    <Button className="file-options-btn">
+    <Button className="file-options-btn" title="Forward">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="19.013"
@@ -39,7 +39,7 @@ const FileCardButtonGroup = props => (
         />
       </svg>
     </Button>
-    <Button className="file-options-btn">
+    <Button className="file-options-btn" title="More">
       <svg xmlns="http://www.w3.org/2000/svg" width="4" height="16" viewBox="0 0 4 16">
         <g id="Group_7768" data-name="Group 7768" transform="translate(0.226 2.088)">
           <circle
