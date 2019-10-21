@@ -79,22 +79,11 @@ const FileList = forwardRef(
       setHoveringFile(undefined);
     };
 
-    const openFile = (url) => {
-      window.open(url, 'Download');
-    };
-
     const restoreFile = (restoreIndex) => {
       const updatingFile = [...chatFiles];
       updatingFile[restoreIndex].FileIsDelete = false;
       EditChatRoomFileLink(shipmentKey, chatroomKey, updatingFile);
       setToggle(!toggle);
-    };
-
-    const downloadFile = (url) => {
-      const xhr = new XMLHttpRequest();
-      xhr.responseType = 'blob';
-      xhr.open('GET', url);
-      xhr.send();
     };
 
     const fileListDateStyle = {
@@ -120,7 +109,7 @@ const FileList = forwardRef(
           <EditFileModal ref={editModalRef} shipmentKey={shipmentKey} chatroomKey={chatroomKey} />
           {_.map(chatFile, (s, index) => (
             <ListGroupItem style={{ border: 0, paddingBottom: 5, paddingTop: 5 }} tag="a">
-              <FileCard fileInfo={s} />
+              <FileCard fileInfo={s} mode="FILE" />
             </ListGroupItem>
           ))}
         </ListGroup>
