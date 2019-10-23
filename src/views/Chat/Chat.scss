@@ -408,6 +408,13 @@ textarea {
 .companySelect div:first-child {
   background-color: #ffffff !important;
 }
+.nav-tabs .nav-link.activeTab {
+  color: #2f353a;
+  background: #fff;
+  border-color: #fff;
+  border-bottom: 2px solid;
+  border-bottom-color: #16a085;
+}
 
 .btn-white:hover {
   color: hsl(0, 0%, 50%);
