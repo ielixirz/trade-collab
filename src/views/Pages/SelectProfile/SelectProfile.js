@@ -19,6 +19,7 @@ import ErrorPopup from '../../../component/commonPopup/ErrorPopup';
 import NewProfileModal from '../../../component/NewProfileModal';
 import { getProfileDetail } from '../../../actions/profileActions';
 import { isValidProfileImg } from '../../../utils/validation';
+import ProfileLoading from '../../../component/svg/ProfileLoading';
 
 class SelectProfile extends Component {
   static propTypes = {
@@ -132,7 +133,11 @@ class SelectProfile extends Component {
 
   renderProfiles = () => {
     const { profiles } = this.props;
-    return profiles.map(profile => this.renderProfile(profile));
+    const renderedProfiles = profiles.map(profile => this.renderProfile(profile));
+    if (renderedProfiles.length === 0) {
+      return <ProfileLoading />;
+    }
+    return renderedProfiles;
   };
 
   render() {
@@ -145,20 +150,29 @@ class SelectProfile extends Component {
                 <div className="container">
                   <BlockUi tag="div" blocking={this.state.blocking}>
                     <h2 className="header-select-profile">Select Profile</h2>
-                    <div style={{ maxHeight: 400, overflowY: 'scroll' }}>
-                      {this.renderProfiles()}
-                    </div>
-                    <div style={{ textAlign: 'center' }}>
-                      <NewProfileModal>
-                        <p style={{ color: '#16a085', marginTop: 20 }} className="add-profile-link">
-                          Add New User
-                        </p>
-                      </NewProfileModal>
-                      <p style={{ color: '#16a085' }}>
-                        You can have multiple users using the same e-mail address
-                      </p>
-                    </div>
-                    <ErrorPopup ref={this.errorPopupRef} />
+                    <React.Fragment>
+                      <div style={{ maxHeight: 400, overflowY: 'scroll' }}>
+                        {this.renderProfiles()}
+                      </div>
+                      {this.props.profiles.length !== 0 ? (
+                        <div style={{ textAlign: 'center' }}>
+                          <NewProfileModal>
+                            <p
+                              style={{ color: '#16a085', marginTop: 20 }}
+                              className="add-profile-link"
+                            >
+                              Add New User
+                            </p>
+                          </NewProfileModal>
+                          <p style={{ color: '#16a085' }}>
+                            You can have multiple users using the same e-mail address
+                          </p>
+                        </div>
+                      ) : (
+                        ''
+                      )}
+                      <ErrorPopup ref={this.errorPopupRef} />
+                    </React.Fragment>
                   </BlockUi>
                 </div>
               </div>
