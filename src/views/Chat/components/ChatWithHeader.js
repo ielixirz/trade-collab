@@ -269,6 +269,7 @@ class ChatWithHeader extends Component {
       ShipmentMember,
       item => item.ShipmentMemberCompanyKey === e.value,
     );
+
     const chatMember = _.find(
       members,
       item => item.ChatRoomMemberEmail === user.email,
