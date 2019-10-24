@@ -27,9 +27,11 @@ import {
   INVALID_EMAIL,
   ACCOUNT_NOT_FOUND,
   INVALID_PASSWORD,
+  TOO_MANY_ATTEMPT,
   INVALID_EMAIL_CODE,
   ACCOUNT_NOT_FOUND_CODE,
   INVALID_PASSWORD_CODE,
+  TOO_MANY_ATTEMPT_CODE,
 } from '../../../constants/auth';
 
 class Login extends Component {
@@ -52,6 +54,9 @@ class Login extends Component {
         break;
       case ACCOUNT_NOT_FOUND_CODE:
         errorMessage = ACCOUNT_NOT_FOUND;
+        break;
+      case TOO_MANY_ATTEMPT_CODE:
+        errorMessage = TOO_MANY_ATTEMPT;
         break;
       default:
         break;
