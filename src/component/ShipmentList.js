@@ -20,12 +20,23 @@ import MasterDetailModal from './MasterDetailModal';
 
 import { GetMasterDataChatRoom } from '../service/masterdata/masterdata';
 import { GetDiffDay } from '../utils/date';
+import OrderInfoTab from '../views/Chat/components/OrderInfoTab';
 
 const shipmentListGroupStyle = {
   maxHeight: '60vh',
   overflow: 'scroll',
   overflowX: 'hidden',
   fontSize: '0.9em',
+};
+
+const renderTab = (tabId, data) => {
+  switch (tabId) {
+    case 1:
+      return <OrderInfoTab {...data} />;
+
+    default:
+      return <div>NoTab</div>;
+  }
 };
 
 const ShipmentList = () => {
@@ -103,7 +114,7 @@ const ShipmentList = () => {
                 </nav>
                 <br />
                 <Container fluid>
-                  <p className="lead">Tab {orderTab}</p>
+                  <p className="lead"> {renderTab(orderTab, data)}</p>
                 </Container>
               </ListGroupItem>
               <ListGroupItem tag="a" style={{ borderBottom: 0 }}>
