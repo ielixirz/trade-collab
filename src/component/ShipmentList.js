@@ -22,6 +22,7 @@ import { GetMasterDataChatRoom } from '../service/masterdata/masterdata';
 import { GetDiffDay } from '../utils/date';
 import OrderInfoTab from '../views/Chat/components/OrderInfoTab';
 import ShippingInfoTab from '../views/Chat/components/ShippingInfoTab';
+import RoleTabs from '../views/Chat/components/RoleTabs';
 
 const shipmentListGroupStyle = {
   maxHeight: '60vh',
@@ -37,7 +38,7 @@ const renderTab = (tabId, data) => {
     case 2:
       return <ShippingInfoTab {...data} />;
     default:
-      return <div>NoTab</div>;
+      return <RoleTabs {...data} />;
   }
 };
 
