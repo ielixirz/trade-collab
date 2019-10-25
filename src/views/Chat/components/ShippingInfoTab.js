@@ -80,7 +80,7 @@ class ShippingInfoTab extends Component {
               <Input
                 type="text"
                 id="text-input"
-                name="text-input"
+                name="text-inputt"
                 placeholder="Text"
                 style={{
                   border: 'none',
