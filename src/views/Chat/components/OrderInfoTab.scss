@@ -1,0 +1,107 @@
+.order-info-port-eta {
+  font-family: Muli;
+  font-size: 14px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.14;
+  letter-spacing: normal;
+  text-align: right;
+  color: #16a085;
+}
+
+.order-info-eta-info {
+  font-family: Muli;
+  font-size: 12px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.33;
+  letter-spacing: normal;
+  text-align: left;
+  color: #3b3b3b;
+  margin-top: 5px;
+}
+
+.progress-line-grey {
+  width: 1px;
+  border-radius: 80px;
+  background-color: #dedede;
+  margin-left: 15.5px;
+}
+
+.progress-line-green {
+  width: 1px;
+  border-radius: 80px;
+  background-color: #16a085;
+  margin-left: 15.5px;
+}
+
+.progress-boat {
+  width: 11.2px;
+  height: 12.3px;
+  margin-left: 10.5px;
+}
+
+.Path-4121 {
+  width: 33px;
+  height: 33px;
+  border: solid 1px #16a085;
+  display: inline-block;
+  border-radius: 50%;
+  text-align: center;
+
+  &.progress {
+    border-color: #dedede;
+    background-color: white;
+  }
+}
+
+.line-sep-dash {
+  width: 300px;
+  height: 1px;
+  opacity: 0.42;
+  border: solid 1px #c7c7c7;
+  background-color: #ffffff;
+  border-style: dashed;
+}
+
+.order-info-port-etd {
+  font-family: Muli;
+  font-size: 14px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.14;
+  letter-spacing: normal;
+  text-align: right;
+  color: #679def;
+}
+
+.order-info-input {
+  width: 350.5px;
+  border: 0;
+  border-bottom: 1px solid #c7c7c7;
+  border-radius: 0;
+  &:hover {
+    color: #679def;
+    cursor: pointer;
+  }
+  &::placeholder {
+    color: #c7c8cb;
+    font-style: italic;
+  }
+}
+
+.order-info-input-label {
+  font-family: Muli;
+  font-size: 12px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.58;
+  letter-spacing: normal;
+  text-align: left;
+  color: #4a4a4a;
+  margin-left: 10px;
+}
