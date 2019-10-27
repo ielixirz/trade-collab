@@ -1091,6 +1091,8 @@ exports.CopyInsideMasterDataToShipment = CloudFunctionsRegionsAsia.firestore
       PayloadObject['ConsigneeETAPortDate'] = newValue.ConsigneeETAPortDate;
     if (newValue.ShipmentDetailProduct)
       PayloadObject['ShipmentProductName'] = newValue.ShipmentDetailProduct;
+    if (newValue.ShipmentDetailNote)
+      PayloadObject['ShipmentDetailNote'] = newValue.ShipmentDetailNote;
     if (newValue.ShipperCompanyName)
       PayloadObject['ShipmentSellerCompanyName'] = newValue.ShipperCompanyName;
     if (newValue.ConsigneeCompanyName)

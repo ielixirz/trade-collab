@@ -320,6 +320,7 @@
         ShipmentDetailBillofLandingNumber (string)
         ShipmentDetailOriginalDocumentTrackingNumber (string)
         ShipmentDetailProduct (string)
+        ShipmentDetailNote (string)
         ConsigneeCompanyName (string)
         ConsigneePort (string)
         ConsigneeETAPortDate (timestamp)
