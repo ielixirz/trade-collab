@@ -3,11 +3,22 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
 import React from 'react';
-import { ButtonGroup, Button } from 'reactstrap';
+import {
+  ButtonGroup,
+  Button,
+  UncontrolledTooltip,
+  UncontrolledButtonDropdown,
+  DropdownMenu,
+  DropdownItem,
+  DropdownToggle,
+} from 'reactstrap';
 
 const FileCardButtonGroup = props => (
   <ButtonGroup style={{ marginTop: 3, marginRight: 10 }}>
-    <Button className="file-options-btn" title="Download" onClick={props.downloadFn}>
+    <UncontrolledTooltip placement="top-start" target="download-btn">
+      Download
+    </UncontrolledTooltip>
+    <Button id="download-btn" className="file-options-btn" onClick={props.downloadFn}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="18.125"
@@ -23,7 +34,10 @@ const FileCardButtonGroup = props => (
         />
       </svg>
     </Button>
-    <Button className="file-options-btn" title="Forward">
+    <UncontrolledTooltip placement="top-start" target="forward-btn">
+      Forward
+    </UncontrolledTooltip>
+    <Button id="forward-btn" className="file-options-btn">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="19.013"
@@ -40,39 +54,47 @@ const FileCardButtonGroup = props => (
         />
       </svg>
     </Button>
-    <Button className="file-options-btn" title="More">
-      <svg xmlns="http://www.w3.org/2000/svg" width="4" height="16" viewBox="0 0 4 16">
-        <g id="Group_7768" data-name="Group 7768" transform="translate(0.226 2.088)">
-          <circle
-            id="Ellipse_6"
-            data-name="Ellipse 6"
-            cx="2"
-            cy="2"
-            r="2"
-            transform="translate(-0.226 -2.088)"
-            fill="#7b7b7b"
-          />
-          <circle
-            id="Ellipse_7"
-            data-name="Ellipse 7"
-            cx="2"
-            cy="2"
-            r="2"
-            transform="translate(-0.226 3.912)"
-            fill="#7b7b7b"
-          />
-          <circle
-            id="Ellipse_8"
-            data-name="Ellipse 8"
-            cx="2"
-            cy="2"
-            r="2"
-            transform="translate(-0.226 9.912)"
-            fill="#7b7b7b"
-          />
-        </g>
-      </svg>
-    </Button>
+    <UncontrolledTooltip placement="top-start" target="more-btn">
+      More
+    </UncontrolledTooltip>
+    <UncontrolledButtonDropdown id="more-btn">
+      <DropdownToggle className="file-options-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="4" height="16" viewBox="0 0 4 16">
+          <g id="Group_7768" data-name="Group 7768" transform="translate(0.226 2.088)">
+            <circle
+              id="Ellipse_6"
+              data-name="Ellipse 6"
+              cx="2"
+              cy="2"
+              r="2"
+              transform="translate(-0.226 -2.088)"
+              fill="#7b7b7b"
+            />
+            <circle
+              id="Ellipse_7"
+              data-name="Ellipse 7"
+              cx="2"
+              cy="2"
+              r="2"
+              transform="translate(-0.226 3.912)"
+              fill="#7b7b7b"
+            />
+            <circle
+              id="Ellipse_8"
+              data-name="Ellipse 8"
+              cx="2"
+              cy="2"
+              r="2"
+              transform="translate(-0.226 9.912)"
+              fill="#7b7b7b"
+            />
+          </g>
+        </svg>
+      </DropdownToggle>
+      <DropdownMenu>
+        <DropdownItem>Achive</DropdownItem>
+      </DropdownMenu>
+    </UncontrolledButtonDropdown>
   </ButtonGroup>
 );
 

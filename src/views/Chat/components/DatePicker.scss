@@ -1,0 +1,40 @@
+.DateInput {
+  width: 100px !important;
+  height: 20px !important;
+  font-size: 14px !important;
+  border-radius: 0px !important;
+  border: 0px solid #dbdbdb !important;
+
+  &:hover {
+    cursor: pointer !important;
+  }
+}
+
+.DateInput_input {
+  width: 100px !important;
+  height: 20px !important;
+  font-size: 14px !important;
+  font-stretch: normal !important;
+  font-style: normal !important;
+
+  &:hover {
+    cursor: pointer !important;
+    color: #679def;
+  }
+}
+
+.SingleDatePickerInput {
+  border-radius: 0px !important;
+  border: 0px solid #dbdbdb !important;
+  height: 15px !important;
+  margin: 0;
+}
+
+.SingleDatePicker {
+  margin-bottom: 10px;
+  height: 15px !important;
+  margin: 0;
+  .div {
+    margin: 10px;
+  }
+}

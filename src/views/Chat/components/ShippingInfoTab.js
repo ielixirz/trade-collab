@@ -10,8 +10,19 @@ import {
 } from 'reactstrap';
 
 class ShippingInfoTab extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      ShipmentDetailShippingLine: '',
+      ShipmentDetailContainerNumber: '',
+      ShipmentDetailBillofLandingNumber: '',
+      ShipmentDetailOriginalDocumentTrackingNumber: '',
+    };
+  }
   render() {
     console.log('Data', this.props);
+
     return (
       <div>
         <Form
@@ -30,6 +41,7 @@ class ShippingInfoTab extends Component {
                 type="text"
                 id="text-input"
                 name="text-input"
+                value={this.state.ShipmentDetailShippingLine}
                 placeholder="Text"
                 style={{
                   border: 'none',
