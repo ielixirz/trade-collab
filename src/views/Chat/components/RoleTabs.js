@@ -93,7 +93,7 @@ class RoleTabs extends Component {
           <Col xs={'2'}>
             <br />
             {this.renderRoleIcon(role.value)}
-            {role.index != 5 ? (
+            {role.index !== 5 ? (
               <div className="progress-line-green" style={{ height: 30 }} />
             ) : (
               ''
