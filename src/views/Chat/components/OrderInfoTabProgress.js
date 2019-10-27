@@ -5,9 +5,9 @@
 /* eslint-disable filenames/match-regex */
 import React from 'react';
 import './OrderInfoTab.scss';
+import werehouse from '../../../component/svg/werehouse';
 
 const factoryLogo = require('./factoryLogo.svg');
-const werehouse = require('./warehouse-solid.svg');
 const progressBoat = require('./progressBoat.svg');
 
 const iconStyle = {
@@ -22,33 +22,50 @@ const boatStyle = {
 
 export default class OrderInfoTabProgress extends React.Component {
   render() {
-    switch (this.props.progress) {
-      case 0:
-        return (
-          // Progress 0
-          <React.Fragment></React.Fragment>
-        );
-      case 1:
-        return (
-          // Progress 1
-          <React.Fragment>
-            <div className="Path-4121">
-              <img style={iconStyle} src={factoryLogo} />
-            </div>
-            {/*  !Important
+    if (this.props.progress > 0 && this.props.progress < 10) {
+      return (
+        <React.Fragment>
+          <div className="Path-4121">
+            <img style={iconStyle} src={factoryLogo} />
+          </div>
+          {/*  !Important
                  progress-line-green height + progress-line-grey height need to equal to => 130px */}
-            <div className="progress-line-green" style={{ height: 20 }} />
-            <div className="progress-boat">
-              <img style={boatStyle} src={progressBoat} />
-            </div>
-            <div className="progress-line-grey" style={{ height: 110 }} />
-            <div className="Path-4121 progress">
-              <img style={iconStyle} src={werehouse} />
-            </div>
-          </React.Fragment>
-        );
-      default:
-        return <div />;
+          <div
+            className="progress-line-green"
+            style={{ height: this.props.progress * 13 }}
+          />
+          <div className="progress-boat">
+            <img style={boatStyle} src={progressBoat} />
+          </div>
+          <div
+            className="progress-line-grey"
+            style={{ height: 130 - this.props.progress * 13 }}
+          />
+          <div className="Path-4121 progress">
+            <div style={iconStyle}>{werehouse(this.props.progress === 10)}</div>
+          </div>
+        </React.Fragment>
+      );
+    } else if (this.props.progress === 10) {
+      return (
+        <React.Fragment>
+          <div className="Path-4121">
+            <img style={iconStyle} src={factoryLogo} />
+          </div>
+          {/*  !Important
+                 progress-line-green height + progress-line-grey height need to equal to => 130px */}
+          <div className="progress-line-green" style={{ height: 130 }} />
+
+          <div className="Path-4121">
+            <div style={iconStyle}>{werehouse(this.props.progress === 10)}</div>
+          </div>
+        </React.Fragment>
+      );
+    } else {
+      return (
+        // Progress 0
+        <React.Fragment></React.Fragment>
+      );
     }
   }
 }

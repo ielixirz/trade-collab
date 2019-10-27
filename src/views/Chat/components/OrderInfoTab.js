@@ -1,9 +1,7 @@
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable filenames/match-regex */
 import React, { Component } from 'react';
-import {
-  Col, Form, FormGroup, Input, Label, Row,
-} from 'reactstrap';
+import { Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import 'react-dates/initialize';
 import DatePicker from './DatePicker';
 import 'react-dates/lib/css/_datepicker.css';
@@ -38,7 +36,9 @@ class OrderInfoTab extends Component {
                 <Col style={{ fontSize: 10 }}>
                   <span className="order-info-minor-text">Port , Country</span>
                 </Col>
-                <Col style={{ fontSize: 10, textAlign: 'right', marginRight: 27 }}>
+                <Col
+                  style={{ fontSize: 10, textAlign: 'right', marginRight: 27 }}
+                >
                   <span className="order-info-minor-text">Shipper</span>
                 </Col>
               </Row>
@@ -74,7 +74,9 @@ class OrderInfoTab extends Component {
                 <Col style={{ fontSize: 10 }}>
                   <span className="order-info-minor-text">Port , Country</span>
                 </Col>
-                <Col style={{ fontSize: 10, textAlign: 'right', marginRight: 27 }}>
+                <Col
+                  style={{ fontSize: 10, textAlign: 'right', marginRight: 27 }}
+                >
                   <span className="order-info-minor-text">Consignee</span>
                 </Col>
               </Row>
@@ -114,11 +116,14 @@ class OrderInfoTab extends Component {
             </FormGroup>
             <FormGroup>
               <Label className="order-info-input-label" htmlFor="Details">
-                Details
-                {' '}
-                <i className="fa fa-lock fa-lg mt-4" />
+                Details <i className="fa fa-lock fa-lg mt-4" />
               </Label>
-              <Input className="order-info-input" type="text" id="Details" placeholder="Detail" />
+              <Input
+                className="order-info-input"
+                type="text"
+                id="Details"
+                placeholder="Detail"
+              />
             </FormGroup>
           </Form>
         </Row>

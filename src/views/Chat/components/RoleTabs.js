@@ -40,74 +40,71 @@ class RoleTabs extends Component {
 
   renderRoleOption = role => {
     return (
-      <Steps.Item
-        icon={<img src={werehouse} />}
-        title={
-          <table className="table table-borderless">
-            <tbody
-              style={{
-                fontSize: '0.9em',
-                fontWeight: 'bold',
-              }}
-            >
-              <tr>
-                <td width={600}>
-                  {role}{' '}
-                  <UncontrolledDropdown>
-                    <DropdownToggle tag={'p'}>
-                      <Select
-                        className={'companySelect'}
-                        onChange={e => {
-                          this.setState({ role: e });
-                        }}
-                        name="company"
-                        placeholder="Select Company"
-                        options={company}
-                        value={this.state.role[role]}
-                        isDisabled={true}
-                      />
-                    </DropdownToggle>
-
-                    <DropdownMenu
-                      modifiers={{
-                        setMaxHeight: {
-                          enabled: true,
-                          order: 890,
-                          fn: data => {
-                            return {
-                              ...data,
-                              styles: {
-                                ...data.styles,
-                                overflow: 'auto',
-                                maxHeight: 500,
-                              },
-                            };
-                          },
-                        },
+      <Row>
+        <table className="table table-borderless">
+          <tbody
+            style={{
+              fontSize: '0.9em',
+              fontWeight: 'bold',
+            }}
+          >
+            <tr>
+              <td width={600}>
+                {role}{' '}
+                <UncontrolledDropdown>
+                  <DropdownToggle tag={'p'}>
+                    <Select
+                      className={'companySelect'}
+                      onChange={e => {
+                        this.setState({ role: e });
                       }}
-                    >
-                      <DropdownItem disabled className="shipment-header">
-                        Share shipping with people in
-                      </DropdownItem>
+                      name="company"
+                      placeholder="Select Company"
+                      options={company}
+                      value={this.state.role[role]}
+                      isDisabled={true}
+                    />
+                  </DropdownToggle>
 
-                      {_.map(company, item => (
-                        <DropdownItem
-                          onClick={() => {
-                            this.setState({ company: item });
-                          }}
-                          className="shipment-item-box"
-                        >
-                          {item.label}
-                        </DropdownItem>
-                      ))}
-                    </DropdownMenu>
-                  </UncontrolledDropdown>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        }
-      />
+                  <DropdownMenu
+                    modifiers={{
+                      setMaxHeight: {
+                        enabled: true,
+                        order: 890,
+                        fn: data => {
+                          return {
+                            ...data,
+                            styles: {
+                              ...data.styles,
+                              overflow: 'auto',
+                              maxHeight: 500,
+                            },
+                          };
+                        },
+                      },
+                    }}
+                  >
+                    <DropdownItem disabled className="shipment-header">
+                      Share shipping with people in
+                    </DropdownItem>
+
+                    {_.map(company, item => (
+                      <DropdownItem
+                        onClick={() => {
+                          this.setState({ company: item });
+                        }}
+                        className="shipment-item-box"
+                      >
+                        {item.label}
+                      </DropdownItem>
+                    ))}
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </Row>
     );
   };
 

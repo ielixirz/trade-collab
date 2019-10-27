@@ -22,21 +22,7 @@ class ShippingInfoTab extends Component {
   }
   render() {
     console.log('Data', this.props);
-    // ConsigneeCompanyName: "Pooh Company"
-    // ConsigneeCountry: ""
-    // ConsigneeETAPortDate: {seconds: 1570294800}
-    // ConsigneeETAWarehouseDate: ""
-    // ConsigneePort: ""
-    // ShipmentDetailBillofLandingNumber: ""
-    // ShipmentDetailContainerNumber: ""
-    // ShipmentDetailOriginalDocumentTrackingNumber: ""
-    // ShipmentDetailPriceDescriptionOfGoods: ""
-    // ShipmentDetailProduct: "FF"
-    // ShipmentDetailShippingLine: ""
-    // ShipperCompanyName: "Medic Comp"
-    // ShipperCountry: ""
-    // ShipperETDDate: {seconds: 1568826000}
-    // ShipperPort: ""
+
     return (
       <div>
         <Form
