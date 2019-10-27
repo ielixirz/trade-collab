@@ -11,7 +11,6 @@ import { StoreContext } from 'redux-react-hook';
 import { configureStore } from './utils/configureStore';
 
 import './App.scss';
-import 'rsuite/dist/styles/rsuite-default.css';
 
 const loading = () => <div className="animated fadeIn pt-3 text-center" />;
 export const { store, persistor } = configureStore();
