@@ -3,11 +3,14 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable filenames/match-regex */
 import React from 'react';
-import { ButtonGroup, Button } from 'reactstrap';
+import { ButtonGroup, Button, UncontrolledTooltip } from 'reactstrap';
 
 const FileCardButtonGroup = props => (
   <ButtonGroup style={{ marginTop: 3, marginRight: 10 }}>
-    <Button className="file-options-btn" title="Download" onClick={props.downloadFn}>
+    <UncontrolledTooltip placement="top-start" target="download-btn">
+      Download
+    </UncontrolledTooltip>
+    <Button id="download-btn" className="file-options-btn" onClick={props.downloadFn}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="18.125"
@@ -23,7 +26,10 @@ const FileCardButtonGroup = props => (
         />
       </svg>
     </Button>
-    <Button className="file-options-btn" title="Forward">
+    <UncontrolledTooltip placement="top-start" target="forward-btn">
+      Forward
+    </UncontrolledTooltip>
+    <Button id="forward-btn" className="file-options-btn">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="19.013"
@@ -40,7 +46,10 @@ const FileCardButtonGroup = props => (
         />
       </svg>
     </Button>
-    <Button className="file-options-btn" title="More">
+    <UncontrolledTooltip placement="top-start" target="more-btn">
+      More
+    </UncontrolledTooltip>
+    <Button id="more-btn" className="file-options-btn">
       <svg xmlns="http://www.w3.org/2000/svg" width="4" height="16" viewBox="0 0 4 16">
         <g id="Group_7768" data-name="Group 7768" transform="translate(0.226 2.088)">
           <circle
