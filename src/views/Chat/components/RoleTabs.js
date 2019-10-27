@@ -18,6 +18,8 @@ import Select from 'react-select';
 import _ from 'lodash';
 import { Steps } from 'rsuite';
 import DatePicker from './DatePicker';
+import Factory2 from '../../../component/svg/Factory2';
+import policeIcon from '../../../component/svg/policeIcon';
 
 const werehouse = require('./warehouse-solid.svg');
 
@@ -29,6 +31,39 @@ const company = [
   { value: 'Jah Company', label: 'Jah Company' },
   { value: 'Fluke Company', label: 'Fluke Company' },
 ];
+let role = [
+  {
+    value: 'OutboundForwarder',
+    label: 'Forwarder Outbound',
+    icon: Factory2(true),
+    index: 2,
+  },
+  {
+    value: 'InboundForwarder',
+    label: 'Forwarder Inbound',
+    icon: Factory2(true),
+    index: 3,
+  },
+  {
+    value: 'OutboundCustomBroker',
+    label: 'Custom Broker Outbound',
+    icon: policeIcon(true),
+    index: 1,
+  },
+  {
+    value: 'InboundCustomBroker',
+    label: 'Custom Broker Inbound',
+    icon: Factory2(true),
+    index: 4,
+  },
+  { value: 'Exporter', label: 'Exporter', icon: Factory2(true), index: 0 },
+  { value: 'Importer', label: 'Importer', icon: Factory2(true), index: 5 },
+];
+role = _.orderBy(role, ['index'], ['asc']);
+
+const iconStyle = {
+  marginTop: 5,
+};
 class RoleTabs extends Component {
   constructor(props) {
     super(props);
@@ -37,94 +72,97 @@ class RoleTabs extends Component {
     };
     this.renderRoleOption = this.renderRoleOption.bind(this);
   }
+  renderRoleIcon = roleName => {
+    return (
+      <div className="Path-4121">
+        <div style={iconStyle}>
+          {_.find(role, item => item.value === roleName).icon}
+        </div>
+      </div>
+    );
+  };
 
   renderRoleOption = role => {
     return (
-      <Row>
-        <table className="table table-borderless">
-          <tbody
-            style={{
-              fontSize: '0.9em',
-              fontWeight: 'bold',
-            }}
-          >
-            <tr>
-              <td width={600}>
-                {role}{' '}
-                <UncontrolledDropdown>
-                  <DropdownToggle tag={'p'}>
-                    <Select
-                      className={'companySelect'}
-                      onChange={e => {
-                        this.setState({ role: e });
-                      }}
-                      name="company"
-                      placeholder="Select Company"
-                      options={company}
-                      value={this.state.role[role]}
-                      isDisabled={true}
-                    />
-                  </DropdownToggle>
+      <React.Fragment>
+        <Row
+          style={{
+            marginBottom: '-20px',
+          }}
+        >
+          <Col xs={'2'}>
+            <br />
+            {this.renderRoleIcon(role.value)}
+            {role.index != 5 ? (
+              <div className="progress-line-green" style={{ height: 30 }} />
+            ) : (
+              ''
+            )}
+          </Col>
+          <Col xs={'8'}>
+            {role.label}
+            <br />
+            <UncontrolledDropdown>
+              <DropdownToggle tag={'p'}>
+                <Select
+                  className={'companySelect'}
+                  onChange={e => {
+                    this.setState({ role: e });
+                  }}
+                  name="company"
+                  placeholder="Select Company"
+                  options={company}
+                  value={this.state.role[role]}
+                  isDisabled={true}
+                />
+              </DropdownToggle>
 
-                  <DropdownMenu
-                    modifiers={{
-                      setMaxHeight: {
-                        enabled: true,
-                        order: 890,
-                        fn: data => {
-                          return {
-                            ...data,
-                            styles: {
-                              ...data.styles,
-                              overflow: 'auto',
-                              maxHeight: 500,
-                            },
-                          };
+              <DropdownMenu
+                modifiers={{
+                  setMaxHeight: {
+                    enabled: true,
+                    order: 890,
+                    fn: data => {
+                      return {
+                        ...data,
+                        styles: {
+                          ...data.styles,
+                          overflow: 'auto',
+                          maxHeight: 500,
                         },
-                      },
-                    }}
-                  >
-                    <DropdownItem disabled className="shipment-header">
-                      Share shipping with people in
-                    </DropdownItem>
+                      };
+                    },
+                  },
+                }}
+              >
+                <DropdownItem disabled className="shipment-header">
+                  Share shipping with people in
+                </DropdownItem>
 
-                    {_.map(company, item => (
-                      <DropdownItem
-                        onClick={() => {
-                          this.setState({ company: item });
-                        }}
-                        className="shipment-item-box"
-                      >
-                        {item.label}
-                      </DropdownItem>
-                    ))}
-                  </DropdownMenu>
-                </UncontrolledDropdown>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </Row>
+                {_.map(company, item => (
+                  <DropdownItem
+                    onClick={() => {
+                      this.setState({ company: item });
+                    }}
+                    className="shipment-item-box"
+                  >
+                    {item.label}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </UncontrolledDropdown>
+          </Col>
+        </Row>
+      </React.Fragment>
     );
   };
 
   render() {
-    const role = [
-      { value: 'OutboundForwarder', label: 'OutboundForwarder' },
-      { value: 'InboundForwarder', label: 'InboundForwarder' },
-      { value: 'OutboundCustomBroker', label: 'OutboundCustomBroker' },
-      { value: 'InboundCustomBroker', label: 'InboundCustomBroker' },
-      { value: 'Exporter', label: 'Exporter' },
-      { value: 'Importer', label: 'Importer' },
-    ];
-
     return (
       <div>
-        <Steps current={1} vertical style={styles}>
-          {role.map(item => {
-            return this.renderRoleOption(item.value);
-          })}
-        </Steps>
+        {role.map(item => {
+          return this.renderRoleOption(item);
+        })}
       </div>
     );
   }

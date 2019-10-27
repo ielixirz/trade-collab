@@ -6,7 +6,6 @@
 import React, { Component } from 'react';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
-import 'rsuite/dist/styles/rsuite-default.css';
 
 import { TabContent, Input, TabPane, Badge } from 'reactstrap';
 import _ from 'lodash';
