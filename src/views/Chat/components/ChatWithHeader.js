@@ -25,6 +25,13 @@ import {
   DropdownItem,
   Modal,
 } from 'reactstrap';
+
+
+
+import 'rsuite/dist/styles/rsuite-default.css';
+
+
+
 import Select from 'react-select';
 import MemberModal from '../../../component/MemberModal';
 import UploadModal from '../../../component/UploadModal';
