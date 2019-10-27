@@ -13,9 +13,18 @@ import {
   Row,
   UncontrolledDropdown,
 } from 'reactstrap';
+
 import Select from 'react-select';
 import _ from 'lodash';
+import { Steps } from 'rsuite';
+import DatePicker from './DatePicker';
 
+const werehouse = require('./warehouse-solid.svg');
+
+const styles = {
+  display: 'inline-table',
+  verticalAlign: 'top',
+};
 const company = [
   { value: 'Jah Company', label: 'Jah Company' },
   { value: 'Fluke Company', label: 'Fluke Company' },
@@ -31,62 +40,74 @@ class RoleTabs extends Component {
 
   renderRoleOption = role => {
     return (
-      <Row>
-        <Col>
-          <small>{role}</small>
-        </Col>
-        <Col>
-          <UncontrolledDropdown>
-            <DropdownToggle tag={'p'}>
-              <Select
-                className={'companySelect'}
-                onChange={e => {
-                  this.setState({ role: e });
-                }}
-                name="company"
-                placeholder="Select Company"
-                options={company}
-                value={this.state.role[role]}
-                isDisabled={true}
-              />
-            </DropdownToggle>
-
-            <DropdownMenu
-              modifiers={{
-                setMaxHeight: {
-                  enabled: true,
-                  order: 890,
-                  fn: data => {
-                    return {
-                      ...data,
-                      styles: {
-                        ...data.styles,
-                        overflow: 'auto',
-                        maxHeight: 500,
-                      },
-                    };
-                  },
-                },
+      <Steps.Item
+        icon={<img src={werehouse} />}
+        title={
+          <table className="table table-borderless">
+            <tbody
+              style={{
+                fontSize: '0.9em',
+                fontWeight: 'bold',
               }}
             >
-              <DropdownItem disabled className="shipment-header">
-                Share shipping with people in
-              </DropdownItem>
+              <tr>
+                <td width={600}>
+                  {role}{' '}
+                  <UncontrolledDropdown>
+                    <DropdownToggle tag={'p'}>
+                      <Select
+                        className={'companySelect'}
+                        onChange={e => {
+                          this.setState({ role: e });
+                        }}
+                        name="company"
+                        placeholder="Select Company"
+                        options={company}
+                        value={this.state.role[role]}
+                        isDisabled={true}
+                      />
+                    </DropdownToggle>
 
-              {_.map(company, item => (
-                <DropdownItem
-                  onClick={() => {
-                    this.setState({ company: item });
-                  }}
-                  className="shipment-item-box"
-                >
-                  {item.label}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </UncontrolledDropdown>
-        </Col>
-      </Row>
+                    <DropdownMenu
+                      modifiers={{
+                        setMaxHeight: {
+                          enabled: true,
+                          order: 890,
+                          fn: data => {
+                            return {
+                              ...data,
+                              styles: {
+                                ...data.styles,
+                                overflow: 'auto',
+                                maxHeight: 500,
+                              },
+                            };
+                          },
+                        },
+                      }}
+                    >
+                      <DropdownItem disabled className="shipment-header">
+                        Share shipping with people in
+                      </DropdownItem>
+
+                      {_.map(company, item => (
+                        <DropdownItem
+                          onClick={() => {
+                            this.setState({ company: item });
+                          }}
+                          className="shipment-item-box"
+                        >
+                          {item.label}
+                        </DropdownItem>
+                      ))}
+                    </DropdownMenu>
+                  </UncontrolledDropdown>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        }
+      />
     );
   };
 
@@ -102,9 +123,11 @@ class RoleTabs extends Component {
 
     return (
       <div>
-        {role.map(item => {
-          return this.renderRoleOption(item.value);
-        })}
+        <Steps current={1} vertical style={styles}>
+          {role.map(item => {
+            return this.renderRoleOption(item.value);
+          })}
+        </Steps>
       </div>
     );
   }
