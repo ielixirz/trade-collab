@@ -20,8 +20,8 @@ import { Steps } from 'rsuite';
 import DatePicker from './DatePicker';
 import Factory2 from '../../../component/svg/Factory2';
 import policeIcon from '../../../component/svg/policeIcon';
-
-const werehouse = require('./warehouse-solid.svg');
+import globalIcon from '../../../component/svg/globalIcon';
+import werehouse from '../../../component/svg/werehouse';
 
 const styles = {
   display: 'inline-table',
@@ -35,13 +35,14 @@ let role = [
   {
     value: 'OutboundForwarder',
     label: 'Forwarder Outbound',
-    icon: Factory2(true),
+    icon: globalIcon(true),
+
     index: 2,
   },
   {
     value: 'InboundForwarder',
     label: 'Forwarder Inbound',
-    icon: Factory2(true),
+    icon: globalIcon(true),
     index: 3,
   },
   {
@@ -53,7 +54,7 @@ let role = [
   {
     value: 'InboundCustomBroker',
     label: 'Custom Broker Inbound',
-    icon: Factory2(true),
+    icon: werehouse(true),
     index: 4,
   },
   { value: 'Exporter', label: 'Exporter', icon: Factory2(true), index: 0 },
