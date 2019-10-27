@@ -1,74 +1,93 @@
 import React, { Component } from 'react';
 import { CardBody, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
+import { Steps } from 'rsuite';
+import 'react-dates/initialize';
+import DatePicker from './DatePicker';
+import 'react-dates/lib/css/_datepicker.css';
 
+const factoryLogo = require('./factoryLogo.svg');
+const werehouse = require('./warehouse-solid.svg');
+
+const styles = {
+  display: 'inline-table',
+  verticalAlign: 'top',
+};
 class OrderInfoTab extends Component {
   render() {
     console.log('Data', this.props);
     return (
       <div>
         <Row>
-          <div className="callout callout-info">
-            <Row>
-              <table className="table table-borderless">
-                <tbody
-                  style={{
-                    textAlign: 'right',
-                    fontSize: '0.9em',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  <tr>
-                    <td width={400}>
-                      Port ETD : 02 Jan 2010
-                      <br />
-                      <small>Port , Country</small>
-                    </td>
-                    <td width={200}>
-                      Quality Fresh
-                      <br />
-                      <small>Shipper</small>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </Row>
-          </div>
+          <Steps current={1} vertical style={styles}>
+            <Steps.Item
+              icon={<img src={factoryLogo} />}
+              title={
+                <table className="table table-borderless">
+                  <tbody
+                    style={{
+                      fontSize: '0.9em',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    <tr>
+                      <td width={400}>
+                        Port ETA : <DatePicker />
+                        <br />
+                        <small>Port , Country</small>
+                      </td>
+                      <td width={200}>
+                        Fluke Company
+                        <br />
+                        <small>Consignee</small>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width={400}>
+                        Last free day : <DatePicker />
+                        <br />
+                        Est. Delivery : <DatePicker />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              }
+            />
+            <Steps.Item
+              icon={<img src={werehouse} />}
+              title={
+                <table className="table table-borderless">
+                  <tbody
+                    style={{
+                      fontSize: '0.9em',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    <tr>
+                      <td width={400}>
+                        Port ETA : <DatePicker />
+                        <br />
+                        <small>Port , Country</small>
+                      </td>
+                      <td width={200}>
+                        Fluke Company
+                        <br />
+                        <small>Consignee</small>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width={400}>
+                        Last free day : <DatePicker />
+                        <br />
+                        Est. Delivery : <DatePicker />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              }
+            />
+          </Steps>
         </Row>
-        <Row>
-          <div className="callout callout-danger">
-            <Row>
-              <table className="table table-borderless">
-                <tbody
-                  style={{
-                    textAlign: 'right',
-                    fontSize: '0.9em',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  <tr>
-                    <td width={400}>
-                      Port ETA : 02 Jan 2010
-                      <br />
-                      <small>Port , Country</small>
-                    </td>
-                    <td width={200}>
-                      Fluke Company
-                      <br />
-                      <small>Consignee</small>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td width={400}>
-                      Last free day : 02 Jan 2010
-                      <br />
-                      Est. Delivery : 02 Jan 2010
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </Row>
-          </div>
-        </Row>
+
         <Row>
           <Form
             style={{
