@@ -74,6 +74,13 @@
                 ShipmentRoleCompanyName (string)
                 ShipmentRoleCompanyKey (string)
             >NoRole
+                ShipmentNoRole (array <object>)
+                    [
+                        {
+                            ShipmentRoleCompanyName (string)
+                            ShipmentRoleCompanyKey (string)
+                        }
+                    ]
         +ChatRoom
             >ChatRoomKey
                 ChatRoomName (string)
