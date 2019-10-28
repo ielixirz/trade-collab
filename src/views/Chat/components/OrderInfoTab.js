@@ -3,7 +3,9 @@
 import firebase from 'firebase';
 
 import React, { Component } from 'react';
-import { Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
+import {
+  Col, Form, FormGroup, Input, Label, Row,
+} from 'reactstrap';
 import 'react-dates/initialize';
 import DatePicker from './DatePicker';
 import 'react-dates/lib/css/_datepicker.css';
@@ -40,7 +42,7 @@ class OrderInfoTab extends Component {
     console.log('State', this.state);
     return (
       <Row
-        onKeyPress={event => {
+        onKeyPress={(event) => {
           console.log('Keypressed', event);
           if (event.key === 'Enter') {
             const {
@@ -80,7 +82,7 @@ class OrderInfoTab extends Component {
                       <span className="order-info-port-eta">Port ETA :</span>
                       <DatePicker
                         value={this.state.ConsigneeETAPortDate}
-                        name={'ConsigneeETAPortDate'}
+                        name="ConsigneeETAPortDate"
                         shipmentKey={this.props.shipmentKey}
                       />
                     </Col>
@@ -92,7 +94,7 @@ class OrderInfoTab extends Component {
                       type="text"
                       placeholder="Company Name"
                       value={this.state.ShipperCompanyName}
-                      onChange={e => {
+                      onChange={(e) => {
                         this.setState({ ShipperCompanyName: e.target.value });
                       }}
                       className="form-control order-info-input-inline"
@@ -109,7 +111,7 @@ class OrderInfoTab extends Component {
                           type="text"
                           placeholder="Port"
                           value={this.state.ShipperPort}
-                          onChange={e => {
+                          onChange={(e) => {
                             this.setState({ ShipperPort: e.target.value });
                           }}
                           className="form-control order-info-input-inline"
@@ -121,7 +123,7 @@ class OrderInfoTab extends Component {
                           type="text"
                           className="form-control order-info-input-inline"
                           placeholder="Country"
-                          onChange={e => {
+                          onChange={(e) => {
                             this.setState({ ShipperCountry: e.target.value });
                           }}
                           value={this.state.ShipperCountry}
@@ -130,9 +132,7 @@ class OrderInfoTab extends Component {
                     </Row>
                   </span>
                 </Col>
-                <Col
-                  style={{ fontSize: 10, textAlign: 'right', marginRight: 27 }}
-                >
+                <Col style={{ fontSize: 10, textAlign: 'right', marginRight: 27 }}>
                   <span className="order-info-minor-text">Shipper</span>
                 </Col>
               </Row>
@@ -142,7 +142,7 @@ class OrderInfoTab extends Component {
                     <span className="order-info-eta-info">First Return :</span>
                     <DatePicker
                       value={this.state.ShipperFirstReturn}
-                      name={'ShipperFirstReturn'}
+                      name="ShipperFirstReturn"
                       shipmentKey={this.props.shipmentKey}
                     />
                   </Row>
@@ -150,7 +150,7 @@ class OrderInfoTab extends Component {
                     <span className="order-info-eta-info"> Cut-off :</span>
                     <DatePicker
                       value={this.state.ShipperCutOff}
-                      name={'ShipperCutOff'}
+                      name="ShipperCutOff"
                       shipmentKey={this.props.shipmentKey}
                     />
                   </Row>
@@ -166,7 +166,7 @@ class OrderInfoTab extends Component {
                       <span className="order-info-port-etd">Port ETD :</span>
                       <DatePicker
                         value={this.state.ShipperETDDate}
-                        name={'ShipperETDDate'}
+                        name="ShipperETDDate"
                         shipmentKey={this.props.shipmentKey}
                       />
                     </Col>
@@ -180,7 +180,7 @@ class OrderInfoTab extends Component {
                       className="form-control order-info-input-inline"
                       placeholder="CompanyName"
                       value={this.state.ConsigneeCompanyName}
-                      onChange={e => {
+                      onChange={(e) => {
                         this.setState({ ConsigneeCompanyName: e.target.value });
                       }}
                     />
@@ -196,7 +196,7 @@ class OrderInfoTab extends Component {
                           type="text"
                           placeholder="Port"
                           value={this.state.ConsigneePort}
-                          onChange={e => {
+                          onChange={(e) => {
                             this.setState({ ConsigneePort: e.target.value });
                           }}
                           className="form-control order-info-input-inline"
@@ -209,7 +209,7 @@ class OrderInfoTab extends Component {
                           className="form-control order-info-input-inline"
                           placeholder="Country"
                           value={this.state.ConsigneeCountry}
-                          onChange={e => {
+                          onChange={(e) => {
                             this.setState({ ConsigneeCountry: e.target.value });
                           }}
                         />
@@ -217,21 +217,17 @@ class OrderInfoTab extends Component {
                     </Row>
                   </span>
                 </Col>
-                <Col
-                  style={{ fontSize: 10, textAlign: 'right', marginRight: 27 }}
-                >
+                <Col style={{ fontSize: 10, textAlign: 'right', marginRight: 27 }}>
                   <span className="order-info-minor-text">Consignee</span>
                 </Col>
               </Row>
               <Row>
                 <Col style={{ fontSize: 14 }}>
                   <Row style={{ marginBottom: 10 }}>
-                    <span className="order-info-eta-info">
-                      Last free day :{' '}
-                    </span>
+                    <span className="order-info-eta-info">Last free day : </span>
                     <DatePicker
                       value={this.state.ConsigneeLastFreeDay}
-                      name={'ConsigneeLastFreeDay'}
+                      name="ConsigneeLastFreeDay"
                       shipmentKey={this.props.shipmentKey}
                     />
                   </Row>
@@ -239,7 +235,7 @@ class OrderInfoTab extends Component {
                     <span className="order-info-eta-info">Est. Delivery :</span>
                     <DatePicker
                       value={this.state.ConsigneeEstimateDelivery}
-                      name={'ConsigneeEstimateDelivery'}
+                      name="ConsigneeEstimateDelivery"
                       shipmentKey={this.props.shipmentKey}
                     />
                   </Row>
@@ -265,14 +261,16 @@ class OrderInfoTab extends Component {
                 id="Product"
                 placeholder="Your Shipment Product"
                 value={this.state.ShipmentDetailProduct}
-                onChange={e => {
+                onChange={(e) => {
                   this.setState({ ShipmentDetailProduct: e.target.value });
                 }}
               />
             </FormGroup>
             <FormGroup>
               <Label className="order-info-input-label" htmlFor="Details">
-                Details <i className="fa fa-lock fa-lg mt-4" />
+                Details
+                {' '}
+                <i className="fa fa-lock fa-lg mt-4" />
               </Label>
               <Input
                 className="order-info-input"
@@ -280,7 +278,7 @@ class OrderInfoTab extends Component {
                 id="Details"
                 placeholder="Detail"
                 value={this.state.ShipmentDetailPriceDescriptionOfGoods}
-                onChange={e => {
+                onChange={(e) => {
                   this.setState({
                     ShipmentDetailPriceDescriptionOfGoods: e.target.value,
                   });
