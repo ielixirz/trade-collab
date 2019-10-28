@@ -29,6 +29,7 @@ import {
   RemoveShipmentRole,
 } from '../../../service/shipment/shipment';
 import Shipment from '../../Shipment/Shipment';
+import BlockUi from 'react-block-ui';
 const timelogo = require('../../../component/svg/times-circle-regular-1.svg');
 
 const styles = {
@@ -76,6 +77,7 @@ class RoleTabs extends Component {
     this.state = {
       role: [],
       ShipmentsRole: [],
+      isWorking: false,
       error: {
         isError: false,
         message: '',
@@ -84,6 +86,7 @@ class RoleTabs extends Component {
     this.renderRoleOption = this.renderRoleOption.bind(this);
   }
   componentDidMount() {
+    console.log('Set Listener');
     GetShipmentDetail(this.props.shipmentKey).subscribe({
       next: shipment => {
         console.log('Shipments', shipment.data(), this.props);
@@ -98,10 +101,15 @@ class RoleTabs extends Component {
         });
       },
     });
-    GetAllShipmentRole(this.props.shipmentKey).subscribe({
+    const shipmentRole = GetAllShipmentRole(this.props.shipmentKey).subscribe({
       next: e => {
         console.log('e', e);
         this.setState({ ShipmentsRole: e });
+      },
+      complete: e => {
+        this.setState({
+          isWorking: false,
+        });
       },
     });
   }
@@ -184,21 +192,31 @@ class RoleTabs extends Component {
                   {_.map(company, item => (
                     <DropdownItem
                       onClick={() => {
-                        AssignShipmentRole(this.props.shipmentKey, role.value, {
-                          ShipmentRoleCompanyKey: item.value,
-                          ShipmentRoleCompanyName: item.label,
-                        }).subscribe({
+                        this.setState({
+                          isWorking: true,
+                        });
+                        const assign = AssignShipmentRole(
+                          this.props.shipmentKey,
+                          role.value,
+                          {
+                            ShipmentRoleCompanyKey: item.value,
+                            ShipmentRoleCompanyName: item.label,
+                          },
+                        ).subscribe({
                           next: res => {
+                            this.setState({
+                              isWorking: false,
+                            });
                             this.setState({
                               error: {
                                 isError: false,
                                 message: '',
                               },
                             });
+
+                            assign.unsubscribe();
                           },
                         });
-
-                        this.setState({ company: item });
                       }}
                       className="shipment-item-box"
                     >
@@ -215,14 +233,8 @@ class RoleTabs extends Component {
                 href={'#'}
                 onClick={e => {
                   e.preventDefault();
-
-                  GetShipmentRoleByCompany(
-                    this.props.shipmentKey,
-                    company[0].value,
-                  ).subscribe({
-                    next: result => {
-                      console.log('GetShipmentRoleByCompany', result);
-                    },
+                  this.setState({
+                    isWorking: true,
                   });
                   RemoveShipmentRole(
                     this.props.shipmentKey,
@@ -230,11 +242,21 @@ class RoleTabs extends Component {
                     company[0].value,
                   ).subscribe({
                     next: res => {
+                      this.setState({
+                        isWorking: false,
+                      });
                       if (res) {
                         this.setState({
                           error: {
                             isError: true,
                             message: res,
+                          },
+                        });
+                      } else {
+                        this.setState({
+                          error: {
+                            isError: false,
+                            message: '',
                           },
                         });
                       }
@@ -261,19 +283,21 @@ class RoleTabs extends Component {
   render() {
     return (
       <div>
-        {role.map(item => {
-          return this.renderRoleOption(item);
-        })}
-        <br />
-        {this.state.error.isError ? (
-          <Row>
-            <div className="alert alert-danger" role="alert">
-              {this.state.error.message}
-            </div>
-          </Row>
-        ) : (
-          ''
-        )}
+        <BlockUi tag="div" blocking={this.state.isWorking}>
+          {role.map(item => {
+            return this.renderRoleOption(item);
+          })}
+          <br />
+          {this.state.error.isError ? (
+            <Row>
+              <div className="alert alert-danger" role="alert">
+                {this.state.error.message}
+              </div>
+            </Row>
+          ) : (
+            ''
+          )}
+        </BlockUi>
       </div>
     );
   }
