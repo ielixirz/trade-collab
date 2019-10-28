@@ -236,6 +236,7 @@ class RoleTabs extends Component {
                     company[0].value,
                   ).subscribe({
                     next: res => {
+                      console.log(res)
                       if (res) {
                         console.log(res);
                         this.setState({
