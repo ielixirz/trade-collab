@@ -25,6 +25,7 @@ import {
   AssignShipmentRole,
   GetAllShipmentRole,
   GetShipmentDetail,
+  GetShipmentRoleByCompany,
   RemoveShipmentRole,
 } from '../../../service/shipment/shipment';
 import Shipment from '../../Shipment/Shipment';
@@ -214,6 +215,14 @@ class RoleTabs extends Component {
                     input: this.props.shipmentKey,
                     role: role.value,
                     companykey: company[0].value,
+                  });
+                  GetShipmentRoleByCompany(
+                    this.props.shipmentKey,
+                    company[0].value,
+                  ).subscribe({
+                    next: result => {
+                      console.log('GetShipmentRoleByCompany', result);
+                    },
                   });
                   RemoveShipmentRole(
                     this.props.shipmentKey,
