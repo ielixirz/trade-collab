@@ -190,6 +190,12 @@ class RoleTabs extends Component {
                         }).subscribe({
                           next: res => {
                             console.log('response', res);
+                            this.setState({
+                              error: {
+                                isError: false,
+                                message: '',
+                              },
+                            });
                           },
                         });
 
@@ -231,6 +237,7 @@ class RoleTabs extends Component {
                   ).subscribe({
                     next: res => {
                       if (res) {
+                        console.log(res);
                         this.setState({
                           error: {
                             isError: true,
@@ -242,7 +249,6 @@ class RoleTabs extends Component {
                   });
                 }}
               >
-                {' '}
                 <img
                   style={{
                     marginTop: '10px',
