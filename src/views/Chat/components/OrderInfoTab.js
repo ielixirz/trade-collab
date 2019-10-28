@@ -42,7 +42,9 @@ class OrderInfoTab extends Component {
       <Row
         onKeyPress={event => {
           console.log('Keypressed', event);
+
           if (event.key === 'Enter') {
+            event.target.blur();
             const {
               ShipperPort,
               ShipperCompanyName,
@@ -67,7 +69,7 @@ class OrderInfoTab extends Component {
         }}
       >
         <Col xs={2} style={{ paddingLeft: 0 }}>
-          <OrderInfoTabProgress progress={1} />
+          <OrderInfoTabProgress progress={10} />
         </Col>
         <Col xs={9} style={{ paddingLeft: 22.5, paddingRight: 0 }}>
           {/* Detail Section */}

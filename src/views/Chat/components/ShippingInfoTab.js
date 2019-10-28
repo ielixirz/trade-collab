@@ -42,6 +42,7 @@ class ShippingInfoTab extends Component {
           onKeyPress={event => {
             console.log('Enter', event);
             if (event.key === 'Enter') {
+              event.target.blur();
               const {
                 ShipmentDetailShippingLine,
                 ShipmentDetailContainerNumber,

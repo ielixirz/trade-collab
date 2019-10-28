@@ -236,15 +236,12 @@ class RoleTabs extends Component {
                   this.setState({
                     isWorking: true,
                   });
-                  RemoveShipmentRole(
+                  const remove = RemoveShipmentRole(
                     this.props.shipmentKey,
                     role.value,
                     company[0].value,
                   ).subscribe({
                     next: res => {
-                      this.setState({
-                        isWorking: false,
-                      });
                       if (res) {
                         this.setState({
                           error: {
@@ -260,6 +257,26 @@ class RoleTabs extends Component {
                           },
                         });
                       }
+                    },
+                    error: err => {
+                      if (err) {
+                        this.setState({
+                          error: {
+                            isError: true,
+                            message: err.message,
+                          },
+                        });
+                        this.setState({
+                          isWorking: false,
+                        });
+                      }
+                    },
+                    complete: () => {
+                      remove.unsubscribe();
+
+                      this.setState({
+                        isWorking: false,
+                      });
                     },
                   });
                 }}
