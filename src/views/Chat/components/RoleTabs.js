@@ -189,7 +189,6 @@ class RoleTabs extends Component {
                           ShipmentRoleCompanyName: item.label,
                         }).subscribe({
                           next: res => {
-                            console.log('response', res);
                             this.setState({
                               error: {
                                 isError: false,
@@ -217,11 +216,6 @@ class RoleTabs extends Component {
                 onClick={e => {
                   e.preventDefault();
 
-                  console.log('click', {
-                    input: this.props.shipmentKey,
-                    role: role.value,
-                    companykey: company[0].value,
-                  });
                   GetShipmentRoleByCompany(
                     this.props.shipmentKey,
                     company[0].value,
@@ -236,9 +230,7 @@ class RoleTabs extends Component {
                     company[0].value,
                   ).subscribe({
                     next: res => {
-                      console.log(res)
                       if (res) {
-                        console.log(res);
                         this.setState({
                           error: {
                             isError: true,
