@@ -71,6 +71,7 @@ class ShippingInfoTab extends Component {
                 id="text-input"
                 name="text-input"
                 value={this.state.ShipmentDetailShippingLine}
+                className={'form-control order-info-input-inline'}
                 onChange={e => {
                   this.setState({ ShipmentDetailShippingLine: e.target.value });
                 }}
@@ -91,6 +92,7 @@ class ShippingInfoTab extends Component {
                 type="text"
                 id="text-input"
                 name="text-input"
+                className={'form-control order-info-input-inline'}
                 value={this.state.ShipmentDetailContainerNumber}
                 onChange={e => {
                   this.setState({
@@ -114,6 +116,7 @@ class ShippingInfoTab extends Component {
                 type="text"
                 id="text-input"
                 name="text-input"
+                className={'form-control order-info-input-inline'}
                 value={this.state.ShipmentDetailBillofLandingNumber}
                 onChange={e => {
                   this.setState({
@@ -136,6 +139,7 @@ class ShippingInfoTab extends Component {
               <Input
                 type="text"
                 id="text-input"
+                className={'form-control order-info-input-inline'}
                 name="text-inputt"
                 placeholder="Text"
                 value={this.state.ShipmentDetailOriginalDocumentTrackingNumber}
@@ -162,6 +166,7 @@ class ShippingInfoTab extends Component {
                 id="text-input"
                 ref={ref => (this.orderTextarea = ref)}
                 name="text-input"
+                className={'form-control order-info-input-inline'}
                 value={this.state.ShipmentDetailNote}
                 onChange={e => {
                   this.orderTextarea.style.height = '100px';
