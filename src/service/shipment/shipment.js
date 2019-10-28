@@ -282,10 +282,15 @@ export const GetAvailableRole = ShipmentKey => GetAllShipmentRole(ShipmentKey).p
   })),
 );
 
+// export const GetShipmentRoleByCompany = (ShipmentKey, CompanyKey) => collectionData(
+//   ShipmentRoleRefPath(ShipmentKey).where('ShipmentRoleCompanyKey', '==', CompanyKey),
+//   'ShipmentRole',
+// ).pipe(map(ShipmentRoleList => ShipmentRoleList[0]));
+
 export const GetShipmentRoleByCompany = (ShipmentKey, CompanyKey) => collectionData(
   ShipmentRoleRefPath(ShipmentKey).where('ShipmentRoleCompanyKey', '==', CompanyKey),
   'ShipmentRole',
-).pipe(map(ShipmentRoleList => ShipmentRoleList[0]));
+).pipe(map(ShipmentRoleList => ShipmentRoleList[0].ShipmentRole));
 
 export const isAssignCompanyToShipment = (ShipmentKey, UserKey) => docData(ShipmentRefPath().doc(ShipmentKey), 'ShipmentKey').pipe(
   map(ShipmentDoc => !!ShipmentDoc.data().ShipmentMember[UserKey].ShipmentMemberCompanyKey),
@@ -356,7 +361,7 @@ export const InviteShipmentRole = (ShipmentKey, Role, CompanyKey, Data) => GetSh
 
 export const CheckAvailableThenRemoveRole = (ShipmentKey, Role) => isAvailableRole(ShipmentKey, Role)
   .pipe(
-    switchMap(RoleStatus => (RoleStatus ? of(null) : GetShipmentRoleDetail(ShipmentKey, Role).pipe(switchMap(RoleDetail => AddShipmentRoleNoRole(ShipmentKey, RoleDetail)), switchMap(DeleteShipmentRole(ShipmentKey, Role))))),
+    switchMap(RoleStatus => (RoleStatus ? GetShipmentRoleDetail(ShipmentKey, Role).pipe(switchMap(RoleDetail => AddShipmentRoleNoRole(ShipmentKey, RoleDetail)), switchMap(DeleteShipmentRole(ShipmentKey, Role))) : of(null))),
   );
 
 export const AssignShipmentRole = (ShipmentKey, Role, Data) => isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? DeleteShipmentRoleNoRole(ShipmentKey, Data).pipe(switchMap(() => AddShipmentRole(ShipmentKey, Role, Data))) : of('Selected role not available'))));
