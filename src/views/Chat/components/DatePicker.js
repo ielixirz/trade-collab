@@ -36,13 +36,11 @@ export default class DatePicker extends React.Component {
       <SingleDatePicker
         numberOfMonths={1}
         daySize={30}
-        onDateChange={date => {
+        onDateChange={(date) => {
           this.setState({ date });
 
           UpdateMasterData(this.props.shipmentKey, 'DefaultTemplate', {
-            [this.props.name]: firebase.firestore.Timestamp.fromDate(
-              date.toDate(),
-            ),
+            [this.props.name]: firebase.firestore.Timestamp.fromDate(date.toDate()),
           }).subscribe(() => {});
         }}
         onFocusChange={({ focused }) => this.setState({ focused })}
