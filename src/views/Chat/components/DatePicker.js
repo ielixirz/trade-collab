@@ -7,6 +7,20 @@ import './DatePicker.scss';
 import firebase from 'firebase';
 import { UpdateMasterData } from '../../../service/masterdata/masterdata';
 
+const invalidStyle = {
+  paddingLeft: 5,
+  marginLeft: 8,
+  border: '1px solid red',
+  display: 'inline-block',
+};
+
+const normalStyle = {
+  paddingLeft: 5,
+  marginLeft: 8,
+  border: '1px solid white',
+  display: 'inline-block',
+};
+
 export default class DatePicker extends React.Component {
   constructor(props) {
     super(props);
@@ -26,27 +40,29 @@ export default class DatePicker extends React.Component {
       try {
         this.setState({ date: moment(this.props.value) });
       } catch (e) {
-        this.setState({ date: moment() });
+        this.setState({ date: moment(this.props.value.seconds * 1000) });
       }
     }
   }
 
   render() {
     return (
-      <SingleDatePicker
-        numberOfMonths={1}
-        daySize={30}
-        onDateChange={(date) => {
-          this.props.changeHandler(date);
-          this.setState({ date });
-          // UpdateMasterData(this.props.shipmentKey, 'DefaultTemplate', {
-          //   [this.props.name]: firebase.firestore.Timestamp.fromDate(date.toDate()),
-          // }).subscribe(() => {});
-        }}
-        onFocusChange={({ focused }) => this.setState({ focused })}
-        focused={this.state.focused}
-        date={this.state.date || new Date()}
-      />
+      <div style={this.props.invalid[this.props.name] ? invalidStyle : normalStyle}>
+        <SingleDatePicker
+          numberOfMonths={1}
+          daySize={30}
+          onDateChange={(date) => {
+            this.props.changeHandler(date, this.props.name);
+            this.setState({ date });
+            // UpdateMasterData(this.props.shipmentKey, 'DefaultTemplate', {
+            //   [this.props.name]: firebase.firestore.Timestamp.fromDate(date.toDate()),
+            // }).subscribe(() => {});
+          }}
+          onFocusChange={({ focused }) => this.setState({ focused })}
+          focused={this.state.focused}
+          date={this.state.date || new Date()}
+        />
+      </div>
     );
   }
 }

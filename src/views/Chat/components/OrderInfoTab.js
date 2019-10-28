@@ -1,7 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable filenames/match-regex */
-import firebase from 'firebase';
 
 import React, { Component } from 'react';
 import {
@@ -38,101 +37,42 @@ class OrderInfoTab extends Component {
       ConsigneePort: '',
       ShipmentDetailProduct: '',
       ShipmentDetailPriceDescriptionOfGoods: '',
+      DateInvalidMap: {
+        ConsigneeETAPortDate: false,
+        ShipperFirstReturn: false,
+        ShipperETDDate: false,
+        ShipperCutOff: false,
+        ConsigneeLastFreeDay: false,
+        ConsigneeEstimateDelivery: false,
+      },
       ...this.props,
     };
   }
 
-  handlePortETADateChange(date) {
+  handleDateChange(date, dateName) {
+    const invalidMap = { ...this.state.DateInvalidMap };
     this.setState(
       {
-        ConsigneeETAPortDate: date,
+        [dateName]: date,
       },
       () => {
         if (this.validateOrderInfoDate()) {
-          console.log('update');
+          console.log('fire update service here');
+          Object.keys(invalidMap).forEach(key => (invalidMap[key] = false));
+          this.setState({
+            DateInvalidMap: invalidMap,
+          });
         } else {
-          console.log('invalid');
+          invalidMap[dateName] = true;
+          this.setState({
+            DateInvalidMap: invalidMap,
+          });
         }
       },
     );
   }
 
-  handleFirstReturnDateChange(date) {
-    this.setState(
-      {
-        ShipperFirstReturn: date,
-      },
-      () => {
-        if (this.validateOrderInfoDate()) {
-          console.log('update');
-        } else {
-          console.log('invalid');
-        }
-      },
-    );
-  }
-
-  handleCutOffDateChange(date) {
-    this.setState(
-      {
-        ShipperCutOff: date,
-      },
-      () => {
-        if (this.validateOrderInfoDate()) {
-          console.log('update');
-        } else {
-          console.log('invalid');
-        }
-      },
-    );
-  }
-
-  handlePortETDDateChange(date) {
-    this.setState(
-      {
-        ShipperETDDate: date,
-      },
-      () => {
-        if (this.validateOrderInfoDate()) {
-          console.log('update');
-        } else {
-          console.log('invalid');
-        }
-      },
-    );
-  }
-
-  handleLastFreeDayDateChange(date) {
-    this.setState(
-      {
-        ConsigneeLastFreeDay: date,
-      },
-      () => {
-        if (this.validateOrderInfoDate()) {
-          console.log('update');
-        } else {
-          console.log('invalid');
-        }
-      },
-    );
-  }
-
-  handleEstimateDeliveryDateChange(date) {
-    this.setState(
-      {
-        ConsigneeEstimateDelivery: date,
-      },
-      () => {
-        if (this.validateOrderInfoDate()) {
-          console.log('update');
-        } else {
-          console.log('invalid');
-        }
-      },
-    );
-  }
-
-  validateOrderInfoDate(changeDate) {
+  validateOrderInfoDate() {
     let rule1 = true;
     let rule2 = true;
     let rule3 = true;
@@ -216,7 +156,8 @@ class OrderInfoTab extends Component {
                         name="ConsigneeETAPortDate"
                         shipmentKey={this.props.shipmentKey}
                         validator={this.validateOrderInfoDate.bind(this)}
-                        changeHandler={this.handlePortETADateChange.bind(this)}
+                        changeHandler={this.handleDateChange.bind(this)}
+                        invalid={this.state.DateInvalidMap}
                       />
                     </Col>
                   </Row>
@@ -278,7 +219,8 @@ class OrderInfoTab extends Component {
                       name="ShipperFirstReturn"
                       shipmentKey={this.props.shipmentKey}
                       validator={this.validateOrderInfoDate.bind(this)}
-                      changeHandler={this.handleFirstReturnDateChange.bind(this)}
+                      changeHandler={this.handleDateChange.bind(this)}
+                      invalid={this.state.DateInvalidMap}
                     />
                   </Row>
                   <Row>
@@ -288,7 +230,8 @@ class OrderInfoTab extends Component {
                       name="ShipperCutOff"
                       shipmentKey={this.props.shipmentKey}
                       validator={this.validateOrderInfoDate.bind(this)}
-                      changeHandler={this.handleCutOffDateChange.bind(this)}
+                      changeHandler={this.handleDateChange.bind(this)}
+                      invalid={this.state.DateInvalidMap}
                     />
                   </Row>
                 </Col>
@@ -306,7 +249,8 @@ class OrderInfoTab extends Component {
                         name="ShipperETDDate"
                         shipmentKey={this.props.shipmentKey}
                         validator={this.validateOrderInfoDate.bind(this)}
-                        changeHandler={this.handlePortETDDateChange.bind(this)}
+                        changeHandler={this.handleDateChange.bind(this)}
+                        invalid={this.state.DateInvalidMap}
                       />
                     </Col>
                   </Row>
@@ -369,7 +313,8 @@ class OrderInfoTab extends Component {
                       name="ConsigneeLastFreeDay"
                       shipmentKey={this.props.shipmentKey}
                       validator={this.validateOrderInfoDate.bind(this)}
-                      changeHandler={this.handleLastFreeDayDateChange.bind(this)}
+                      changeHandler={this.handleDateChange.bind(this)}
+                      invalid={this.state.DateInvalidMap}
                     />
                   </Row>
                   <Row>
@@ -379,7 +324,8 @@ class OrderInfoTab extends Component {
                       name="ConsigneeEstimateDelivery"
                       shipmentKey={this.props.shipmentKey}
                       validator={this.validateOrderInfoDate.bind(this)}
-                      changeHandler={this.handleEstimateDeliveryDateChange.bind(this)}
+                      changeHandler={this.handleDateChange.bind(this)}
+                      invalid={this.state.DateInvalidMap}
                     />
                   </Row>
                 </Col>
