@@ -314,6 +314,8 @@
         ShipperPort (string)
         ShipperCountry (string)
         ShipperETDDate (timestamp)
+        ShipperFirstReturn (timestamp)
+        ShipperCutOff (timestamp)
         ShipmentDetailShippingLine (string)
         ShipmentDetailPriceDescriptionOfGoods (string)
         ShipmentDetailContainerNumber (string)
@@ -325,6 +327,8 @@
         ConsigneePort (string)
         ConsigneeETAPortDate (timestamp)
         ConsigneeETAWarehouseDate (timestamp)
+        ConsigneeLastFreeDay (timestamp)
+        ConsigneeEstimateDelivery (timestamp)
         ConsigneeCountry (string)
 
 +NonUserInvite
