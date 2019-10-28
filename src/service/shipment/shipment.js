@@ -402,3 +402,6 @@ export const RemoveShipmentRole = (ShipmentKey, Role, CompanyKey) => GetShipment
     return of('Company are not a member in the shipment');
   }),
 );
+
+export const isRoleCanAccessShipmentDetail = (ShipmentKey, CompanyKey) => forkJoin(docData(ShipmentRoleRefPath(ShipmentKey).doc('Importer'), docData(ShipmentRoleRefPath(ShipmentKey).doc('Exporter'))))
+  .pipe(map(ResultRole => ResultRole[0].ShipmentRoleCompanyKey === CompanyKey || ResultRole[1].ShipmentRoleCompanyKey === CompanyKey));
