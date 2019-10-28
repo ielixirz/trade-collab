@@ -290,7 +290,14 @@ export const GetAvailableRole = ShipmentKey => GetAllShipmentRole(ShipmentKey).p
 export const GetShipmentRoleByCompany = (ShipmentKey, CompanyKey) => collectionData(
   ShipmentRoleRefPath(ShipmentKey).where('ShipmentRoleCompanyKey', '==', CompanyKey),
   'ShipmentRole',
-).pipe(map(ShipmentRoleList => ShipmentRoleList[0].ShipmentRole));
+).pipe(map(ShipmentRoleList => ShipmentRoleList), map((ShipmentRoleArray) => {
+  if (_.find(ShipmentRoleArray, ['ShipmentRole', 'Importer'])) return 'Importer';
+  if (_.find(ShipmentRoleArray, ['ShipmentRole', 'Exporter'])) return 'Exporter';
+  if (_.find(ShipmentRoleArray, ['ShipmentRole', 'InboundForwarder'])) return 'InboundForwarder';
+  if (_.find(ShipmentRoleArray, ['ShipmentRole', 'OutboundForwarder'])) return 'OutboundForwarder';
+  if (_.find(ShipmentRoleArray, ['ShipmentRole', 'OutboundCustomBroker'])) return 'OutboundCustomBroker';
+  if (_.find(ShipmentRoleArray, ['ShipmentRole', 'InboundCustomBroker'])) return 'InboundCustomBroker';
+}));
 
 export const isAssignCompanyToShipment = (ShipmentKey, UserKey) => docData(ShipmentRefPath().doc(ShipmentKey), 'ShipmentKey').pipe(
   map(ShipmentDoc => !!ShipmentDoc.data().ShipmentMember[UserKey].ShipmentMemberCompanyKey),
