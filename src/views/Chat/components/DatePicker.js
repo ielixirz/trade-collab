@@ -24,7 +24,7 @@ export default class DatePicker extends React.Component {
       this.setState({ date: moment() });
     } else {
       try {
-        this.setState({ date: moment(this.props.value.seconds * 1000) });
+        this.setState({ date: moment(this.props.value) });
       } catch (e) {
         this.setState({ date: moment() });
       }
@@ -37,15 +37,15 @@ export default class DatePicker extends React.Component {
         numberOfMonths={1}
         daySize={30}
         onDateChange={(date) => {
+          this.props.changeHandler(date);
           this.setState({ date });
-
-          UpdateMasterData(this.props.shipmentKey, 'DefaultTemplate', {
-            [this.props.name]: firebase.firestore.Timestamp.fromDate(date.toDate()),
-          }).subscribe(() => {});
+          // UpdateMasterData(this.props.shipmentKey, 'DefaultTemplate', {
+          //   [this.props.name]: firebase.firestore.Timestamp.fromDate(date.toDate()),
+          // }).subscribe(() => {});
         }}
         onFocusChange={({ focused }) => this.setState({ focused })}
         focused={this.state.focused}
-        date={this.state.date || firebase.firestore.Timestamp.now()}
+        date={this.state.date || new Date()}
       />
     );
   }

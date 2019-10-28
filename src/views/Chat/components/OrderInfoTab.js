@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prefer-stateless-function */
 /* eslint-disable filenames/match-regex */
 import firebase from 'firebase';
@@ -7,25 +8,28 @@ import {
   Col, Form, FormGroup, Input, Label, Row,
 } from 'reactstrap';
 import 'react-dates/initialize';
+import moment from 'moment';
+
 import DatePicker from './DatePicker';
 import 'react-dates/lib/css/_datepicker.css';
 import './OrderInfoTab.scss';
 
 import OrderInfoTabProgress from './OrderInfoTabProgress';
-import moment from 'moment';
 import { UpdateMasterData } from '../../../service/masterdata/masterdata';
+
+import { isDateBefore, isDateAfter } from '../../../utils/date';
 
 class OrderInfoTab extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      ConsigneeETAPortDate: firebase.firestore.Timestamp.now(),
-      ShipperFirstReturn: firebase.firestore.Timestamp.now(),
-      ShipperETDDate: firebase.firestore.Timestamp.now(),
-      ShipperCutOff: firebase.firestore.Timestamp.now(),
-      ConsigneeLastFreeDay: firebase.firestore.Timestamp.now(),
-      ConsigneeEstimateDelivery: firebase.firestore.Timestamp.now(),
+      ConsigneeETAPortDate: new Date(),
+      ShipperFirstReturn: new Date(),
+      ShipperETDDate: new Date(),
+      ShipperCutOff: new Date(),
+      ConsigneeLastFreeDay: new Date(),
+      ConsigneeEstimateDelivery: new Date(),
       ShipperPort: '',
       ShipperCompanyName: '',
       ConsigneeCompanyName: '',
@@ -36,6 +40,133 @@ class OrderInfoTab extends Component {
       ShipmentDetailPriceDescriptionOfGoods: '',
       ...this.props,
     };
+  }
+
+  handlePortETADateChange(date) {
+    this.setState(
+      {
+        ConsigneeETAPortDate: date,
+      },
+      () => {
+        if (this.validateOrderInfoDate()) {
+          console.log('update');
+        } else {
+          console.log('invalid');
+        }
+      },
+    );
+  }
+
+  handleFirstReturnDateChange(date) {
+    this.setState(
+      {
+        ShipperFirstReturn: date,
+      },
+      () => {
+        if (this.validateOrderInfoDate()) {
+          console.log('update');
+        } else {
+          console.log('invalid');
+        }
+      },
+    );
+  }
+
+  handleCutOffDateChange(date) {
+    this.setState(
+      {
+        ShipperCutOff: date,
+      },
+      () => {
+        if (this.validateOrderInfoDate()) {
+          console.log('update');
+        } else {
+          console.log('invalid');
+        }
+      },
+    );
+  }
+
+  handlePortETDDateChange(date) {
+    this.setState(
+      {
+        ShipperETDDate: date,
+      },
+      () => {
+        if (this.validateOrderInfoDate()) {
+          console.log('update');
+        } else {
+          console.log('invalid');
+        }
+      },
+    );
+  }
+
+  handleLastFreeDayDateChange(date) {
+    this.setState(
+      {
+        ConsigneeLastFreeDay: date,
+      },
+      () => {
+        if (this.validateOrderInfoDate()) {
+          console.log('update');
+        } else {
+          console.log('invalid');
+        }
+      },
+    );
+  }
+
+  handleEstimateDeliveryDateChange(date) {
+    this.setState(
+      {
+        ConsigneeEstimateDelivery: date,
+      },
+      () => {
+        if (this.validateOrderInfoDate()) {
+          console.log('update');
+        } else {
+          console.log('invalid');
+        }
+      },
+    );
+  }
+
+  validateOrderInfoDate(changeDate) {
+    let rule1 = true;
+    let rule2 = true;
+    let rule3 = true;
+    let rule4 = true;
+    if (isDateAfter(moment(this.state.ShipperFirstReturn), moment(this.state.ShipperCutOff))) {
+      rule1 = false;
+    }
+
+    if (isDateAfter(moment(this.state.ShipperCutOff), moment(this.state.ShipperETDDate))) {
+      rule2 = false;
+    }
+
+    if (isDateBefore(moment(this.state.ConsigneeETAPortDate), moment(this.state.ShipperETDDate))) {
+      rule3 = false;
+    }
+
+    if (
+      isDateBefore(
+        moment(this.state.ConsigneeEstimateDelivery),
+        moment(this.state.ConsigneeETAPortDate),
+      )
+      || isDateBefore(moment(this.state.ConsigneeLastFreeDay), moment(this.state.ConsigneeETAPortDate))
+    ) {
+      rule4 = false;
+    }
+
+    this.setState({
+      OrderInfoDateRule1: rule1,
+      OrderInfoDateRule2: rule2,
+      OrderInfoDateRule3: rule3,
+      OrderInfoDateRule4: rule4,
+    });
+
+    return rule1 && rule2 && rule3 && rule4;
   }
 
   render() {
@@ -84,6 +215,8 @@ class OrderInfoTab extends Component {
                         value={this.state.ConsigneeETAPortDate}
                         name="ConsigneeETAPortDate"
                         shipmentKey={this.props.shipmentKey}
+                        validator={this.validateOrderInfoDate.bind(this)}
+                        changeHandler={this.handlePortETADateChange.bind(this)}
                       />
                     </Col>
                   </Row>
@@ -144,6 +277,8 @@ class OrderInfoTab extends Component {
                       value={this.state.ShipperFirstReturn}
                       name="ShipperFirstReturn"
                       shipmentKey={this.props.shipmentKey}
+                      validator={this.validateOrderInfoDate.bind(this)}
+                      changeHandler={this.handleFirstReturnDateChange.bind(this)}
                     />
                   </Row>
                   <Row>
@@ -152,6 +287,8 @@ class OrderInfoTab extends Component {
                       value={this.state.ShipperCutOff}
                       name="ShipperCutOff"
                       shipmentKey={this.props.shipmentKey}
+                      validator={this.validateOrderInfoDate.bind(this)}
+                      changeHandler={this.handleCutOffDateChange.bind(this)}
                     />
                   </Row>
                 </Col>
@@ -168,6 +305,8 @@ class OrderInfoTab extends Component {
                         value={this.state.ShipperETDDate}
                         name="ShipperETDDate"
                         shipmentKey={this.props.shipmentKey}
+                        validator={this.validateOrderInfoDate.bind(this)}
+                        changeHandler={this.handlePortETDDateChange.bind(this)}
                       />
                     </Col>
                   </Row>
@@ -229,6 +368,8 @@ class OrderInfoTab extends Component {
                       value={this.state.ConsigneeLastFreeDay}
                       name="ConsigneeLastFreeDay"
                       shipmentKey={this.props.shipmentKey}
+                      validator={this.validateOrderInfoDate.bind(this)}
+                      changeHandler={this.handleLastFreeDayDateChange.bind(this)}
                     />
                   </Row>
                   <Row>
@@ -237,6 +378,8 @@ class OrderInfoTab extends Component {
                       value={this.state.ConsigneeEstimateDelivery}
                       name="ConsigneeEstimateDelivery"
                       shipmentKey={this.props.shipmentKey}
+                      validator={this.validateOrderInfoDate.bind(this)}
+                      changeHandler={this.handleEstimateDeliveryDateChange.bind(this)}
                     />
                   </Row>
                 </Col>
