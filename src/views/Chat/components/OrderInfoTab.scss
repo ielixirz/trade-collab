@@ -78,6 +78,20 @@
   color: #679def;
 }
 
+.order-info-input-inline {
+  border: 0;
+  border-bottom: 1px solid #c7c7c7;
+  border-radius: 0;
+  &:hover {
+    color: #679def;
+    cursor: pointer;
+  }
+  &::placeholder {
+    color: #c7c8cb;
+    font-style: italic;
+  }
+}
+
 .order-info-input {
   width: 350.5px;
   border: 0;

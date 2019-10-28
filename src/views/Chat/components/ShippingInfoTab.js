@@ -20,18 +20,16 @@ class ShippingInfoTab extends Component {
       ShipmentDetailBillofLandingNumber: '',
       ShipmentDetailOriginalDocumentTrackingNumber: '',
       ShipmentDetailNote: '',
+      ...this.props,
     };
   }
   componentDidMount() {
     if (this.orderTextarea) {
       this.orderTextarea.style.height = '100px';
     }
-    this.setState({ ...this.props });
   }
 
   render() {
-    console.log('Data', this.props);
-
     return (
       <div>
         <Form
@@ -41,6 +39,7 @@ class ShippingInfoTab extends Component {
             borderColor: 'transparent',
           }}
           onKeyPress={event => {
+            console.log('Enter', event);
             if (event.key === 'Enter') {
               const {
                 ShipmentDetailShippingLine,
@@ -55,7 +54,9 @@ class ShippingInfoTab extends Component {
                 ShipmentDetailBillofLandingNumber,
                 ShipmentDetailOriginalDocumentTrackingNumber,
                 ShipmentDetailNote,
-              }).subscribe(() => {});
+              }).subscribe(() => {
+                console.log('Updated');
+              });
             }
           }}
         >
