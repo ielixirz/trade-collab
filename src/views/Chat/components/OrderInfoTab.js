@@ -10,6 +10,7 @@ import OrderInfoTabProgress from './OrderInfoTabProgress';
 
 class OrderInfoTab extends Component {
   render() {
+    console.log('Props', this.props);
     return (
       <Row>
         <Col xs={2} style={{ paddingLeft: 0 }}>
@@ -24,12 +25,14 @@ class OrderInfoTab extends Component {
                   <Row style={{ fontSize: 14 }}>
                     <Col>
                       <span className="order-info-port-eta">Port ETA :</span>
-                      <DatePicker />
+                      <DatePicker value={this.props.ConsigneeETAPortDate} />
                     </Col>
                   </Row>
                 </Col>
                 <Col style={{ fontSize: 14 }}>
-                  <Row style={{ marginLeft: 30 }}>Fluke Company</Row>
+                  <Row style={{ marginLeft: 30 }}>
+                    {this.props.ShipperCompanyName}
+                  </Row>
                 </Col>
               </Row>
               <Row style={{ marginTop: 5, marginBottom: 20 }}>

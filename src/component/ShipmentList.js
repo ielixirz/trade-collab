@@ -1,8 +1,6 @@
 /* eslint-disable filenames/match-regex */
 /* as it is component */
-import React, {
-  useContext, useRef, useEffect, useState,
-} from 'react';
+import React, { useContext, useRef, useEffect, useState } from 'react';
 import {
   ListGroup,
   ListGroupItem,
@@ -52,63 +50,81 @@ const ShipmentList = () => {
   const masterDetailModalRef = useRef(null);
 
   useEffect(() => {
-    GetMasterDataChatRoom(shipmentKey, chatroomKey).subscribe((doc) => {
+    GetMasterDataChatRoom(shipmentKey, chatroomKey).subscribe(doc => {
       const data = doc[0].data();
       setMasterData([data]);
     });
   }, [lastUpdate]);
 
-  const updateLastUpdate = (lastUpdateData) => {
+  const updateLastUpdate = lastUpdateData => {
     setLastUpdate(lastUpdateData);
   };
 
-  const preventParentCollapse = (e) => {
+  const preventParentCollapse = e => {
     e.stopPropagation();
   };
 
   return (
     <div>
-      <MasterDetailModal ref={masterDetailModalRef} lastUpdate={updateLastUpdate} />
+      <MasterDetailModal
+        ref={masterDetailModalRef}
+        lastUpdate={updateLastUpdate}
+      />
       {masterData === undefined
         ? ''
         : masterData.map(data => (
-          <ListGroup onClick={preventParentCollapse} flush style={shipmentListGroupStyle}>
-            <ListGroupItem tag="a" style={{ borderBottom: 0, paddingLeft: 7 }}>
-              <nav className="nav nav-tabs nav-justified">
-                <a
-                  className={`nav-item nav-link ${orderTab === 1 ? 'activeTab' : ''}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setTab(1);
-                  }}
-                >
+            <ListGroup
+              onClick={preventParentCollapse}
+              flush
+              style={shipmentListGroupStyle}
+            >
+              <ListGroupItem
+                tag="a"
+                style={{ borderBottom: 0, paddingLeft: 7 }}
+              >
+                <nav className="nav nav-tabs nav-justified">
+                  <a
+                    className={`nav-item nav-link ${
+                      orderTab === 1 ? 'activeTab' : ''
+                    }`}
+                    onClick={e => {
+                      e.preventDefault();
+                      setTab(1);
+                    }}
+                  >
                     Order Info.
-                </a>
-                <a
-                  className={`nav-item nav-link ${orderTab === 2 ? 'activeTab' : ''}`}
-                  onClick={(e) => {
-                    setTab(2);
+                  </a>
+                  <a
+                    className={`nav-item nav-link ${
+                      orderTab === 2 ? 'activeTab' : ''
+                    }`}
+                    onClick={e => {
+                      setTab(2);
 
-                    e.preventDefault();
-                  }}
-                >
+                      e.preventDefault();
+                    }}
+                  >
                     Shipping Info.
-                </a>
-                <a
-                  className={`nav-item nav-link ${orderTab === 3 ? 'activeTab' : ''}`}
-                  onClick={(e) => {
-                    setTab(3);
-                    e.preventDefault();
-                  }}
-                >
+                  </a>
+                  <a
+                    className={`nav-item nav-link ${
+                      orderTab === 3 ? 'activeTab' : ''
+                    }`}
+                    onClick={e => {
+                      setTab(3);
+                      e.preventDefault();
+                    }}
+                  >
                     Role
-                </a>
-              </nav>
-              <br />
-              <Container>{renderTab(orderTab, data)}</Container>
-            </ListGroupItem>
-          </ListGroup>
-        ))}
+                  </a>
+                </nav>
+                <br />
+                <Container>
+                  {renderTab(orderTab, { ...data, chatroomKey, shipmentKey })}
+                </Container>
+              </ListGroupItem>
+            </ListGroup>
+          ))}
     </div>
   );
 };

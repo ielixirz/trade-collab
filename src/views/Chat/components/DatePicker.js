@@ -11,6 +11,14 @@ export default class DatePicker extends React.Component {
     date: moment(),
   };
 
+  componentDidMount() {
+    try {
+      this.setState({ date: moment(this.props.value.seconds * 1000) });
+    } catch (e) {
+      console.log('no value use default');
+    }
+  }
+
   render() {
     return (
       <SingleDatePicker
