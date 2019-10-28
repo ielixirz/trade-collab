@@ -9,6 +9,7 @@ import {
   Label,
 } from 'reactstrap';
 import { UpdateMasterData } from '../../../service/masterdata/masterdata';
+import { GetAllShipmentRole } from '../../../service/shipment/shipment';
 
 class ShippingInfoTab extends Component {
   constructor(props) {

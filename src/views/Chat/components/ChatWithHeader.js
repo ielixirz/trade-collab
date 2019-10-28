@@ -1427,6 +1427,7 @@ class ChatWithHeader extends Component {
               mainData={this.props.ShipmentData}
               shipmentKey={ShipmentKey}
               chatroomKey={ChatRoomKey}
+              userData={user}
               collapse={this.state.sideCollpase}
               collapseTrigger={this.triggerSideCollapse}
             />

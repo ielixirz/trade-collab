@@ -43,7 +43,7 @@ const renderTab = (tabId, data) => {
 };
 
 const ShipmentList = () => {
-  const { chatroomKey, shipmentKey, mainData } = useContext(ShipmentContext);
+  const { chatroomKey, shipmentKey, userKey } = useContext(ShipmentContext);
   const [masterData, setMasterData] = useState(undefined);
   const [lastUpdate, setLastUpdate] = useState(undefined);
   const [orderTab, setTab] = useState(1);
@@ -120,7 +120,12 @@ const ShipmentList = () => {
                 </nav>
                 <br />
                 <Container>
-                  {renderTab(orderTab, { ...data, chatroomKey, shipmentKey })}
+                  {renderTab(orderTab, {
+                    ...data,
+                    chatroomKey,
+                    shipmentKey,
+                    userKey,
+                  })}
                 </Container>
               </ListGroupItem>
             </ListGroup>
