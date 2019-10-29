@@ -32,14 +32,14 @@ export default class OrderInfoTabProgress extends React.Component {
                  progress-line-green height + progress-line-grey height need to equal to => 130px */}
           <div
             className="progress-line-green"
-            style={{ height: this.props.progress * 13 }}
+            style={{ height: this.props.progress * 16 }}
           />
           <div className="progress-boat">
             <img style={boatStyle} src={progressBoat} />
           </div>
           <div
             className="progress-line-grey"
-            style={{ height: 130 - this.props.progress * 13 }}
+            style={{ height: 160 - this.props.progress * 16 }}
           />
           <div className="Path-4121 progress">
             <div style={iconStyle}>{werehouse(this.props.progress === 10)}</div>
@@ -54,7 +54,7 @@ export default class OrderInfoTabProgress extends React.Component {
           </div>
           {/*  !Important
                  progress-line-green height + progress-line-grey height need to equal to => 130px */}
-          <div className="progress-line-green" style={{ height: 130 }} />
+          <div className="progress-line-green" style={{ height: 160 }} />
 
           <div className="Path-4121">
             <div style={iconStyle}>{werehouse(this.props.progress === 10)}</div>

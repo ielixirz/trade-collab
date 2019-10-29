@@ -157,7 +157,10 @@ class OrderInfoTab extends Component {
           }
         }}
       >
-        <Col xs={2} style={{ paddingLeft: 0, paddingTop: '10px' }}>
+        <Col
+          xs={2}
+          style={{ paddingLeft: 0, paddingTop: '10px', marginRight: '7px' }}
+        >
           <OrderInfoTabProgress progress={10} />
         </Col>
         <Col
@@ -217,9 +220,10 @@ class OrderInfoTab extends Component {
                           onChange={e => {
                             this.setState({ ShipperPort: e.target.value });
                           }}
-                          className="form-control order-info-input-inline"
+                          className="form-control order-info-input-noborder"
                           style={{
                             fontSize: 10,
+                            borderBottom: '0px ',
                           }}
                         />
                       </Col>
