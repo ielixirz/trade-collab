@@ -255,25 +255,30 @@ class OrderInfoTab extends Component {
                 <Col style={{ fontSize: 14 }}>
                   <Row style={{ marginBottom: 10 }}>
                     <span className="order-info-eta-info">First Return :</span>
-                    <DatePicker
-                      value={dateInput['ShipperFirstReturn']}
-                      name="ShipperFirstReturn"
-                      shipmentKey={this.props.shipmentKey}
-                      validator={this.validateOrderInfoDate.bind(this)}
-                      changeHandler={this.handleDateChange.bind(this)}
-                      invalid={this.state.DateInvalidMap}
-                    />
+
+                    <Col>
+                      <DatePicker
+                        value={dateInput['ShipperFirstReturn']}
+                        name="ShipperFirstReturn"
+                        shipmentKey={this.props.shipmentKey}
+                        validator={this.validateOrderInfoDate.bind(this)}
+                        changeHandler={this.handleDateChange.bind(this)}
+                        invalid={this.state.DateInvalidMap}
+                      />
+                    </Col>
                   </Row>
                   <Row>
                     <span className="order-info-eta-info"> Cut-off :</span>
-                    <DatePicker
-                      value={dateInput['ShipperCutOff']}
-                      name="ShipperCutOff"
-                      shipmentKey={this.props.shipmentKey}
-                      validator={this.validateOrderInfoDate.bind(this)}
-                      changeHandler={this.handleDateChange.bind(this)}
-                      invalid={this.state.DateInvalidMap}
-                    />
+                    <Col>
+                      <DatePicker
+                        value={dateInput['ShipperCutOff']}
+                        name="ShipperCutOff"
+                        shipmentKey={this.props.shipmentKey}
+                        validator={this.validateOrderInfoDate.bind(this)}
+                        changeHandler={this.handleDateChange.bind(this)}
+                        invalid={this.state.DateInvalidMap}
+                      />
+                    </Col>
                   </Row>
                 </Col>
               </Row>
