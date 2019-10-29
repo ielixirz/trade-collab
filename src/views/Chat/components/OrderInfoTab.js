@@ -3,7 +3,9 @@
 /* eslint-disable filenames/match-regex */
 
 import React, { Component } from 'react';
-import { Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
+import {
+  Col, Form, FormGroup, Input, Label, Row,
+} from 'reactstrap';
 import 'react-dates/initialize';
 import moment from 'moment';
 import _ from 'lodash';
@@ -14,6 +16,7 @@ import './OrderInfoTab.scss';
 
 import OrderInfoTabProgress from './OrderInfoTabProgress';
 import { UpdateMasterData } from '../../../service/masterdata/masterdata';
+import ErrorPopup from '../../../component/commonPopup/ErrorPopup';
 
 import { isDateBefore, isDateAfter } from '../../../utils/date';
 import firebase from 'firebase';
@@ -47,6 +50,7 @@ class OrderInfoTab extends Component {
       },
       ...this.props,
     };
+    this.errorPopupRef = React.createRef();
   }
 
   handleDateChange(date, dateName) {
@@ -57,8 +61,6 @@ class OrderInfoTab extends Component {
       },
       () => {
         if (this.validateOrderInfoDate()) {
-          console.log('fire update service here', dateName);
-
           UpdateMasterData(this.props.shipmentKey, 'DefaultTemplate', {
             [dateName]: firebase.firestore.Timestamp.fromDate(date.toDate()),
           }).subscribe(() => {
@@ -71,6 +73,71 @@ class OrderInfoTab extends Component {
           });
         } else {
           invalidMap[dateName] = true;
+          let invalidMsg = '';
+
+          switch (dateName) {
+            case 'ConsigneeETAPortDate':
+              invalidMsg = (
+                <span>
+                  <b>ETA is invalid.</b>
+                  <br />
+ETA must be after ETD or before Estimate Delivery and Last
+                  Free Day.
+                </span>
+              );
+              break;
+            case 'ShipperFirstReturn':
+              invalidMsg = (
+                <span>
+                  <b>First Return date is invalid.</b>
+                  <br />
+                  First Return date must be before Cut-off date.
+                </span>
+              );
+              break;
+            case 'ShipperETDDate':
+              invalidMsg = (
+                <span>
+                  <b>ETD is invalid.</b>
+                  <br />
+ETD must be after Cut-off date and after ETA.
+                </span>
+              );
+              break;
+            case 'ShipperCutOff':
+              invalidMsg = (
+                <span>
+                  <b>Cut-off date is invalid.</b>
+                  <br />
+Cut-off date must be before ETD and after First
+                  Return date.
+                </span>
+              );
+              break;
+            case 'ConsigneeLastFreeDay':
+              invalidMsg = (
+                <span>
+                  <b>Last Free day date is invalid.</b>
+                  <br />
+Last Free day date must be after ETA.
+                </span>
+              );
+              break;
+            case 'ConsigneeEstimateDelivery':
+              invalidMsg = (
+                <span>
+                  <b>Estimate Delivery date is invalid.</b>
+                  <br />
+Estimate Delivery date must be after
+                  ETA.
+                </span>
+              );
+              break;
+
+            default:
+              break;
+          }
+          this.errorPopupRef.current.triggerError(invalidMsg, 'WARN');
           this.setState({
             DateInvalidMap: invalidMap,
           });
@@ -84,30 +151,15 @@ class OrderInfoTab extends Component {
     let rule2 = true;
     let rule3 = true;
     let rule4 = true;
-    if (
-      isDateAfter(
-        moment(this.state.ShipperFirstReturn),
-        moment(this.state.ShipperCutOff),
-      )
-    ) {
+    if (isDateAfter(moment(this.state.ShipperFirstReturn), moment(this.state.ShipperCutOff))) {
       rule1 = false;
     }
 
-    if (
-      isDateAfter(
-        moment(this.state.ShipperCutOff),
-        moment(this.state.ShipperETDDate),
-      )
-    ) {
+    if (isDateAfter(moment(this.state.ShipperCutOff), moment(this.state.ShipperETDDate))) {
       rule2 = false;
     }
 
-    if (
-      isDateBefore(
-        moment(this.state.ConsigneeETAPortDate),
-        moment(this.state.ShipperETDDate),
-      )
-    ) {
+    if (isDateBefore(moment(this.state.ConsigneeETAPortDate), moment(this.state.ShipperETDDate))) {
       rule3 = false;
     }
 
@@ -115,11 +167,8 @@ class OrderInfoTab extends Component {
       isDateBefore(
         moment(this.state.ConsigneeEstimateDelivery),
         moment(this.state.ConsigneeETAPortDate),
-      ) ||
-      isDateBefore(
-        moment(this.state.ConsigneeLastFreeDay),
-        moment(this.state.ConsigneeETAPortDate),
       )
+      || isDateBefore(moment(this.state.ConsigneeLastFreeDay), moment(this.state.ConsigneeETAPortDate))
     ) {
       rule4 = false;
     }
@@ -136,7 +185,7 @@ class OrderInfoTab extends Component {
 
   render() {
     console.log('State', this.state);
-    let dateInput = {};
+    const dateInput = {};
     _.forEach(this.state.DateInvalidMap, (item, index) => {
       if (_.isEmpty(this.state[index])) {
         dateInput[index] = new Date();
@@ -146,7 +195,7 @@ class OrderInfoTab extends Component {
     });
     return (
       <Row
-        onKeyPress={event => {
+        onKeyPress={(event) => {
           console.log('Keypressed', event);
 
           if (event.key === 'Enter') {
@@ -174,16 +223,10 @@ class OrderInfoTab extends Component {
           }
         }}
       >
-        <Col
-          xs={2}
-          style={{ paddingLeft: 0, paddingTop: '15px', marginRight: '7px' }}
-        >
+        <Col xs={2} style={{ paddingLeft: 0, paddingTop: '15px', marginRight: '7px' }}>
           <OrderInfoTabProgress progress={10} />
         </Col>
-        <Col
-          xs={9}
-          style={{ paddingLeft: 22.5, paddingRight: 0, paddingTop: 10 }}
-        >
+        <Col xs={9} style={{ paddingLeft: 22.5, paddingRight: 0, paddingTop: 10 }}>
           {/* Detail Section */}
           <Row>
             <Col>
@@ -193,7 +236,7 @@ class OrderInfoTab extends Component {
                     <Col>
                       <span className="order-info-port-eta">Port ETA :</span>
                       <DatePicker
-                        value={dateInput['ConsigneeETAPortDate']}
+                        value={dateInput.ConsigneeETAPortDate}
                         name="ConsigneeETAPortDate"
                         shipmentKey={this.props.shipmentKey}
                         validator={this.validateOrderInfoDate.bind(this)}
@@ -209,7 +252,7 @@ class OrderInfoTab extends Component {
                       type="text"
                       placeholder="Company Name"
                       value={this.state.ShipperCompanyName}
-                      onChange={e => {
+                      onChange={(e) => {
                         this.setState({ ShipperCompanyName: e.target.value });
                       }}
                       className="form-control order-info-input-inline"
@@ -234,7 +277,7 @@ class OrderInfoTab extends Component {
                           type="text"
                           placeholder="Port,Country"
                           value={this.state.ShipperPort}
-                          onChange={e => {
+                          onChange={(e) => {
                             this.setState({ ShipperPort: e.target.value });
                           }}
                           className="form-control order-info-input-noborder"
@@ -258,7 +301,7 @@ class OrderInfoTab extends Component {
 
                     <Col>
                       <DatePicker
-                        value={dateInput['ShipperFirstReturn']}
+                        value={dateInput.ShipperFirstReturn}
                         name="ShipperFirstReturn"
                         shipmentKey={this.props.shipmentKey}
                         validator={this.validateOrderInfoDate.bind(this)}
@@ -271,7 +314,7 @@ class OrderInfoTab extends Component {
                     <span className="order-info-eta-info"> Cut-off :</span>
                     <Col>
                       <DatePicker
-                        value={dateInput['ShipperCutOff']}
+                        value={dateInput.ShipperCutOff}
                         name="ShipperCutOff"
                         shipmentKey={this.props.shipmentKey}
                         validator={this.validateOrderInfoDate.bind(this)}
@@ -291,7 +334,7 @@ class OrderInfoTab extends Component {
                     <Col>
                       <span className="order-info-port-etd">Port ETD :</span>
                       <DatePicker
-                        value={dateInput['ShipperETDDate']}
+                        value={dateInput.ShipperETDDate}
                         name="ShipperETDDate"
                         shipmentKey={this.props.shipmentKey}
                         validator={this.validateOrderInfoDate.bind(this)}
@@ -309,7 +352,7 @@ class OrderInfoTab extends Component {
                       className="form-control order-info-input-inline"
                       placeholder="CompanyName"
                       value={this.state.ConsigneeCompanyName}
-                      onChange={e => {
+                      onChange={(e) => {
                         this.setState({ ConsigneeCompanyName: e.target.value });
                       }}
                       style={{
@@ -328,7 +371,7 @@ class OrderInfoTab extends Component {
                           type="text"
                           placeholder="Port,Country"
                           value={this.state.ConsigneePort}
-                          onChange={e => {
+                          onChange={(e) => {
                             this.setState({ ConsigneePort: e.target.value });
                           }}
                           className="form-control order-info-input-noborder"
@@ -344,11 +387,9 @@ class OrderInfoTab extends Component {
               <Row>
                 <Col style={{ fontSize: 14 }}>
                   <Row style={{ marginBottom: 10 }}>
-                    <span className="order-info-eta-info">
-                      Last free day :{' '}
-                    </span>
+                    <span className="order-info-eta-info">Last free day : </span>
                     <DatePicker
-                      value={dateInput['ConsigneeLastFreeDay']}
+                      value={dateInput.ConsigneeLastFreeDay}
                       name="ConsigneeLastFreeDay"
                       shipmentKey={this.props.shipmentKey}
                       validator={this.validateOrderInfoDate.bind(this)}
@@ -359,7 +400,7 @@ class OrderInfoTab extends Component {
                   <Row>
                     <span className="order-info-eta-info">Est. Delivery :</span>
                     <DatePicker
-                      value={dateInput['ConsigneeEstimateDelivery']}
+                      value={dateInput.ConsigneeEstimateDelivery}
                       name="ConsigneeEstimateDelivery"
                       shipmentKey={this.props.shipmentKey}
                       validator={this.validateOrderInfoDate.bind(this)}
@@ -389,14 +430,16 @@ class OrderInfoTab extends Component {
                 id="Product"
                 placeholder="Your Shipment Product"
                 value={this.state.ShipmentDetailProduct}
-                onChange={e => {
+                onChange={(e) => {
                   this.setState({ ShipmentDetailProduct: e.target.value });
                 }}
               />
             </FormGroup>
             <FormGroup>
               <Label className="order-info-input-label" htmlFor="Details">
-                Details <i className="fa fa-lock fa-lg mt-4" />
+                Details
+                {' '}
+                <i className="fa fa-lock fa-lg mt-4" />
               </Label>
               <Input
                 className="order-info-input"
@@ -404,7 +447,7 @@ class OrderInfoTab extends Component {
                 id="Details"
                 placeholder="Detail"
                 value={this.state.ShipmentDetailPriceDescriptionOfGoods}
-                onChange={e => {
+                onChange={(e) => {
                   this.setState({
                     ShipmentDetailPriceDescriptionOfGoods: e.target.value,
                   });
@@ -413,6 +456,7 @@ class OrderInfoTab extends Component {
             </FormGroup>
           </Form>
         </Row>
+        <ErrorPopup ref={this.errorPopupRef} />
       </Row>
     );
   }
