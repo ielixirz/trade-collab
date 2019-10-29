@@ -38,6 +38,7 @@ class ShippingInfoTab extends Component {
           style={{
             border: 'none',
             borderColor: 'transparent',
+            fontSize: '12px',
           }}
           onKeyPress={event => {
             console.log('Enter', event);
@@ -63,8 +64,10 @@ class ShippingInfoTab extends Component {
           }}
         >
           <FormGroup row>
-            <Col md="6">
-              <Label htmlFor="text-input">Shipping Line</Label>
+            <Col lg="6">
+              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>
+                Shipping Line
+              </Label>
             </Col>
             <Col xs="6">
               <Input
@@ -85,8 +88,10 @@ class ShippingInfoTab extends Component {
             </Col>
           </FormGroup>
           <FormGroup row>
-            <Col md="6">
-              <Label htmlFor="text-input">Container No.</Label>
+            <Col lg="6">
+              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>
+                Container No.
+              </Label>
             </Col>
             <Col xs="6">
               <Input
@@ -109,8 +114,10 @@ class ShippingInfoTab extends Component {
             </Col>
           </FormGroup>
           <FormGroup row>
-            <Col md="6">
-              <Label htmlFor="text-input">Bill of Landding No.</Label>
+            <Col lg="6">
+              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>
+                Bill of Landding No.
+              </Label>
             </Col>
             <Col xs="6">
               <Input
@@ -133,8 +140,16 @@ class ShippingInfoTab extends Component {
             </Col>
           </FormGroup>
           <FormGroup row>
-            <Col md="6">
-              <Label htmlFor="text-input">Original Docs. Tracking No.</Label>
+            <Col lg="6">
+              <Label
+                style={{
+                  fontSize: 12,
+                  fontWeight: 'bold',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Original Docs. Tracking No.
+              </Label>
             </Col>
             <Col xs="6">
               <Input
@@ -159,7 +174,7 @@ class ShippingInfoTab extends Component {
           </FormGroup>
           <FormGroup>
             <Col>
-              <Label htmlFor="text-input">Note</Label>
+              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>Note</Label>
             </Col>
             <Col>
               <textarea
