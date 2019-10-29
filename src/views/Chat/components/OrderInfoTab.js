@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import 'react-dates/initialize';
 import moment from 'moment';
+import _ from 'lodash';
 
 import DatePicker from './DatePicker';
 import 'react-dates/lib/css/_datepicker.css';
@@ -15,6 +16,7 @@ import OrderInfoTabProgress from './OrderInfoTabProgress';
 import { UpdateMasterData } from '../../../service/masterdata/masterdata';
 
 import { isDateBefore, isDateAfter } from '../../../utils/date';
+import firebase from 'firebase';
 
 class OrderInfoTab extends Component {
   constructor(props) {
@@ -55,7 +57,14 @@ class OrderInfoTab extends Component {
       },
       () => {
         if (this.validateOrderInfoDate()) {
-          console.log('fire update service here');
+          console.log('fire update service here', dateName);
+
+          UpdateMasterData(this.props.shipmentKey, 'DefaultTemplate', {
+            [dateName]: firebase.firestore.Timestamp.fromDate(date.toDate()),
+          }).subscribe(() => {
+            console.log('Done');
+          });
+
           Object.keys(invalidMap).forEach(key => (invalidMap[key] = false));
           this.setState({
             DateInvalidMap: invalidMap,
@@ -127,6 +136,14 @@ class OrderInfoTab extends Component {
 
   render() {
     console.log('State', this.state);
+    let dateInput = {};
+    _.forEach(this.state.DateInvalidMap, (item, index) => {
+      if (_.isEmpty(this.state[index])) {
+        dateInput[index] = new Date();
+      } else {
+        dateInput[index] = new Date(this.state[index].seconds * 1000);
+      }
+    });
     return (
       <Row
         onKeyPress={event => {
@@ -176,7 +193,7 @@ class OrderInfoTab extends Component {
                     <Col>
                       <span className="order-info-port-eta">Port ETA :</span>
                       <DatePicker
-                        value={this.state.ConsigneeETAPortDate}
+                        value={dateInput['ConsigneeETAPortDate']}
                         name="ConsigneeETAPortDate"
                         shipmentKey={this.props.shipmentKey}
                         validator={this.validateOrderInfoDate.bind(this)}
@@ -239,7 +256,7 @@ class OrderInfoTab extends Component {
                   <Row style={{ marginBottom: 10 }}>
                     <span className="order-info-eta-info">First Return :</span>
                     <DatePicker
-                      value={this.state.ShipperFirstReturn}
+                      value={dateInput['ShipperFirstReturn']}
                       name="ShipperFirstReturn"
                       shipmentKey={this.props.shipmentKey}
                       validator={this.validateOrderInfoDate.bind(this)}
@@ -250,7 +267,7 @@ class OrderInfoTab extends Component {
                   <Row>
                     <span className="order-info-eta-info"> Cut-off :</span>
                     <DatePicker
-                      value={this.state.ShipperCutOff}
+                      value={dateInput['ShipperCutOff']}
                       name="ShipperCutOff"
                       shipmentKey={this.props.shipmentKey}
                       validator={this.validateOrderInfoDate.bind(this)}
@@ -269,7 +286,7 @@ class OrderInfoTab extends Component {
                     <Col>
                       <span className="order-info-port-etd">Port ETD :</span>
                       <DatePicker
-                        value={this.state.ShipperETDDate}
+                        value={dateInput['ShipperETDDate']}
                         name="ShipperETDDate"
                         shipmentKey={this.props.shipmentKey}
                         validator={this.validateOrderInfoDate.bind(this)}
@@ -326,7 +343,7 @@ class OrderInfoTab extends Component {
                       Last free day :{' '}
                     </span>
                     <DatePicker
-                      value={this.state.ConsigneeLastFreeDay}
+                      value={dateInput['ConsigneeLastFreeDay']}
                       name="ConsigneeLastFreeDay"
                       shipmentKey={this.props.shipmentKey}
                       validator={this.validateOrderInfoDate.bind(this)}
@@ -337,7 +354,7 @@ class OrderInfoTab extends Component {
                   <Row>
                     <span className="order-info-eta-info">Est. Delivery :</span>
                     <DatePicker
-                      value={this.state.ConsigneeEstimateDelivery}
+                      value={dateInput['ConsigneeEstimateDelivery']}
                       name="ConsigneeEstimateDelivery"
                       shipmentKey={this.props.shipmentKey}
                       validator={this.validateOrderInfoDate.bind(this)}
