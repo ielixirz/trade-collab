@@ -159,7 +159,7 @@ class OrderInfoTab extends Component {
       >
         <Col
           xs={2}
-          style={{ paddingLeft: 0, paddingTop: '10px', marginRight: '7px' }}
+          style={{ paddingLeft: 0, paddingTop: '15px', marginRight: '7px' }}
         >
           <OrderInfoTabProgress progress={10} />
         </Col>
@@ -187,7 +187,7 @@ class OrderInfoTab extends Component {
                   </Row>
                 </Col>
                 <Col style={{ fontSize: 14 }}>
-                  <Row style={{ marginLeft: 30, paddingTop: '-10px' }}>
+                  <Row style={{ marginLeft: 30, marginTop: '5px' }}>
                     <input
                       type="text"
                       placeholder="Company Name"
@@ -264,7 +264,7 @@ class OrderInfoTab extends Component {
                 <span className="line-sep-dash" />
               </Row>
               <Row>
-                <Col style={{ marginRight: 12 }}>
+                <Col style={{ marginRight: 12, marginTop: 5 }}>
                   <Row style={{ fontSize: 14 }}>
                     <Col>
                       <span className="order-info-port-etd">Port ETD :</span>
@@ -290,6 +290,9 @@ class OrderInfoTab extends Component {
                       onChange={e => {
                         this.setState({ ConsigneeCompanyName: e.target.value });
                       }}
+                      style={{
+                        textAlign: 'right',
+                      }}
                     />
                   </Row>
                 </Col>
@@ -301,32 +304,18 @@ class OrderInfoTab extends Component {
                       <Col>
                         <input
                           type="text"
-                          placeholder="Port"
+                          placeholder="Port,Country"
                           value={this.state.ConsigneePort}
                           onChange={e => {
                             this.setState({ ConsigneePort: e.target.value });
                           }}
-                          className="form-control order-info-input-inline"
-                        />
-                      </Col>
-
-                      <Col>
-                        <input
-                          type="text"
-                          className="form-control order-info-input-inline"
-                          placeholder="Country"
-                          value={this.state.ConsigneeCountry}
-                          onChange={e => {
-                            this.setState({ ConsigneeCountry: e.target.value });
-                          }}
+                          className="form-control order-info-input-noborder"
                         />
                       </Col>
                     </Row>
                   </span>
                 </Col>
-                <Col
-                  style={{ fontSize: 10, textAlign: 'right', marginRight: 27 }}
-                >
+                <Col style={{ fontSize: 10, textAlign: 'right' }}>
                   <span className="order-info-minor-text">Consignee</span>
                 </Col>
               </Row>
