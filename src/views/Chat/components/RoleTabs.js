@@ -305,6 +305,12 @@ class RoleTabs extends Component {
             return this.renderRoleOption(item);
           })}
           <br />
+        </BlockUi>
+        <div
+          style={{
+            marginTop: 50,
+          }}
+        >
           {this.state.error.isError ? (
             <Row>
               <div className="alert alert-danger" role="alert">
@@ -314,7 +320,7 @@ class RoleTabs extends Component {
           ) : (
             ''
           )}
-        </BlockUi>
+        </div>
       </div>
     );
   }
