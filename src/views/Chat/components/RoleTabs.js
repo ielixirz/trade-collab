@@ -296,6 +296,18 @@ class RoleTabs extends Component {
                       this.setState({
                         isWorking: false,
                       });
+
+                      PermissionRemoveList(
+                        this.props.shipmentKey,
+                        this.props.memberData.ShipmentMemberCompanyKey,
+                      ).subscribe({
+                        next: res => {
+                          this.setState({
+                            PermissionRole: res,
+                          });
+                        },
+                      });
+
                       remove.unsubscribe();
                     },
                   });
