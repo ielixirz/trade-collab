@@ -464,3 +464,32 @@ export const RemoveShipmentRole = (ShipmentKey, Role, CompanyKey) => GetShipment
     }
   }),
 );
+
+export const PermissionRemoveList = (ShipmentKey, CompanyKey) => GetShipmentRoleByCompany(
+  ShipmentKey,
+  CompanyKey,
+).pipe(map(
+  (CompanyRoleList) => {
+    let PermissionList = [];
+
+    if (_.includes(CompanyRoleList, 'Importer')) {
+      PermissionList = _.union(PermissionList, ['Importer', 'Exporter']);
+    }
+    if (_.includes(CompanyRoleList, 'Exporter')) {
+      PermissionList = _.union(PermissionList, ['Importer', 'Exporter']);
+    }
+    if (_.includes(CompanyRoleList, 'InboundForwarder')) {
+      PermissionList = _.union(PermissionList, ['Importer', 'OutboundForwarder', 'InboundForwarder']);
+    }
+    if (_.includes(CompanyRoleList, 'OutboundForwarder')) {
+      PermissionList = _.union(PermissionList, ['Exporter', 'InboundForwarder', 'OutboundForwarder']);
+    }
+    if (_.includes(CompanyRoleList, 'InboundCustomBroker')) {
+      PermissionList = _.union(PermissionList, ['Importer', 'InboundForwarder', 'InboundCustomBroker']);
+    }
+    if (_.includes(CompanyRoleList, 'OutboundCustomBroker')) {
+      PermissionList = _.union(PermissionList, ['Exporter', 'OutboundForwarder', 'OutboundCustomBroker']);
+    }
+    return PermissionList;
+  },
+));
