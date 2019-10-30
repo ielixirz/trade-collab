@@ -17,6 +17,7 @@ import {
   GetShipmentRoleDetail,
   isAvailableRole,
   AssignShipmentRole,
+  isCanSeeShipmentDetail,
 } from '../../service/shipment/shipment';
 import { GetMasterDataChatRoom, GetDefaultTemplate } from '../../service/masterdata/masterdata';
 import {
@@ -214,6 +215,7 @@ const TestService = () => {
     //   ShipmentRoleCompanyName: 'eiie',
     //   ShipmentRoleCompanyKey: '5555',
     // }).subscribe(console.log);
+    // isCanSeeShipmentDetail('yyOW5JFhltyZUwgrIdW3', 'gzaZbc3h9IU7hUWc3zWq').subscribe(console.log);
   }, []);
   return (
     <div>

@@ -308,7 +308,7 @@ export const isCanSeeShipmentDetail = (ShipmentKey, CompanyKey) => GetShipmentRo
   ShipmentKey,
   CompanyKey,
 ).pipe(
-  map(ShipmentRoleList => !!(_.findIndex(ShipmentRoleList, 'Importer') || _.findIndex(ShipmentRoleList, 'Exporter'))),
+  map(ShipmentRoleList => !(_.findIndex(ShipmentRoleList, 'Importer') || _.findIndex(ShipmentRoleList, 'Exporter'))),
 );
 
 export const isAssignCompanyToShipment = (ShipmentKey, UserKey) => docData(ShipmentRefPath().doc(ShipmentKey), 'ShipmentKey').pipe(
