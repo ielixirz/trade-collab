@@ -26,6 +26,7 @@ import {
   GetAllShipmentRole,
   GetShipmentDetail,
   GetShipmentRoleByCompany,
+  PermissionRemoveList,
   RemoveShipmentRole,
 } from '../../../service/shipment/shipment';
 import Shipment from '../../Shipment/Shipment';
@@ -87,7 +88,18 @@ class RoleTabs extends Component {
     this.renderRoleOption = this.renderRoleOption.bind(this);
   }
   componentDidMount() {
-    console.log('Set Listener');
+    console.log('Set Listener', {
+      ...this.props,
+    });
+    PermissionRemoveList(
+      this.props.shipmentKey,
+      this.props.memberData.ShipmentMemberCompanyKey,
+    ).subscribe({
+      next: res => {
+        console.log('res', res);
+      },
+    });
+
     GetUserCompany(this.props.userKey).subscribe({
       next: res => {
         console.log('User Company is', res);

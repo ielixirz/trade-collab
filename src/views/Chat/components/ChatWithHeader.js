@@ -1027,6 +1027,11 @@ class ChatWithHeader extends Component {
       member,
       item => item.ChatRoomMemberEmail === user.email,
     );
+
+    console.log('memberData', {
+      members,
+      isInvited,
+    });
     let ref = '';
     if (!_.isEmpty(isInvited)) {
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
@@ -1430,6 +1435,7 @@ class ChatWithHeader extends Component {
               userData={user}
               collapse={this.state.sideCollpase}
               collapseTrigger={this.triggerSideCollapse}
+              memberData={isInvited}
             />
           </Col>
         </Row>

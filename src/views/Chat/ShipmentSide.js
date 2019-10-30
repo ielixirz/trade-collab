@@ -36,10 +36,17 @@ const styles = {
   },
 };
 
-const ShipmentData = ({ shipmentKey, chatroomKey, userKey, mainData }) => {
+const ShipmentData = ({
+  shipmentKey,
+  chatroomKey,
+  userKey,
+  mainData,
+  memberData,
+}) => {
   const initialState = useContext(ShipmentListContext);
 
   const [state, dispatch] = useReducer(shipmentReducer, initialState);
+
   return (
     <ShipmentListContext.Provider
       value={{
@@ -49,6 +56,7 @@ const ShipmentData = ({ shipmentKey, chatroomKey, userKey, mainData }) => {
         chatroomKey,
         userKey,
         mainData,
+        memberData,
       }}
     >
       <ShipmentList />
@@ -112,6 +120,7 @@ class ShipmentSide extends Component {
                 chatroomKey={this.props.chatroomKey}
                 userKey={this.props.auth.uid}
                 mainData={this.props.mainData}
+                memberData={this.props.memberData}
               />
             </Collapse>
           </CardBody>
