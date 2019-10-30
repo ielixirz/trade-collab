@@ -229,13 +229,12 @@ class RoleTabs extends Component {
                                 message: '',
                               },
                             });
-
-                            assign.unsubscribe();
                           },
                           complete: () => {
                             this.setState({
                               isWorking: false,
                             });
+                            assign.unsubscribe();
                           },
                         });
                       }}
@@ -280,11 +279,12 @@ class RoleTabs extends Component {
                       }
                     },
                     error: err => {
+                      console.error('Error on RemoveShipmentRole', err);
                       if (err) {
                         this.setState({
                           error: {
                             isError: true,
-                            message: err.message,
+                            message: err,
                           },
                         });
                         this.setState({
