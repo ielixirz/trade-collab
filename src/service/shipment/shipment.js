@@ -287,17 +287,29 @@ export const GetAvailableRole = ShipmentKey => GetAllShipmentRole(ShipmentKey).p
 //   'ShipmentRole',
 // ).pipe(map(ShipmentRoleList => ShipmentRoleList[0]));
 
+// export const GetShipmentRoleByCompany = (ShipmentKey, CompanyKey) => collectionData(
+//   ShipmentRoleRefPath(ShipmentKey).where('ShipmentRoleCompanyKey', '==', CompanyKey),
+//   'ShipmentRole',
+// ).pipe(map(ShipmentRoleList => ShipmentRoleList), map((ShipmentRoleArray) => {
+//   if (_.find(ShipmentRoleArray, ['ShipmentRole', 'Importer'])) return 'Importer';
+//   if (_.find(ShipmentRoleArray, ['ShipmentRole', 'Exporter'])) return 'Exporter';
+//   if (_.find(ShipmentRoleArray, ['ShipmentRole', 'InboundForwarder'])) return 'InboundForwarder';
+//   if (_.find(ShipmentRoleArray, ['ShipmentRole', 'OutboundForwarder'])) return 'OutboundForwarder';
+//   if (_.find(ShipmentRoleArray, ['ShipmentRole', 'OutboundCustomBroker'])) return 'OutboundCustomBroker';
+//   if (_.find(ShipmentRoleArray, ['ShipmentRole', 'InboundCustomBroker'])) return 'InboundCustomBroker';
+// }));
+
 export const GetShipmentRoleByCompany = (ShipmentKey, CompanyKey) => collectionData(
   ShipmentRoleRefPath(ShipmentKey).where('ShipmentRoleCompanyKey', '==', CompanyKey),
   'ShipmentRole',
-).pipe(map(ShipmentRoleList => ShipmentRoleList), map((ShipmentRoleArray) => {
-  if (_.find(ShipmentRoleArray, ['ShipmentRole', 'Importer'])) return 'Importer';
-  if (_.find(ShipmentRoleArray, ['ShipmentRole', 'Exporter'])) return 'Exporter';
-  if (_.find(ShipmentRoleArray, ['ShipmentRole', 'InboundForwarder'])) return 'InboundForwarder';
-  if (_.find(ShipmentRoleArray, ['ShipmentRole', 'OutboundForwarder'])) return 'OutboundForwarder';
-  if (_.find(ShipmentRoleArray, ['ShipmentRole', 'OutboundCustomBroker'])) return 'OutboundCustomBroker';
-  if (_.find(ShipmentRoleArray, ['ShipmentRole', 'InboundCustomBroker'])) return 'InboundCustomBroker';
-}));
+).pipe(map(ShipmentRoleList => ShipmentRoleList.ShipmentRole));
+
+export const isCanSeeShipmentDetail = (ShipmentKey, CompanyKey) => GetShipmentRoleByCompany(
+  ShipmentKey,
+  CompanyKey,
+).pipe(
+  map(ShipmentRoleList => !!(_.findIndex(ShipmentRoleList, 'Importer') || _.findIndex(ShipmentRoleList, 'Exporter'))),
+);
 
 export const isAssignCompanyToShipment = (ShipmentKey, UserKey) => docData(ShipmentRefPath().doc(ShipmentKey), 'ShipmentKey').pipe(
   map(ShipmentDoc => !!ShipmentDoc.data().ShipmentMember[UserKey].ShipmentMemberCompanyKey),
@@ -318,53 +330,53 @@ export const CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMaster
   )),
 );
 
-export const InviteShipmentRole = (ShipmentKey, Role, CompanyKey, Data) => GetShipmentRoleByCompany(ShipmentKey, CompanyKey).pipe(
-  switchMap((ShipmentRole) => {
-    if (ShipmentRole === 'Importer') {
-      if (Role === 'Exporter' || Role === 'Importer' || Role === 'InboundForwarder' || Role === 'InboundCustomBroker') {
-        return isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? AddShipmentRole(ShipmentKey, Role, Data) : of(null))));
-      }
-      return of('Not have permission');
-    }
-    if (ShipmentRole === 'Exporter') {
-      if (Role === 'Exporter' || Role === 'Importer' || Role === 'OutboundForwarder' || Role === 'OutboundCustomBroker') {
-        return isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? AddShipmentRole(ShipmentKey, Role, Data) : of(null))));
-      }
-      return of('Not have permission');
-    }
-    if (ShipmentRole === 'OutboundForwarder') {
-      if (Role === 'Exporter' || Role === 'InboundForwarder' || Role === 'OutboundCustomBroker') {
-        return isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? AddShipmentRole(ShipmentKey, Role, Data) : of(null))));
-      }
-      return of('Not have permission');
-    }
-    if (ShipmentRole === 'OutboundCustomBroker') {
-      if (Role === 'Exporter' || Role === 'OutboundCustomBroker') {
-        return isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? AddShipmentRole(ShipmentKey, Role, Data) : of(null))));
-      }
-      return of('Not have permission');
-    }
-    if (ShipmentRole === 'InboundCustomBroker') {
-      if (Role === 'Importer' || Role === 'InboundCustomBroker') {
-        return isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? AddShipmentRole(ShipmentKey, Role, Data) : of(null))));
-      }
-      return of('Not have permission');
-    }
-    if (ShipmentRole === 'InboundForwarder') {
-      if (Role === 'Importer' || Role === 'OutboundForwarder' || Role === 'InboundForwarder' || Role === 'InboundCustomBroker') {
-        return isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? AddShipmentRole(ShipmentKey, Role, Data) : of(null))));
-      }
-      return of('Not have permission');
-    }
-    if (ShipmentRole === 'InboundForwarder') {
-      if (Role === 'Importer' || Role === 'OutboundForwarder' || Role === 'InboundForwarder' || Role === 'InboundCustomBroker') {
-        return isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? AddShipmentRole(ShipmentKey, Role, Data) : of(null))));
-      }
-      return of('Not have permission');
-    }
-    return of('Company are not a member in the shipment');
-  }),
-);
+// export const InviteShipmentRole = (ShipmentKey, Role, CompanyKey, Data) => GetShipmentRoleByCompany(ShipmentKey, CompanyKey).pipe(
+//   switchMap((ShipmentRole) => {
+//     if (ShipmentRole === 'Importer') {
+//       if (Role === 'Exporter' || Role === 'Importer' || Role === 'InboundForwarder' || Role === 'InboundCustomBroker') {
+//         return isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? AddShipmentRole(ShipmentKey, Role, Data) : of(null))));
+//       }
+//       return of('Not have permission');
+//     }
+//     if (ShipmentRole === 'Exporter') {
+//       if (Role === 'Exporter' || Role === 'Importer' || Role === 'OutboundForwarder' || Role === 'OutboundCustomBroker') {
+//         return isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? AddShipmentRole(ShipmentKey, Role, Data) : of(null))));
+//       }
+//       return of('Not have permission');
+//     }
+//     if (ShipmentRole === 'OutboundForwarder') {
+//       if (Role === 'Exporter' || Role === 'InboundForwarder' || Role === 'OutboundCustomBroker') {
+//         return isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? AddShipmentRole(ShipmentKey, Role, Data) : of(null))));
+//       }
+//       return of('Not have permission');
+//     }
+//     if (ShipmentRole === 'OutboundCustomBroker') {
+//       if (Role === 'Exporter' || Role === 'OutboundCustomBroker') {
+//         return isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? AddShipmentRole(ShipmentKey, Role, Data) : of(null))));
+//       }
+//       return of('Not have permission');
+//     }
+//     if (ShipmentRole === 'InboundCustomBroker') {
+//       if (Role === 'Importer' || Role === 'InboundCustomBroker') {
+//         return isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? AddShipmentRole(ShipmentKey, Role, Data) : of(null))));
+//       }
+//       return of('Not have permission');
+//     }
+//     if (ShipmentRole === 'InboundForwarder') {
+//       if (Role === 'Importer' || Role === 'OutboundForwarder' || Role === 'InboundForwarder' || Role === 'InboundCustomBroker') {
+//         return isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? AddShipmentRole(ShipmentKey, Role, Data) : of(null))));
+//       }
+//       return of('Not have permission');
+//     }
+//     if (ShipmentRole === 'InboundForwarder') {
+//       if (Role === 'Importer' || Role === 'OutboundForwarder' || Role === 'InboundForwarder' || Role === 'InboundCustomBroker') {
+//         return isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? AddShipmentRole(ShipmentKey, Role, Data) : of(null))));
+//       }
+//       return of('Not have permission');
+//     }
+//     return of('Company are not a member in the shipment');
+//   }),
+// );
 
 export const CheckAvailableThenRemoveRole = (ShipmentKey, Role) => isAvailableRole(ShipmentKey, Role)
   .pipe(
