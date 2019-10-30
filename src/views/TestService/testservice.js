@@ -12,13 +12,17 @@ import {
   SearchShipment,
   CombineShipmentAndShipmentReference,
   TestCollectionGroup,
-  CreateShipmentMember
+  CreateShipmentMember,
+  CheckAvailableThenRemoveRole,
+  GetShipmentRoleDetail,
+  isAvailableRole,
+  AssignShipmentRole,
 } from '../../service/shipment/shipment';
 import { GetMasterDataChatRoom, GetDefaultTemplate } from '../../service/masterdata/masterdata';
 import {
   CreateCompanyMultipleInvitation,
   CreateChatMultipleInvitation,
-  IsExistInvitation
+  IsExistInvitation,
 } from '../../service/join/invite';
 import { GetProfileListFromEmail } from '../../service/user/profile';
 
@@ -29,7 +33,7 @@ import {
   CreateCompanyUserAccessibility,
   GetCompanyUserAccessibility,
   UpdataCompanyUserAccessibility,
-  DeleteCompanyUserAccessibility
+  DeleteCompanyUserAccessibility,
 } from '../../service/company/company';
 
 import { GetUserRequest } from '../../service/join/request';
@@ -37,7 +41,7 @@ import { GetUserRequest } from '../../service/join/request';
 import {
   AddShipmentPin,
   DeleteShipmentPin,
-  GetShipmentPin
+  GetShipmentPin,
 } from '../../service/personalize/personalize';
 
 const TestService = () => {
@@ -55,7 +59,7 @@ const TestService = () => {
     ChatRoomMessageSender: ProfileKey,
     ChatRoomMessageContext: 'น่าร๊ากกกก',
     ChatRoomMessageType: 'Text',
-    ChatRoomMessageTimestamp: new Date()
+    ChatRoomMessageTimestamp: new Date(),
   };
 
   useEffect(() => {
@@ -201,6 +205,15 @@ const TestService = () => {
     // const timestamp = firebase.firestore.Timestamp.fromDate(date);
     // console.log(timestamp);
     // SearchShipment('ZmtGheg8u5UEUzbdhuDZcu5gSyg2', timestamp, 'ShipperETDDate', 15).subscribe(r => r.map(item => console.log(item)));
+    // CheckAvailableThenRemoveRole('yyOW5JFhltyZUwgrIdW3', 'OutboundCustomBroker').subscribe(
+    //   console.log,
+    // );
+    // GetShipmentRoleDetail('yyOW5JFhltyZUwgrIdW3', 'OutboundCustomBroker').subscribe(console.log);
+    // isAvailableRole('yyOW5JFhltyZUwgrIdW3', 'OutboundCustomBroker').subscribe(console.log);
+    // AssignShipmentRole('yyOW5JFhltyZUwgrIdW3', 'OutboundCustomBroker', {
+    //   ShipmentRoleCompanyName: 'eiie',
+    //   ShipmentRoleCompanyKey: '5555',
+    // }).subscribe(console.log);
   }, []);
   return (
     <div>

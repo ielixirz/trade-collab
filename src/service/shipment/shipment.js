@@ -258,10 +258,10 @@ export const DeleteShipmentRoleNoRole = (ShipmentKey, Data) => from(
 
 export const GetAllShipmentRole = ShipmentKey => collectionData(ShipmentRoleRefPath(ShipmentKey), 'ShipmentRole');
 
-export const GetShipmentRoleDetail = (ShipmentKey, Role) => docData(ShipmentRoleRefPath(ShipmentKey).doc(Role), 'ShipmentRole');
+export const GetShipmentRoleDetail = (ShipmentKey, Role) => docData(ShipmentRoleRefPath(ShipmentKey).doc(Role), 'ShipmentRole').pipe(take(1));
 
 // eslint-disable-next-line max-len
-export const isAvailableRole = (ShipmentKey, Role) => GetShipmentRoleDetail(ShipmentKey, Role).pipe(map(Doc => !!Doc));
+export const isAvailableRole = (ShipmentKey, Role) => GetShipmentRoleDetail(ShipmentKey, Role).pipe(map(Doc => !Doc.ShipmentRoleCompanyKey));
 
 export const GetAvailableRole = ShipmentKey => GetAllShipmentRole(ShipmentKey).pipe(
   map(ShipmentRoleList => ({
@@ -383,15 +383,35 @@ export const CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMaster
 //     switchMap(RoleStatus => (RoleStatus ? GetShipmentRoleDetail(ShipmentKey, Role).pipe(switchMap(RoleDetail => AddShipmentRoleNoRole(ShipmentKey, RoleDetail)), switchMap(DeleteShipmentRole(ShipmentKey, Role))) : of(null))),
 //   );
 
-export const CheckAvailableThenRemoveRole = (ShipmentKey, Role) => GetShipmentRoleDetail(
-  ShipmentKey,
-  Role,
-).pipe(
-  tap(RoleDetail => console.log(RoleDetail)),
-  switchMap(RoleDetail => (RoleDetail.ShipmentRoleCompanyName ? forkJoin(AddShipmentRoleNoRole(ShipmentKey, RoleDetail), DeleteShipmentRole(ShipmentKey, Role)) : throwError(''))),
-);
+export const CheckAvailableThenRemoveRole = (ShipmentKey, Role) => isAvailableRole(ShipmentKey, Role)
+  .pipe(
+    tap(RoleStatus => console.log(RoleStatus)),
+    switchMap((RoleStatus) => {
+      if (RoleStatus === true) {
+        return throwError('Selected role is available');
+      }
+      if (RoleStatus === false) {
+        return GetShipmentRoleDetail(ShipmentKey, Role).pipe(
+          // tap(RoleDetail => console.log(RoleDetail)),
+          switchMap(RoleDetail => (RoleDetail.ShipmentRoleCompanyName ? forkJoin(AddShipmentRoleNoRole(ShipmentKey, RoleDetail), DeleteShipmentRole(ShipmentKey, Role)) : throwError('Selected role is available'))),
+        );
+      }
+    }),
+  );
 
-export const AssignShipmentRole = (ShipmentKey, Role, Data) => isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? DeleteShipmentRoleNoRole(ShipmentKey, Data).pipe(switchMap(() => AddShipmentRole(ShipmentKey, Role, Data))) : of('Selected role not available'))));
+export const AssignShipmentRole = (ShipmentKey, Role, Data) => isAvailableRole(ShipmentKey, Role)
+  .pipe(
+    tap(RoleStatus => console.log(RoleStatus)),
+    switchMap((RoleStatus) => {
+      if (RoleStatus === true) {
+        console.log('eiei');
+        return forkJoin(DeleteShipmentRoleNoRole(ShipmentKey, Data), AddShipmentRole(ShipmentKey, Role, Data));
+      }
+      if (RoleStatus === false) {
+        return throwError('Selected role not available');
+      }
+    }),
+);
 
 // export const RemoveShipmentRole = (ShipmentKey, Role, CompanyKey) => GetShipmentRoleByCompany(ShipmentKey, CompanyKey).pipe(
 //   switchMap((ShipmentRole) => {
