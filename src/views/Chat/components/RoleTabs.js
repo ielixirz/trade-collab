@@ -79,6 +79,7 @@ class RoleTabs extends Component {
       role: [],
       companyList: [],
       ShipmentsRole: [],
+      PermissionRole: [],
       isWorking: false,
       error: {
         isError: false,
@@ -88,15 +89,14 @@ class RoleTabs extends Component {
     this.renderRoleOption = this.renderRoleOption.bind(this);
   }
   componentDidMount() {
-    console.log('Set Listener', {
-      ...this.props,
-    });
     PermissionRemoveList(
       this.props.shipmentKey,
       this.props.memberData.ShipmentMemberCompanyKey,
     ).subscribe({
       next: res => {
-        console.log('res', res);
+        this.setState({
+          PermissionRole: res,
+        });
       },
     });
 
@@ -143,6 +143,11 @@ class RoleTabs extends Component {
       this.state.ShipmentsRole,
       item => item.ShipmentRole === role.value,
     );
+    const canDelete = _.find(
+      this.state.PermissionRole,
+      item => item === role.value,
+    );
+
     return (
       <React.Fragment>
         <Row
@@ -244,7 +249,7 @@ class RoleTabs extends Component {
             )}
           </Col>
           <Col>
-            {roleCard ? (
+            {roleCard && !_.isEmpty(canDelete) ? (
               <a
                 href={'#'}
                 onClick={e => {
