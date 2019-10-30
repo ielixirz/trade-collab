@@ -311,6 +311,11 @@ class RoleTabs extends Component {
             ) : (
               ''
             )}
+            {roleCard && _.isEmpty(canDelete) ? (
+              <i className="fa fa-lock fa-lg mt-4" />
+            ) : (
+              ''
+            )}
           </Col>
         </Row>
       </React.Fragment>
