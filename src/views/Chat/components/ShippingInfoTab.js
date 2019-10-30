@@ -8,8 +8,13 @@ import {
   Input,
   Label,
 } from 'reactstrap';
+import _ from 'lodash';
 import { UpdateMasterData } from '../../../service/masterdata/masterdata';
-import { GetAllShipmentRole } from '../../../service/shipment/shipment';
+import {
+  GetAllShipmentRole,
+  GetShipmentDetail,
+  isCanSeeShipmentDetail,
+} from '../../../service/shipment/shipment';
 
 class ShippingInfoTab extends Component {
   constructor(props) {

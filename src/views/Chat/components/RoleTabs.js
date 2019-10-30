@@ -102,7 +102,7 @@ class RoleTabs extends Component {
         });
       },
     });
-    const shipmentRole = GetAllShipmentRole(this.props.shipmentKey).subscribe({
+    GetAllShipmentRole(this.props.shipmentKey).subscribe({
       next: e => {
         console.log('e', e);
         this.setState({ ShipmentsRole: e });
@@ -207,9 +207,6 @@ class RoleTabs extends Component {
                         ).subscribe({
                           next: res => {
                             this.setState({
-                              isWorking: false,
-                            });
-                            this.setState({
                               error: {
                                 isError: false,
                                 message: '',
@@ -217,6 +214,11 @@ class RoleTabs extends Component {
                             });
 
                             assign.unsubscribe();
+                          },
+                          complete: () => {
+                            this.setState({
+                              isWorking: false,
+                            });
                           },
                         });
                       }}
@@ -274,11 +276,10 @@ class RoleTabs extends Component {
                       }
                     },
                     complete: () => {
-                      remove.unsubscribe();
-
                       this.setState({
                         isWorking: false,
                       });
+                      remove.unsubscribe();
                     },
                   });
                 }}

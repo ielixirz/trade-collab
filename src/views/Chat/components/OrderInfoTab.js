@@ -18,12 +18,17 @@ import ErrorPopup from '../../../component/commonPopup/ErrorPopup';
 
 import { isDateBefore, isDateAfter } from '../../../utils/date';
 import firebase from 'firebase';
+import {
+  GetShipmentDetail,
+  isCanSeeShipmentDetail,
+} from '../../../service/shipment/shipment';
 
 class OrderInfoTab extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      isImporter: false,
       ConsigneeETAPortDate: new Date(),
       ShipperFirstReturn: new Date(),
       ShipperETDDate: new Date(),
@@ -49,6 +54,31 @@ class OrderInfoTab extends Component {
       ...this.props,
     };
     this.errorPopupRef = React.createRef();
+  }
+  componentDidMount() {
+    GetShipmentDetail(this.props.shipmentKey).subscribe({
+      next: shipment => {
+        console.log('Shipments', shipment.data(), this.props);
+        const currentMember = _.get(
+          shipment.data().ShipmentMember,
+          this.props.userKey,
+          false,
+        );
+        if (currentMember) {
+          isCanSeeShipmentDetail(
+            this.props.shipmentKey,
+            currentMember.ShipmentMemberCompanyKey,
+          ).subscribe({
+            next: res => {
+              console.log('result lock is', res);
+              this.setState({
+                isImporter: res,
+              });
+            },
+          });
+        }
+      },
+    });
   }
 
   handleDateChange(date, dateName) {
@@ -459,7 +489,12 @@ class OrderInfoTab extends Component {
             </FormGroup>
             <FormGroup>
               <Label className="order-info-input-label" htmlFor="Details">
-                Details <i className="fa fa-lock fa-lg mt-4" />
+                Details{' '}
+                {!this.state.isImporter ? (
+                  <i className="fa fa-lock fa-lg mt-4" />
+                ) : (
+                  ''
+                )}
               </Label>
               <Input
                 className="order-info-input"
@@ -467,6 +502,7 @@ class OrderInfoTab extends Component {
                 id="Details"
                 placeholder="Detail"
                 value={this.state.ShipmentDetailPriceDescriptionOfGoods}
+                readOnly={!this.state.isImporter}
                 onChange={e => {
                   this.setState({
                     ShipmentDetailPriceDescriptionOfGoods: e.target.value,
