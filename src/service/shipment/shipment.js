@@ -302,7 +302,7 @@ export const GetAvailableRole = ShipmentKey => GetAllShipmentRole(ShipmentKey).p
 export const GetShipmentRoleByCompany = (ShipmentKey, CompanyKey) => collectionData(
   ShipmentRoleRefPath(ShipmentKey).where('ShipmentRoleCompanyKey', '==', CompanyKey),
   'ShipmentRole',
-).pipe(map(ShipmentRoleList => ShipmentRoleList.map(ShipmentRoleDoc => ShipmentRoleDoc.ShipmentRole)));
+).pipe(map(ShipmentRoleList => ShipmentRoleList.map(ShipmentRoleDoc => ShipmentRoleDoc.ShipmentRole)), take(1));
 
 export const isCanSeeShipmentDetail = (ShipmentKey, CompanyKey) => GetShipmentRoleByCompany(
   ShipmentKey,
@@ -460,36 +460,39 @@ export const RemoveShipmentRole = (ShipmentKey, Role, CompanyKey) => GetShipment
   CompanyKey,
 ).pipe(
   switchMap((CompanyRoleList) => {
-    if (Role === 'Importer') {
-      if (_.includes(CompanyRoleList, 'Importer') || _.includes(CompanyRoleList, 'Exporter')) {
-        return CheckAvailableThenRemoveRole(ShipmentKey, Role);
+    if (CompanyRoleList.length > 0) {
+      if (Role === 'Importer') {
+        if (_.includes(CompanyRoleList, 'Importer') || _.includes(CompanyRoleList, 'Exporter')) {
+          return CheckAvailableThenRemoveRole(ShipmentKey, Role);
+        }
+      }
+      if (Role === 'Exporter') {
+        if (_.includes(CompanyRoleList, 'Importer') || _.includes(CompanyRoleList, 'Exporter')) {
+          return CheckAvailableThenRemoveRole(ShipmentKey, Role);
+        }
+      }
+      if (Role === 'InboundForwarder') {
+        if (_.includes(CompanyRoleList, 'Importer') || _.includes(CompanyRoleList, 'OutboundForwarder') || _.includes(CompanyRoleList, 'InboundForwarder')) {
+          return CheckAvailableThenRemoveRole(ShipmentKey, Role);
+        }
+      }
+      if (Role === 'OutboundForwarder') {
+        if (_.includes(CompanyRoleList, 'Exporter') || _.includes(CompanyRoleList, 'InboundForwarder') || _.includes(CompanyRoleList, 'OutboundForwarder')) {
+          return CheckAvailableThenRemoveRole(ShipmentKey, Role);
+        }
+      }
+      if (Role === 'InboundCustomBroker') {
+        if (_.includes(CompanyRoleList, 'Importer') || _.includes(CompanyRoleList, 'InboundForwarder') || _.includes(CompanyRoleList, 'InboundCustomBroker')) {
+          return CheckAvailableThenRemoveRole(ShipmentKey, Role);
+        }
+      }
+      if (Role === 'OutboundCustomBroker') {
+        if (_.includes(CompanyRoleList, 'Exporter') || _.includes(CompanyRoleList, 'OutboundForwarder') || _.includes(CompanyRoleList, 'OutboundCustomBroker')) {
+          return CheckAvailableThenRemoveRole(ShipmentKey, Role);
+        }
       }
     }
-    if (Role === 'Exporter') {
-      if (_.includes(CompanyRoleList, 'Importer') || _.includes(CompanyRoleList, 'Exporter')) {
-        return CheckAvailableThenRemoveRole(ShipmentKey, Role);
-      }
-    }
-    if (Role === 'InboundForwarder') {
-      if (_.includes(CompanyRoleList, 'Importer') || _.includes(CompanyRoleList, 'OutboundForwarder') || _.includes(CompanyRoleList, 'InboundForwarder')) {
-        return CheckAvailableThenRemoveRole(ShipmentKey, Role);
-      }
-    }
-    if (Role === 'OutboundForwarder') {
-      if (_.includes(CompanyRoleList, 'Exporter') || _.includes(CompanyRoleList, 'InboundForwarder') || _.includes(CompanyRoleList, 'OutboundForwarder')) {
-        return CheckAvailableThenRemoveRole(ShipmentKey, Role);
-      }
-    }
-    if (Role === 'InboundCustomBroker') {
-      if (_.includes(CompanyRoleList, 'Importer') || _.includes(CompanyRoleList, 'InboundForwarder') || _.includes(CompanyRoleList, 'InboundCustomBroker')) {
-        return CheckAvailableThenRemoveRole(ShipmentKey, Role);
-      }
-    }
-    if (Role === 'OutboundCustomBroker') {
-      if (_.includes(CompanyRoleList, 'Exporter') || _.includes(CompanyRoleList, 'OutboundForwarder') || _.includes(CompanyRoleList, 'OutboundCustomBroker')) {
-        return CheckAvailableThenRemoveRole(ShipmentKey, Role);
-      }
-    }
+    else throwError('Your comapny has no role');
   }),
 );
 
