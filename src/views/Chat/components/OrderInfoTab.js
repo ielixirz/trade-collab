@@ -3,9 +3,7 @@
 /* eslint-disable filenames/match-regex */
 
 import React, { Component } from 'react';
-import {
-  Col, Form, FormGroup, Input, Label, Row,
-} from 'reactstrap';
+import { Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import 'react-dates/initialize';
 import moment from 'moment';
 import _ from 'lodash';
@@ -81,7 +79,7 @@ class OrderInfoTab extends Component {
                 <span>
                   <b>ETA is invalid.</b>
                   <br />
-ETA must be after ETD or before Estimate Delivery and Last
+                  ETA must be after ETD or before Estimate Delivery and Last
                   Free Day.
                 </span>
               );
@@ -100,7 +98,7 @@ ETA must be after ETD or before Estimate Delivery and Last
                 <span>
                   <b>ETD is invalid.</b>
                   <br />
-ETD must be after Cut-off date and after ETA.
+                  ETD must be after Cut-off date and after ETA.
                 </span>
               );
               break;
@@ -109,8 +107,7 @@ ETD must be after Cut-off date and after ETA.
                 <span>
                   <b>Cut-off date is invalid.</b>
                   <br />
-Cut-off date must be before ETD and after First
-                  Return date.
+                  Cut-off date must be before ETD and after First Return date.
                 </span>
               );
               break;
@@ -119,7 +116,7 @@ Cut-off date must be before ETD and after First
                 <span>
                   <b>Last Free day date is invalid.</b>
                   <br />
-Last Free day date must be after ETA.
+                  Last Free day date must be after ETA.
                 </span>
               );
               break;
@@ -128,8 +125,7 @@ Last Free day date must be after ETA.
                 <span>
                   <b>Estimate Delivery date is invalid.</b>
                   <br />
-Estimate Delivery date must be after
-                  ETA.
+                  Estimate Delivery date must be after ETA.
                 </span>
               );
               break;
@@ -151,15 +147,30 @@ Estimate Delivery date must be after
     let rule2 = true;
     let rule3 = true;
     let rule4 = true;
-    if (isDateAfter(moment(this.state.ShipperFirstReturn), moment(this.state.ShipperCutOff))) {
+    if (
+      isDateAfter(
+        moment(this.state.ShipperFirstReturn),
+        moment(this.state.ShipperCutOff),
+      )
+    ) {
       rule1 = false;
     }
 
-    if (isDateAfter(moment(this.state.ShipperCutOff), moment(this.state.ShipperETDDate))) {
+    if (
+      isDateAfter(
+        moment(this.state.ShipperCutOff),
+        moment(this.state.ShipperETDDate),
+      )
+    ) {
       rule2 = false;
     }
 
-    if (isDateBefore(moment(this.state.ConsigneeETAPortDate), moment(this.state.ShipperETDDate))) {
+    if (
+      isDateBefore(
+        moment(this.state.ConsigneeETAPortDate),
+        moment(this.state.ShipperETDDate),
+      )
+    ) {
       rule3 = false;
     }
 
@@ -167,8 +178,11 @@ Estimate Delivery date must be after
       isDateBefore(
         moment(this.state.ConsigneeEstimateDelivery),
         moment(this.state.ConsigneeETAPortDate),
+      ) ||
+      isDateBefore(
+        moment(this.state.ConsigneeLastFreeDay),
+        moment(this.state.ConsigneeETAPortDate),
       )
-      || isDateBefore(moment(this.state.ConsigneeLastFreeDay), moment(this.state.ConsigneeETAPortDate))
     ) {
       rule4 = false;
     }
@@ -195,7 +209,7 @@ Estimate Delivery date must be after
     });
     return (
       <Row
-        onKeyPress={(event) => {
+        onKeyPress={event => {
           console.log('Keypressed', event);
 
           if (event.key === 'Enter') {
@@ -223,10 +237,16 @@ Estimate Delivery date must be after
           }
         }}
       >
-        <Col xs={2} style={{ paddingLeft: 0, paddingTop: '15px', marginRight: '7px' }}>
+        <Col
+          xs={2}
+          style={{ paddingLeft: 0, paddingTop: '15px', marginRight: '7px' }}
+        >
           <OrderInfoTabProgress progress={10} />
         </Col>
-        <Col xs={9} style={{ paddingLeft: 22.5, paddingRight: 0, paddingTop: 10 }}>
+        <Col
+          xs={9}
+          style={{ paddingLeft: 22.5, paddingRight: 0, paddingTop: 10 }}
+        >
           {/* Detail Section */}
           <Row>
             <Col>
@@ -234,10 +254,10 @@ Estimate Delivery date must be after
                 <Col style={{ marginRight: 12 }}>
                   <Row style={{ fontSize: 14, paddingTop: '10px' }}>
                     <Col>
-                      <span className="order-info-port-eta">Port ETA :</span>
+                      <span className="order-info-port-etd">Port ETD :</span>
                       <DatePicker
-                        value={dateInput.ConsigneeETAPortDate}
-                        name="ConsigneeETAPortDate"
+                        value={dateInput.ShipperETDDate}
+                        name="ShipperETDDate"
                         shipmentKey={this.props.shipmentKey}
                         validator={this.validateOrderInfoDate.bind(this)}
                         changeHandler={this.handleDateChange.bind(this)}
@@ -252,7 +272,7 @@ Estimate Delivery date must be after
                       type="text"
                       placeholder="Company Name"
                       value={this.state.ShipperCompanyName}
-                      onChange={(e) => {
+                      onChange={e => {
                         this.setState({ ShipperCompanyName: e.target.value });
                       }}
                       className="form-control order-info-input-inline"
@@ -277,7 +297,7 @@ Estimate Delivery date must be after
                           type="text"
                           placeholder="Port,Country"
                           value={this.state.ShipperPort}
-                          onChange={(e) => {
+                          onChange={e => {
                             this.setState({ ShipperPort: e.target.value });
                           }}
                           className="form-control order-info-input-noborder"
@@ -332,10 +352,10 @@ Estimate Delivery date must be after
                 <Col style={{ marginRight: 12, marginTop: 5 }}>
                   <Row style={{ fontSize: 14 }}>
                     <Col>
-                      <span className="order-info-port-etd">Port ETD :</span>
+                      <span className="order-info-port-eta">Port ETA :</span>
                       <DatePicker
-                        value={dateInput.ShipperETDDate}
-                        name="ShipperETDDate"
+                        value={dateInput.ConsigneeETAPortDate}
+                        name="ConsigneeETAPortDate"
                         shipmentKey={this.props.shipmentKey}
                         validator={this.validateOrderInfoDate.bind(this)}
                         changeHandler={this.handleDateChange.bind(this)}
@@ -352,7 +372,7 @@ Estimate Delivery date must be after
                       className="form-control order-info-input-inline"
                       placeholder="CompanyName"
                       value={this.state.ConsigneeCompanyName}
-                      onChange={(e) => {
+                      onChange={e => {
                         this.setState({ ConsigneeCompanyName: e.target.value });
                       }}
                       style={{
@@ -371,7 +391,7 @@ Estimate Delivery date must be after
                           type="text"
                           placeholder="Port,Country"
                           value={this.state.ConsigneePort}
-                          onChange={(e) => {
+                          onChange={e => {
                             this.setState({ ConsigneePort: e.target.value });
                           }}
                           className="form-control order-info-input-noborder"
@@ -387,7 +407,9 @@ Estimate Delivery date must be after
               <Row>
                 <Col style={{ fontSize: 14 }}>
                   <Row style={{ marginBottom: 10 }}>
-                    <span className="order-info-eta-info">Last free day : </span>
+                    <span className="order-info-eta-info">
+                      Last free day :{' '}
+                    </span>
                     <DatePicker
                       value={dateInput.ConsigneeLastFreeDay}
                       name="ConsigneeLastFreeDay"
@@ -430,16 +452,14 @@ Estimate Delivery date must be after
                 id="Product"
                 placeholder="Your Shipment Product"
                 value={this.state.ShipmentDetailProduct}
-                onChange={(e) => {
+                onChange={e => {
                   this.setState({ ShipmentDetailProduct: e.target.value });
                 }}
               />
             </FormGroup>
             <FormGroup>
               <Label className="order-info-input-label" htmlFor="Details">
-                Details
-                {' '}
-                <i className="fa fa-lock fa-lg mt-4" />
+                Details <i className="fa fa-lock fa-lg mt-4" />
               </Label>
               <Input
                 className="order-info-input"
@@ -447,7 +467,7 @@ Estimate Delivery date must be after
                 id="Details"
                 placeholder="Detail"
                 value={this.state.ShipmentDetailPriceDescriptionOfGoods}
-                onChange={(e) => {
+                onChange={e => {
                   this.setState({
                     ShipmentDetailPriceDescriptionOfGoods: e.target.value,
                   });
