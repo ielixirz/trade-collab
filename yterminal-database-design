@@ -74,6 +74,13 @@
                 ShipmentRoleCompanyName (string)
                 ShipmentRoleCompanyKey (string)
             >NoRole
+                ShipmentNoRole (array <object>)
+                    [
+                        {
+                            ShipmentRoleCompanyName (string)
+                            ShipmentRoleCompanyKey (string)
+                        }
+                    ]
         +ChatRoom
             >ChatRoomKey
                 ChatRoomName (string)
@@ -307,16 +314,21 @@
         ShipperPort (string)
         ShipperCountry (string)
         ShipperETDDate (timestamp)
+        ShipperFirstReturn (timestamp)
+        ShipperCutOff (timestamp)
         ShipmentDetailShippingLine (string)
         ShipmentDetailPriceDescriptionOfGoods (string)
         ShipmentDetailContainerNumber (string)
         ShipmentDetailBillofLandingNumber (string)
         ShipmentDetailOriginalDocumentTrackingNumber (string)
         ShipmentDetailProduct (string)
+        ShipmentDetailNote (string)
         ConsigneeCompanyName (string)
         ConsigneePort (string)
         ConsigneeETAPortDate (timestamp)
         ConsigneeETAWarehouseDate (timestamp)
+        ConsigneeLastFreeDay (timestamp)
+        ConsigneeEstimateDelivery (timestamp)
         ConsigneeCountry (string)
 
 +NonUserInvite

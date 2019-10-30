@@ -203,8 +203,8 @@ tbody > tr:hover {
   overflow-x: hidden; /* Hide the horizontal scroll */
 }
 
-thead,
-tbody tr {
+.table.profile-table > thead,
+.table.profile-table > tbody tr {
   display: table;
   width: 100%;
   table-layout: fixed; /* even columns width , fix width of table too*/
@@ -276,8 +276,8 @@ tbody tr {
   overflow-x: hidden; /* Hide the horizontal scroll */
 }
 
-thead,
-tbody tr {
+.table.company-table > thead,
+.table.company-table > tbody tr {
   display: table;
   width: 100%;
   table-layout: fixed; /* even columns width , fix width of table too*/
@@ -315,8 +315,8 @@ tbody tr {
   overflow-x: hidden; /* Hide the horizontal scroll */
 }
 
-thead,
-tbody tr {
+.table.setting-table > thead,
+.table.setting-table > tbody tr {
   display: table;
   width: 100%;
   table-layout: fixed; /* even columns width , fix width of table too*/

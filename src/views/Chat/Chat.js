@@ -7,9 +7,7 @@ import React, { Component } from 'react';
 import BlockUi from 'react-block-ui';
 import 'react-block-ui/style.css';
 
-import {
-  TabContent, Input, TabPane, Badge,
-} from 'reactstrap';
+import { TabContent, Input, TabPane, Badge } from 'reactstrap';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import Tabs from 'react-draggable-tabs';
@@ -32,14 +30,22 @@ import {
 import ChatWithHeader from './components/ChatWithHeader';
 import ChatCreateRoom from './components/ChatCreateRoom';
 
-import { AddChatRoomMember, CreateChatRoom, EditChatRoom } from '../../service/chat/chat';
+import {
+  AddChatRoomMember,
+  CreateChatRoom,
+  EditChatRoom,
+} from '../../service/chat/chat';
 import './MasterDetail.css';
 import { GetShipmentDetail } from '../../service/shipment/shipment';
 import { GetShipmentNotificationCount } from '../../service/personalize/personalize';
 import { GetUserCompany } from '../../service/user/user';
 import { fetchCompany } from '../../actions/companyAction';
 import './Chat.scss';
-import { editShipmentRef, fetchShipments, updateShipmentRef } from '../../actions/shipmentActions';
+import {
+  editShipmentRef,
+  fetchShipments,
+  updateShipmentRef,
+} from '../../actions/shipmentActions';
 
 class Chat extends Component {
   constructor(props) {
@@ -76,11 +82,11 @@ class Chat extends Component {
     const hasNewChat = _.get(this.props, 'ChatReducer.selectedChat', '');
   }
 
-  toggleBlocking = (toggle) => {
+  toggleBlocking = toggle => {
     this.props.toggleLoading(toggle);
   };
 
-  toggleCreateChat = (toggle) => {
+  toggleCreateChat = toggle => {
     this.setState({ toggleChat: toggle });
   };
 
@@ -95,7 +101,7 @@ class Chat extends Component {
       ChatRoomType: room,
       ChatRoomName: room,
     }).subscribe({
-      next: (result) => {
+      next: result => {
         const data = result.path.split('/');
         const chatkey = result.id;
 
@@ -109,7 +115,7 @@ class Chat extends Component {
           ChatRoomMemberCompanyName: memberData.ShipmentMemberCompanyName || '',
           ChatRoomMemberCompanyKey: memberData.ShipmentMemberCompanyKey || '',
         }).subscribe({
-          next: (res) => {
+          next: res => {
             fetchChatMessage(data[data.length - 1], shipmentkey, chatkey);
             this.props.newChat(chatkey);
             this.props.toggleCreateChat(false);
@@ -118,7 +124,7 @@ class Chat extends Component {
           },
         });
       },
-      complete: (result) => {},
+      complete: result => {},
     });
   }
 
@@ -146,10 +152,21 @@ class Chat extends Component {
       companies,
     } = this.props;
     const { text, chatrooms, msg } = ChatReducer;
-    const chat = _.get(this.props, `ChatReducer.chatroomsMsg.${ChatRoomKey}`, []);
+    const chat = _.get(
+      this.props,
+      `ChatReducer.chatroomsMsg.${ChatRoomKey}`,
+      [],
+    );
     const chatMsg = chat.length === 0 ? [] : chat.chatMsg;
-    const ChatRoomFileLink = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomData.ChatRoomFileLink`);
-    const ChatRoomMember = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomMember`, []);
+    const ChatRoomFileLink = _.get(
+      chatrooms,
+      `[${ChatRoomKey}].ChatRoomData.ChatRoomFileLink`,
+    );
+    const ChatRoomMember = _.get(
+      chatrooms,
+      `[${ChatRoomKey}].ChatRoomMember`,
+      [],
+    );
     const ChatRoomData = _.get(chatrooms, `[${ChatRoomKey}].ChatRoomData`, []);
     const member = _.get(chatrooms, `[${ChatRoomKey}].member`, []);
     console.log('member', member);
@@ -202,15 +219,23 @@ class Chat extends Component {
   onFileDrop = (event, ShipmentKey, ChatRoomKey) => {
     event.preventDefault();
     const fileItems = event.dataTransfer.items;
-    if (fileItems !== undefined && fileItems !== null && fileItems[0].kind === 'file') {
+    if (
+      fileItems !== undefined &&
+      fileItems !== null &&
+      fileItems[0].kind === 'file'
+    ) {
       const files = [];
-      _.forEach(fileItems, (i) => {
+      _.forEach(fileItems, i => {
         files.push(i.getAsFile());
       });
 
       // eslint-disable-next-line no-param-reassign
       event.target.value = null;
-      this.uploadModalRef.current.triggerUploading(files, ShipmentKey, ChatRoomKey);
+      this.uploadModalRef.current.triggerUploading(
+        files,
+        ShipmentKey,
+        ChatRoomKey,
+      );
     }
     this.setState({
       onDropChatStyle: false,
@@ -221,7 +246,7 @@ class Chat extends Component {
     this.chatWithHeader.current.scrollChatToBottom();
   };
 
-  onDragOver = (event) => {
+  onDragOver = event => {
     event.stopPropagation();
     event.preventDefault();
     this.setState({
@@ -229,7 +254,7 @@ class Chat extends Component {
     });
   };
 
-  onDragLeave = (event) => {
+  onDragLeave = event => {
     event.stopPropagation();
     event.preventDefault();
     this.setState({
@@ -237,12 +262,12 @@ class Chat extends Component {
     });
   };
 
-  onDragEnter = (event) => {
+  onDragEnter = event => {
     event.preventDefault();
   };
 
   closedTab(removedIndex) {
-    this.setState((state) => {
+    this.setState(state => {
       const newTabs = [...state.tabs];
       newTabs.splice(removedIndex, 1);
 
@@ -257,7 +282,7 @@ class Chat extends Component {
   }
 
   addTab() {
-    this.setState((state) => {
+    this.setState(state => {
       const newTabs = [...state.tabs];
       newTabs.push({
         id: newTabs.length + 1,
@@ -293,12 +318,12 @@ class Chat extends Component {
     } = this.props;
 
     this.props.getChatRoomList(params.shipmentkey, this.props.user.uid); // MOCK SHIPMENT KEY
-    const chats = _.filter(this.props.ChatReducer.chatrooms, (item) => {
+    const chats = _.filter(this.props.ChatReducer.chatrooms, item => {
       if (item.ShipmentKey === 'custom') return true;
       return item.ShipmentKey === params.shipmentkey;
     });
     GetShipmentDetail(params.shipmentkey).subscribe({
-      next: (res) => {
+      next: res => {
         this.setState({
           shipments: {
             ...res.data(),
@@ -306,25 +331,32 @@ class Chat extends Component {
         });
       },
     });
-    GetShipmentNotificationCount(this.props.sender.id, params.shipmentkey).subscribe({
-      next: (res) => {
+    GetShipmentNotificationCount(
+      this.props.sender.id,
+      params.shipmentkey,
+    ).subscribe({
+      next: res => {
         this.setState({
           chatAlert: res.data(),
         });
       },
     });
     const tabs = [];
-    _.forEach(chats, (item) => {
+    _.forEach(chats, item => {
       tabs.push({
         ChatRoomKey: item.ChatRoomKey,
         ShipmentKey: item.ShipmentKey,
       });
     });
-    _.forEach(tabs, (tab) => {
-      this.props.fetchChatMessage(tab.ChatRoomKey, tab.ShipmentKey, this.scrollChildChatToBottom);
+    _.forEach(tabs, tab => {
+      this.props.fetchChatMessage(
+        tab.ChatRoomKey,
+        tab.ShipmentKey,
+        this.scrollChildChatToBottom,
+      );
     });
     GetUserCompany(this.props.user.uid).subscribe({
-      next: (res) => {
+      next: res => {
         this.props.fetchCompany(res);
       },
     });
@@ -338,7 +370,7 @@ class Chat extends Component {
     const {
       match: { params },
     } = this.props;
-    let chats = _.filter(this.props.ChatReducer.chatrooms, (item) => {
+    let chats = _.filter(this.props.ChatReducer.chatrooms, item => {
       if (item.ShipmentKey === 'custom') {
         return true;
       }
@@ -346,7 +378,11 @@ class Chat extends Component {
     });
 
     const hasNewChat = _.get(this.props, 'ChatReducer.selectedChat', '');
-    const hasNewCreateChat = _.get(this.props, 'ChatReducer.lastCreatedChat', '');
+    const hasNewCreateChat = _.get(
+      this.props,
+      'ChatReducer.lastCreatedChat',
+      '',
+    );
     if (_.size(hasNewChat) > 2) {
       if (_.find(chats, item => item.ChatRoomKey === hasNewChat)) {
         chats = _.map(chats, (item, index) => {
@@ -382,7 +418,7 @@ class Chat extends Component {
     const newChat = chats;
     let tabs = [];
 
-    _.forEach(chats, (item) => {
+    _.forEach(chats, item => {
       let content = (
         <div
           className={item.roomName === '+' ? 'create-new-chat-tab' : 'noti'}
@@ -401,8 +437,16 @@ class Chat extends Component {
           {item.roomName}
           {item.roomName !== '+' ? (
             <Badge pill className="notibadge" color="danger">
-              {_.get(this.state, `chatAlert.ChatRoomCount.${item.ChatRoomKey}`, 0) > 0
-                ? _.get(this.state, `chatAlert.ChatRoomCount.${item.ChatRoomKey}`, 0)
+              {_.get(
+                this.state,
+                `chatAlert.ChatRoomCount.${item.ChatRoomKey}`,
+                0,
+              ) > 0
+                ? _.get(
+                    this.state,
+                    `chatAlert.ChatRoomCount.${item.ChatRoomKey}`,
+                    0,
+                  )
                 : ''}
             </Badge>
           ) : (
@@ -411,19 +455,19 @@ class Chat extends Component {
         </div>
       );
       if (
-        this.state.roomeditor.ShipmentKey === item.ShipmentKey
-        && this.state.roomeditor.ChatRoomKey === item.ChatRoomKey
+        this.state.roomeditor.ShipmentKey === item.ShipmentKey &&
+        this.state.roomeditor.ChatRoomKey === item.ChatRoomKey
       ) {
         content = (
           <div className="noti">
             <Input
-              ref={(input) => {
+              ref={input => {
                 this.nameInput = input;
               }}
               value={this.state.roomeditor.roomName}
               type="text"
               maxLength={40}
-              onChange={(e) => {
+              onChange={e => {
                 this.setState({
                   roomeditor: {
                     ...this.state.roomeditor,
@@ -431,14 +475,14 @@ class Chat extends Component {
                   },
                 });
               }}
-              onBlur={(e) => {
+              onBlur={e => {
                 console.log('Un Focus');
                 EditChatRoom(item.ShipmentKey, item.ChatRoomKey, {
                   ChatRoomName: this.state.roomeditor.roomName,
                 });
                 this.setState({ roomeditor: {} });
               }}
-              onKeyDown={(button) => {
+              onKeyDown={button => {
                 if (button.key === 'Enter') {
                   EditChatRoom(item.ShipmentKey, item.ChatRoomKey, {
                     ChatRoomName: this.state.roomeditor.roomName,
@@ -477,9 +521,16 @@ class Chat extends Component {
           tabs={tabs}
         />
         <TabContent>
-          <BlockUi tag="div" blocking={toggle || this.state.toggleChat} style={{ height: '100%' }}>
+          <BlockUi
+            tag="div"
+            blocking={toggle || this.state.toggleChat}
+            style={{ height: '100%' }}
+          >
             {activeTab.length !== 0 ? (
-              this.renderChat(activeTab[0].ChatRoomKey, activeTab[0].ShipmentKey)
+              this.renderChat(
+                activeTab[0].ChatRoomKey,
+                activeTab[0].ShipmentKey,
+              )
             ) : (
               <BlockUi tag="div" blocking style={{ height: '100%' }}>
                 <div style={{ height: '74vh' }} />
@@ -492,9 +543,13 @@ class Chat extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   const {
-    ChatReducer, authReducer, profileReducer, companyReducer, shipmentReducer,
+    ChatReducer,
+    authReducer,
+    profileReducer,
+    companyReducer,
+    shipmentReducer,
   } = state;
 
   const sender = _.find(

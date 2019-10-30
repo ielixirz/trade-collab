@@ -88,7 +88,8 @@ img {
   text-align: center;
   height: max-content;
   border-radius: 3px;
-  border: solid 1px #ededed;}
+  border: solid 1px #ededed;
+}
 
 .create-shipment-create-btn {
   font-size: 1vw;
@@ -236,8 +237,8 @@ div.seenby {
   overflow-x: hidden; /* Hide the horizontal scroll */
 }
 
-thead,
-tbody tr {
+.table.shipment-table > thead,
+.table.shipment-table > tbody tr {
   display: table;
   width: 100%;
   table-layout: fixed; /* even columns width , fix width of table too*/
@@ -350,15 +351,14 @@ tbody > tr:hover {
   }
 }
 
-.company-shipment{
+.company-shipment {
   margin: 4px;
   border-radius: 3px;
   background-color: #d6d6d6;
   width: -webkit-fill-available;
 }
 
-
-.company-shipment-button{
+.company-shipment-button {
   margin: 4px;
   border-radius: 3px;
 }
@@ -368,15 +368,15 @@ tbody > tr:hover {
   color: #9b9b9b;
 }
 
-.shipment-item-box{
+.shipment-item-box {
   border: 0px;
 }
 
-.shipment-item-box:focus{
+.shipment-item-box:focus {
   outline: none;
 }
 
-.shipment-item-box-gray-background{
+.shipment-item-box-gray-background {
   margin: 4px;
   border: 0px;
   border-radius: 3px;
@@ -409,7 +409,7 @@ tbody > tr:hover {
   }
 }
 
-.input-shipment  {
+.input-shipment {
   color: #9b9b9b;
   border-color: #d6d6d6;
   border-width: thin;

@@ -408,6 +408,13 @@ textarea {
 .companySelect div:first-child {
   background-color: #ffffff !important;
 }
+.nav-tabs .nav-link.activeTab {
+  color: #2f353a;
+  background: #fff;
+  border-color: #fff;
+  border-bottom: 2px solid;
+  border-bottom-color: #16a085;
+}
 
 .btn-white:hover {
   color: hsl(0, 0%, 50%);
@@ -570,11 +577,20 @@ h2.time-background:before {
 }
 
 .file-row {
-  border: 0;
+  height: 50px;
+  border: 1px solid #e2e2e2;
+  border-radius: 3px;
+  padding: 3px;
+  &.selected {
+    border-color: #367fee;
+    background-color: #f5f9ff;
+    border-radius: 5px;
+  }
 }
 
 .file-row:hover {
-  background-color: #367fee1c;
+  border-color: #367fee;
+  background-color: #f5f9ff;
   border-radius: 5px;
 }
 

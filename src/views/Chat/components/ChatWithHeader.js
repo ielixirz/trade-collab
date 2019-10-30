@@ -25,6 +25,7 @@ import {
   DropdownItem,
   Modal,
 } from 'reactstrap';
+
 import Select from 'react-select';
 import MemberModal from '../../../component/MemberModal';
 import UploadModal from '../../../component/UploadModal';
@@ -269,6 +270,7 @@ class ChatWithHeader extends Component {
       ShipmentMember,
       item => item.ShipmentMemberCompanyKey === e.value,
     );
+
     const chatMember = _.find(
       members,
       item => item.ChatRoomMemberEmail === user.email,
@@ -1025,6 +1027,11 @@ class ChatWithHeader extends Component {
       member,
       item => item.ChatRoomMemberEmail === user.email,
     );
+
+    console.log('memberData', {
+      members,
+      isInvited,
+    });
     let ref = '';
     if (!_.isEmpty(isInvited)) {
       if (_.size(_.get(ship, 'ShipmentReferenceList', [])) > 0) {
@@ -1051,61 +1058,6 @@ class ChatWithHeader extends Component {
             borderBottom: '1px solid #707070',
           }}
         >
-          <Breadcrumb className="chat-toolbar">
-            <Row style={{ width: '100%', marginLeft: 20 }}>
-              {this.state.toggleInvite ? (
-                this.renderInviteComponent()
-              ) : (
-                <React.Fragment>
-                  <Col xs={6}>
-                    {isLoadingShipment ? (
-                      <BlockUi tag="div" blocking />
-                    ) : (
-                      this.renderRefComponent(
-                        1,
-                        _.get(ship, 'ShipmentReferenceList', []),
-                        ShipmentKey,
-                        _.get(ship, 'ShipmentMember', []),
-                      )
-                    )}
-                  </Col>
-                  <Col>
-                    <Row style={{ paddingLeft: 77 }}>
-                      <MemberModal
-                        {...this.props}
-                        count={
-                          _.filter(
-                            member,
-                            item =>
-                              _.get(item, 'ChatRoomMemberIsLeave', false) ===
-                              false,
-                          ).length
-                        }
-                        toggleBlocking={toggleBlocking}
-                        list={member}
-                        network={network}
-                      />
-                      <Button
-                        className="invite-btn-trigger"
-                        onClick={() => {
-                          this.toggleInviteComponent(this.state.toggleInvite);
-                        }}
-                      >
-                        <b>Invite</b>
-                      </Button>
-                    </Row>
-                  </Col>
-                  <Col xs={4} />
-                </React.Fragment>
-              )}
-            </Row>
-          </Breadcrumb>
-        </Row>
-        <Row
-          style={{
-            height: 'auto',
-          }}
-        >
           <Col
             xs="8"
             style={{
@@ -1114,6 +1066,55 @@ class ChatWithHeader extends Component {
               paddingRight: '5px',
             }}
           >
+            <Breadcrumb className="chat-toolbar">
+              <Row style={{ width: '100%', marginLeft: 20 }}>
+                {this.state.toggleInvite ? (
+                  this.renderInviteComponent()
+                ) : (
+                  <React.Fragment>
+                    <Col xs={6}>
+                      {isLoadingShipment ? (
+                        <BlockUi tag="div" blocking />
+                      ) : (
+                        this.renderRefComponent(
+                          1,
+                          _.get(ship, 'ShipmentReferenceList', []),
+                          ShipmentKey,
+                          _.get(ship, 'ShipmentMember', []),
+                        )
+                      )}
+                    </Col>
+                    <Col>
+                      <Row style={{ paddingLeft: 77 }}>
+                        <MemberModal
+                          {...this.props}
+                          count={
+                            _.filter(
+                              member,
+                              item =>
+                                _.get(item, 'ChatRoomMemberIsLeave', false) ===
+                                false,
+                            ).length
+                          }
+                          toggleBlocking={toggleBlocking}
+                          list={member}
+                          network={network}
+                        />
+                        <Button
+                          className="invite-btn-trigger"
+                          onClick={() => {
+                            this.toggleInviteComponent(this.state.toggleInvite);
+                          }}
+                        >
+                          <b>Invite</b>
+                        </Button>
+                      </Row>
+                    </Col>
+                  </React.Fragment>
+                )}
+              </Row>
+            </Breadcrumb>
+
             <div
               className="mesgs"
               style={onDropChatStyle === false ? {} : { opacity: '0.5' }}
@@ -1388,11 +1389,6 @@ class ChatWithHeader extends Component {
                       }}
                     />
                     <InputGroupAddon addonType="append" className="sent">
-                      {/* <Button color="default1"> @</Button> */}
-                      {/* <Button color="default1"> */}
-                      {/*  {' '} */}
-                      {/*  <i className="fa fa-smile-o fa-lg" /> */}
-                      {/* </Button> */}
                       <Button
                         color="default1"
                         onClick={() => {
@@ -1436,8 +1432,10 @@ class ChatWithHeader extends Component {
               mainData={this.props.ShipmentData}
               shipmentKey={ShipmentKey}
               chatroomKey={ChatRoomKey}
+              userData={user}
               collapse={this.state.sideCollpase}
               collapseTrigger={this.triggerSideCollapse}
+              memberData={isInvited}
             />
           </Col>
         </Row>

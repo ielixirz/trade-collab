@@ -5,9 +5,7 @@ import React, { Component, useContext, useReducer } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import {
-  Collapse, CardBody, Card, Row, Col,
-} from 'reactstrap';
+import { Collapse, CardBody, Card, Row, Col } from 'reactstrap';
 import ShipmentListContext from '../../context/ShipmentContext';
 
 import shipmentReducer from '../../reducers/shipmentReducer';
@@ -39,11 +37,16 @@ const styles = {
 };
 
 const ShipmentData = ({
-  shipmentKey, chatroomKey, userKey, mainData,
+  shipmentKey,
+  chatroomKey,
+  userKey,
+  mainData,
+  memberData,
 }) => {
   const initialState = useContext(ShipmentListContext);
 
   const [state, dispatch] = useReducer(shipmentReducer, initialState);
+
   return (
     <ShipmentListContext.Provider
       value={{
@@ -53,6 +56,7 @@ const ShipmentData = ({
         chatroomKey,
         userKey,
         mainData,
+        memberData,
       }}
     >
       <ShipmentList />
@@ -76,7 +80,11 @@ class ShipmentSide extends Component {
   render() {
     return (
       <div>
-        <Card className="card-chat-side" onClick={this.triggerCollapse} style={styles.card}>
+        <Card
+          className="card-chat-side"
+          onClick={this.triggerCollapse}
+          style={styles.card}
+        >
           <CardBody style={{ paddingRight: 10 }}>
             <Row style={{ marginBottom: '10px', paddingRight: 15 }}>
               <Col xs="10" className="text-left">
@@ -84,8 +92,7 @@ class ShipmentSide extends Component {
                   <i className="fa fa-cube" />
                 </span>
                 <span style={styles.title}>
-                  Shipment Update :
-                  {' '}
+                  Shipment Update :{' '}
                   <span style={styles.status}>
                     {this.props.mainData.ShipmentStatus === undefined ? (
                       <TextLoading />
@@ -113,6 +120,7 @@ class ShipmentSide extends Component {
                 chatroomKey={this.props.chatroomKey}
                 userKey={this.props.auth.uid}
                 mainData={this.props.mainData}
+                memberData={this.props.memberData}
               />
             </Collapse>
           </CardBody>
@@ -122,7 +130,7 @@ class ShipmentSide extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   const { authReducer, userReducer, profileReducer } = state;
   const profile = _.find(
     profileReducer.ProfileList,
