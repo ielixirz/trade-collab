@@ -3,7 +3,7 @@ import {
   collection, doc, collectionData, docData,
 } from 'rxfire/firestore';
 import {
-  from, combineLatest, merge, forkJoin, of,
+  from, combineLatest, merge, forkJoin, of, throwError,
 } from 'rxjs';
 import {
   take, concatMap, map, tap, mergeMap, toArray, switchMap, filter,
@@ -302,7 +302,7 @@ export const GetAvailableRole = ShipmentKey => GetAllShipmentRole(ShipmentKey).p
 export const GetShipmentRoleByCompany = (ShipmentKey, CompanyKey) => collectionData(
   ShipmentRoleRefPath(ShipmentKey).where('ShipmentRoleCompanyKey', '==', CompanyKey),
   'ShipmentRole',
-).pipe(map(ShipmentRoleList => ShipmentRoleList.ShipmentRole));
+).pipe(map(ShipmentRoleList => ShipmentRoleList.map(ShipmentRoleDoc => ShipmentRoleDoc.ShipmentRole)));
 
 export const isCanSeeShipmentDetail = (ShipmentKey, CompanyKey) => GetShipmentRoleByCompany(
   ShipmentKey,
@@ -378,10 +378,18 @@ export const CreateShipmentBySelectCompanyWithShipmentReferenceAndShipmentMaster
 //   }),
 // );
 
-export const CheckAvailableThenRemoveRole = (ShipmentKey, Role) => isAvailableRole(ShipmentKey, Role)
-  .pipe(
-    switchMap(RoleStatus => (RoleStatus ? GetShipmentRoleDetail(ShipmentKey, Role).pipe(switchMap(RoleDetail => AddShipmentRoleNoRole(ShipmentKey, RoleDetail)), switchMap(DeleteShipmentRole(ShipmentKey, Role))) : of(null))),
-  );
+// export const CheckAvailableThenRemoveRole = (ShipmentKey, Role) => isAvailableRole(ShipmentKey, Role)
+//   .pipe(
+//     switchMap(RoleStatus => (RoleStatus ? GetShipmentRoleDetail(ShipmentKey, Role).pipe(switchMap(RoleDetail => AddShipmentRoleNoRole(ShipmentKey, RoleDetail)), switchMap(DeleteShipmentRole(ShipmentKey, Role))) : of(null))),
+//   );
+
+export const CheckAvailableThenRemoveRole = (ShipmentKey, Role) => GetShipmentRoleDetail(
+  ShipmentKey,
+  Role,
+).pipe(
+  tap(RoleDetail => console.log(RoleDetail)),
+  switchMap(RoleDetail => (RoleDetail.ShipmentRoleCompanyName ? forkJoin(AddShipmentRoleNoRole(ShipmentKey, RoleDetail), DeleteShipmentRole(ShipmentKey, Role)) : throwError(''))),
+);
 
 export const AssignShipmentRole = (ShipmentKey, Role, Data) => isAvailableRole(ShipmentKey, Role).pipe(switchMap(RoleStatus => (RoleStatus ? DeleteShipmentRoleNoRole(ShipmentKey, Data).pipe(switchMap(() => AddShipmentRole(ShipmentKey, Role, Data))) : of('Selected role not available'))));
 
@@ -471,7 +479,7 @@ export const PermissionRemoveList = (ShipmentKey, CompanyKey) => GetShipmentRole
 ).pipe(map(
   (CompanyRoleList) => {
     let PermissionList = [];
-
+    console.log(`CompanyRoleList : ${CompanyRoleList}`);
     if (_.includes(CompanyRoleList, 'Importer')) {
       PermissionList = _.union(PermissionList, ['Importer', 'Exporter']);
     }
@@ -485,10 +493,10 @@ export const PermissionRemoveList = (ShipmentKey, CompanyKey) => GetShipmentRole
       PermissionList = _.union(PermissionList, ['Exporter', 'InboundForwarder', 'OutboundForwarder']);
     }
     if (_.includes(CompanyRoleList, 'InboundCustomBroker')) {
-      PermissionList = _.union(PermissionList, ['Importer', 'InboundForwarder', 'InboundCustomBroker']);
+      PermissionList = _.union(PermissionList, ['InboundCustomBroker']);
     }
     if (_.includes(CompanyRoleList, 'OutboundCustomBroker')) {
-      PermissionList = _.union(PermissionList, ['Exporter', 'OutboundForwarder', 'OutboundCustomBroker']);
+      PermissionList = _.union(PermissionList, ['OutboundCustomBroker']);
     }
     return PermissionList;
   },
