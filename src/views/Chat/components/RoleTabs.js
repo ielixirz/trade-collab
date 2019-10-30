@@ -30,13 +30,13 @@ import {
 } from '../../../service/shipment/shipment';
 import Shipment from '../../Shipment/Shipment';
 import BlockUi from 'react-block-ui';
+import { GetUserCompany } from '../../../service/user/user';
 const timelogo = require('../../../component/svg/times-circle-regular-1.svg');
 
 const styles = {
   display: 'inline-table',
   verticalAlign: 'top',
 };
-const company = [];
 let role = [
   {
     value: 'OutboundForwarder',
@@ -76,6 +76,7 @@ class RoleTabs extends Component {
     super(props);
     this.state = {
       role: [],
+      companyList: [],
       ShipmentsRole: [],
       isWorking: false,
       error: {
@@ -87,17 +88,17 @@ class RoleTabs extends Component {
   }
   componentDidMount() {
     console.log('Set Listener');
-    GetShipmentDetail(this.props.shipmentKey).subscribe({
-      next: shipment => {
-        console.log('Shipments', shipment.data(), this.props);
-        const currentMember = _.get(
-          shipment.data().ShipmentMember,
-          this.props.userKey,
-          {},
-        );
-        company.push({
-          value: currentMember.ShipmentMemberCompanyKey,
-          label: currentMember.ShipmentMemberCompanyName,
+    GetUserCompany(this.props.userKey).subscribe({
+      next: res => {
+        console.log('User Company is', res);
+        const company = _.map(res, item => {
+          return {
+            value: item.CompanyKey,
+            label: item.CompanyName,
+          };
+        });
+        this.setState({
+          companyList: company,
         });
       },
     });
@@ -125,6 +126,7 @@ class RoleTabs extends Component {
   };
 
   renderRoleOption = role => {
+    const { companyList: company } = this.state;
     const roleCard = _.find(
       this.state.ShipmentsRole,
       item => item.ShipmentRole === role.value,
