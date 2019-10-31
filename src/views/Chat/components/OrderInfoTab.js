@@ -483,7 +483,13 @@ class OrderInfoTab extends Component {
                 placeholder="Your Shipment Product"
                 value={this.state.ShipmentDetailProduct}
                 onChange={e => {
-                  this.setState({ ShipmentDetailProduct: e.target.value });
+                  if (_.size(e.target.value) > 50) {
+                    e.target.className =
+                      'form-control  order-info-input-invalid';
+                  } else {
+                    e.target.className = 'form-control  order-info-input';
+                    this.setState({ ShipmentDetailProduct: e.target.value });
+                  }
                 }}
               />
             </FormGroup>
@@ -504,9 +510,15 @@ class OrderInfoTab extends Component {
                 value={this.state.ShipmentDetailPriceDescriptionOfGoods}
                 readOnly={!this.state.isImporter}
                 onChange={e => {
-                  this.setState({
-                    ShipmentDetailPriceDescriptionOfGoods: e.target.value,
-                  });
+                  if (_.size(e.target.value) > 600) {
+                    e.target.className =
+                      'form-control order-info-input-invalid';
+                  } else {
+                    e.target.className = 'form-control order-info-input';
+                    this.setState({
+                      ShipmentDetailPriceDescriptionOfGoods: e.target.value,
+                    });
+                  }
                 }}
               />
             </FormGroup>

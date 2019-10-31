@@ -131,9 +131,25 @@ font-size: 10px;
 }
 
 .order-info-input {
+  text-overflow:ellipsis;
+
   width: 350.5px;
   border: 0;
   border-bottom: 1px solid #c7c7c7;
+  border-radius: 0;
+  &:hover {
+    color: #679def;
+    cursor: pointer;
+  }
+  &::placeholder {
+    color: #c7c8cb;
+    font-style: italic;
+  }
+}
+.order-info-input-invalid {
+  text-overflow:ellipsis;
+  border: 2px solid #FF0000 !important;
+  width: 350.5px;
   border-radius: 0;
   &:hover {
     color: #679def;
