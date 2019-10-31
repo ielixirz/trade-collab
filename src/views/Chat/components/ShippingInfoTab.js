@@ -33,7 +33,7 @@ class ShippingInfoTab extends Component {
 
   componentDidMount() {
     if (this.orderTextarea) {
-      this.orderTextarea.style.height = '100px';
+      this.orderTextarea.style.height = '50px';
     }
   }
 
@@ -239,7 +239,7 @@ class ShippingInfoTab extends Component {
             </Col>
             <Col>
               <textarea
-                row={9}
+                row={0}
                 id="text-input"
                 ref={ref => (this.orderTextarea = ref)}
                 name="text-input"
@@ -247,7 +247,7 @@ class ShippingInfoTab extends Component {
                 value={this.state.ShipmentDetailNote}
                 maxLength={300}
                 onChange={e => {
-                  this.orderTextarea.style.height = '100px';
+                  this.orderTextarea.style.height = '50px';
                   if (this.orderTextarea.scrollHeight > 280) {
                     this.orderTextarea.style.height = '280px';
                   } else {
