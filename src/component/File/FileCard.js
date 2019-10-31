@@ -41,15 +41,15 @@ const FileCard = ({ fileInfo, mode, progress }) => {
     const fileType = getFileImgType(extension);
     switch (fileType) {
       case 'PDF':
-        return 'assets/img/file-pdf-regular.png';
+        return 'assets/svg/file-pdf-regular.svg';
       case 'EXCEL':
-        return 'assets/img/file-excel-regular.png';
+        return 'assets/svg/file-excel-regular.svg';
       case 'WORD':
-        return 'assets/img/file-word-regular.png';
+        return 'assets/svg/file-word-regular.svg';
       case 'IMAGES':
-        return 'assets/img/file-image-regular.png';
+        return 'assets/svg/file-image-regular.svg';
       default:
-        return 'assets/img/file-any-other-type.png';
+        return 'assets/svg/file-any-other-type.svg';
     }
   };
 
