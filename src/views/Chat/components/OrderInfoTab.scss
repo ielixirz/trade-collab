@@ -79,11 +79,9 @@
   text-align: right;
   color: #679def;
 }
-input:invalid {
-  border: 1px solid #FF0000;
-}
+
 .order-info-input-inline {
-  text-overflow:ellipsis;
+
   border: 0;
   border-bottom: 1px solid #c7c7c7 !important;
   border-radius: 0;
@@ -94,6 +92,10 @@ input:invalid {
   &::placeholder {
     color: #c7c8cb;
     font-style: italic;
+  }
+
+  &.textarea {
+    text-align: left;
   }
 }
 
