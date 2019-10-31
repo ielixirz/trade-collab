@@ -176,7 +176,7 @@ class ShippingInfoTab extends Component {
                 id="text-input"
                 ref={ref => (this.orderTextarea = ref)}
                 name="text-input"
-                className="form-control order-info-input-inline"
+                className="form-control order-info-input-inline textarea"
                 value={this.state.ShipmentDetailNote}
                 onChange={(e) => {
                   this.orderTextarea.style.height = '100px';
