@@ -71,7 +71,9 @@ class ShippingInfoTab extends Component {
         >
           <FormGroup row>
             <Col lg="6">
-              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>
+              <Label
+                style={{ fontSize: 12, fontWeight: 'bold', marginTop: 10 }}
+              >
                 Shipping Line
               </Label>
             </Col>
@@ -116,7 +118,9 @@ class ShippingInfoTab extends Component {
           </FormGroup>
           <FormGroup row>
             <Col lg="6">
-              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>
+              <Label
+                style={{ fontSize: 12, fontWeight: 'bold', marginTop: 10 }}
+              >
                 Container No.
               </Label>
             </Col>
@@ -154,7 +158,9 @@ class ShippingInfoTab extends Component {
           </FormGroup>
           <FormGroup row>
             <Col lg="6">
-              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>
+              <Label
+                style={{ fontSize: 12, fontWeight: 'bold', marginTop: 10 }}
+              >
                 Bill of Landding No.
               </Label>
             </Col>
@@ -195,6 +201,7 @@ class ShippingInfoTab extends Component {
                 style={{
                   fontSize: 12,
                   fontWeight: 'bold',
+                  marginTop: 10,
                   whiteSpace: 'nowrap',
                 }}
               >
@@ -235,7 +242,11 @@ class ShippingInfoTab extends Component {
           </FormGroup>
           <FormGroup>
             <Col>
-              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>Note</Label>
+              <Label
+                style={{ fontSize: 12, fontWeight: 'bold', marginTop: 10 }}
+              >
+                Note
+              </Label>
             </Col>
             <Col>
               <textarea
