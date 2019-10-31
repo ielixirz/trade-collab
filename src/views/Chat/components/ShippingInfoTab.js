@@ -1,3 +1,4 @@
+/* eslint-disable filenames/match-regex */
 import React, { Component } from 'react';
 import {
   Badge,
@@ -29,6 +30,7 @@ class ShippingInfoTab extends Component {
       ...this.props,
     };
   }
+
   componentDidMount() {
     if (this.orderTextarea) {
       this.orderTextarea.style.height = '100px';
@@ -46,7 +48,6 @@ class ShippingInfoTab extends Component {
             fontSize: '12px',
           }}
           onKeyPress={event => {
-            console.log('Enter', event);
             if (event.key === 'Enter') {
               event.target.blur();
               const {
@@ -80,11 +81,32 @@ class ShippingInfoTab extends Component {
                 id="text-input"
                 name="text-input"
                 value={this.state.ShipmentDetailShippingLine}
-                className={'form-control order-info-input-inline'}
+                className="form-control order-info-input-inline"
                 onChange={e => {
-                  this.setState({ ShipmentDetailShippingLine: e.target.value });
+                  const regex = RegExp('[!@#$%^&*(),.?":{}|<>]');
+                  console.log(
+                    'test regex of',
+                    e.target.value,
+                    regex.test(e.target.value),
+                  );
+                  console.log('test regex', regex.test(e.target.value));
+                  const validateResult =
+                    (regex.test(e.target.value) === false &&
+                      _.size(e.target.value) > 0) ||
+                    _.size(e.target.value) > 50;
+
+                  console.log('size', validateResult);
+                  if (validateResult) {
+                    e.target.className =
+                      'form-control order-info-input-inline-invalid';
+                  } else {
+                    e.target.className = 'form-control order-info-input-inline';
+                    this.setState({
+                      ShipmentDetailShippingLine: e.target.value,
+                    });
+                  }
                 }}
-                placeholder="Text"
+                placeholder="e.g. Maersk, MSC"
                 style={{
                   border: 'none',
                   borderColor: 'transparent',
@@ -103,15 +125,27 @@ class ShippingInfoTab extends Component {
                 type="text"
                 id="text-input"
                 name="text-input"
-                className={'form-control order-info-input-inline'}
+                className="form-control order-info-input-inline"
                 value={this.state.ShipmentDetailContainerNumber}
                 onChange={e => {
-                  this.setState({
-                    ShipmentDetailContainerNumber: e.target.value,
-                  });
+                  const regex = RegExp('/^[d a-zA-Z0-9 -]+/gm');
+                  if (
+                    _.size(e.target.value) > 50 ||
+                    (regex.test(e.target.value) === false &&
+                      _.size(e.target.value) > 0)
+                  ) {
+                    e.target.className =
+                      'form-control order-info-input-inline-invalid';
+                  } else {
+                    e.target.className = 'form-control order-info-input-inline';
+                    this.setState({
+                      ShipmentDetailContainerNumber: e.target.value,
+                    });
+                  }
                 }}
-                placeholder="Text"
+                placeholder="Input Container No."
                 style={{
+                  'text-transform': 'uppercase',
                   border: 'none',
                   borderColor: 'transparent',
                 }}
@@ -129,14 +163,25 @@ class ShippingInfoTab extends Component {
                 type="text"
                 id="text-input"
                 name="text-input"
-                className={'form-control order-info-input-inline'}
+                className="form-control order-info-input-inline"
                 value={this.state.ShipmentDetailBillofLandingNumber}
                 onChange={e => {
-                  this.setState({
-                    ShipmentDetailBillofLandingNumber: e.target.value,
-                  });
+                  const regex = RegExp('/^[d a-zA-Z0-9 -]+/gm');
+                  if (
+                    _.size(e.target.value) > 50 ||
+                    (regex.test(e.target.value) === false &&
+                      _.size(e.target.value) > 0)
+                  ) {
+                    e.target.className =
+                      'form-control order-info-input-inline-invalid';
+                  } else {
+                    e.target.className = 'form-control order-info-input-inline';
+                    this.setState({
+                      ShipmentDetailBillofLandingNumber: e.target.value,
+                    });
+                  }
                 }}
-                placeholder="Text"
+                placeholder="Master Bill of Landing No."
                 style={{
                   border: 'none',
                   borderColor: 'transparent',
@@ -160,15 +205,26 @@ class ShippingInfoTab extends Component {
               <Input
                 type="text"
                 id="text-input"
-                className={'form-control order-info-input-inline'}
+                className="form-control order-info-input-inline"
                 name="text-inputt"
-                placeholder="Text"
+                placeholder="e.g. DHL Tracking No."
                 value={this.state.ShipmentDetailOriginalDocumentTrackingNumber}
                 onChange={e => {
-                  this.setState({
-                    ShipmentDetailOriginalDocumentTrackingNumber:
-                      e.target.value,
-                  });
+                  const regex = RegExp('/^[d a-zA-Z0-9 -]+/gm');
+                  if (
+                    _.size(e.target.value) > 50 ||
+                    (regex.test(e.target.value) === false &&
+                      _.size(e.target.value) > 0)
+                  ) {
+                    e.target.className =
+                      'form-control order-info-input-inline-invalid';
+                  } else {
+                    e.target.className = 'form-control order-info-input-inline';
+                    this.setState({
+                      ShipmentDetailOriginalDocumentTrackingNumber:
+                        e.target.value,
+                    });
+                  }
                 }}
                 style={{
                   border: 'none',
@@ -187,8 +243,9 @@ class ShippingInfoTab extends Component {
                 id="text-input"
                 ref={ref => (this.orderTextarea = ref)}
                 name="text-input"
-                className={'form-control order-info-input-inline'}
+                className="form-control order-info-input-inline textarea"
                 value={this.state.ShipmentDetailNote}
+                maxLength={300}
                 onChange={e => {
                   this.orderTextarea.style.height = '100px';
                   if (this.orderTextarea.scrollHeight > 280) {
@@ -196,9 +253,15 @@ class ShippingInfoTab extends Component {
                   } else {
                     this.orderTextarea.style.height = `${this.orderTextarea.scrollHeight}px`;
                   }
-                  this.setState({
-                    ShipmentDetailNote: e.target.value,
-                  });
+                  if (_.size(e.target.value) > 300) {
+                    e.target.className =
+                      'form-control order-info-input-inline-invalid';
+                  } else {
+                    e.target.className = 'form-control order-info-input-inline';
+                    this.setState({
+                      ShipmentDetailNote: e.target.value,
+                    });
+                  }
                 }}
                 placeholder="Text"
                 style={{

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   Button,
   CardBody,
+  CardHeader,
   Col,
   DropdownItem,
   DropdownMenu,
@@ -165,7 +166,16 @@ class RoleTabs extends Component {
             )}
           </Col>
           <Col xs={'8'} style={{ marginTop: 15 }}>
-            {role.label}
+            <span
+              style={{
+                fontSize: 12,
+                fontWeight: 'bold',
+                'white-space': 'nowrap',
+              }}
+            >
+              {role.label}
+            </span>
+
             <br />
 
             {roleCard ? (
@@ -173,17 +183,16 @@ class RoleTabs extends Component {
             ) : (
               <UncontrolledDropdown>
                 <DropdownToggle tag={'p'}>
-                  <Select
-                    className={'companySelect'}
-                    onChange={e => {
-                      this.setState({ role: e });
+                  <span
+                    style={{
+                      fontSize: 12,
+                      'white-space': 'nowrap',
+                      'text-decoration': 'underline',
                     }}
-                    name="company"
-                    placeholder="Select Company"
-                    options={company}
-                    value={this.state.role[role]}
-                    isDisabled={true}
-                  />
+                  >
+                    Select your own company for this role{' '}
+                    <i className="fa fa-arrow-down"></i>
+                  </span>
                 </DropdownToggle>
 
                 <DropdownMenu
