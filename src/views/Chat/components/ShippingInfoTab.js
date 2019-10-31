@@ -83,13 +83,20 @@ class ShippingInfoTab extends Component {
                 value={this.state.ShipmentDetailShippingLine}
                 className="form-control order-info-input-inline"
                 onChange={e => {
-                  const regex = /^[d a-zA-Z0-9 -]+/g;
-                  console.log('regex', regex.test(e.target.value) === false);
-                  if (
-                    _.size(e.target.value) > 50 ||
+                  const regex = RegExp('[!@#$%^&*(),.?":{}|<>]');
+                  console.log(
+                    'test regex of',
+                    e.target.value,
+                    regex.test(e.target.value),
+                  );
+                  console.log('test regex', regex.test(e.target.value));
+                  const validateResult =
                     (regex.test(e.target.value) === false &&
-                      _.size(e.target.value) > 0)
-                  ) {
+                      _.size(e.target.value) > 0) ||
+                    _.size(e.target.value) > 50;
+
+                  console.log('size', validateResult);
+                  if (validateResult) {
                     e.target.className =
                       'form-control order-info-input-inline-invalid';
                   } else {
@@ -121,7 +128,7 @@ class ShippingInfoTab extends Component {
                 className="form-control order-info-input-inline"
                 value={this.state.ShipmentDetailContainerNumber}
                 onChange={e => {
-                  const regex = /^[d a-zA-Z0-9 -]+/g;
+                  const regex = RegExp('/^[d a-zA-Z0-9 -]+/gm');
                   if (
                     _.size(e.target.value) > 50 ||
                     (regex.test(e.target.value) === false &&
@@ -159,7 +166,7 @@ class ShippingInfoTab extends Component {
                 className="form-control order-info-input-inline"
                 value={this.state.ShipmentDetailBillofLandingNumber}
                 onChange={e => {
-                  const regex = /^[d a-zA-Z0-9 -]+/g;
+                  const regex = RegExp('/^[d a-zA-Z0-9 -]+/gm');
                   if (
                     _.size(e.target.value) > 50 ||
                     (regex.test(e.target.value) === false &&
@@ -203,7 +210,7 @@ class ShippingInfoTab extends Component {
                 placeholder="e.g. DHL Tracking No."
                 value={this.state.ShipmentDetailOriginalDocumentTrackingNumber}
                 onChange={e => {
-                  const regex = /^[d a-zA-Z0-9 -]+/g;
+                  const regex = RegExp('/^[d a-zA-Z0-9 -]+/gm');
                   if (
                     _.size(e.target.value) > 50 ||
                     (regex.test(e.target.value) === false &&
