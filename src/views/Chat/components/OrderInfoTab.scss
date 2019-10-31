@@ -79,7 +79,13 @@
   text-align: right;
   color: #679def;
 }
+.roleOption{
+  opacity:0;
+}
 
+.roleOption:hover{
+  opacity:1;
+}
 .order-info-input-inline {
   text-overflow: ellipsis;
 
