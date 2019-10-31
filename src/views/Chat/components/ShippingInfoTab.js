@@ -1,7 +1,13 @@
 /* eslint-disable filenames/match-regex */
 import React, { Component } from 'react';
 import {
-  Badge, Col, Form, FormGroup, FormText, Input, Label,
+  Badge,
+  Col,
+  Form,
+  FormGroup,
+  FormText,
+  Input,
+  Label,
 } from 'reactstrap';
 import _ from 'lodash';
 import { UpdateMasterData } from '../../../service/masterdata/masterdata';
@@ -41,8 +47,7 @@ class ShippingInfoTab extends Component {
             borderColor: 'transparent',
             fontSize: '12px',
           }}
-          onKeyPress={(event) => {
-            console.log('Enter', event);
+          onKeyPress={event => {
             if (event.key === 'Enter') {
               event.target.blur();
               const {
@@ -66,7 +71,9 @@ class ShippingInfoTab extends Component {
         >
           <FormGroup row>
             <Col lg="6">
-              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>Shipping Line</Label>
+              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>
+                Shipping Line
+              </Label>
             </Col>
             <Col xs="6">
               <Input
@@ -75,8 +82,16 @@ class ShippingInfoTab extends Component {
                 name="text-input"
                 value={this.state.ShipmentDetailShippingLine}
                 className="form-control order-info-input-inline"
-                onChange={(e) => {
-                  this.setState({ ShipmentDetailShippingLine: e.target.value });
+                onChange={e => {
+                  if (_.size(e.target.value) > 50) {
+                    e.target.className =
+                      'form-control order-info-input-inline-invalid';
+                  } else {
+                    e.target.className = 'form-control order-info-input-inline';
+                    this.setState({
+                      ShipmentDetailShippingLine: e.target.value,
+                    });
+                  }
                 }}
                 placeholder="e.g. Maersk, MSC"
                 style={{
@@ -88,7 +103,9 @@ class ShippingInfoTab extends Component {
           </FormGroup>
           <FormGroup row>
             <Col lg="6">
-              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>Container No.</Label>
+              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>
+                Container No.
+              </Label>
             </Col>
             <Col xs="6">
               <Input
@@ -97,13 +114,20 @@ class ShippingInfoTab extends Component {
                 name="text-input"
                 className="form-control order-info-input-inline"
                 value={this.state.ShipmentDetailContainerNumber}
-                onChange={(e) => {
-                  this.setState({
-                    ShipmentDetailContainerNumber: e.target.value,
-                  });
+                onChange={e => {
+                  if (_.size(e.target.value) > 50) {
+                    e.target.className =
+                      'form-control order-info-input-inline-invalid';
+                  } else {
+                    e.target.className = 'form-control order-info-input-inline';
+                    this.setState({
+                      ShipmentDetailContainerNumber: e.target.value,
+                    });
+                  }
                 }}
                 placeholder="Input Container No."
                 style={{
+                  'text-transform': 'uppercase',
                   border: 'none',
                   borderColor: 'transparent',
                 }}
@@ -112,7 +136,9 @@ class ShippingInfoTab extends Component {
           </FormGroup>
           <FormGroup row>
             <Col lg="6">
-              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>Bill of Landding No.</Label>
+              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>
+                Bill of Landding No.
+              </Label>
             </Col>
             <Col xs="6">
               <Input
@@ -121,10 +147,16 @@ class ShippingInfoTab extends Component {
                 name="text-input"
                 className="form-control order-info-input-inline"
                 value={this.state.ShipmentDetailBillofLandingNumber}
-                onChange={(e) => {
-                  this.setState({
-                    ShipmentDetailBillofLandingNumber: e.target.value,
-                  });
+                onChange={e => {
+                  if (_.size(e.target.value) > 50) {
+                    e.target.className =
+                      'form-control order-info-input-inline-invalid';
+                  } else {
+                    e.target.className = 'form-control order-info-input-inline';
+                    this.setState({
+                      ShipmentDetailBillofLandingNumber: e.target.value,
+                    });
+                  }
                 }}
                 placeholder="Master Bill of Landing No."
                 style={{
@@ -154,10 +186,17 @@ class ShippingInfoTab extends Component {
                 name="text-inputt"
                 placeholder="e.g. DHL Tracking No."
                 value={this.state.ShipmentDetailOriginalDocumentTrackingNumber}
-                onChange={(e) => {
-                  this.setState({
-                    ShipmentDetailOriginalDocumentTrackingNumber: e.target.value,
-                  });
+                onChange={e => {
+                  if (_.size(e.target.value) > 50) {
+                    e.target.className =
+                      'form-control order-info-input-inline-invalid';
+                  } else {
+                    e.target.className = 'form-control order-info-input-inline';
+                    this.setState({
+                      ShipmentDetailOriginalDocumentTrackingNumber:
+                        e.target.value,
+                    });
+                  }
                 }}
                 style={{
                   border: 'none',
@@ -178,16 +217,23 @@ class ShippingInfoTab extends Component {
                 name="text-input"
                 className="form-control order-info-input-inline"
                 value={this.state.ShipmentDetailNote}
-                onChange={(e) => {
+                maxLength={300}
+                onChange={e => {
                   this.orderTextarea.style.height = '100px';
                   if (this.orderTextarea.scrollHeight > 280) {
                     this.orderTextarea.style.height = '280px';
                   } else {
                     this.orderTextarea.style.height = `${this.orderTextarea.scrollHeight}px`;
                   }
-                  this.setState({
-                    ShipmentDetailNote: e.target.value,
-                  });
+                  if (_.size(e.target.value) > 300) {
+                    e.target.className =
+                      'form-control order-info-input-inline-invalid';
+                  } else {
+                    e.target.className = 'form-control order-info-input-inline';
+                    this.setState({
+                      ShipmentDetailNote: e.target.value,
+                    });
+                  }
                 }}
                 placeholder="Text"
                 style={{

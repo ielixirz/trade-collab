@@ -79,9 +79,11 @@
   text-align: right;
   color: #679def;
 }
-
+input:invalid {
+  border: 1px solid #FF0000;
+}
 .order-info-input-inline {
-
+  text-overflow:ellipsis;
   border: 0;
   border-bottom: 1px solid #c7c7c7 !important;
   border-radius: 0;
@@ -95,7 +97,22 @@
   }
 }
 
+.order-info-input-inline-invalid {
+  text-overflow:ellipsis;
+  border: 2px solid #FF0000 !important;
+  border-radius: 0;
+  &:hover {
+    color: #679def;
+    cursor: pointer;
+  }
+  &::placeholder {
+    color: #c7c8cb;
+    font-style: italic;
+  }
+}
+
 .order-info-input-noborder{
+  text-overflow:ellipsis;
 font-size: 10px;
   border: 0;
   padding-left: 0;
