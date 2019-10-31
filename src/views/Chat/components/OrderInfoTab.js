@@ -28,6 +28,7 @@ class OrderInfoTab extends Component {
     super(props);
 
     this.state = {
+      progress: 0,
       isImporter: false,
       ConsigneeETAPortDate: new Date(),
       ShipperFirstReturn: new Date(),
@@ -57,8 +58,27 @@ class OrderInfoTab extends Component {
   }
   componentDidMount() {
     GetShipmentDetail(this.props.shipmentKey).subscribe({
-      next: shipment => {
+      next: (shipment) => {
         console.log('Shipments', shipment.data(), this.props);
+        const shipmentData = shipment.data();
+        let start = moment();
+        let end = moment();
+        const today = moment().startOf('day');
+
+        try {
+          start = moment(shipmentData.ShipperETDDate.seconds * 1000);
+          end = moment(shipmentData.ConsigneeETAPortDate.seconds * 1000);
+        } catch (e) {
+          start = new Date().getTime();
+          end = new Date().getTime();
+        }
+
+        const total = end.diff(start, 'days');
+        const current = today.diff(start, 'days');
+
+        this.setState({
+          progress: ((current / total) * 100) / 10,
+        });
         const currentMember = _.get(
           shipment.data().ShipmentMember,
           this.props.userKey,
@@ -69,7 +89,7 @@ class OrderInfoTab extends Component {
             this.props.shipmentKey,
             currentMember.ShipmentMemberCompanyKey,
           ).subscribe({
-            next: res => {
+            next: (res) => {
               console.log('result lock is', res);
               this.setState({
                 isImporter: res,
@@ -95,7 +115,7 @@ class OrderInfoTab extends Component {
             console.log('Done');
           });
 
-          Object.keys(invalidMap).forEach(key => (invalidMap[key] = false));
+          Object.keys(invalidMap).forEach((key) => (invalidMap[key] = false));
           this.setState({
             DateInvalidMap: invalidMap,
           });
@@ -239,7 +259,7 @@ class OrderInfoTab extends Component {
     });
     return (
       <Row
-        onKeyPress={event => {
+        onKeyPress={(event) => {
           console.log('Keypressed', event);
 
           if (event.key === 'Enter') {
@@ -271,7 +291,7 @@ class OrderInfoTab extends Component {
           xs={2}
           style={{ paddingLeft: 0, paddingTop: '15px', marginRight: '7px' }}
         >
-          <OrderInfoTabProgress progress={10} />
+          <OrderInfoTabProgress progress={this.state.progress} />
         </Col>
         <Col
           xs={9}
@@ -302,7 +322,7 @@ class OrderInfoTab extends Component {
                       type="text"
                       placeholder="Company Name"
                       value={this.state.ShipperCompanyName}
-                      onChange={e => {
+                      onChange={(e) => {
                         this.setState({ ShipperCompanyName: e.target.value });
                       }}
                       className="form-control order-info-input-inline"
@@ -327,7 +347,7 @@ class OrderInfoTab extends Component {
                           type="text"
                           placeholder="Port,Country"
                           value={this.state.ShipperPort}
-                          onChange={e => {
+                          onChange={(e) => {
                             this.setState({ ShipperPort: e.target.value });
                           }}
                           className="form-control order-info-input-noborder"
@@ -402,7 +422,7 @@ class OrderInfoTab extends Component {
                       className="form-control order-info-input-inline"
                       placeholder="CompanyName"
                       value={this.state.ConsigneeCompanyName}
-                      onChange={e => {
+                      onChange={(e) => {
                         this.setState({ ConsigneeCompanyName: e.target.value });
                       }}
                       style={{
@@ -421,7 +441,7 @@ class OrderInfoTab extends Component {
                           type="text"
                           placeholder="Port,Country"
                           value={this.state.ConsigneePort}
-                          onChange={e => {
+                          onChange={(e) => {
                             this.setState({ ConsigneePort: e.target.value });
                           }}
                           className="form-control order-info-input-noborder"
@@ -482,7 +502,7 @@ class OrderInfoTab extends Component {
                 id="Product"
                 placeholder="Your Shipment Product"
                 value={this.state.ShipmentDetailProduct}
-                onChange={e => {
+                onChange={(e) => {
                   if (_.size(e.target.value) > 50) {
                     e.target.className =
                       'form-control  order-info-input-invalid';
@@ -509,7 +529,7 @@ class OrderInfoTab extends Component {
                 placeholder="Detail"
                 value={this.state.ShipmentDetailPriceDescriptionOfGoods}
                 readOnly={!this.state.isImporter}
-                onChange={e => {
+                onChange={(e) => {
                   if (_.size(e.target.value) > 600) {
                     e.target.className =
                       'form-control order-info-input-invalid';

@@ -64,7 +64,18 @@ export default class OrderInfoTabProgress extends React.Component {
     } else {
       return (
         // Progress 0
-        <React.Fragment></React.Fragment>
+        <React.Fragment>
+          <div className="Path-4121">
+            <img style={iconStyle} src={factoryLogo} />
+          </div>
+          <div
+            className="progress-line-grey"
+            style={{ height: 170 - this.props.progress * 17 }}
+          />
+          <div className="Path-4121 progress">
+            <div style={iconStyle}>{werehouse(this.props.progress === 10)}</div>
+          </div>
+        </React.Fragment>
       );
     }
   }
