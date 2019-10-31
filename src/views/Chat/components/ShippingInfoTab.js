@@ -83,7 +83,7 @@ class ShippingInfoTab extends Component {
                 value={this.state.ShipmentDetailShippingLine}
                 className="form-control order-info-input-inline"
                 onChange={e => {
-                  const regex = RegExp('[!@#$%^&*(),.?":{}|<>]');
+                  const regex = RegExp('/^[d a-zA-Z0-9 -]+/g');
                   console.log(
                     'test regex of',
                     e.target.value,
