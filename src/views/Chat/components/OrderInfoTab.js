@@ -3,9 +3,7 @@
 /* eslint-disable filenames/match-regex */
 
 import React, { Component } from 'react';
-import {
-  Col, Form, FormGroup, Input, Label, Row,
-} from 'reactstrap';
+import { Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import 'react-dates/initialize';
 import moment from 'moment';
 import _ from 'lodash';
@@ -20,7 +18,10 @@ import ErrorPopup from '../../../component/commonPopup/ErrorPopup';
 
 import { isDateBefore, isDateAfter } from '../../../utils/date';
 import firebase from 'firebase';
-import { GetShipmentDetail, isCanSeeShipmentDetail } from '../../../service/shipment/shipment';
+import {
+  GetShipmentDetail,
+  isCanSeeShipmentDetail,
+} from '../../../service/shipment/shipment';
 
 class OrderInfoTab extends Component {
   constructor(props) {
@@ -58,7 +59,7 @@ class OrderInfoTab extends Component {
 
   componentDidMount() {
     GetShipmentDetail(this.props.shipmentKey).subscribe({
-      next: (shipment) => {
+      next: shipment => {
         console.log('Shipments', shipment.data(), this.props);
         const shipmentData = shipment.data();
         let start = moment();
@@ -77,18 +78,24 @@ class OrderInfoTab extends Component {
         );
 
         const total = end.diff(start, 'days');
+        console.log('Total days', total);
         const current = today.diff(start, 'days');
+        console.log('how many days pass since ETD', current);
 
         this.setState({
           progress: ((current / total) * 100) / 10,
         });
-        const currentMember = _.get(shipment.data().ShipmentMember, this.props.userKey, false);
+        const currentMember = _.get(
+          shipment.data().ShipmentMember,
+          this.props.userKey,
+          false,
+        );
         if (currentMember) {
           isCanSeeShipmentDetail(
             this.props.shipmentKey,
             currentMember.ShipmentMemberCompanyKey,
           ).subscribe({
-            next: (res) => {
+            next: res => {
               console.log('result lock is', res);
               this.setState({
                 isImporter: res,
@@ -128,7 +135,8 @@ class OrderInfoTab extends Component {
                 <span>
                   <b>ETA is invalid.</b>
                   <br />
-                  ETA must be after ETD or before Estimate Delivery and Last Free Day.
+                  ETA must be after ETD or before Estimate Delivery and Last
+                  Free Day.
                 </span>
               );
               break;
@@ -261,7 +269,7 @@ class OrderInfoTab extends Component {
     });
     return (
       <Row
-        onKeyPress={(event) => {
+        onKeyPress={event => {
           console.log('Keypressed', event);
 
           if (event.key === 'Enter') {
@@ -289,10 +297,16 @@ class OrderInfoTab extends Component {
           }
         }}
       >
-        <Col xs={2} style={{ paddingLeft: 0, paddingTop: '15px', marginRight: '7px' }}>
+        <Col
+          xs={2}
+          style={{ paddingLeft: 0, paddingTop: '15px', marginRight: '7px' }}
+        >
           <OrderInfoTabProgress progress={this.state.progress} />
         </Col>
-        <Col xs={9} style={{ paddingLeft: 22.5, paddingRight: 0, paddingTop: 10 }}>
+        <Col
+          xs={9}
+          style={{ paddingLeft: 22.5, paddingRight: 0, paddingTop: 10 }}
+        >
           {/* Detail Section */}
           <Row>
             <Col>
@@ -318,7 +332,7 @@ class OrderInfoTab extends Component {
                       type="text"
                       placeholder="Company Name"
                       value={this.state.ShipperCompanyName}
-                      onChange={(e) => {
+                      onChange={e => {
                         this.setState({ ShipperCompanyName: e.target.value });
                       }}
                       className="form-control order-info-input-inline"
@@ -343,7 +357,7 @@ class OrderInfoTab extends Component {
                           type="text"
                           placeholder="Port,Country"
                           value={this.state.ShipperPort}
-                          onChange={(e) => {
+                          onChange={e => {
                             this.setState({ ShipperPort: e.target.value });
                           }}
                           className="form-control order-info-input-noborder"
@@ -418,7 +432,7 @@ class OrderInfoTab extends Component {
                       className="form-control order-info-input-inline"
                       placeholder="CompanyName"
                       value={this.state.ConsigneeCompanyName}
-                      onChange={(e) => {
+                      onChange={e => {
                         this.setState({ ConsigneeCompanyName: e.target.value });
                       }}
                       style={{
@@ -437,7 +451,7 @@ class OrderInfoTab extends Component {
                           type="text"
                           placeholder="Port,Country"
                           value={this.state.ConsigneePort}
-                          onChange={(e) => {
+                          onChange={e => {
                             this.setState({ ConsigneePort: e.target.value });
                           }}
                           className="form-control order-info-input-noborder"
@@ -453,7 +467,9 @@ class OrderInfoTab extends Component {
               <Row>
                 <Col style={{ fontSize: 14 }}>
                   <Row style={{ marginBottom: 10 }}>
-                    <span className="order-info-eta-info">Last free day : </span>
+                    <span className="order-info-eta-info">
+                      Last free day :{' '}
+                    </span>
                     <DatePicker
                       value={dateInput.ConsigneeLastFreeDay}
                       name="ConsigneeLastFreeDay"
@@ -496,9 +512,10 @@ class OrderInfoTab extends Component {
                 id="Product"
                 placeholder="Your Shipment Product"
                 value={this.state.ShipmentDetailProduct}
-                onChange={(e) => {
+                onChange={e => {
                   if (_.size(e.target.value) > 50) {
-                    e.target.className = 'form-control  order-info-input-invalid';
+                    e.target.className =
+                      'form-control  order-info-input-invalid';
                   } else {
                     e.target.className = 'form-control  order-info-input';
                     this.setState({ ShipmentDetailProduct: e.target.value });
@@ -508,9 +525,12 @@ class OrderInfoTab extends Component {
             </FormGroup>
             <FormGroup>
               <Label className="order-info-input-label" htmlFor="Details">
-                Details
-                {' '}
-                {!this.state.isImporter ? <i className="fa fa-lock fa-lg mt-4" /> : ''}
+                Details{' '}
+                {!this.state.isImporter ? (
+                  <i className="fa fa-lock fa-lg mt-4" />
+                ) : (
+                  ''
+                )}
               </Label>
               <Input
                 className="order-info-input"
@@ -519,9 +539,10 @@ class OrderInfoTab extends Component {
                 placeholder="Detail"
                 value={this.state.ShipmentDetailPriceDescriptionOfGoods}
                 readOnly={!this.state.isImporter}
-                onChange={(e) => {
+                onChange={e => {
                   if (_.size(e.target.value) > 600) {
-                    e.target.className = 'form-control order-info-input-invalid';
+                    e.target.className =
+                      'form-control order-info-input-invalid';
                   } else {
                     e.target.className = 'form-control order-info-input';
                     this.setState({

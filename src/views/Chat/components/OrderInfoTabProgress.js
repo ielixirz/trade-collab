@@ -22,7 +22,12 @@ const boatStyle = {
 
 export default class OrderInfoTabProgress extends React.Component {
   render() {
-    if (this.props.progress > 0 && this.props.progress < 10) {
+    console.log(
+      'Progress',
+      this.props.progress < 10 && this.props.progress > 0,
+    );
+
+    if (this.props.progress < 10 && this.props.progress > 0) {
       return (
         <React.Fragment>
           <div className="Path-4121">
@@ -46,7 +51,7 @@ export default class OrderInfoTabProgress extends React.Component {
           </div>
         </React.Fragment>
       );
-    } else if (this.props.progress === 10) {
+    } else if (this.props.progress >= 10) {
       return (
         <React.Fragment>
           <div className="Path-4121">
@@ -57,7 +62,7 @@ export default class OrderInfoTabProgress extends React.Component {
           <div className="progress-line-green" style={{ height: 170 }} />
 
           <div className="Path-4121">
-            <div style={iconStyle}>{werehouse(this.props.progress === 10)}</div>
+            <div style={iconStyle}>{werehouse(this.props.progress > 10)}</div>
           </div>
         </React.Fragment>
       );
@@ -68,10 +73,7 @@ export default class OrderInfoTabProgress extends React.Component {
           <div className="Path-4121">
             <img style={iconStyle} src={factoryLogo} />
           </div>
-          <div
-            className="progress-line-grey"
-            style={{ height: 170 - this.props.progress * 17 }}
-          />
+          <div className="progress-line-grey" style={{ height: 170 }} />
           <div className="Path-4121 progress">
             <div style={iconStyle}>{werehouse(this.props.progress === 10)}</div>
           </div>
