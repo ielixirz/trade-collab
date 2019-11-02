@@ -195,24 +195,46 @@ class OrderInfoTab extends Component {
     let rule2 = true;
     let rule3 = true;
     let rule4 = true;
-    if (isDateAfter(moment(this.state.ShipperFirstReturn), moment(this.state.ShipperCutOff))) {
+
+    const firstReturnDate = moment.isMoment(this.state.ShipperFirstReturn)
+      ? this.state.ShipperFirstReturn
+      : new Date(this.state.ShipperFirstReturn.seconds * 1000);
+
+    const shipperCutOffDate = moment.isMoment(this.state.ShipperCutOff)
+      ? this.state.ShipperCutOff
+      : new Date(this.state.ShipperCutOff.seconds * 1000);
+
+    const etdDate = moment.isMoment(this.state.ShipperETDDate)
+      ? this.state.ShipperETDDate
+      : new Date(this.state.ShipperETDDate.seconds * 1000);
+
+    const etaPortDate = moment.isMoment(this.state.ConsigneeETAPortDate)
+      ? this.state.ConsigneeETAPortDate
+      : new Date(this.state.ConsigneeETAPortDate.seconds * 1000);
+
+    const estimateDeliveryDate = moment.isMoment(this.state.ConsigneeEstimateDelivery)
+      ? this.state.ConsigneeEstimateDelivery
+      : new Date(this.state.ConsigneeEstimateDelivery.seconds * 1000);
+
+    const lastFreeDayDate = moment.isMoment(this.state.ConsigneeLastFreeDay)
+      ? this.state.ConsigneeLastFreeDay
+      : new Date(this.state.ConsigneeLastFreeDay.seconds * 1000);
+
+    if (isDateAfter(moment(firstReturnDate), moment(shipperCutOffDate))) {
       rule1 = false;
     }
 
-    if (isDateAfter(moment(this.state.ShipperCutOff), moment(this.state.ShipperETDDate))) {
+    if (isDateAfter(moment(shipperCutOffDate), moment(etdDate))) {
       rule2 = false;
     }
 
-    if (isDateBefore(moment(this.state.ConsigneeETAPortDate), moment(this.state.ShipperETDDate))) {
+    if (isDateBefore(moment(etaPortDate), moment(this.state.ShipperETDDate))) {
       rule3 = false;
     }
 
     if (
-      isDateBefore(
-        moment(this.state.ConsigneeEstimateDelivery),
-        moment(this.state.ConsigneeETAPortDate),
-      )
-      || isDateBefore(moment(this.state.ConsigneeLastFreeDay), moment(this.state.ConsigneeETAPortDate))
+      isDateBefore(moment(estimateDeliveryDate), moment(etaPortDate))
+      || isDateBefore(moment(lastFreeDayDate), moment(etaPortDate))
     ) {
       rule4 = false;
     }

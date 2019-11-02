@@ -54,9 +54,6 @@ export default class DatePicker extends React.Component {
           onDateChange={(date) => {
             this.props.changeHandler(date, this.props.name);
             this.setState({ date });
-            // UpdateMasterData(this.props.shipmentKey, 'DefaultTemplate', {
-            //   [this.props.name]: firebase.firestore.Timestamp.fromDate(date.toDate()),
-            // }).subscribe(() => {});
           }}
           onFocusChange={({ focused }) => this.setState({ focused })}
           focused={this.state.focused}
