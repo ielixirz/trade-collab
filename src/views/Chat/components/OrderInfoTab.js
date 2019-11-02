@@ -3,7 +3,9 @@
 /* eslint-disable filenames/match-regex */
 
 import React, { Component } from 'react';
-import { Col, Form, FormGroup, Input, Label, Row } from 'reactstrap';
+import {
+  Col, Form, FormGroup, Input, Label, Row,
+} from 'reactstrap';
 import 'react-dates/initialize';
 import moment from 'moment';
 import _ from 'lodash';
@@ -18,10 +20,7 @@ import ErrorPopup from '../../../component/commonPopup/ErrorPopup';
 
 import { isDateBefore, isDateAfter } from '../../../utils/date';
 import firebase from 'firebase';
-import {
-  GetShipmentDetail,
-  isCanSeeShipmentDetail,
-} from '../../../service/shipment/shipment';
+import { GetShipmentDetail, isCanSeeShipmentDetail } from '../../../service/shipment/shipment';
 
 class OrderInfoTab extends Component {
   constructor(props) {
@@ -56,6 +55,7 @@ class OrderInfoTab extends Component {
     };
     this.errorPopupRef = React.createRef();
   }
+
   componentDidMount() {
     GetShipmentDetail(this.props.shipmentKey).subscribe({
       next: (shipment) => {
@@ -65,13 +65,16 @@ class OrderInfoTab extends Component {
         let end = moment();
         const today = moment().startOf('day');
 
-        try {
-          start = moment(shipmentData.ShipperETDDate.seconds * 1000);
-          end = moment(shipmentData.ConsigneeETAPortDate.seconds * 1000);
-        } catch (e) {
-          start = new Date().getTime();
-          end = new Date().getTime();
-        }
+        start = moment(
+          shipmentData.ShipperETDDate === undefined
+            ? today
+            : shipmentData.ShipperETDDate.seconds * 1000,
+        );
+        end = moment(
+          shipmentData.ConsigneeETAPortDate === undefined
+            ? today
+            : shipmentData.ConsigneeETAPortDate.seconds * 1000,
+        );
 
         const total = end.diff(start, 'days');
         const current = today.diff(start, 'days');
@@ -79,11 +82,7 @@ class OrderInfoTab extends Component {
         this.setState({
           progress: ((current / total) * 100) / 10,
         });
-        const currentMember = _.get(
-          shipment.data().ShipmentMember,
-          this.props.userKey,
-          false,
-        );
+        const currentMember = _.get(shipment.data().ShipmentMember, this.props.userKey, false);
         if (currentMember) {
           isCanSeeShipmentDetail(
             this.props.shipmentKey,
@@ -115,7 +114,7 @@ class OrderInfoTab extends Component {
             console.log('Done');
           });
 
-          Object.keys(invalidMap).forEach((key) => (invalidMap[key] = false));
+          Object.keys(invalidMap).forEach(key => (invalidMap[key] = false));
           this.setState({
             DateInvalidMap: invalidMap,
           });
@@ -129,8 +128,7 @@ class OrderInfoTab extends Component {
                 <span>
                   <b>ETA is invalid.</b>
                   <br />
-                  ETA must be after ETD or before Estimate Delivery and Last
-                  Free Day.
+                  ETA must be after ETD or before Estimate Delivery and Last Free Day.
                 </span>
               );
               break;
@@ -197,30 +195,15 @@ class OrderInfoTab extends Component {
     let rule2 = true;
     let rule3 = true;
     let rule4 = true;
-    if (
-      isDateAfter(
-        moment(this.state.ShipperFirstReturn),
-        moment(this.state.ShipperCutOff),
-      )
-    ) {
+    if (isDateAfter(moment(this.state.ShipperFirstReturn), moment(this.state.ShipperCutOff))) {
       rule1 = false;
     }
 
-    if (
-      isDateAfter(
-        moment(this.state.ShipperCutOff),
-        moment(this.state.ShipperETDDate),
-      )
-    ) {
+    if (isDateAfter(moment(this.state.ShipperCutOff), moment(this.state.ShipperETDDate))) {
       rule2 = false;
     }
 
-    if (
-      isDateBefore(
-        moment(this.state.ConsigneeETAPortDate),
-        moment(this.state.ShipperETDDate),
-      )
-    ) {
+    if (isDateBefore(moment(this.state.ConsigneeETAPortDate), moment(this.state.ShipperETDDate))) {
       rule3 = false;
     }
 
@@ -228,11 +211,8 @@ class OrderInfoTab extends Component {
       isDateBefore(
         moment(this.state.ConsigneeEstimateDelivery),
         moment(this.state.ConsigneeETAPortDate),
-      ) ||
-      isDateBefore(
-        moment(this.state.ConsigneeLastFreeDay),
-        moment(this.state.ConsigneeETAPortDate),
       )
+      || isDateBefore(moment(this.state.ConsigneeLastFreeDay), moment(this.state.ConsigneeETAPortDate))
     ) {
       rule4 = false;
     }
@@ -287,16 +267,10 @@ class OrderInfoTab extends Component {
           }
         }}
       >
-        <Col
-          xs={2}
-          style={{ paddingLeft: 0, paddingTop: '15px', marginRight: '7px' }}
-        >
+        <Col xs={2} style={{ paddingLeft: 0, paddingTop: '15px', marginRight: '7px' }}>
           <OrderInfoTabProgress progress={this.state.progress} />
         </Col>
-        <Col
-          xs={9}
-          style={{ paddingLeft: 22.5, paddingRight: 0, paddingTop: 10 }}
-        >
+        <Col xs={9} style={{ paddingLeft: 22.5, paddingRight: 0, paddingTop: 10 }}>
           {/* Detail Section */}
           <Row>
             <Col>
@@ -457,9 +431,7 @@ class OrderInfoTab extends Component {
               <Row>
                 <Col style={{ fontSize: 14 }}>
                   <Row style={{ marginBottom: 10 }}>
-                    <span className="order-info-eta-info">
-                      Last free day :{' '}
-                    </span>
+                    <span className="order-info-eta-info">Last free day : </span>
                     <DatePicker
                       value={dateInput.ConsigneeLastFreeDay}
                       name="ConsigneeLastFreeDay"
@@ -504,8 +476,7 @@ class OrderInfoTab extends Component {
                 value={this.state.ShipmentDetailProduct}
                 onChange={(e) => {
                   if (_.size(e.target.value) > 50) {
-                    e.target.className =
-                      'form-control  order-info-input-invalid';
+                    e.target.className = 'form-control  order-info-input-invalid';
                   } else {
                     e.target.className = 'form-control  order-info-input';
                     this.setState({ ShipmentDetailProduct: e.target.value });
@@ -515,12 +486,9 @@ class OrderInfoTab extends Component {
             </FormGroup>
             <FormGroup>
               <Label className="order-info-input-label" htmlFor="Details">
-                Details{' '}
-                {!this.state.isImporter ? (
-                  <i className="fa fa-lock fa-lg mt-4" />
-                ) : (
-                  ''
-                )}
+                Details
+                {' '}
+                {!this.state.isImporter ? <i className="fa fa-lock fa-lg mt-4" /> : ''}
               </Label>
               <Input
                 className="order-info-input"
@@ -531,8 +499,7 @@ class OrderInfoTab extends Component {
                 readOnly={!this.state.isImporter}
                 onChange={(e) => {
                   if (_.size(e.target.value) > 600) {
-                    e.target.className =
-                      'form-control order-info-input-invalid';
+                    e.target.className = 'form-control order-info-input-invalid';
                   } else {
                     e.target.className = 'form-control order-info-input';
                     this.setState({
