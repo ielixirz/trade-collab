@@ -28,6 +28,7 @@ class OrderInfoTab extends Component {
     super(props);
 
     this.state = {
+      progress: 0,
       isImporter: false,
       ConsigneeETAPortDate: new Date(),
       ShipperFirstReturn: new Date(),
@@ -55,10 +56,35 @@ class OrderInfoTab extends Component {
     };
     this.errorPopupRef = React.createRef();
   }
+
   componentDidMount() {
     GetShipmentDetail(this.props.shipmentKey).subscribe({
       next: shipment => {
         console.log('Shipments', shipment.data(), this.props);
+        const shipmentData = shipment.data();
+        let start = moment();
+        let end = moment();
+        const today = moment().startOf('day');
+
+        start = moment(
+          shipmentData.ShipperETDDate === undefined
+            ? today
+            : shipmentData.ShipperETDDate.seconds * 1000,
+        );
+        end = moment(
+          shipmentData.ConsigneeETAPortDate === undefined
+            ? today
+            : shipmentData.ConsigneeETAPortDate.seconds * 1000,
+        );
+
+        const total = end.diff(start, 'days');
+        console.log('Total days', total);
+        const current = today.diff(start, 'days');
+        console.log('how many days pass since ETD', current);
+
+        this.setState({
+          progress: ((current / total) * 100) / 10,
+        });
         const currentMember = _.get(
           shipment.data().ShipmentMember,
           this.props.userKey,
@@ -177,42 +203,46 @@ class OrderInfoTab extends Component {
     let rule2 = true;
     let rule3 = true;
     let rule4 = true;
-    if (
-      isDateAfter(
-        moment(this.state.ShipperFirstReturn),
-        moment(this.state.ShipperCutOff),
-      )
-    ) {
+
+    const firstReturnDate = moment.isMoment(this.state.ShipperFirstReturn)
+      ? this.state.ShipperFirstReturn
+      : new Date(this.state.ShipperFirstReturn.seconds * 1000);
+
+    const shipperCutOffDate = moment.isMoment(this.state.ShipperCutOff)
+      ? this.state.ShipperCutOff
+      : new Date(this.state.ShipperCutOff.seconds * 1000);
+
+    const etdDate = moment.isMoment(this.state.ShipperETDDate)
+      ? this.state.ShipperETDDate
+      : new Date(this.state.ShipperETDDate.seconds * 1000);
+
+    const etaPortDate = moment.isMoment(this.state.ConsigneeETAPortDate)
+      ? this.state.ConsigneeETAPortDate
+      : new Date(this.state.ConsigneeETAPortDate.seconds * 1000);
+
+    const estimateDeliveryDate = moment.isMoment(this.state.ConsigneeEstimateDelivery)
+      ? this.state.ConsigneeEstimateDelivery
+      : new Date(this.state.ConsigneeEstimateDelivery.seconds * 1000);
+
+    const lastFreeDayDate = moment.isMoment(this.state.ConsigneeLastFreeDay)
+      ? this.state.ConsigneeLastFreeDay
+      : new Date(this.state.ConsigneeLastFreeDay.seconds * 1000);
+
+    if (isDateAfter(moment(firstReturnDate), moment(shipperCutOffDate))) {
       rule1 = false;
     }
 
-    if (
-      isDateAfter(
-        moment(this.state.ShipperCutOff),
-        moment(this.state.ShipperETDDate),
-      )
-    ) {
+    if (isDateAfter(moment(shipperCutOffDate), moment(etdDate))) {
       rule2 = false;
     }
 
-    if (
-      isDateBefore(
-        moment(this.state.ConsigneeETAPortDate),
-        moment(this.state.ShipperETDDate),
-      )
-    ) {
+    if (isDateBefore(moment(etaPortDate), moment(this.state.ShipperETDDate))) {
       rule3 = false;
     }
 
     if (
-      isDateBefore(
-        moment(this.state.ConsigneeEstimateDelivery),
-        moment(this.state.ConsigneeETAPortDate),
-      ) ||
-      isDateBefore(
-        moment(this.state.ConsigneeLastFreeDay),
-        moment(this.state.ConsigneeETAPortDate),
-      )
+      isDateBefore(moment(estimateDeliveryDate), moment(etaPortDate))
+      || isDateBefore(moment(lastFreeDayDate), moment(etaPortDate))
     ) {
       rule4 = false;
     }
@@ -271,7 +301,7 @@ class OrderInfoTab extends Component {
           xs={2}
           style={{ paddingLeft: 0, paddingTop: '15px', marginRight: '7px' }}
         >
-          <OrderInfoTabProgress progress={10} />
+          <OrderInfoTabProgress progress={this.state.progress} />
         </Col>
         <Col
           xs={9}

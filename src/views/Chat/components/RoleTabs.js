@@ -189,6 +189,7 @@ class RoleTabs extends Component {
                       'white-space': 'nowrap',
                       'text-decoration': 'underline',
                     }}
+                    className={'roleOption'}
                   >
                     Select your own company for this role{' '}
                     <i className="fa fa-arrow-down"></i>
@@ -324,7 +325,7 @@ class RoleTabs extends Component {
               >
                 <img
                   style={{
-                    marginTop: '10px',
+                    marginTop: '25px',
                   }}
                   src={timelogo}
                 />

@@ -33,7 +33,7 @@ class ShippingInfoTab extends Component {
 
   componentDidMount() {
     if (this.orderTextarea) {
-      this.orderTextarea.style.height = '100px';
+      this.orderTextarea.style.height = '50px';
     }
   }
 
@@ -71,7 +71,9 @@ class ShippingInfoTab extends Component {
         >
           <FormGroup row>
             <Col lg="6">
-              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>
+              <Label
+                style={{ fontSize: 12, fontWeight: 'bold', marginTop: 10 }}
+              >
                 Shipping Line
               </Label>
             </Col>
@@ -116,7 +118,9 @@ class ShippingInfoTab extends Component {
           </FormGroup>
           <FormGroup row>
             <Col lg="6">
-              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>
+              <Label
+                style={{ fontSize: 12, fontWeight: 'bold', marginTop: 10 }}
+              >
                 Container No.
               </Label>
             </Col>
@@ -154,7 +158,9 @@ class ShippingInfoTab extends Component {
           </FormGroup>
           <FormGroup row>
             <Col lg="6">
-              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>
+              <Label
+                style={{ fontSize: 12, fontWeight: 'bold', marginTop: 10 }}
+              >
                 Bill of Landding No.
               </Label>
             </Col>
@@ -195,6 +201,7 @@ class ShippingInfoTab extends Component {
                 style={{
                   fontSize: 12,
                   fontWeight: 'bold',
+                  marginTop: 10,
                   whiteSpace: 'nowrap',
                 }}
               >
@@ -235,11 +242,15 @@ class ShippingInfoTab extends Component {
           </FormGroup>
           <FormGroup>
             <Col>
-              <Label style={{ fontSize: 12, fontWeight: 'bold' }}>Note</Label>
+              <Label
+                style={{ fontSize: 12, fontWeight: 'bold', marginTop: 10 }}
+              >
+                Note
+              </Label>
             </Col>
             <Col>
               <textarea
-                row={9}
+                row={0}
                 id="text-input"
                 ref={ref => (this.orderTextarea = ref)}
                 name="text-input"
@@ -247,7 +258,7 @@ class ShippingInfoTab extends Component {
                 value={this.state.ShipmentDetailNote}
                 maxLength={300}
                 onChange={e => {
-                  this.orderTextarea.style.height = '100px';
+                  this.orderTextarea.style.height = '50px';
                   if (this.orderTextarea.scrollHeight > 280) {
                     this.orderTextarea.style.height = '280px';
                   } else {
