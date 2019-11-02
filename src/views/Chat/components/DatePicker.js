@@ -24,7 +24,6 @@ const normalStyle = {
 export default class DatePicker extends React.Component {
   constructor(props) {
     super(props);
-    console.log('Props', props);
     this.state = {
       focused: false,
       date: moment(),
@@ -46,12 +45,15 @@ export default class DatePicker extends React.Component {
   }
 
   render() {
+    console.log('DatePicker Props', this.props.value);
     return (
-      <div style={this.props.invalid[this.props.name] ? invalidStyle : normalStyle}>
+      <div
+        style={this.props.invalid[this.props.name] ? invalidStyle : normalStyle}
+      >
         <SingleDatePicker
           numberOfMonths={1}
           daySize={30}
-          onDateChange={(date) => {
+          onDateChange={date => {
             this.props.changeHandler(date, this.props.name);
             this.setState({ date });
             // UpdateMasterData(this.props.shipmentKey, 'DefaultTemplate', {
