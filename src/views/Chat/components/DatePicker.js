@@ -47,19 +47,18 @@ export default class DatePicker extends React.Component {
   render() {
     console.log('DatePicker Props', this.props.value);
     return (
-      <div
-        style={this.props.invalid[this.props.name] ? invalidStyle : normalStyle}
-      >
+      <div style={this.props.invalid[this.props.name] ? invalidStyle : normalStyle}>
         <SingleDatePicker
           numberOfMonths={1}
           daySize={30}
-          onDateChange={date => {
+          onDateChange={(date) => {
             this.props.changeHandler(date, this.props.name);
             this.setState({ date });
           }}
           onFocusChange={({ focused }) => this.setState({ focused })}
           focused={this.state.focused}
           date={this.state.date || new Date()}
+          isOutsideRange={() => false}
         />
       </div>
     );
