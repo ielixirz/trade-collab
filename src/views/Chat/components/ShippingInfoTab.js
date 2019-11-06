@@ -64,7 +64,8 @@ class ShippingInfoTab extends Component {
     return (
       <div>
         <p style={{ fontSize: 10, color: 'red' }}>
-          {format ? 'special character not allowed' : ''}
+          {format ? 'special character not allowed' + <br /> : ''}
+
           {size ? `text size is must lower than ${limit}` : ''}
         </p>
       </div>
