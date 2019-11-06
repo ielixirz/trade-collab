@@ -1,13 +1,7 @@
 /* eslint-disable filenames/match-regex */
 import React, { Component } from 'react';
 import {
-  Badge,
-  Col,
-  Form,
-  FormGroup,
-  FormText,
-  Input,
-  Label,
+  Badge, Col, Form, FormGroup, FormText, Input, Label,
 } from 'reactstrap';
 import _ from 'lodash';
 import { UpdateMasterData } from '../../../service/masterdata/masterdata';
@@ -47,7 +41,7 @@ class ShippingInfoTab extends Component {
             borderColor: 'transparent',
             fontSize: '12px',
           }}
-          onKeyPress={event => {
+          onKeyPress={(event) => {
             if (event.key === 'Enter') {
               event.target.blur();
               const {
@@ -71,9 +65,7 @@ class ShippingInfoTab extends Component {
         >
           <FormGroup row>
             <Col lg="6">
-              <Label
-                style={{ fontSize: 12, fontWeight: 'bold', marginTop: 10 }}
-              >
+              <Label style={{ fontSize: 12, fontWeight: 'bold', marginTop: 10 }}>
                 Shipping Line
               </Label>
             </Col>
@@ -84,23 +76,13 @@ class ShippingInfoTab extends Component {
                 name="text-input"
                 value={this.state.ShipmentDetailShippingLine}
                 className="form-control order-info-input-inline"
-                onChange={e => {
-                  const regex = RegExp('/^[d a-zA-Z0-9 -]+/g');
-                  console.log(
-                    'test regex of',
-                    e.target.value,
-                    regex.test(e.target.value),
-                  );
-                  console.log('test regex', regex.test(e.target.value));
-                  const validateResult =
-                    (regex.test(e.target.value) === false &&
-                      _.size(e.target.value) > 0) ||
-                    _.size(e.target.value) > 50;
+                onChange={(e) => {
+                  const regex = RegExp('^[d a-zA-Z0-9 -]+$');
+                  const validateResult = (regex.test(e.target.value) === false && _.size(e.target.value) > 0)
+                    || _.size(e.target.value) > 50;
 
-                  console.log('size', validateResult);
                   if (validateResult) {
-                    e.target.className =
-                      'form-control order-info-input-inline-invalid';
+                    e.target.className = 'form-control order-info-input-inline-invalid';
                   } else {
                     e.target.className = 'form-control order-info-input-inline';
                     this.setState({
@@ -118,9 +100,7 @@ class ShippingInfoTab extends Component {
           </FormGroup>
           <FormGroup row>
             <Col lg="6">
-              <Label
-                style={{ fontSize: 12, fontWeight: 'bold', marginTop: 10 }}
-              >
+              <Label style={{ fontSize: 12, fontWeight: 'bold', marginTop: 10 }}>
                 Container No.
               </Label>
             </Col>
@@ -131,15 +111,13 @@ class ShippingInfoTab extends Component {
                 name="text-input"
                 className="form-control order-info-input-inline"
                 value={this.state.ShipmentDetailContainerNumber}
-                onChange={e => {
-                  const regex = RegExp('/^[d a-zA-Z0-9 -]+/g');
+                onChange={(e) => {
+                  const regex = RegExp('^[d a-zA-Z0-9 -]+$');
                   if (
-                    _.size(e.target.value) > 50 ||
-                    (regex.test(e.target.value) === false &&
-                      _.size(e.target.value) > 0)
+                    _.size(e.target.value) > 50
+                    || (regex.test(e.target.value) === false && _.size(e.target.value) > 0)
                   ) {
-                    e.target.className =
-                      'form-control order-info-input-inline-invalid';
+                    e.target.className = 'form-control order-info-input-inline-invalid';
                   } else {
                     e.target.className = 'form-control order-info-input-inline';
                     this.setState({
@@ -158,9 +136,7 @@ class ShippingInfoTab extends Component {
           </FormGroup>
           <FormGroup row>
             <Col lg="6">
-              <Label
-                style={{ fontSize: 12, fontWeight: 'bold', marginTop: 10 }}
-              >
+              <Label style={{ fontSize: 12, fontWeight: 'bold', marginTop: 10 }}>
                 Bill of Landding No.
               </Label>
             </Col>
@@ -171,15 +147,13 @@ class ShippingInfoTab extends Component {
                 name="text-input"
                 className="form-control order-info-input-inline"
                 value={this.state.ShipmentDetailBillofLandingNumber}
-                onChange={e => {
-                  const regex = RegExp('/^[d a-zA-Z0-9 -]+/g');
+                onChange={(e) => {
+                  const regex = RegExp('^[d a-zA-Z0-9 -]+$');
                   if (
-                    _.size(e.target.value) > 50 ||
-                    (regex.test(e.target.value) === false &&
-                      _.size(e.target.value) > 0)
+                    _.size(e.target.value) > 50
+                    || (regex.test(e.target.value) === false && _.size(e.target.value) > 0)
                   ) {
-                    e.target.className =
-                      'form-control order-info-input-inline-invalid';
+                    e.target.className = 'form-control order-info-input-inline-invalid';
                   } else {
                     e.target.className = 'form-control order-info-input-inline';
                     this.setState({
@@ -216,20 +190,17 @@ class ShippingInfoTab extends Component {
                 name="text-inputt"
                 placeholder="e.g. DHL Tracking No."
                 value={this.state.ShipmentDetailOriginalDocumentTrackingNumber}
-                onChange={e => {
-                  const regex = RegExp('/^[d a-zA-Z0-9 -]+/g');
+                onChange={(e) => {
+                  const regex = RegExp('^[d a-zA-Z0-9 -]+$');
                   if (
-                    _.size(e.target.value) > 50 ||
-                    (regex.test(e.target.value) === false &&
-                      _.size(e.target.value) > 0)
+                    _.size(e.target.value) > 50
+                    || (regex.test(e.target.value) === false && _.size(e.target.value) > 0)
                   ) {
-                    e.target.className =
-                      'form-control order-info-input-inline-invalid';
+                    e.target.className = 'form-control order-info-input-inline-invalid';
                   } else {
                     e.target.className = 'form-control order-info-input-inline';
                     this.setState({
-                      ShipmentDetailOriginalDocumentTrackingNumber:
-                        e.target.value,
+                      ShipmentDetailOriginalDocumentTrackingNumber: e.target.value,
                     });
                   }
                 }}
@@ -242,11 +213,7 @@ class ShippingInfoTab extends Component {
           </FormGroup>
           <FormGroup>
             <Col>
-              <Label
-                style={{ fontSize: 12, fontWeight: 'bold', marginTop: 10 }}
-              >
-                Note
-              </Label>
+              <Label style={{ fontSize: 12, fontWeight: 'bold', marginTop: 10 }}>Note</Label>
             </Col>
             <Col>
               <textarea
@@ -257,7 +224,7 @@ class ShippingInfoTab extends Component {
                 className="form-control order-info-input-inline textarea"
                 value={this.state.ShipmentDetailNote}
                 maxLength={300}
-                onChange={e => {
+                onChange={(e) => {
                   this.orderTextarea.style.height = '50px';
                   if (this.orderTextarea.scrollHeight > 280) {
                     this.orderTextarea.style.height = '280px';
@@ -265,8 +232,7 @@ class ShippingInfoTab extends Component {
                     this.orderTextarea.style.height = `${this.orderTextarea.scrollHeight}px`;
                   }
                   if (_.size(e.target.value) > 300) {
-                    e.target.className =
-                      'form-control order-info-input-inline-invalid';
+                    e.target.className = 'form-control order-info-input-inline-invalid';
                   } else {
                     e.target.className = 'form-control order-info-input-inline';
                     this.setState({
